@@ -517,8 +517,7 @@
           <div class="pd-offer-ribbon hidden" id="pdOfferRibbon">ONLY 2
             LEFT</div>
 
-          <img id="pdMainImg" src="../images/partywear.webp"
-            alt="Product Main Image">
+          <img id="pdMainImg" src="" alt="Product Main Image">
           <div class="video-reel-btn" id="pdVideoBtn" style="display:none;"
             onclick="openVideoModal()">
             <i class="fa-solid fa-circle-play"></i> Watch Video
@@ -561,24 +560,6 @@
           </div>
           <div class="pd-size-row" id="pdSizes"></div>
         </div>
-
-        <!-- Offers -->
-        <div class="pd-offers" id="pdOffers"><h4>Available Offers!</h4><ul
-            id="pdOffersList"><li><i class="fa-solid fa-tags"></i><span><b>Kurta
-                  Sets:</b> Buy any 2 &amp; get <b>20% off</b></span></li><li><i
-                class="fa-solid fa-tags"></i><span><b>Maternity:</b> Buy any 2
-                at <b>₹1,999</b></span></li><li><i
-                class="fa-solid fa-tags"></i><span><b>Kurtas:</b> Buy any 2 at
-                <b>₹1,499</b></span></li><li><i
-                class="fa-solid fa-tags"></i><span><b>Leggings:</b> Buy any 3 at
-                <b>₹999</b></span></li></ul></div>
-
-        <!-- Gift box -->
-        <div class="pd-gift"><input type="checkbox" id="pdGift"><div
-            class="pd-gift-txt"><h5>Add a AURA Gift Box 🎁</h5><p>Make your
-              order extra special with our signature gift
-              box.</p><b>₹399</b></div><div class="pd-gift-img"
-            aria-hidden="true"><i class="fa-solid fa-gift"></i></div></div>
 
         <!-- Key Highlights -->
         <div class="pd-hl" id="pdHighlights">
@@ -859,19 +840,22 @@
       function withTimeout(p, ms) {
         return Promise.race([p, new Promise(function (_, rej) { setTimeout(function () { rej(new Error("timeout")); }, ms); })]);
       }
-
-      async function fetchProducts() {
-        try {
-          var m = await withTimeout(import("./js/firebase.js"), 7000);
-          var q = m.query(m.collection(m.db, "products"), m.where("status", "==", "active"));
-          var snap = await withTimeout(m.getDocs(q), 8000);
-          return snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
-        } catch (err) {
-          console.warn("Firestore products not loaded:", err);
-          return [];
-        }
-      }
-
+async function fetchProducts() {
+  try {
+    var m = await import("./js/firebase.js"); // Timeout remove panniten
+    var q = m.query(m.collection(m.db, "products"));
+    var snap = await m.getDocs(q); // Timeout remove panniten
+    return snap.docs
+      .map(function (d) { return Object.assign({ id: d.id }, d.data()); })
+      .filter(function (p) {
+        var s = String(p.status || "").toLowerCase();
+        return s === "active" || s === "";
+      });
+  } catch (err) {
+    console.warn("Firestore products not loaded:", err);
+    return [];
+  }
+}
       /* images of one color -> [{src,label}] */
       function colorImageList(p, color) {
         var set = (p.colorImages && color && p.colorImages[color]) || null, list = [];
@@ -1001,7 +985,20 @@
       /* ---------- sizes (price under each size, sold-out faded, "x left") ---------- */
       function renderSizes() {
         var v = V(selectedColor);
-        if (selectedSize && (v.sizes.indexOf(selectedSize) < 0 || v.sold.indexOf(selectedSize) >= 0)) selectedSize = null;
+        
+        // Clear invalid size
+        if (selectedSize && (v.sizes.indexOf(selectedSize) < 0 || v.sold.indexOf(selectedSize) >= 0)) {
+          selectedSize = null;
+        }
+
+        // AUTO-SELECT first available size if none selected
+        if (!selectedSize && v.sizes.length) {
+          var firstAvailable = v.sizes.find(function (s) {
+            return v.sold.indexOf(s) < 0;
+          });
+          if (firstAvailable) selectedSize = firstAvailable;
+        }
+
         $("pdSizes").innerHTML = v.sizes.map(function (s) {
           var out = v.sold.indexOf(s) >= 0;
           var sp = (v.sizePrices[s] > 0) ? v.sizePrices[s] : v.price;
@@ -1010,6 +1007,13 @@
             (!out && v.sizeStock && v.sizeStock[s] > 0 && v.sizeStock[s] <= 3 ? '<small style="color:#c62828;font-weight:600">' + v.sizeStock[s] + ' left</small>' : '') +
             '</button>';
         }).join("") || '<span style="font-size:14px;color:var(--pd-muted)">One size</span>';
+
+        // If only text "One size" is shown, force a default size
+        if (!v.sizes.length) {
+          selectedSize = "Free Size";
+        }
+
+        updateCTA();
       }
 
       /* ---------- colors ---------- */
@@ -1235,16 +1239,28 @@
         document.querySelectorAll("#cartBadge, #mCartBadge").forEach(function (b) { b.textContent = n; });
       }
       function addToCart(buyNow) {
-        if (!product || !selectedSize) return;
+        if (!product) return;
+        
+        if (!selectedSize) {
+          alert("Please select a size first");
+          return;
+        }
 
         // do not allow more than the stock of this color + size
         var avail = availableStock(selectedColor, selectedSize);
-        var inCart = getCart().filter(function (x) { return x.id === product.id && x.size === selectedSize && x.color === selectedColor; })
-          .reduce(function (a, x) { return a + (x.qty || 1); }, 0);
-        if (inCart + 1 > avail) { alert("Sorry, only " + avail + " item" + (avail === 1 ? "" : "s") + " available in this size."); return; }
+        var inCart = getCart().filter(function (x) { 
+          return x.id === product.id && x.size === selectedSize && x.color === selectedColor; 
+        }).reduce(function (a, x) { return a + (x.qty || 1); }, 0);
+        
+        if (inCart + 1 > avail) {
+          alert("Sorry, only " + avail + " item" + (avail === 1 ? "" : "s") + " available in this size.");
+          return;
+        }
 
         var cart = getCart();
-        var existing = cart.findIndex(function (x) { return x.id === product.id && x.size === selectedSize && x.color === selectedColor; });
+        var existing = cart.findIndex(function (x) { 
+          return x.id === product.id && x.size === selectedSize && x.color === selectedColor; 
+        });
 
         var finalPrice = currentPrice();
 
@@ -1252,17 +1268,38 @@
         var cl = colorImageList(product, selectedColor);
         if (cl.length) finalImg = cl[0].src;
 
-        if (existing > -1) cart[existing].qty = (cart[existing].qty || 1) + 1;
-        else {
+        if (existing > -1) {
+          cart[existing].qty = (cart[existing].qty || 1) + 1;
+        } else {
           cart.push({
-            id: product.id, name: product.name, price: finalPrice, image: finalImg,
-            size: selectedSize, color: selectedColor, qty: 1,
-            gift: $("pdGift").checked ? 399 : 0
+            id: product.id,
+            name: product.name,
+            price: finalPrice,
+            image: finalImg,
+            size: selectedSize,
+            color: selectedColor || "",
+            qty: 1,
+            gift: $("pdGift") && $("pdGift").checked ? 399 : 0
           });
         }
+        
         setCart(cart);
+
+        // Force open the cart drawer
+        if (window.AuraCart && typeof window.AuraCart.open === "function") {
+          window.AuraCart.open();
+        }
+
         if (buyNow) {
-          var item = { id: product.id, name: product.name, price: finalPrice, image: finalImg, size: selectedSize, color: selectedColor, qty: 1 };
+          var item = { 
+            id: product.id, 
+            name: product.name, 
+            price: finalPrice, 
+            image: finalImg, 
+            size: selectedSize, 
+            color: selectedColor || "", 
+            qty: 1 
+          };
           if (window.AuraCheckout && typeof window.AuraCheckout.buyNow === "function") {
             window.AuraCheckout.buyNow(item);
           } else {
@@ -1511,7 +1548,7 @@
     }
     
     document.addEventListener("DOMContentLoaded", loadReviews);
-    </script>
+    </script><script src="js/nav-menu.js"></script> 
     <script type="module" src="js/checkout.js"></script>
     <script src="./js/cart-drawer.js"></script>
     <script src="js/theme.js"></script>

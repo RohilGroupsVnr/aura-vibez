@@ -183,3 +183,17 @@
 .ck-ov .ck-f.err input { border-color: #d93025; }
 .ck-ov .ck-ph input, .ck-ov .ck-cp input { width: auto; padding: 2px 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
 .ck-ov .ck-cp input { height: 36px; }
+
+/* ---- Manual UPI QR step: paste this at the END of user/css/checkout.css ---- */
+.ck-upi { text-align: center; }
+.ck-upi .ck-card { padding: 16px 12px; }
+.ck-upi-amt { margin: 0; font-size: 1.6rem; font-weight: 600; color: var(--ck-ad); }
+.ck-qr { width: 220px; height: 220px; margin: 12px auto 8px; padding: 10px; background: #fff; border: 1px solid var(--ck-line); border-radius: 14px; display: grid; place-items: center; }
+.ck-qr img, .ck-qr canvas { max-width: 100%; height: auto; display: block; }
+.ck-upi-name { margin: 4px 0 0; font-size: .95rem; font-weight: 500; }
+.ck-upi-id { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 6px 0 10px; font-size: .88rem; color: #3b2a30; flex-wrap: wrap; }
+.ck-upi-id button { padding: 4px 12px; border: 1px solid var(--ck-a); border-radius: 6px; font-size: .76rem; font-weight: 600; color: var(--ck-a); }
+.ck-upi-id button:hover { background: var(--ck-soft); }
+.ck-upiapp { display: none; align-items: center; justify-content: center; text-decoration: none; }
+@media (max-width: 560px) { .ck-upiapp { display: flex; } }
+.ck-steps { margin: 4px 6px 14px; padding-left: 18px; text-align: left; font-size: .84rem; line-height: 1.65; color: #5a4850; }

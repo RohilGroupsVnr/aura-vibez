@@ -14,7 +14,12 @@ import * as FB from "./firebase.js";
     shipFee: 60,
     prepaidOff: 40,
     codFee: 50,
-    razorpayKey: "",               // paste your Razorpay key_id to enable online payment
+    codEnabled: false,             // set true to show Cash on Delivery again
+    razorpayKey: "",               // paste your Razorpay key_id to enable AUTOMATIC online payment (then QR step is skipped)
+    /* ---- manual UPI QR (used while razorpayKey is empty) ---- */
+    upiId: "sofiajohnsonece-2@oksbi",
+    upiName: "Sofia Johnson",
+    qrImage: "",                   // optional: your own QR image, e.g. "../assets/upi-qr.jpg". Empty = QR is generated with the exact amount
     trackUrl: "trackorder.html",
     coupons: { AURA10: { pct: 10 }, WELCOME100: { flat: 100, min: 999 } }
   }, window.AURA_CHECKOUT_CONFIG || {});
@@ -60,9 +65,16 @@ import * as FB from "./firebase.js";
     { id: "wallet", name: "Wallets", ico: I.wallet },
     { id: "cod", name: "Cash on Delivery", ico: I.cod }
   ];
+  /* manual mode (no razorpayKey): only UPI QR + COD. Card / Netbanking / Wallet come back automatically once razorpayKey is set */
+  const manualMode = () => !CFG.razorpayKey;
+  const payList = () => {
+    let list = manualMode() ? PAY.filter(m => m.id === "upi" || m.id === "cod") : PAY;
+    if (!CFG.codEnabled) list = list.filter(m => m.id !== "cod");   // COD hidden unless codEnabled: true
+    return list;
+  };
 
   /* ---------- state ---------- */
-  const S = { open: false, step: "login", items: [], buyNow: false, user: null, addr: null, coupon: null, method: null, busy: false, itemsOpen: false, tip: true, order: null, phoneDraft: "", msgI: 0, reveal: false };
+  const S = { open: false, step: "login", items: [], buyNow: false, user: null, addr: null, coupon: null, method: null, busy: false, itemsOpen: false, tip: true, order: null, phoneDraft: "", msgI: 0, reveal: false, utr: "" };
   let authResolve, pending = null, ribbonTimer, toastTimer, flashTimer;
   const authReady = new Promise(r => (authResolve = r));
 
@@ -129,7 +141,7 @@ import * as FB from "./firebase.js";
     S.items = (opts.items || readCart()).map(normItem);
     S.buyNow = !!opts.items;
     if (!S.items.length) { alert("Your bag is empty."); return; }
-    S.coupon = opts.coupon || null; S.method = null; S.itemsOpen = false; S.tip = true; S.order = null;
+    S.coupon = opts.coupon || null; S.method = null; S.itemsOpen = false; S.tip = true; S.order = null; S.utr = "";
     S.open = true;
     root.classList.add("show");
     document.body.style.overflow = "hidden";
@@ -178,7 +190,7 @@ import * as FB from "./firebase.js";
 
     /* the address sheet slides up over the page behind it (like HAY) */
     const base = S.step === "address" ? (S.addr ? "summary" : "login") : S.step;
-    ({ login: viewLogin, summary: viewSummary, done: viewDone })[base]();
+    ({ login: viewLogin, summary: viewSummary, upi: viewUpi, done: viewDone })[base]();
 
     const sheet = $("ckSheet"), showSheet = S.step === "address";
     $("ckDim").classList.toggle("on", showSheet);
@@ -260,7 +272,7 @@ import * as FB from "./firebase.js";
 
       <p class="ck-sec">Payment options</p>
       <p class="ck-banner">Extra ${inr(CFG.prepaidOff)} off on Prepaid</p>
-      <div class="ck-pays">${PAY.map(payRow).join("")}</div>
+      <div class="ck-pays">${payList().map(payRow).join("")}</div>
 
       <div class="ck-login"><div>${I.user}<span>Logged in using ${esc(pGroup(p) || (u && u.email) || "your account")}</span></div><button type="button" data-a="logout">Logout</button></div>
       <p class="ck-fine">By proceeding, you agree to AURA's <a href="privacy-policy.html">Privacy Policy</a> and <a href="terms.html">T&amp;C</a></p>`;
@@ -269,6 +281,10 @@ import * as FB from "./firebase.js";
 
   function payRow(m) {
     const prepaid = m.id !== "cod", t = calc(m.id), open = S.method === m.id;
+    /* prepaid -> automatic Razorpay when a key is set, otherwise the manual UPI QR screen */
+    const act = !prepaid ? "cod" : (CFG.razorpayKey ? "pay" : "upi");
+    const label = !prepaid ? `Place order · ${inr(t.total)}` : (CFG.razorpayKey ? `Pay ${inr(t.total)}` : `Pay ${inr(t.total)} with UPI QR`);
+    const note = !prepaid ? "Pay in cash when your order arrives." : (CFG.razorpayKey ? "You'll complete the payment in a secure window." : "Scan the QR with any UPI app (GPay, PhonePe, Paytm…).");
     return `<div class="ck-pay ${open ? "open" : ""}">
       <button type="button" class="ck-pay-h" data-a="method" data-m="${m.id}" aria-expanded="${open}">
         <span class="ico">${m.ico}</span>
@@ -276,16 +292,64 @@ import * as FB from "./firebase.js";
         <span class="amt">${prepaid ? `<s>${money2(t.base)}</s>` : ""}<b>${money2(t.total)}</b></span>
         ${open ? I.down : I.right}
       </button>
-      ${open ? `<div class="ck-pay-b"><button type="button" class="ck-btn" data-a="${prepaid ? "pay" : "cod"}" ${S.busy ? "disabled" : ""}>${prepaid ? `Pay ${inr(t.total)}` : `Place order · ${inr(t.total)}`}</button>${prepaid ? '<p class="ck-note">You\'ll complete the payment in a secure window.</p>' : '<p class="ck-note">Pay in cash when your order arrives.</p>'}</div>` : ""}
+      ${open ? `<div class="ck-pay-b"><button type="button" class="ck-btn" data-a="${act}" ${S.busy ? "disabled" : ""}>${label}</button><p class="ck-note">${note}</p></div>` : ""}
     </div>`;
+  }
+
+  /* ---------- manual UPI QR step ---------- */
+  const upiLink = amt => `upi://pay?pa=${encodeURIComponent(CFG.upiId)}&pn=${encodeURIComponent(CFG.upiName)}&am=${Number(amt).toFixed(2)}&cu=INR&tn=${encodeURIComponent("AURA order")}`;
+
+  function loadQrLib() {
+    return new Promise((res, rej) => {
+      if (window.QRCode) return res();
+      const s = document.createElement("script"); s.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+      s.onload = res; s.onerror = () => rej(new Error("qr")); document.head.appendChild(s);
+    });
+  }
+  async function drawQr(amt) {
+    const box = $("ckQr"); if (!box) return;
+    if (CFG.qrImage) { box.innerHTML = `<img src="${esc(CFG.qrImage)}" alt="UPI QR code">`; return; }
+    try {
+      await loadQrLib();
+      const el = $("ckQr"); if (!el || S.step !== "upi") return;
+      el.innerHTML = "";
+      new window.QRCode(el, { text: upiLink(amt), width: 196, height: 196, correctLevel: window.QRCode.CorrectLevel.M });
+    } catch (e) {
+      const el = $("ckQr"); if (el) el.innerHTML = `<p class="ck-note">Couldn't load the QR. Please pay to the UPI ID below.</p>`;
+    }
+  }
+
+  function viewUpi() {
+    const t = calc("upi");
+    $("ckBody").innerHTML = `
+      <div class="ck-upi">
+        <p class="ck-sec" style="margin-top:4px">Scan &amp; pay</p>
+        <div class="ck-card">
+          <p class="ck-upi-amt">${money2(t.total)}</p>
+          <p class="ck-note" style="margin-top:2px">${t.pre ? `Includes ${inr(t.pre)} prepaid discount` : "Pay this exact amount"}</p>
+          <div class="ck-qr" id="ckQr"><p class="ck-note">Loading QR…</p></div>
+          <p class="ck-upi-name">${esc(CFG.upiName)}</p>
+          <div class="ck-upi-id"><span>UPI ID: <b>${esc(CFG.upiId)}</b></span><button type="button" data-a="copyUpi">Copy</button></div>
+          <a class="ck-btn line ck-upiapp" href="${esc(upiLink(t.total))}">Open in UPI app</a>
+        </div>
+        <ol class="ck-steps">
+          <li>Scan the QR with any UPI app and pay <b>${inr(t.total)}</b>.</li>
+          <li>After paying, enter the 12-digit <b>UTR / Transaction ID</b> from your payment app.</li>
+          <li>Tap <b>I've paid</b>. We'll verify your payment and confirm your order.</li>
+        </ol>
+        <div class="ck-f" data-f="ckUtr"><input id="ckUtr" placeholder=" " value="${esc(S.utr)}" maxlength="12" inputmode="numeric" autocomplete="off"><label for="ckUtr">UTR / Transaction ID (12 digits) *</label><p class="ck-ferr"></p></div>
+      </div>`;
+    $("ckFoot").innerHTML = `<button type="button" class="ck-btn" data-a="upiPaid" ${S.busy ? "disabled" : ""}>${S.busy ? "Placing order…" : "I've paid · Place order"}</button>`;
+    drawQr(t.total);
   }
 
   function viewDone() {
     const o = S.order;
+    const manual = o.paymentStatus === "verification";
     $("ckBody").innerHTML = `<div class="ck-done"><div class="ck-tick">${I.check}</div><h3>Order placed!</h3>
       <p>Thank you, ${esc(o.address.name)}. We'll send updates to ${esc(pCompact(o.phone) || o.address.email)}.</p>
       <span class="id">${esc(o.orderId)}</span>
-      <p>${o.paymentMethod === "cod" ? "Pay " + inr(o.total) + " in cash on delivery." : "Payment of " + inr(o.total) + " received."}</p></div>`;
+      <p>${o.paymentMethod === "cod" ? "Pay " + inr(o.total) + " in cash on delivery." : manual ? "Payment of " + inr(o.total) + " submitted (Ref " + esc(o.paymentId) + "). We'll confirm it shortly." : "Payment of " + inr(o.total) + " received."}</p></div>`;
     $("ckFoot").innerHTML = `<button type="button" class="ck-btn" data-a="track">Track order</button><button type="button" class="ck-btn line" style="margin-top:10px" data-a="close">Continue shopping</button>`;
   }
 
@@ -329,14 +393,18 @@ import * as FB from "./firebase.js";
     return !first;
   }
   /* ---------- order ---------- */
-  async function placeOrder(method, paymentId) {
+  /* manual = true  -> customer paid by scanning the QR, admin must verify the UTR (paymentStatus "verification") */
+  async function placeOrder(method, paymentId, manual) {
     const t = calc(method), a = S.addr, d = digits(phoneOf());
     const order = {
       orderId: "",   // filled inside the transaction: AURA#01, AURA#02, ...
       uid: S.user.uid, phone: d.length === 10 ? "+91" + d : phoneOf(), email: a.email, customerName: a.name,
       address: a, items: S.items, subtotal: t.sub, shipping: t.ship, discount: t.disc, coupon: S.coupon ? S.coupon.code : "",
       prepaidDiscount: t.pre, codFee: t.cod, total: t.total,
-      paymentMethod: method, paymentId: paymentId || "", paymentStatus: method === "cod" ? "pending" : "paid", status: "pending"
+      paymentMethod: method, paymentId: paymentId || "",
+      paymentStatus: method === "cod" ? "pending" : (manual ? "verification" : "paid"),
+      upiId: manual ? CFG.upiId : "",
+      status: "pending"
     };
     S.busy = true; render();
     try {
@@ -359,7 +427,7 @@ import * as FB from "./firebase.js";
       S.busy = false; render(); toast("Couldn't place your order. Please try again.", true);
       return;
     }
-    S.busy = false; S.order = order; S.step = "done";
+    S.busy = false; S.order = order; S.step = "done"; S.utr = "";
     if (!S.buyNow) { try { localStorage.removeItem(CFG.cartKey); } catch (e) { } }
     window.dispatchEvent(new CustomEvent("aura:order-placed", { detail: order }));
     render();
@@ -390,7 +458,8 @@ import * as FB from "./firebase.js";
     const a = b.dataset.a;
     if (a === "close") close();
     else if (a === "back") {
-      if (S.step === "address") { if (S.addr) { S.step = "summary"; render(); } else close(); }
+      if (S.step === "upi") { S.step = "summary"; render(); }
+      else if (S.step === "address") { if (S.addr) { S.step = "summary"; render(); } else close(); }
       else close();
     }
     else if (a === "flashClose") { $("ckFlash").classList.remove("on"); }
@@ -427,8 +496,20 @@ import * as FB from "./firebase.js";
     else if (a === "editAddr") { S.step = "address"; S.reveal = true; render(); }
     /* Coupon & Gift Card events hidden */
     else if (a === "method") { S.method = S.method === b.dataset.m ? null : b.dataset.m; S.tip = false; render(); }
-    else if (a === "cod") { if (!S.busy) placeOrder("cod"); }
+    else if (a === "cod") { if (!S.busy && CFG.codEnabled) placeOrder("cod"); }
     else if (a === "pay") payOnline();
+    else if (a === "upi") { S.method = "upi"; S.step = "upi"; render(); }
+    else if (a === "copyUpi") {
+      try { await navigator.clipboard.writeText(CFG.upiId); toast("UPI ID copied"); }
+      catch (err) { toast("Copy failed. UPI ID: " + CFG.upiId, true); }
+    }
+    else if (a === "upiPaid") {
+      if (S.busy) return;
+      const utr = digits($("ckUtr").value);
+      if (utr.length !== 12) { setErr("ckUtr", "Enter the 12-digit UTR / Transaction ID"); $("ckUtr").focus(); return; }
+      S.utr = utr;
+      placeOrder("upi", utr, true);
+    }
     else if (a === "logout") { try { await FB.signOut(FB.auth); } catch (err) { console.error(err); } }
     else if (a === "track") { location.href = CFG.trackUrl; }
   });
@@ -440,6 +521,7 @@ import * as FB from "./firebase.js";
       const er = $("ckPhErr"); if (er) er.textContent = "";
     }
     if (id === "ckMob") e.target.value = digits(e.target.value).slice(0, 10);
+    if (id === "ckUtr") { const d = digits(e.target.value).slice(0, 12); e.target.value = d; S.utr = d; }
     if (id === "ckPin") {
       const pin = digits(e.target.value).slice(0, 6); e.target.value = pin; setErr("ckPin", "");
       if (pin.length === 6) revealFromPin(pin); else lockCityState(false);
@@ -451,6 +533,7 @@ import * as FB from "./firebase.js";
     if (e.key !== "Enter") return;
     if (e.target.id === "ckPhone" && !e.target.readOnly) root.querySelector('[data-a="login"]')?.click();
     if (e.target.id === "ckPin") root.querySelector('[data-a="saveAddr"]')?.click();
+    if (e.target.id === "ckUtr") root.querySelector('[data-a="upiPaid"]')?.click();
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && S.open) close(); });
 

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Import Products — AURA Admin</title>
+  <link rel="icon" href="../assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <style>
+    .imp-note{background:#fdfaf6;border:1px dashed #e8e1d3;border-radius:8px;padding:12px 14px;font-size:13px;color:#7a6a70;margin-bottom:14px;line-height:1.6}
+    .imp-note b{color:#a3194a}
+    .imp-cols{display:flex;flex-wrap:wrap;gap:4px}
+    .imp-dot{display:inline-block;width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.2);margin-right:4px}
+    .imp-chip{font-size:11px;background:#fbe9ef;color:#a3194a;border-radius:99px;padding:2px 8px;white-space:nowrap}
+    .imp-log{margin-top:12px;font-size:13px;max-height:160px;overflow:auto;color:#2b1a20}
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-side" id="adminSide"></aside>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div>
+        <h1>Import products from Excel</h1>
+        <p>Aura.xlsx data — colors, sizes and size-wise stock.</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-admin ghost" id="delAllBtn" type="button" style="color:#c0392b;border-color:#c0392b"><i class="fa-solid fa-trash"></i> Delete ALL products</button>
+        <button class="btn-admin ghost" id="freshBtn" type="button" style="border-color:#c0392b;color:#c0392b"><i class="fa-solid fa-trash-can"></i> Delete ALL &amp; add fresh</button>
+        <button class="btn-admin primary" id="impBtn" type="button"><i class="fa-solid fa-file-import"></i> Import / update products</button>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <div class="imp-note">
+        <b id="iCount">0</b> products · <b id="iPcs">0</b> pcs total — <b id="iUpd">0</b> will be <b>updated</b> (existing products keep their images, badge, new-collection tag and bill history), <b id="iNew">0</b> will be <b>added</b>.
+        Safe to click more than once. New products get a placeholder image; MRP = price unless the product already had a higher MRP.
+        <br>Duplicate copies found: <b id="iDup">0</b> <button type="button" class="btn-admin ghost" id="dupBtn" hidden style="margin-left:8px;padding:4px 10px">Delete duplicates</button>
+      </div>
+      <div class="prod-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>#</th><th>Product</th><th>Code</th><th>Category</th><th>Price</th><th>Colors &amp; stock</th><th>Total</th><th>Action</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="imp-log" id="log"></div>
+    </div>
+  </main>
+</div>
+<div class="a-toast" id="toast" role="status"></div>
+
+<script type="module">
+  import { adminReady } from "./js/admin-shell.js";
+  import { db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "./js/firebase.js";
+  import { SEED, SIZE_ORDER } from "./js/products-seed.js";
+
+  const PLACEHOLDER = "../images/partywear.webp";
+  // seed name -> other spellings used by products that are already in the shop
+  const NAME_ALIAS = { "Pano": ["Pano 1052"], "Rameshwaram SHE": ["Rameshwaram SEH"], "Ryn Alia 603 NMH": ["Ryn Aliya 603 NMH"] };
+  // old short color names -> proper color names
+  const COLOR_ALIAS = { nblue: "Navy Blue", navy: "Navy Blue", bgreen: "Bottle Green", lavander: "Lavender", rama: "Rama Green" };
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  const norm = s => String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const canon = c => COLOR_ALIAS[norm(c)] || c;
+  const catLabel = v => v.split("-").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
+
+  function toast(msg, kind = "ok") {
+    const t = $("toast");
+    t.className = "a-toast show " + kind;
+    t.innerHTML = `<i class="fa-solid ${kind === "ok" ? "fa-circle-check" : "fa-circle-exclamation"}"></i> ${esc(msg)}`;
+    setTimeout(() => t.classList.remove("show"), 2600);
+  }
+
+  let existing = [], billed = new Set(), plan = [], dupDocs = [];
+
+  async function loadAll() {
+    existing = (await getDocs(collection(db, "products"))).docs.map(d => ({ id: d.id, ...d.data() }));
+    billed = new Set();
+    try {
+      (await getDocs(collection(db, "bills"))).docs.forEach(d => (d.data().items || []).forEach(i => i.id && billed.add(i.id)));
+    } catch (e) { console.warn("bills not read", e); }
+
+    plan = []; dupDocs = [];
+    SEED.forEach(p => {
+      const names = new Set([p.name, ...(NAME_ALIAS[p.name] || [])].map(norm));
+      const cands = existing.filter(d => names.has(norm(d.name)));
+      // best match: used in bills > old product (not created by this importer) > same stock total
+      const rank = d => (billed.has(d.id) ? 0 : 4) + (d.code ? 2 : 0) + (Number(d.stock) === p.stock ? 0 : 1);
+      const pick = cands.length ? [...cands].sort((a, b) => rank(a) - rank(b))[0] : null;
+      cands.filter(d => d !== pick).forEach(d => dupDocs.push(d));
+      plan.push({ p, pick, extra: cands.length - (pick ? 1 : 0) });
+    });
+    dupDocs = [...new Map(dupDocs.map(d => [d.id, d])).values()];
+    drawPreview();
+  }
+
+  function drawPreview() {
+    $("iCount").textContent = SEED.length;
+    $("iPcs").textContent = SEED.reduce((a, p) => a + p.stock, 0);
+    const upd = plan.filter(x => x.pick).length;
+    $("iUpd").textContent = upd; $("iNew").textContent = plan.length - upd;
+    const safeDup = dupDocs.filter(d => !billed.has(d.id));
+    $("iDup").textContent = safeDup.length;
+    $("dupBtn").hidden = !safeDup.length;
+    $("tbody").innerHTML = plan.map(({ p, pick, extra }, i) => `<tr>
+      <td>${i + 1}</td>
+      <td><div class="prod-name">${esc(p.name)}</div><div class="prod-meta">${esc(p.description)}</div></td>
+      <td>${esc(p.code || "—")}</td>
+      <td><span class="cat-pill">${esc(catLabel(p.category))}</span></td>
+      <td>${p.price ? "₹" + p.price.toLocaleString("en-IN") : "<b style='color:#c0392b'>Missing</b>"}</td>
+      <td><div class="imp-cols">${p.colors.map(c => {
+        const v = p.variants[c];
+        return `<span class="imp-chip"><i class="imp-dot" style="background:${esc(p.colorHex[c])}"></i>${esc(c)} · ${v.sizes.map(s => esc(s) + ":" + v.sizeStock[s]).join(" ")}</span>`;
+      }).join("")}</div></td>
+      <td><b>${p.stock}</b></td>
+      <td>${pick ? `<span class="badge pending">Update existing</span>` : `<span class="badge delivered">Add new</span>`}${extra > 0 ? `<div class="prod-meta">${extra} duplicate</div>` : ""}</td>
+    </tr>`).join("");
+  }
+
+  /* build the variant data in the same shape products.html saves */
+  function build(p, old) {
+    const price = p.price;
+    const fallback = old?.image || PLACEHOLDER;
+    const oldImgs = {};
+    (old?.colors || []).forEach(c => {
+      const im = old.colorImages?.[c] || old.variants?.[c]?.images;
+      if (im && Object.values(im).some(Boolean)) oldImgs[canon(c)] = im;
+    });
+    const variants = {}, colorImages = {}, colorSold = {}, colorStock = {};
+    const union = new Set();
+    p.colors.forEach(c => {
+      const v = p.variants[c];
+      const sizes = SIZE_ORDER.filter(s => v.sizes.includes(s));
+      const sizeStock = {}; sizes.forEach(s => sizeStock[s] = v.sizeStock[s]);
+      const soldSizes = sizes.filter(s => sizeStock[s] <= 0);
+      const im = oldImgs[c];
+      const imgs = im ? { front: im.front || "", back: im.back || "", side: im.side || "", quality: im.quality || "" }
+                      : { front: fallback, back: "", side: "", quality: "" };
+      const mrp = Math.max(Number(old?.variants?.[c]?.mrp) || Number(old?.mrp) || 0, price);
+      variants[c] = { price, mrp, sizes, sizePrices: {}, soldSizes, sizeStock, stock: v.stock, images: imgs };
+      colorImages[c] = imgs; colorSold[c] = soldSizes; colorStock[c] = v.stock;
+      sizes.forEach(s => union.add(s));
+    });
+    const first = variants[p.colors[0]].images;
+    return {
+      name: old?.name || p.name, category: p.category, price,
+      mrp: Math.max(Number(old?.mrp) || 0, price), stock: p.stock, colorStock,
+      status: price > 0 ? (old?.status || "active") : "draft",
+      colors: p.colors, colorHex: p.colorHex, variants, colorImages, colorSold,
+      sizes: SIZE_ORDER.filter(s => union.has(s)), sizePrices: {}, soldSizes: [],
+      description: old?.description || p.description || "", fabric: old?.fabric || p.fabric || "",
+      partNo: p.partNo || "", code: p.code || "",
+      _image: old?.image || first.front || first.back || PLACEHOLDER,
+      _images: (old?.images && old.images.length) ? old.images : [first.front || PLACEHOLDER]
+    };
+  }
+
+  function newPayload(d) {
+    const { _image, _images, ...core } = d;
+    return {
+      ...core, image: _image, images: _images, badge: "", video: "", isNew: false,
+      seoTitle: "", seoDesc: "", seoKeywords: "", relatedProducts: [],
+      fit: "", neck: "", sleeveStyling: "", sleeveLength: "", technique: "", createdAt: serverTimestamp()
+    };
+  }
+
+  /* delete EVERY product, then add all Excel products fresh */
+  $("freshBtn").addEventListener("click", async () => {
+    const typed = prompt(`This will DELETE ALL ${existing.length} products in the shop (including Kurta, Lehenga, MIX…) and add ${SEED.length} fresh products from Excel.\n\nImages, badges, New-Collection tags are lost, and old bills lose their product link.\nThis can't be undone.\n\nType DELETE to continue:`);
+    if (typed !== "DELETE") { if (typed !== null) toast("Cancelled — you must type DELETE", "err"); return; }
+    const btn = $("freshBtn"), log = $("log"); log.innerHTML = "";
+    btn.disabled = true; $("impBtn").disabled = true;
+    let del = 0, added = 0, failed = 0;
+    for (const d of existing) {
+      try { await deleteDoc(doc(db, "products", d.id)); del++; btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Deleting ${del}/${existing.length}`; }
+      catch (e) { failed++; console.error(e); log.insertAdjacentHTML("beforeend", `<div style="color:#c0392b">❌ Could not delete ${esc(d.name)}: ${esc(e.message || e)}</div>`); }
+    }
+    log.insertAdjacentHTML("beforeend", `<div>🗑 Deleted ${del} products</div>`);
+    for (const p of SEED) {
+      try {
+        await addDoc(collection(db, "products"), newPayload(build(p, null)));
+        added++; btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Adding ${added}/${SEED.length}`;
+        log.insertAdjacentHTML("beforeend", `<div>✅ Added: ${esc(p.name)} (${p.stock} pcs)</div>`);
+      } catch (e) { failed++; console.error(e); log.insertAdjacentHTML("beforeend", `<div style="color:#c0392b">❌ ${esc(p.name)}: ${esc(e.message || e)}</div>`); }
+    }
+    log.insertAdjacentHTML("beforeend", `<div style="margin-top:8px"><b>Finished: ${del} deleted, ${added} added, ${failed} failed.</b></div>`);
+    toast(`Done — ${added} products added`);
+    btn.disabled = false; $("impBtn").disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-trash-can"></i> Delete ALL &amp; add fresh`;
+    await loadAll();
+  });
+
+  $("impBtn").addEventListener("click", async () => {
+    const btn = $("impBtn");
+    const upd = plan.filter(x => x.pick).length;
+    if (!confirm(`${upd} existing products will be UPDATED (price, category, colors, size-wise stock) and ${plan.length - upd} added. Continue?`)) return;
+    btn.disabled = true;
+    const log = $("log"); log.innerHTML = "";
+    let added = 0, updated = 0, failed = 0;
+    for (const { p, pick } of plan) {
+      try {
+        const d = build(p, pick);
+        const { _image, _images, ...core } = d;
+        if (pick) {
+          await updateDoc(doc(db, "products", pick.id), { ...core, updatedAt: serverTimestamp() });
+          updated++; log.insertAdjacentHTML("beforeend", `<div>🔄 Updated: ${esc(p.name)} (${p.stock} pcs)</div>`);
+        } else {
+          await addDoc(collection(db, "products"), newPayload(d));
+          added++; log.insertAdjacentHTML("beforeend", `<div>✅ Added: ${esc(p.name)} (${p.stock} pcs)</div>`);
+        }
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${added + updated + failed}/${plan.length}`;
+      } catch (err) {
+        failed++; console.error(err);
+        log.insertAdjacentHTML("beforeend", `<div style="color:#c0392b">❌ ${esc(p.name)}: ${esc(err.message || err)}</div>`);
+      }
+    }
+    log.insertAdjacentHTML("beforeend", `<div style="margin-top:8px"><b>Finished: ${updated} updated, ${added} added, ${failed} failed.</b></div>`);
+    toast(`Done — ${updated} updated, ${added} added`);
+    btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-file-import"></i> Import / update products`;
+    await loadAll();
+  });
+
+  /* delete duplicate copies (never touches a product used in a bill) */
+  $("dupBtn").addEventListener("click", async () => {
+    const list = dupDocs.filter(d => !billed.has(d.id));
+    if (!list.length) return;
+    if (!confirm(`Delete ${list.length} duplicate copies?\n\n` + list.map(d => "• " + d.name).join("\n") + "\n\nThis can't be undone. Run Import first so the kept copy has the right stock.")) return;
+    let n = 0;
+    for (const d of list) { try { await deleteDoc(doc(db, "products", d.id)); n++; } catch (e) { console.error(e); } }
+    toast(`${n} duplicates deleted`);
+    await loadAll();
+  });
+
+  /* delete EVERY product, then Import adds all fresh */
+  $("delAllBtn").addEventListener("click", async () => {
+    if (!existing.length) { toast("No products to delete", "err"); return; }
+    const ans = prompt(`This will permanently delete ALL ${existing.length} products from the shop (including Kurta, Lehenga and everything else).\nOld bills stay, but they will no longer link to a product.\n\nType DELETE to confirm:`);
+    if (ans !== "DELETE") { if (ans !== null) toast("Cancelled — you must type DELETE", "err"); return; }
+    const btn = $("delAllBtn"), log = $("log"); log.innerHTML = "";
+    btn.disabled = true;
+    let n = 0, failed = 0;
+    for (const d of existing) {
+      try { await deleteDoc(doc(db, "products", d.id)); n++; }
+      catch (e) { failed++; console.error(e); log.insertAdjacentHTML("beforeend", `<div style="color:#c0392b">❌ ${esc(d.name)}: ${esc(e.message || e)}</div>`); }
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${n + failed}/${existing.length}`;
+    }
+    log.insertAdjacentHTML("beforeend", `<div><b>🗑 Deleted ${n} products${failed ? `, ${failed} failed` : ""}.</b> Now click “Import / update products” to add all ${SEED.length} fresh.</div>`);
+    toast(`${n} products deleted`);
+    btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-trash"></i> Delete ALL products`;
+    await loadAll();
+  });
+
+  adminReady.then(loadAll).catch(err => { console.error(err); toast("Could not load products", "err"); });
+</script>
+</body>
+</html>

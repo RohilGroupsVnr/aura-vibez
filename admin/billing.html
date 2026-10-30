@@ -1,20 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Billing (POS) — AURA Admin</title>
   <link rel="icon" href="../assets/favicon.png">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="css/admin.css">
 
   <style>
-body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--ink); margin: 0; display: flex; min-height: 100vh; }    .admin-layout { display: flex; width: 100%; }
-    .admin-main { flex: 1; padding: 20px 30px; min-width: 0; height: 100vh; overflow-y: auto; position: relative; }
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--ivory);
+      color: var(--ink);
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+    }
 
-    .pos-container { display: flex; gap: 20px; height: calc(100vh - 130px); }
-    .pos-left { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .admin-layout {
+      display: flex;
+      width: 100%;
+    }
+
+    .admin-main {
+      flex: 1;
+      padding: 20px 30px;
+      min-width: 0;
+      height: 100vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .pos-container {
+      display: flex;
+      gap: 20px;
+      height: calc(100vh - 130px);
+    }
+
+    .pos-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
 
     /* LOW STOCK ALERT BANNER */
     .stock-alert-banner {
@@ -28,434 +61,948 @@ body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--i
       gap: 12px;
       animation: slideDown 0.4s ease;
     }
+
     @keyframes slideDown {
-      from { transform: translateY(-20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
+
     .stock-alert-banner .alert-icon {
-      background: #a3194a; color: #fff; width: 36px; height: 36px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+      background: #a3194a;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
     }
-    .stock-alert-banner .alert-text { flex: 1; font-size: 14px; color: #6e0e33; }
-    .stock-alert-banner .alert-text b { color: #a3194a; }
+
+    .stock-alert-banner .alert-text {
+      flex: 1;
+      font-size: 14px;
+      color: #6e0e33;
+    }
+
+    .stock-alert-banner .alert-text b {
+      color: #a3194a;
+    }
 
     /* Top Input Bar */
-    .entry-bar { background: #fff; border: 1.5px solid #ead9df; border-radius: 10px; padding: 15px; display: grid; grid-template-columns: minmax(200px, 2fr) 1fr 1fr 1fr auto auto; gap: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); align-items: end; }
-    .entry-group { display: flex; flex-direction: column; position: relative; min-width: 0; }
-    .entry-group label { font-size: 11px; font-weight: 600; color: #a3194a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-    .entry-group input { width: 100%; padding: 12px; border: 1.5px solid #e8e1d3; border-radius: 6px; font-size: 16px; font-weight: 500; font-family: inherit; box-sizing: border-box; }
-    .entry-group input:focus { outline: none; border-color: #a3194a; background: #fff9f0; }
-    .entry-group input[type="number"]::-webkit-inner-spin-button, .entry-group input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .entry-bar {
+      background: #fff;
+      border: 1.5px solid #ead9df;
+      border-radius: 10px;
+      padding: 15px;
+      display: grid;
+      grid-template-columns: minmax(200px, 2fr) 1fr 1fr 1fr auto auto;
+      gap: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      align-items: end;
+    }
 
-    .btn-pos { background: #a3194a; color: #fff; border: none; border-radius: 6px; padding: 12px 15px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; height: 45px; position: relative; }
-    .btn-pos:hover { background: #6e0e33; }
-    .btn-manual { background: #6e0e33; color: #fff; border: none; border-radius: 6px; padding: 0 15px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; height: 45px; }
-    .btn-manual:hover { background: #a3194a; }
+    .entry-group {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-width: 0;
+    }
 
-    .browse-badge { position: absolute; top: -8px; right: -8px; background: #2ecc71; color: #fff; font-size: 11px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .entry-group label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #a3194a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .entry-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid #e8e1d3;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    .entry-group input:focus {
+      outline: none;
+      border-color: #a3194a;
+      background: #fff9f0;
+    }
+
+    .entry-group input[type="number"]::-webkit-inner-spin-button,
+    .entry-group input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .btn-pos {
+      background: #a3194a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 15px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 45px;
+      position: relative;
+    }
+
+    .btn-pos:hover {
+      background: #6e0e33;
+    }
+
+    .btn-manual {
+      background: #6e0e33;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0 15px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      height: 45px;
+    }
+
+    .btn-manual:hover {
+      background: #a3194a;
+    }
+
+    .browse-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #2ecc71;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
 
     /* Bill Table */
-    .bill-table-wrap { flex: 1; background: #fff; border: 1.5px solid #ead9df; border-radius: 10px; overflow: auto; display: flex; flex-direction: column; }
-    .bill-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    .bill-table th { background: #fbeef2; color: #6e0e33; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px; text-align: left; position: sticky; top: 0; }
-    .bill-table td { padding: 8px 12px; border-bottom: 1px solid #f0e6ea; }
-    .bill-table input { width: 100%; padding: 8px; border: 1px solid #ead9df; border-radius: 4px; text-align: right; font-family: inherit; font-weight: 600; }
-    .bill-table input:focus { outline: none; border-color: #a3194a; background: #fff5f8; }
+    .bill-table-wrap {
+      flex: 1;
+      background: #fff;
+      border: 1.5px solid #ead9df;
+      border-radius: 10px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bill-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .bill-table th {
+      background: #fbeef2;
+      color: #6e0e33;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px;
+      text-align: left;
+      position: sticky;
+      top: 0;
+    }
+
+    .bill-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0e6ea;
+    }
+
+    .bill-table input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ead9df;
+      border-radius: 4px;
+      text-align: right;
+      font-family: inherit;
+      font-weight: 600;
+    }
+
+    .bill-table input:focus {
+      outline: none;
+      border-color: #a3194a;
+      background: #fff5f8;
+    }
 
     /* Right Side */
-    .pos-right { width: 400px; background: #fff; border: 1.5px solid #ead9df; border-radius: 10px; display: flex; flex-direction: column; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); overflow-y: auto; }
-    .pos-right h2 { color: #6e0e33; font-size: 18px; margin-bottom: 15px; border-bottom: 1px solid #f0e6ea; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .pos-right {
+      width: 400px;
+      background: #fff;
+      border: 1.5px solid #ead9df;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      overflow-y: auto;
+    }
 
-    .btn-hold { background: #fff; color: #a3194a; border: 1px solid #a3194a; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
-    .btn-hold:hover { background: #fbeef2; }
+    .pos-right h2 {
+      color: #6e0e33;
+      font-size: 18px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #f0e6ea;
+      padding-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-    .cust-details { display: grid; gap: 10px; margin-bottom: 15px; }
-    .cust-details input, .cust-details select { padding: 10px; border: 1.5px solid #e8e1d3; border-radius: 6px; font-family: inherit; font-size: 14px; width: 100%; box-sizing: border-box; }
-    .cust-details input:focus, .cust-details select:focus { outline: none; border-color: #a3194a; }
+    .btn-hold {
+      background: #fff;
+      color: #a3194a;
+      border: 1px solid #a3194a;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-    .tot-box { background: #fbeef2; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-    .tot-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #555; }
-    .tot-row.grand { font-size: 24px; font-weight: 700; color: #a3194a; border-top: 1px dashed #d4a3b5; padding-top: 10px; margin-top: 5px; }
+    .btn-hold:hover {
+      background: #fbeef2;
+    }
 
-    .quick-cash { display: flex; gap: 5px; margin-bottom: 10px; }
-    .quick-cash button { flex: 1; padding: 8px; border: 1px solid #a3194a; background: #fff; color: #a3194a; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; }
-    .quick-cash button:hover { background: #a3194a; color: #fff; }
+    .cust-details {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
 
-    .received-row { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
-    .received-row input { flex: 1; padding: 10px; border: 1.5px solid #e8e1d3; border-radius: 6px; font-weight: 600; }
-    .change-box { font-size: 14px; font-weight: 600; color: #a3194a; white-space: nowrap; }
+    .cust-details input,
+    .cust-details select {
+      padding: 10px;
+      border: 1.5px solid #e8e1d3;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-    .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; padding-top: 15px; }
-    .btn-action { width: 100%; border: none; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;}
-    .btn-save { background: linear-gradient(135deg, #a3194a, #6e0e33); color: #fff; grid-column: span 2; }
-    .btn-pdf { background: #2ecc71; color: #fff; }
-    .btn-wa { background: #25D366; color: #fff; }
-    .btn-action:hover { transform: translateY(-2px); opacity: 0.9; }
+    .cust-details input:focus,
+    .cust-details select:focus {
+      outline: none;
+      border-color: #a3194a;
+    }
 
-    .sugg-box { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1.5px solid #a3194a; border-radius: 0 0 8px 8px; z-index: 100; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-    .sugg-item { padding: 10px 15px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; }
-    .sugg-item.active { background: #fbeef2; border-left: 4px solid #a3194a; }
+    .tot-box {
+      background: #fbeef2;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
 
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; max-height: 60vh; overflow-y: auto; padding-right: 5px; }
-    .p-card { background: #fff; border: 1px solid #ead9df; border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; position: relative; }
-    .p-card:hover { border-color: #a3194a; box-shadow: 0 4px 12px rgba(163,25,74,0.15); transform: translateY(-2px); }
-    .p-card img { width: 100%; height: 140px; object-fit: cover; border-bottom: 1px solid #f0e6ea; }
-    .p-card-info { padding: 10px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
-    .p-card-info h4 { font-size: 13px; margin: 0 0 4px 0; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .p-card-info .price { font-size: 14px; font-weight: 700; color: #a3194a; }
-    .p-card-info .stock { font-size: 11px; color: #888; margin-top: 4px; }
-    .p-card-info .stock.low { color: #e74c3c; font-weight: 700; }
+    .tot-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #555;
+    }
 
-    .p-card.added { border-color: #2ecc71; background: #e8f8f5; }
-    .p-card.added::after { content: "✓ Added"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.2); background: rgba(46, 204, 113, 0.95); color: white; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: popIn 0.3s ease-out forwards; z-index: 10; }
-    @keyframes popIn { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+    .tot-row.grand {
+      font-size: 24px;
+      font-weight: 700;
+      color: #a3194a;
+      border-top: 1px dashed #d4a3b5;
+      padding-top: 10px;
+      margin-top: 5px;
+    }
 
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 999; }
-    .modal-overlay.on { display: flex; }
-    .modal-box { background: #fff; padding: 25px; border-radius: 10px; width: 450px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-    .modal-wide { width: 800px; }
-    .held-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .quick-cash {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .quick-cash button {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #a3194a;
+      background: #fff;
+      color: #a3194a;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .quick-cash button:hover {
+      background: #a3194a;
+      color: #fff;
+    }
+
+    .received-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .received-row input {
+      flex: 1;
+      padding: 10px;
+      border: 1.5px solid #e8e1d3;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .change-box {
+      font-size: 14px;
+      font-weight: 600;
+      color: #a3194a;
+      white-space: nowrap;
+    }
+
+    .action-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 15px;
+    }
+
+    .btn-action {
+      width: 100%;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #a3194a, #6e0e33);
+      color: #fff;
+      grid-column: span 2;
+    }
+
+    .btn-pdf {
+      background: #2ecc71;
+      color: #fff;
+    }
+
+    .btn-wa {
+      background: #25D366;
+      color: #fff;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    .sugg-box {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1.5px solid #a3194a;
+      border-radius: 0 0 8px 8px;
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .sugg-item {
+      padding: 10px 15px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sugg-item.active {
+      background: #fbeef2;
+      border-left: 4px solid #a3194a;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+      max-height: 60vh;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .p-card {
+      background: #fff;
+      border: 1px solid #ead9df;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .p-card:hover {
+      border-color: #a3194a;
+      box-shadow: 0 4px 12px rgba(163, 25, 74, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .p-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-bottom: 1px solid #f0e6ea;
+    }
+
+    .p-card-info {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .p-card-info h4 {
+      font-size: 13px;
+      margin: 0 0 4px 0;
+      color: #333;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .p-card-info .price {
+      font-size: 14px;
+      font-weight: 700;
+      color: #a3194a;
+    }
+
+    .p-card-info .stock {
+      font-size: 11px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .p-card-info .stock.low {
+      color: #e74c3c;
+      font-weight: 700;
+    }
+
+    .p-card.added {
+      border-color: #2ecc71;
+      background: #e8f8f5;
+    }
+
+    .p-card.added::after {
+      content: "✓ Added";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1.2);
+      background: rgba(46, 204, 113, 0.95);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.3s ease-out forwards;
+      z-index: 10;
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-overlay.on {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      width: 450px;
+      max-width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-wide {
+      width: 800px;
+    }
+
+    .held-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
     /* TOAST NOTIFICATION */
     .toast-notify {
-      position: fixed; bottom: 30px; right: 30px; background: #2ecc71; color: #fff;
-      padding: 14px 22px; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      display: flex; align-items: center; gap: 10px; z-index: 9999;
-      transform: translateX(400px); transition: transform 0.4s ease; font-size: 14px; font-weight: 600;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #2ecc71;
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 9999;
+      transform: translateX(400px);
+      transition: transform 0.4s ease;
+      font-size: 14px;
+      font-weight: 600;
     }
-    .toast-notify.show { transform: translateX(0); }
-    .toast-notify.low { background: #e74c3c; }
+
+    .toast-notify.show {
+      transform: translateX(0);
+    }
+
+    .toast-notify.low {
+      background: #e74c3c;
+    }
 
     /* ================= PRINT / INVOICE ================= */
-    #print-section { display: none; }
+    #print-section {
+      display: none;
+    }
+
     @media print {
-      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-      html, body { background: #fff !important; }
-      body * { visibility: hidden; }
-      #print-section, #print-section * { visibility: visible; }
-      #print-section { position: absolute; left: 0; top: 0; width: 210mm; padding: 0; margin: 0; display: block; background: #fff; color: #000; }
-      @page { size: A4; margin: 0; }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html,
+      body {
+        background: #fff !important;
+      }
+
+      body * {
+        visibility: hidden;
+      }
+
+      #print-section,
+      #print-section * {
+        visibility: visible;
+      }
+
+      #print-section {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+        padding: 0;
+        margin: 0;
+        display: block;
+        background: #fff;
+        color: #000;
+      }
+
+      @page {
+        size: A4;
+        margin: 0;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<div class="admin-layout">
-  <aside class="admin-side" id="adminSide"></aside>
+  <div class="admin-layout">
+    <aside class="admin-side" id="adminSide"></aside>
 
-  <main class="admin-main">
-    <div class="admin-topbar" style="margin-bottom: 20px; z-index: 10; position: relative;">
-      <div>
-        <h1>Billing (POS)</h1>
-        <p>Generate bills, reduce stock, and manage customers.</p>
-      </div>
-    </div>
-
-    <!-- LOW STOCK ALERT BANNER -->
-    <div class="stock-alert-banner" id="stockAlert">
-      <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-      <div class="alert-text">
-        <b>Low Stock Alert!</b> <span id="alertProducts"></span> — Please refill soon.
-      </div>
-    </div>
-
-    <div class="pos-container">
-      <div class="pos-left">
-        <div class="entry-bar">
-          <div class="entry-group">
-            <label>Item Name / Scan (F2)</label>
-            <input type="text" id="inpName" placeholder="Type or scan..." autocomplete="off">
-            <div class="sugg-box" id="suggBox"></div>
-          </div>
-          <div class="entry-group">
-            <label>Stock</label>
-            <input type="text" id="inpStock" value="-" readonly style="background: #f9f9f9;">
-          </div>
-          <div class="entry-group">
-            <label>Rate (₹)</label>
-            <input type="number" id="inpRate" min="0" value="0">
-          </div>
-          <div class="entry-group">
-            <label>Qty</label>
-            <input type="number" id="inpQty" min="1" value="1">
-          </div>
-          <button class="btn-pos" id="btnBrowse">
-            <i class="fa-solid fa-images"></i> Browse
-            <span class="browse-badge" id="browseBadge" style="display: none;">0</span>
-          </button>
-          <button class="btn-manual" id="btnManual"><i class="fa-solid fa-plus"></i> Manual</button>
-        </div>
-
-        <div class="bill-table-wrap">
-          <table class="bill-table">
-            <thead>
-              <tr>
-                <th style="width: 40px;">#</th>
-                <th>Product</th>
-                <th style="width: 80px;">Qty</th>
-                <th style="width: 100px;">Rate</th>
-                <th style="width: 100px;">Total</th>
-                <th style="width: 40px;"></th>
-              </tr>
-            </thead>
-            <tbody id="billBody"></tbody>
-          </table>
+    <main class="admin-main">
+      <div class="admin-topbar" style="margin-bottom: 20px; z-index: 10; position: relative;">
+        <div>
+          <h1>Billing (POS)</h1>
+          <p>Generate bills, reduce stock, and manage customers.</p>
         </div>
       </div>
 
-      <div class="pos-right">
-        <h2>Bill Summary <button class="btn-hold" id="btnHold"><i class="fa-solid fa-pause"></i> Hold</button></h2>
+      <!-- LOW STOCK ALERT BANNER -->
+      <div class="stock-alert-banner" id="stockAlert">
+        <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="alert-text">
+          <b>Low Stock Alert!</b> <span id="alertProducts"></span> — Please refill soon.
+        </div>
+      </div>
 
-        <div class="cust-details">
-          <input type="text" id="custName" placeholder="Customer Name (Optional)">
-          <div style="display: flex; gap: 5px;">
-            <input type="text" id="custPhone" placeholder="Phone Number" maxlength="10" inputmode="numeric" style="flex: 1;">
-            <button id="btnHistory" style="background: #fbeef2; color: #a3194a; border: 1px solid #a3194a; border-radius: 6px; padding: 0 10px; cursor: pointer;" title="View History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+      <div class="pos-container">
+        <div class="pos-left">
+          <div class="entry-bar">
+            <div class="entry-group">
+              <label>Item Name / Scan (F2)</label>
+              <input type="text" id="inpName" placeholder="Type or scan..." autocomplete="off">
+              <div class="sugg-box" id="suggBox"></div>
+            </div>
+            <div class="entry-group">
+              <label>Stock</label>
+              <input type="text" id="inpStock" value="-" readonly style="background: #f9f9f9;">
+            </div>
+            <div class="entry-group">
+              <label>Rate (₹)</label>
+              <input type="number" id="inpRate" min="0" value="0">
+            </div>
+            <div class="entry-group">
+              <label>Qty</label>
+              <input type="number" id="inpQty" min="1" value="1">
+            </div>
+            <button class="btn-pos" id="btnBrowse">
+              <i class="fa-solid fa-images"></i> Browse
+              <span class="browse-badge" id="browseBadge" style="display: none;">0</span>
+            </button>
+            <button class="btn-manual" id="btnManual"><i class="fa-solid fa-plus"></i> Manual</button>
           </div>
-          <select id="payMode">
-            <option value="Cash">Cash</option>
-            <option value="UPI">UPI</option>
-            <option value="Card">Card</option>
-          </select>
+
+          <div class="bill-table-wrap">
+            <table class="bill-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;">#</th>
+                  <th>Product</th>
+                  <th style="width: 80px;">Qty</th>
+                  <th style="width: 100px;">Rate</th>
+                  <th style="width: 100px;">Total</th>
+                  <th style="width: 40px;"></th>
+                </tr>
+              </thead>
+              <tbody id="billBody"></tbody>
+            </table>
+          </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-          <div>
-            <label style="font-size: 11px; font-weight: 600; color: #555;">GST (%)</label>
-            <select id="gstRate" style="width: 100%; padding: 10px; border: 1.5px solid #e8e1d3; border-radius: 6px;">
-              <option value="0">0% (Exempt)</option>
-              <option value="5">5% GST</option>
-              <option value="12">12% GST</option>
-              <option value="18">18% GST</option>
+        <div class="pos-right">
+          <h2>Bill Summary <button class="btn-hold" id="btnHold"><i class="fa-solid fa-pause"></i> Hold</button></h2>
+
+          <div class="cust-details">
+            <input type="text" id="custName" placeholder="Customer Name (Optional)">
+            <div style="display: flex; gap: 5px;">
+              <input type="text" id="custPhone" placeholder="Phone Number" maxlength="10" inputmode="numeric"
+                style="flex: 1;">
+              <button id="btnHistory"
+                style="background: #fbeef2; color: #a3194a; border: 1px solid #a3194a; border-radius: 6px; padding: 0 10px; cursor: pointer;"
+                title="View History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+            </div>
+            <select id="payMode">
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="Card">Card</option>
             </select>
           </div>
-          <div>
-            <label style="font-size: 11px; font-weight: 600; color: #555;">Discount</label>
-            <div style="display: flex; gap: 5px;">
-              <input type="number" id="inpDiscount" placeholder="0" style="flex: 1; padding: 10px; border: 1.5px solid #e8e1d3; border-radius: 6px;" min="0">
-              <select id="discountType" style="width: 60px; padding: 10px; border: 1.5px solid #e8e1d3; border-radius: 6px;">
-                <option value="flat">₹</option>
-                <option value="pct">%</option>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div>
+              <label style="font-size: 11px; font-weight: 600; color: #555;">GST (%)</label>
+              <select id="gstRate" style="width: 100%; padding: 10px; border: 1.5px solid #e8e1d3; border-radius: 6px;">
+                <option value="0">0% (Exempt)</option>
+                <option value="5">5% GST</option>
+                <option value="12">12% GST</option>
+                <option value="18">18% GST</option>
               </select>
             </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 600; color: #555;">Discount</label>
+              <div style="display: flex; gap: 5px;">
+                <input type="number" id="inpDiscount" placeholder="0"
+                  style="flex: 1; padding: 10px; border: 1.5px solid #e8e1d3; border-radius: 6px;" min="0">
+                <select id="discountType"
+                  style="width: 60px; padding: 10px; border: 1.5px solid #e8e1d3; border-radius: 6px;">
+                  <option value="flat">₹</option>
+                  <option value="pct">%</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="tot-box">
+            <div class="tot-row"><span>Total Items:</span> <b id="totItems">0</b></div>
+            <div class="tot-row"><span>Subtotal:</span> <b id="totSub">₹0</b></div>
+            <div class="tot-row"><span>Discount:</span> <b id="totDisc">- ₹0</b></div>
+            <div class="tot-row"><span>GST Amount:</span> <b id="totGst">+ ₹0</b></div>
+            <div class="tot-row grand"><span>TOTAL:</span> <span id="totGrand">₹0</span></div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 600; color: #555; margin-bottom: 5px;">Quick Cash:</div>
+          <div class="quick-cash">
+            <button class="cash-btn" data-amt="100">₹100</button>
+            <button class="cash-btn" data-amt="500">₹500</button>
+            <button class="cash-btn" data-amt="2000">₹2000</button>
+            <button class="cash-btn" data-amt="clear" style="color: #c0392b; border-color: #c0392b;">Clear</button>
+          </div>
+
+          <div class="received-row">
+            <input type="number" id="inpReceived" placeholder="Amount Received" min="0">
+            <div class="change-box">Change: <span id="txtChange">₹0.00</span></div>
+          </div>
+
+          <div class="action-btns">
+            <button class="btn-action btn-pdf" id="btnPdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+            <button class="btn-action btn-wa" id="btnWa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+            <button class="btn-action btn-save" id="btnSave"><i class="fa-solid fa-print"></i> Save & Print
+              (F9)</button>
           </div>
         </div>
+      </div>
+    </main>
+  </div>
 
-        <div class="tot-box">
-          <div class="tot-row"><span>Total Items:</span> <b id="totItems">0</b></div>
-          <div class="tot-row"><span>Subtotal:</span> <b id="totSub">₹0</b></div>
-          <div class="tot-row"><span>Discount:</span> <b id="totDisc">- ₹0</b></div>
-          <div class="tot-row"><span>GST Amount:</span> <b id="totGst">+ ₹0</b></div>
-          <div class="tot-row grand"><span>TOTAL:</span> <span id="totGrand">₹0</span></div>
-        </div>
+  <!-- MODALS -->
+  <div class="modal-overlay" id="browseModal">
+    <div class="modal-box modal-wide">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0; color: #6e0e33;">Select Product</h3>
+        <button onclick="document.getElementById('browseModal').classList.remove('on')"
+          style="background: none; border: none; font-size: 20px; cursor: pointer; color: #888;">&times;</button>
+      </div>
+      <input type="text" id="browseSearch" placeholder="Search products..."
+        style="width: 100%; padding: 12px; border: 1.5px solid #ead9df; border-radius: 8px; margin-bottom: 15px; font-family: inherit;">
+      <div class="product-grid" id="browseGrid"></div>
+    </div>
+  </div>
 
-        <div style="font-size: 12px; font-weight: 600; color: #555; margin-bottom: 5px;">Quick Cash:</div>
-        <div class="quick-cash">
-          <button class="cash-btn" data-amt="100">₹100</button>
-          <button class="cash-btn" data-amt="500">₹500</button>
-          <button class="cash-btn" data-amt="2000">₹2000</button>
-          <button class="cash-btn" data-amt="clear" style="color: #c0392b; border-color: #c0392b;">Clear</button>
-        </div>
+  <div class="modal-overlay" id="holdModal">
+    <div class="modal-box">
+      <h3 style="margin-bottom: 15px;">Held Bills</h3>
+      <div id="heldList" style="max-height: 300px; overflow-y: auto;"></div>
+      <button onclick="document.getElementById('holdModal').classList.remove('on')"
+        style="margin-top: 15px; padding: 10px; width: 100%; border: none; background: #eee; border-radius: 6px; cursor: pointer;">Close</button>
+    </div>
+  </div>
 
-        <div class="received-row">
-          <input type="number" id="inpReceived" placeholder="Amount Received" min="0">
-          <div class="change-box">Change: <span id="txtChange">₹0.00</span></div>
-        </div>
+  <div class="modal-overlay" id="histModal">
+    <div class="modal-box">
+      <h3 style="margin-bottom: 15px;">Customer History</h3>
+      <div id="histList" style="max-height: 300px; overflow-y: auto;"></div>
+      <button onclick="document.getElementById('histModal').classList.remove('on')"
+        style="margin-top: 15px; padding: 10px; width: 100%; border: none; background: #eee; border-radius: 6px; cursor: pointer;">Close</button>
+    </div>
+  </div>
 
-        <div class="action-btns">
-          <button class="btn-action btn-pdf" id="btnPdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-          <button class="btn-action btn-wa" id="btnWa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
-          <button class="btn-action btn-save" id="btnSave"><i class="fa-solid fa-print"></i> Save & Print (F9)</button>
-        </div>
+  <div class="modal-overlay" id="manualModal">
+    <div class="modal-box">
+      <h3 style="margin-bottom: 15px;">Manual Item Entry</h3>
+      <input type="text" id="mName" placeholder="Item Name"
+        style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px;">
+      <input type="number" id="mRate" placeholder="Rate (₹)"
+        style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px;">
+      <input type="number" id="mQty" placeholder="Qty" value="1"
+        style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px;">
+      <div style="display: flex; gap: 10px;">
+        <button onclick="document.getElementById('manualModal').classList.remove('on')"
+          style="flex:1; padding: 10px; border: none; background: #eee; border-radius: 6px; cursor: pointer;">Cancel</button>
+        <button id="btnAddManual"
+          style="flex:1; padding: 10px; border: none; background: #a3194a; color: #fff; border-radius: 6px; cursor: pointer;">Add</button>
       </div>
     </div>
-  </main>
-</div>
-
-<!-- MODALS -->
-<div class="modal-overlay" id="browseModal">
-  <div class="modal-box modal-wide">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-      <h3 style="margin: 0; color: #6e0e33;">Select Product</h3>
-      <button onclick="document.getElementById('browseModal').classList.remove('on')" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #888;">&times;</button>
-    </div>
-    <input type="text" id="browseSearch" placeholder="Search products..." style="width: 100%; padding: 12px; border: 1.5px solid #ead9df; border-radius: 8px; margin-bottom: 15px; font-family: inherit;">
-    <div class="product-grid" id="browseGrid"></div>
   </div>
-</div>
 
-<div class="modal-overlay" id="holdModal">
-  <div class="modal-box">
-    <h3 style="margin-bottom: 15px;">Held Bills</h3>
-    <div id="heldList" style="max-height: 300px; overflow-y: auto;"></div>
-    <button onclick="document.getElementById('holdModal').classList.remove('on')" style="margin-top: 15px; padding: 10px; width: 100%; border: none; background: #eee; border-radius: 6px; cursor: pointer;">Close</button>
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-notify" id="toastNotify">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastMsg">Stock Updated!</span>
   </div>
-</div>
 
-<div class="modal-overlay" id="histModal">
-  <div class="modal-box">
-    <h3 style="margin-bottom: 15px;">Customer History</h3>
-    <div id="histList" style="max-height: 300px; overflow-y: auto;"></div>
-    <button onclick="document.getElementById('histModal').classList.remove('on')" style="margin-top: 15px; padding: 10px; width: 100%; border: none; background: #eee; border-radius: 6px; cursor: pointer;">Close</button>
-  </div>
-</div>
+  <div id="print-section"></div>
 
-<div class="modal-overlay" id="manualModal">
-  <div class="modal-box">
-    <h3 style="margin-bottom: 15px;">Manual Item Entry</h3>
-    <input type="text" id="mName" placeholder="Item Name" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px;">
-    <input type="number" id="mRate" placeholder="Rate (₹)" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px;">
-    <input type="number" id="mQty" placeholder="Qty" value="1" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px;">
-    <div style="display: flex; gap: 10px;">
-      <button onclick="document.getElementById('manualModal').classList.remove('on')" style="flex:1; padding: 10px; border: none; background: #eee; border-radius: 6px; cursor: pointer;">Cancel</button>
-      <button id="btnAddManual" style="flex:1; padding: 10px; border: none; background: #a3194a; color: #fff; border-radius: 6px; cursor: pointer;">Add</button>
-    </div>
-  </div>
-</div>
+  <script type="module">
+    import { adminReady } from "./js/admin-shell.js";
+    import { db, collection, getDocs, updateDoc, doc, addDoc, serverTimestamp, query, where, onSnapshot } from "./js/firebase.js";
 
-<!-- TOAST NOTIFICATION -->
-<div class="toast-notify" id="toastNotify">
-  <i class="fa-solid fa-circle-check"></i>
-  <span id="toastMsg">Stock Updated!</span>
-</div>
+    let allProducts = [];
+    let bill = [];
+    let suggIndex = -1;
+    let heldBills = [];
 
-<div id="print-section"></div>
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const inpName = $("inpName"), inpStock = $("inpStock"), inpRate = $("inpRate"), inpQty = $("inpQty");
+    const suggBox = $("suggBox");
+    const custName = $("custName"), custPhone = $("custPhone"), payMode = $("payMode");
+    const gstRate = $("gstRate"), inpDiscount = $("inpDiscount"), discountType = $("discountType");
+    const inpReceived = $("inpReceived"), txtChange = $("txtChange");
+    const browseBadge = $("browseBadge");
+    const stockAlert = $("stockAlert");
+    const alertProducts = $("alertProducts");
 
-<script type="module">
-  import { adminReady } from "./js/admin-shell.js";
-  import { db, collection, getDocs, updateDoc, doc, addDoc, serverTimestamp, query, where, onSnapshot } from "./js/firebase.js";
-
-  let allProducts = [];
-  let bill = [];
-  let suggIndex = -1;
-  let heldBills = [];
-
-  const $ = id => document.getElementById(id);
-  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const inpName = $("inpName"), inpStock = $("inpStock"), inpRate = $("inpRate"), inpQty = $("inpQty");
-  const suggBox = $("suggBox");
-  const custName = $("custName"), custPhone = $("custPhone"), payMode = $("payMode");
-  const gstRate = $("gstRate"), inpDiscount = $("inpDiscount"), discountType = $("discountType");
-  const inpReceived = $("inpReceived"), txtChange = $("txtChange");
-  const browseBadge = $("browseBadge");
-  const stockAlert = $("stockAlert");
-  const alertProducts = $("alertProducts");
-
-  /* LOAD PRODUCTS WITH LIVE LISTENER (Real-time stock update) */
-  function initProductsListener() {
-    const q = query(collection(db, "products"));
-    onSnapshot(q, (snap) => {
-      allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      updateLowStockAlert();
-      if ($("browseModal").classList.contains("on")) {
-        renderBrowseGrid($("browseSearch").value);
-      }
-    });
-  }
-
-  /* LOW STOCK ALERT FUNCTION */
-  function updateLowStockAlert() {
-    const lowStock = allProducts.filter(p => p.stock > 0 && p.stock <= 5);
-    const outOfStock = allProducts.filter(p => p.stock <= 0);
-
-    // banner only when 2 or more products are low / out of stock
-    if (lowStock.length + outOfStock.length >= 2) {
-      stockAlert.style.display = "flex";
-      let msg = "";
-      if (lowStock.length > 0) msg += `${lowStock.length} product(s) low stock. `;
-      if (outOfStock.length > 0) msg += `${outOfStock.length} out of stock.`;
-      alertProducts.textContent = msg;
-    } else {
-      stockAlert.style.display = "none";
-    }
-  }
-
-  /* TOAST NOTIFICATION FUNCTION */
-  function showToast(message, type = "success") {
-    const toast = $("toastNotify");
-    $("toastMsg").textContent = message;
-    toast.className = "toast-notify show" + (type === "low" ? " low" : "");
-    setTimeout(() => toast.classList.remove("show"), 3000);
-  }
-
-  /* SUGGESTIONS LOGIC */
-  let barcodeTimer;
-  inpName.addEventListener("input", () => {
-    clearTimeout(barcodeTimer);
-    const val = inpName.value.trim();
-
-    barcodeTimer = setTimeout(() => {
-      if (val.length > 3) {
-        const exactMatch = allProducts.find(p => p.name.toLowerCase() === val.toLowerCase() || p.barcode === val);
-        if (exactMatch && exactMatch.stock > 0) {
-          selectProduct(exactMatch);
-          return;
+    /* LOAD PRODUCTS WITH LIVE LISTENER (Real-time stock update) */
+    function initProductsListener() {
+      const q = query(collection(db, "products"));
+      onSnapshot(q, (snap) => {
+        allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        updateLowStockAlert();
+        if ($("browseModal").classList.contains("on")) {
+          renderBrowseGrid($("browseSearch").value);
         }
-      }
+      });
+    }
 
-      if (!val) { suggBox.style.display = "none"; return; }
-      const matches = allProducts.filter(p => p.name.toLowerCase().includes(val.toLowerCase()) && p.stock > 0);
-      if (!matches.length) { suggBox.style.display = "none"; return; }
-      suggIndex = 0;
-      suggBox.innerHTML = matches.map((p, i) => `
+    /* LOW STOCK ALERT FUNCTION */
+    function updateLowStockAlert() {
+      const lowStock = allProducts.filter(p => p.stock > 0 && p.stock <= 5);
+      const outOfStock = allProducts.filter(p => p.stock <= 0);
+
+      // banner only when 2 or more products are low / out of stock
+      if (lowStock.length + outOfStock.length >= 2) {
+        stockAlert.style.display = "flex";
+        let msg = "";
+        if (lowStock.length > 0) msg += `${lowStock.length} product(s) low stock. `;
+        if (outOfStock.length > 0) msg += `${outOfStock.length} out of stock.`;
+        alertProducts.textContent = msg;
+      } else {
+        stockAlert.style.display = "none";
+      }
+    }
+
+    /* TOAST NOTIFICATION FUNCTION */
+    function showToast(message, type = "success") {
+      const toast = $("toastNotify");
+      $("toastMsg").textContent = message;
+      toast.className = "toast-notify show" + (type === "low" ? " low" : "");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    /* SUGGESTIONS LOGIC */
+    let barcodeTimer;
+    inpName.addEventListener("input", () => {
+      clearTimeout(barcodeTimer);
+      const val = inpName.value.trim();
+
+      barcodeTimer = setTimeout(() => {
+        if (val.length > 3) {
+          const exactMatch = allProducts.find(p => p.name.toLowerCase() === val.toLowerCase() || p.barcode === val);
+          if (exactMatch && exactMatch.stock > 0) {
+            selectProduct(exactMatch);
+            return;
+          }
+        }
+
+        if (!val) { suggBox.style.display = "none"; return; }
+        const matches = allProducts.filter(p => p.name.toLowerCase().includes(val.toLowerCase()) && p.stock > 0);
+        if (!matches.length) { suggBox.style.display = "none"; return; }
+        suggIndex = 0;
+        suggBox.innerHTML = matches.map((p, i) => `
         <div class="sugg-item ${i === 0 ? 'active' : ''}" data-id="${p.id}">
           <span><b>${esc(p.name)}</b></span>
           <span style="color: ${p.stock <= 5 ? '#e74c3c' : '#a3194a'}; font-weight: 600;">₹${p.price} (Stock: ${p.stock})</span>
         </div>
       `).join("");
-      suggBox.style.display = "block";
-    }, 150);
-  });
+        suggBox.style.display = "block";
+      }, 150);
+    });
 
-  inpName.addEventListener("keydown", (e) => {
-    const items = suggBox.querySelectorAll(".sugg-item");
-    if (e.key === "ArrowDown" && items.length) { e.preventDefault(); suggIndex = (suggIndex + 1) % items.length; updateSuggActive(items); }
-    else if (e.key === "ArrowUp" && items.length) { e.preventDefault(); suggIndex = (suggIndex - 1 + items.length) % items.length; updateSuggActive(items); }
-    else if (e.key === "Enter") { e.preventDefault(); if (items.length && suggBox.style.display === "block") items[suggIndex].click(); }
-    else if (e.key === "Escape") { suggBox.style.display = "none"; }
-  });
+    inpName.addEventListener("keydown", (e) => {
+      const items = suggBox.querySelectorAll(".sugg-item");
+      if (e.key === "ArrowDown" && items.length) { e.preventDefault(); suggIndex = (suggIndex + 1) % items.length; updateSuggActive(items); }
+      else if (e.key === "ArrowUp" && items.length) { e.preventDefault(); suggIndex = (suggIndex - 1 + items.length) % items.length; updateSuggActive(items); }
+      else if (e.key === "Enter") { e.preventDefault(); if (items.length && suggBox.style.display === "block") items[suggIndex].click(); }
+      else if (e.key === "Escape") { suggBox.style.display = "none"; }
+    });
 
-  function updateSuggActive(items) {
-    items.forEach((el, i) => el.classList.toggle("active", i === suggIndex));
-    items[suggIndex].scrollIntoView({ block: "nearest" });
-  }
-
-  suggBox.addEventListener("click", (e) => {
-    const item = e.target.closest(".sugg-item");
-    if (item) {
-      const prod = allProducts.find(p => p.id === item.dataset.id);
-      selectProduct(prod);
-    }
-  });
-
-  function selectProduct(prod) {
-    inpName.value = prod.name; inpStock.value = prod.stock; inpRate.value = prod.price; inpQty.value = 1;
-    suggBox.style.display = "none"; inpQty.focus(); inpQty.select();
-  }
-
-  inpQty.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); addToBill(); } });
-
-  /* PRODUCT BROWSER */
-  function updateBrowseBadge() {
-    const count = bill.reduce((s, item) => s + item.qty, 0);
-    if (count > 0) { browseBadge.textContent = count; browseBadge.style.display = "flex"; }
-    else { browseBadge.style.display = "none"; }
-  }
-
-  function renderBrowseGrid(searchTerm = "") {
-    const grid = $("browseGrid");
-    const filtered = allProducts.filter(p => p.stock > 0 && p.name.toLowerCase().includes(searchTerm.toLowerCase()));
-
-    if (!filtered.length) {
-      grid.innerHTML = "<p style='text-align: center; color: #888; grid-column: 1/-1;'>No products found.</p>";
-      return;
+    function updateSuggActive(items) {
+      items.forEach((el, i) => el.classList.toggle("active", i === suggIndex));
+      items[suggIndex].scrollIntoView({ block: "nearest" });
     }
 
-    grid.innerHTML = filtered.map(p => {
-      const inBill = bill.find(b => b.id === p.id);
-      const addedClass = inBill ? "added" : "";
-      const stockClass = p.stock <= 5 ? "low" : "";
-      return `
+    suggBox.addEventListener("click", (e) => {
+      const item = e.target.closest(".sugg-item");
+      if (item) {
+        const prod = allProducts.find(p => p.id === item.dataset.id);
+        selectProduct(prod);
+      }
+    });
+
+    function selectProduct(prod) {
+      inpName.value = prod.name; inpStock.value = prod.stock; inpRate.value = prod.price; inpQty.value = 1;
+      suggBox.style.display = "none"; inpQty.focus(); inpQty.select();
+    }
+
+    inpQty.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); addToBill(); } });
+
+    /* PRODUCT BROWSER */
+    function updateBrowseBadge() {
+      const count = bill.reduce((s, item) => s + item.qty, 0);
+      if (count > 0) { browseBadge.textContent = count; browseBadge.style.display = "flex"; }
+      else { browseBadge.style.display = "none"; }
+    }
+
+    function renderBrowseGrid(searchTerm = "") {
+      const grid = $("browseGrid");
+      const filtered = allProducts.filter(p => p.stock > 0 && p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+      if (!filtered.length) {
+        grid.innerHTML = "<p style='text-align: center; color: #888; grid-column: 1/-1;'>No products found.</p>";
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => {
+        const inBill = bill.find(b => b.id === p.id);
+        const addedClass = inBill ? "added" : "";
+        const stockClass = p.stock <= 5 ? "low" : "";
+        return `
         <div class="p-card ${addedClass}" data-id="${p.id}">
           <img src="${esc(p.image || '../images/partywear.webp')}" alt="${esc(p.name)}" onerror="this.src='../images/partywear.webp'">
           <div class="p-card-info">
@@ -467,120 +1014,120 @@ body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--i
           </div>
         </div>
       `;
-    }).join("");
+      }).join("");
 
-    grid.querySelectorAll(".p-card").forEach(card => {
-      card.addEventListener("click", () => {
-        const prod = allProducts.find(p => p.id === card.dataset.id);
-        const existing = bill.find(b => b.id === prod.id);
+      grid.querySelectorAll(".p-card").forEach(card => {
+        card.addEventListener("click", () => {
+          const prod = allProducts.find(p => p.id === card.dataset.id);
+          const existing = bill.find(b => b.id === prod.id);
 
-        if (existing) {
-          if (existing.qty + 1 > prod.stock) return alert(`Only ${prod.stock} items in stock!`);
-          existing.qty += 1;
-          existing.total = existing.qty * existing.rate;
-        } else {
-          bill.push({ id: prod.id, name: prod.name, qty: 1, rate: prod.price, total: prod.price });
-        }
+          if (existing) {
+            if (existing.qty + 1 > prod.stock) return alert(`Only ${prod.stock} items in stock!`);
+            existing.qty += 1;
+            existing.total = existing.qty * existing.rate;
+          } else {
+            bill.push({ id: prod.id, name: prod.name, qty: 1, rate: prod.price, total: prod.price });
+          }
 
-        card.classList.add("added");
-        setTimeout(() => { if (!bill.find(b => b.id === prod.id)) card.classList.remove("added"); }, 1000);
+          card.classList.add("added");
+          setTimeout(() => { if (!bill.find(b => b.id === prod.id)) card.classList.remove("added"); }, 1000);
 
-        renderBill();
-        updateBrowseBadge();
+          renderBill();
+          updateBrowseBadge();
+        });
       });
-    });
-  }
-
-  $("btnBrowse").addEventListener("click", () => {
-    $("browseSearch").value = "";
-    renderBrowseGrid();
-    $("browseModal").classList.add("on");
-    setTimeout(() => $("browseSearch").focus(), 100);
-  });
-
-  $("browseSearch").addEventListener("input", (e) => renderBrowseGrid(e.target.value));
-
-  /* ADD TO BILL */
-  function addToBill() {
-    const name = inpName.value.trim();
-    const qty = parseInt(inpQty.value);
-    const rate = parseFloat(inpRate.value);
-    const stock = parseInt(inpStock.value);
-
-    if (!name) return alert("Select a product first!");
-    if (isNaN(qty) || qty < 1) return alert("Enter valid Qty!");
-    if (isNaN(rate) || rate < 0) return alert("Enter valid Rate!");
-    if (qty > stock) return alert(`Only ${stock} items in stock!`);
-
-    const prod = allProducts.find(p => p.name === name);
-    if (!prod) return alert("Product not found in database!");
-
-    const existing = bill.find(b => b.id === prod.id);
-    if (existing) {
-      if (existing.qty + qty > stock) return alert(`Total qty exceeds stock (${stock})!`);
-      existing.qty += qty;
-      existing.total = existing.qty * existing.rate;
-    } else {
-      bill.push({ id: prod.id, name: prod.name, qty, rate, total: qty * rate });
     }
 
-    inpName.value = ""; inpStock.value = "-"; inpRate.value = 0; inpQty.value = 1;
-    inpName.focus();
-    renderBill();
-    updateBrowseBadge();
-  }
-
-  /* MANUAL ITEM ENTRY */
-  function openManualModal() {
-    $("mName").value = ""; $("mRate").value = ""; $("mQty").value = 1;
-    $("manualModal").classList.add("on");
-    setTimeout(() => $("mName").focus(), 100);
-  }
-
-  $("btnManual").addEventListener("click", openManualModal);
-
-  const manualFields = ["mName", "mRate", "mQty"];
-  manualFields.forEach((id, index) => {
-    $(id).addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === "ArrowDown") {
-        e.preventDefault();
-        if (index < manualFields.length - 1) {
-          $(manualFields[index + 1]).focus();
-          $(manualFields[index + 1]).select();
-        } else {
-          addManualItem();
-        }
-      }
-      else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        if (index > 0) {
-          $(manualFields[index - 1]).focus();
-          $(manualFields[index - 1]).select();
-        }
-      }
+    $("btnBrowse").addEventListener("click", () => {
+      $("browseSearch").value = "";
+      renderBrowseGrid();
+      $("browseModal").classList.add("on");
+      setTimeout(() => $("browseSearch").focus(), 100);
     });
-  });
 
-  $("btnAddManual").addEventListener("click", addManualItem);
+    $("browseSearch").addEventListener("input", (e) => renderBrowseGrid(e.target.value));
 
-  function addManualItem() {
-    const name = $("mName").value.trim();
-    const rate = parseFloat($("mRate").value);
-    const qty = parseInt($("mQty").value);
+    /* ADD TO BILL */
+    function addToBill() {
+      const name = inpName.value.trim();
+      const qty = parseInt(inpQty.value);
+      const rate = parseFloat(inpRate.value);
+      const stock = parseInt(inpStock.value);
 
-    if (!name) { alert("Enter Item Name"); $("mName").focus(); return; }
-    if (isNaN(rate) || rate < 0) { alert("Enter valid Rate"); $("mRate").focus(); return; }
-    if (isNaN(qty) || qty < 1) { alert("Enter valid Qty"); $("mQty").focus(); return; }
+      if (!name) return alert("Select a product first!");
+      if (isNaN(qty) || qty < 1) return alert("Enter valid Qty!");
+      if (isNaN(rate) || rate < 0) return alert("Enter valid Rate!");
+      if (qty > stock) return alert(`Only ${stock} items in stock!`);
 
-    bill.push({ id: 'manual-' + Date.now(), name: name, qty, rate, total: qty * rate, manual: true });
-    $("manualModal").classList.remove("on");
-    renderBill();
-    updateBrowseBadge();
-  }
+      const prod = allProducts.find(p => p.name === name);
+      if (!prod) return alert("Product not found in database!");
 
-  /* RENDER BILL & CALCULATION */
-  function renderBill() {
-    $("billBody").innerHTML = bill.map((item, i) => `
+      const existing = bill.find(b => b.id === prod.id);
+      if (existing) {
+        if (existing.qty + qty > stock) return alert(`Total qty exceeds stock (${stock})!`);
+        existing.qty += qty;
+        existing.total = existing.qty * existing.rate;
+      } else {
+        bill.push({ id: prod.id, name: prod.name, qty, rate, total: qty * rate });
+      }
+
+      inpName.value = ""; inpStock.value = "-"; inpRate.value = 0; inpQty.value = 1;
+      inpName.focus();
+      renderBill();
+      updateBrowseBadge();
+    }
+
+    /* MANUAL ITEM ENTRY */
+    function openManualModal() {
+      $("mName").value = ""; $("mRate").value = ""; $("mQty").value = 1;
+      $("manualModal").classList.add("on");
+      setTimeout(() => $("mName").focus(), 100);
+    }
+
+    $("btnManual").addEventListener("click", openManualModal);
+
+    const manualFields = ["mName", "mRate", "mQty"];
+    manualFields.forEach((id, index) => {
+      $(id).addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === "ArrowDown") {
+          e.preventDefault();
+          if (index < manualFields.length - 1) {
+            $(manualFields[index + 1]).focus();
+            $(manualFields[index + 1]).select();
+          } else {
+            addManualItem();
+          }
+        }
+        else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          if (index > 0) {
+            $(manualFields[index - 1]).focus();
+            $(manualFields[index - 1]).select();
+          }
+        }
+      });
+    });
+
+    $("btnAddManual").addEventListener("click", addManualItem);
+
+    function addManualItem() {
+      const name = $("mName").value.trim();
+      const rate = parseFloat($("mRate").value);
+      const qty = parseInt($("mQty").value);
+
+      if (!name) { alert("Enter Item Name"); $("mName").focus(); return; }
+      if (isNaN(rate) || rate < 0) { alert("Enter valid Rate"); $("mRate").focus(); return; }
+      if (isNaN(qty) || qty < 1) { alert("Enter valid Qty"); $("mQty").focus(); return; }
+
+      bill.push({ id: 'manual-' + Date.now(), name: name, qty, rate, total: qty * rate, manual: true });
+      $("manualModal").classList.remove("on");
+      renderBill();
+      updateBrowseBadge();
+    }
+
+    /* RENDER BILL & CALCULATION */
+    function renderBill() {
+      $("billBody").innerHTML = bill.map((item, i) => `
       <tr data-idx="${i}">
         <td>${i + 1}</td>
         <td>${esc(item.name)} ${item.manual ? '<span style="font-size:10px;color:#888;">(M)</span>' : ''}</td>
@@ -591,104 +1138,104 @@ body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--i
       </tr>
     `).join("");
 
-    document.querySelectorAll(".bill-table input").forEach(inp => {
-      inp.addEventListener("change", (e) => {
-        const idx = parseInt(e.target.dataset.idx);
-        const key = e.target.dataset.k;
-        const val = parseFloat(e.target.value);
-        if (val > 0) {
-          bill[idx][key] = val;
-          bill[idx].total = bill[idx].qty * bill[idx].rate;
-          renderBill();
-          updateBrowseBadge();
+      document.querySelectorAll(".bill-table input").forEach(inp => {
+        inp.addEventListener("change", (e) => {
+          const idx = parseInt(e.target.dataset.idx);
+          const key = e.target.dataset.k;
+          const val = parseFloat(e.target.value);
+          if (val > 0) {
+            bill[idx][key] = val;
+            bill[idx].total = bill[idx].qty * bill[idx].rate;
+            renderBill();
+            updateBrowseBadge();
+          }
+        });
+      });
+
+      calcTotals();
+    }
+
+    window.removeItem = (idx) => {
+      bill.splice(idx, 1);
+      renderBill();
+      updateBrowseBadge();
+      if ($("browseModal").classList.contains("on")) renderBrowseGrid($("browseSearch").value);
+    };
+
+    /* TOTALS & DISCOUNT & GST */
+    function getTotals() {
+      let sub = bill.reduce((s, item) => s + item.total, 0);
+      let qty = bill.reduce((s, item) => s + item.qty, 0);
+
+      let discVal = parseFloat(inpDiscount.value) || 0;
+      let discAmt = 0;
+      if (discountType.value === "pct") discAmt = sub * (Math.min(discVal, 100) / 100);
+      else discAmt = Math.min(discVal, sub);
+
+      let taxable = sub - discAmt;
+      let gstPct = parseFloat(gstRate.value) || 0;
+      let gstAmt = taxable * (gstPct / 100);
+      let grand = Math.round(taxable + gstAmt);
+
+      return { sub, qty, discAmt, gstAmt, grand };
+    }
+
+    function calcTotals() {
+      let t = getTotals();
+      $("totItems").textContent = t.qty;
+      $("totSub").textContent = "₹" + t.sub.toFixed(2);
+      $("totDisc").textContent = "- ₹" + t.discAmt.toFixed(2);
+      $("totGst").textContent = "+ ₹" + t.gstAmt.toFixed(2);
+      $("totGrand").textContent = "₹" + t.grand.toFixed(2);
+      calcChange(t.grand);
+    }
+
+    function calcChange(grandTotal) {
+      let recv = parseFloat(inpReceived.value) || 0;
+      let change = recv - grandTotal;
+      txtChange.textContent = "₹" + (change > 0 ? change.toFixed(2) : "0.00");
+    }
+
+    inpDiscount.addEventListener("input", calcTotals);
+    discountType.addEventListener("change", calcTotals);
+    gstRate.addEventListener("change", calcTotals);
+    inpReceived.addEventListener("input", () => calcChange(getTotals().grand));
+
+    /* QUICK CASH */
+    document.querySelectorAll(".cash-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (btn.dataset.amt === "clear") { inpReceived.value = ""; }
+        else {
+          let amt = parseFloat(btn.dataset.amt);
+          let current = parseFloat(inpReceived.value) || 0;
+          inpReceived.value = current + amt;
         }
+        inpReceived.dispatchEvent(new Event("input"));
       });
     });
 
-    calcTotals();
-  }
+    /* CUSTOMER HISTORY */
+    $("btnHistory").addEventListener("click", async () => {
+      const phone = custPhone.value.trim();
+      if (!phone) return alert("Enter Customer Phone Number");
 
-  window.removeItem = (idx) => {
-    bill.splice(idx, 1);
-    renderBill();
-    updateBrowseBadge();
-    if($("browseModal").classList.contains("on")) renderBrowseGrid($("browseSearch").value);
-  };
+      $("histList").innerHTML = "<p>Loading...</p>";
+      $("histModal").classList.add("on");
 
-  /* TOTALS & DISCOUNT & GST */
-  function getTotals() {
-    let sub = bill.reduce((s, item) => s + item.total, 0);
-    let qty = bill.reduce((s, item) => s + item.qty, 0);
+      try {
+        const q = query(collection(db, "bills"), where("customerPhone", "==", phone));
+        const snap = await getDocs(q);
 
-    let discVal = parseFloat(inpDiscount.value) || 0;
-    let discAmt = 0;
-    if (discountType.value === "pct") discAmt = sub * (Math.min(discVal, 100) / 100);
-    else discAmt = Math.min(discVal, sub);
+        if (snap.empty) {
+          $("histList").innerHTML = "<p>No previous bills found for this number.</p>";
+          return;
+        }
 
-    let taxable = sub - discAmt;
-    let gstPct = parseFloat(gstRate.value) || 0;
-    let gstAmt = taxable * (gstPct / 100);
-    let grand = Math.round(taxable + gstAmt);
+        let bills = [];
+        snap.forEach(d => bills.push(d.data()));
+        bills.sort((a, b) => b.date.toDate() - a.date.toDate());
 
-    return { sub, qty, discAmt, gstAmt, grand };
-  }
-
-  function calcTotals() {
-    let t = getTotals();
-    $("totItems").textContent = t.qty;
-    $("totSub").textContent = "₹" + t.sub.toFixed(2);
-    $("totDisc").textContent = "- ₹" + t.discAmt.toFixed(2);
-    $("totGst").textContent = "+ ₹" + t.gstAmt.toFixed(2);
-    $("totGrand").textContent = "₹" + t.grand.toFixed(2);
-    calcChange(t.grand);
-  }
-
-  function calcChange(grandTotal) {
-    let recv = parseFloat(inpReceived.value) || 0;
-    let change = recv - grandTotal;
-    txtChange.textContent = "₹" + (change > 0 ? change.toFixed(2) : "0.00");
-  }
-
-  inpDiscount.addEventListener("input", calcTotals);
-  discountType.addEventListener("change", calcTotals);
-  gstRate.addEventListener("change", calcTotals);
-  inpReceived.addEventListener("input", () => calcChange(getTotals().grand));
-
-  /* QUICK CASH */
-  document.querySelectorAll(".cash-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      if (btn.dataset.amt === "clear") { inpReceived.value = ""; }
-      else {
-        let amt = parseFloat(btn.dataset.amt);
-        let current = parseFloat(inpReceived.value) || 0;
-        inpReceived.value = current + amt;
-      }
-      inpReceived.dispatchEvent(new Event("input"));
-    });
-  });
-
-  /* CUSTOMER HISTORY */
-  $("btnHistory").addEventListener("click", async () => {
-    const phone = custPhone.value.trim();
-    if (!phone) return alert("Enter Customer Phone Number");
-
-    $("histList").innerHTML = "<p>Loading...</p>";
-    $("histModal").classList.add("on");
-
-    try {
-      const q = query(collection(db, "bills"), where("customerPhone", "==", phone));
-      const snap = await getDocs(q);
-
-      if (snap.empty) {
-        $("histList").innerHTML = "<p>No previous bills found for this number.</p>";
-        return;
-      }
-
-      let bills = [];
-      snap.forEach(d => bills.push(d.data()));
-      bills.sort((a, b) => b.date.toDate() - a.date.toDate());
-
-      $("histList").innerHTML = bills.map(b => `
+        $("histList").innerHTML = bills.map(b => `
         <div style="padding: 10px; border-bottom: 1px solid #eee;">
           ${b.billNo ? `<b>Bill:</b> ${esc(b.billNo)}<br>` : ""}
           <b>Date:</b> ${b.date.toDate().toLocaleString()}<br>
@@ -696,96 +1243,96 @@ body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--i
           <b>Items:</b> ${b.items.length}
         </div>
       `).join("");
-    } catch(e) { $("histList").innerHTML = "Error loading history."; }
-  });
+      } catch (e) { $("histList").innerHTML = "Error loading history."; }
+    });
 
-  /* HOLD BILL */
-  $("btnHold").addEventListener("click", () => {
-    if (!bill.length) return alert("Bill is empty!");
-    heldBills.push({ date: new Date().toLocaleTimeString(), custName: custName.value, custPhone: custPhone.value, items: JSON.parse(JSON.stringify(bill)) });
-    resetBill();
-    alert("Bill placed on Hold!");
-  });
+    /* HOLD BILL */
+    $("btnHold").addEventListener("click", () => {
+      if (!bill.length) return alert("Bill is empty!");
+      heldBills.push({ date: new Date().toLocaleTimeString(), custName: custName.value, custPhone: custPhone.value, items: JSON.parse(JSON.stringify(bill)) });
+      resetBill();
+      alert("Bill placed on Hold!");
+    });
 
-  function showHeldBills() {
-    const box = $("heldList");
-    if (!heldBills.length) box.innerHTML = "<p style='color: #888;'>No held bills.</p>";
-    else {
-      box.innerHTML = heldBills.map((h, i) => `
+    function showHeldBills() {
+      const box = $("heldList");
+      if (!heldBills.length) box.innerHTML = "<p style='color: #888;'>No held bills.</p>";
+      else {
+        box.innerHTML = heldBills.map((h, i) => `
         <div class="held-item">
           <div><b>${esc(h.custName) || 'Walk-in'}</b><br><small style="color: #888;">${h.items.length} items - ${h.date}</small></div>
           <button onclick="resumeHeld(${i})" style="padding:5px 10px;background:#a3194a;color:#fff;border:none;border-radius:4px;cursor:pointer;">Resume</button>
         </div>
       `).join("");
+      }
+      $("holdModal").classList.add("on");
     }
-    $("holdModal").classList.add("on");
-  }
 
-  window.resumeHeld = (idx) => {
-    if (bill.length && !confirm("Current bill clear aagum, resume pannalama?")) return;
-    let h = heldBills[idx];
-    bill = JSON.parse(JSON.stringify(h.items));
-    custName.value = h.custName; custPhone.value = h.custPhone;
-    heldBills.splice(idx, 1);
-    $("holdModal").classList.remove("on");
-    renderBill();
-    updateBrowseBadge();
-  };
+    window.resumeHeld = (idx) => {
+      if (bill.length && !confirm("Current bill clear aagum, resume pannalama?")) return;
+      let h = heldBills[idx];
+      bill = JSON.parse(JSON.stringify(h.items));
+      custName.value = h.custName; custPhone.value = h.custPhone;
+      heldBills.splice(idx, 1);
+      $("holdModal").classList.remove("on");
+      renderBill();
+      updateBrowseBadge();
+    };
 
-  function resetBill() {
-    bill = [];
-    renderBill();
-    updateBrowseBadge();
-    custName.value = ""; custPhone.value = "";
-    inpDiscount.value = 0; gstRate.value = "0"; inpReceived.value = "";
-    txtChange.textContent = "₹0.00";
-  }
+    function resetBill() {
+      bill = [];
+      renderBill();
+      updateBrowseBadge();
+      custName.value = ""; custPhone.value = "";
+      inpDiscount.value = 0; gstRate.value = "0"; inpReceived.value = "";
+      txtChange.textContent = "₹0.00";
+    }
 
-  /* ================================================================
-     PREMIUM A4 INVOICE
-     ================================================================ */
-  // Next invoice number: AURA#<year><running no.> -> AURA#202601, AURA#202602 ...
-  // Year is read from today's date, so it starts again at 01 every new year.
-  async function nextBillNo() {
-    const year = new Date().getFullYear();
-    let max = 0;
-    try {
-      const snap = await getDocs(query(collection(db, "bills"), where("billYear", "==", year)));
-      snap.forEach(d => { const n = Number(d.data().billSeq) || 0; if (n > max) max = n; });
-    } catch (e) { console.warn("bill number lookup failed", e); }
-    const seq = max + 1;
-    return { billNo: `AURA#${year}${String(seq).padStart(2, "0")}`, billYear: year, billSeq: seq };
-  }
+    /* ================================================================
+       PREMIUM A4 INVOICE
+       ================================================================ */
+    // Next invoice number: AURA#<year><running no.> -> AURA#202601, AURA#202602 ...
+    // Year is read from today's date, so it starts again at 01 every new year.
+    async function nextBillNo() {
+      const year = new Date().getFullYear();
+      let max = 0;
+      try {
+        const snap = await getDocs(query(collection(db, "bills"), where("billYear", "==", year)));
+        snap.forEach(d => { const n = Number(d.data().billSeq) || 0; if (n > max) max = n; });
+      } catch (e) { console.warn("bill number lookup failed", e); }
+      const seq = max + 1;
+      return { billNo: `AURA#${year}${String(seq).padStart(2, "0")}`, billYear: year, billSeq: seq };
+    }
 
-  // Indian-system amount in words
-  function inrWords(num) {
-    let n = Math.round(num);
-    if (!n) return "Zero Rupees Only";
-    const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
-    const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-    const two = x => x < 20 ? a[x] : b[Math.floor(x / 10)] + (x % 10 ? " " + a[x % 10] : "");
-    const three = x => (x >= 100 ? a[Math.floor(x / 100)] + " Hundred" + (x % 100 ? " " : "") : "") + (x % 100 ? two(x % 100) : "");
-    const parts = [];
-    const cr = Math.floor(n / 1e7); n %= 1e7;
-    const lk = Math.floor(n / 1e5); n %= 1e5;
-    const th = Math.floor(n / 1e3); n %= 1e3;
-    if (cr) parts.push(three(cr) + " Crore");
-    if (lk) parts.push(two(lk) + " Lakh");
-    if (th) parts.push(two(th) + " Thousand");
-    if (n) parts.push(three(n));
-    return parts.join(" ") + " Rupees Only";
-  }
+    // Indian-system amount in words
+    function inrWords(num) {
+      let n = Math.round(num);
+      if (!n) return "Zero Rupees Only";
+      const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+      const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+      const two = x => x < 20 ? a[x] : b[Math.floor(x / 10)] + (x % 10 ? " " + a[x % 10] : "");
+      const three = x => (x >= 100 ? a[Math.floor(x / 100)] + " Hundred" + (x % 100 ? " " : "") : "") + (x % 100 ? two(x % 100) : "");
+      const parts = [];
+      const cr = Math.floor(n / 1e7); n %= 1e7;
+      const lk = Math.floor(n / 1e5); n %= 1e5;
+      const th = Math.floor(n / 1e3); n %= 1e3;
+      if (cr) parts.push(three(cr) + " Crore");
+      if (lk) parts.push(two(lk) + " Lakh");
+      if (th) parts.push(two(th) + " Thousand");
+      if (n) parts.push(three(n));
+      return parts.join(" ") + " Rupees Only";
+    }
 
-  function generateBillHTML(cust, phone, pay, t, billNo, received) {
-    const d = new Date();
-    const dateStr = d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-    const timeStr = d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
-    const gstPct = parseFloat(gstRate.value) || 0;
-    const money = n => Number(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const savings = t.discAmt;
-    const change = received > t.grand ? received - t.grand : 0;
+    function generateBillHTML(cust, phone, pay, t, billNo, received) {
+      const d = new Date();
+      const dateStr = d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+      const timeStr = d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+      const gstPct = parseFloat(gstRate.value) || 0;
+      const money = n => Number(n).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const savings = t.discAmt;
+      const change = received > t.grand ? received - t.grand : 0;
 
-    const rows = bill.map((item, i) => `
+      const rows = bill.map((item, i) => `
       <tr class="${i % 2 ? "alt" : ""}">
         <td class="c">${String(i + 1).padStart(2, "0")}</td>
         <td><div class="nm">${esc(item.name)}</div><div class="hs">HSN 6109</div></td>
@@ -794,7 +1341,7 @@ body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--i
         <td class="r b">₹ ${money(item.total)}</td>
       </tr>`).join("");
 
-    return `
+      return `
 <style>
   .inv { font-family: 'Jost', Arial, sans-serif; color: #2b1b21; background: #fff; width: 210mm; min-height: 296mm; display: flex; flex-direction: column; box-sizing: border-box; font-size: 12px; }
   .inv * { box-sizing: border-box; }
@@ -947,123 +1494,124 @@ body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--i
   </div>
   <div class="band thin"></div>
 </div>`;
-  }
+    }
 
-  function printBill(html) {
-    $("print-section").innerHTML = html;
-    // wait for logo + fonts so the first print is never blank / unstyled
-    const imgs = [...$("print-section").querySelectorAll("img")];
-    const ready = Promise.all(imgs.map(i => i.complete ? Promise.resolve() : new Promise(r => { i.onload = i.onerror = r; })));
-    const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-    Promise.all([ready, fonts]).then(() => setTimeout(() => window.print(), 150));
-  }
+    function printBill(html) {
+      $("print-section").innerHTML = html;
+      // wait for logo + fonts so the first print is never blank / unstyled
+      const imgs = [...$("print-section").querySelectorAll("img")];
+      const ready = Promise.all(imgs.map(i => i.complete ? Promise.resolve() : new Promise(r => { i.onload = i.onerror = r; })));
+      const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      Promise.all([ready, fonts]).then(() => setTimeout(() => window.print(), 150));
+    }
 
-  /* PDF BUTTON */
-  $("btnPdf").addEventListener("click", async () => {
-    if (!bill.length) return alert("Bill is empty!");
-    const finalCustName = custName.value.trim() || custPhone.value.trim() || "Walk-in Customer";
-    const recv = parseFloat(inpReceived.value) || 0;
-    const bn = await nextBillNo();   // preview only — the number is reserved when you Save & Print
-    printBill(generateBillHTML(finalCustName, custPhone.value, payMode.value, getTotals(), bn.billNo, recv));
-  });
-
-  /* WHATSAPP BUTTON */
-  $("btnWa").addEventListener("click", () => {
-    if (!bill.length) return alert("Bill is empty!");
-    if (!custPhone.value) return alert("Phone number enter pannunga!");
-
-    let t = getTotals();
-    let text = `*AURA Clothing*\n\n`;
-    bill.forEach(i => text += `${i.name} - ${i.qty} x ₹${i.rate} = ₹${i.total.toFixed(2)}\n`);
-    text += `\nSubtotal: ₹${t.sub.toFixed(2)}\n`;
-    if (t.discAmt > 0) text += `Discount: - ₹${t.discAmt.toFixed(2)}\n`;
-    if (t.gstAmt > 0) text += `GST: + ₹${t.gstAmt.toFixed(2)}\n`;
-    text += `*TOTAL: ₹${t.grand.toFixed(2)}*\n\nPaid by: ${payMode.value}\n\nThank you! Visit again.`;
-
-    window.open(`https://wa.me/91${custPhone.value}?text=${encodeURIComponent(text)}`, '_blank');
-  });
-
-  /* SAVE & PRINT (WITH STOCK REDUCTION & NOTIFICATION) */
-  $("btnSave").addEventListener("click", async () => {
-    if (!bill.length) return alert("Bill is empty!");
-    const btn = $("btnSave");
-    btn.disabled = true; btn.textContent = "Saving...";
-
-    try {
-      let t = getTotals();
-      let customer = custName.value.trim() || "Walk-in Customer";
-      const bn = await nextBillNo();
-      const billNo = bn.billNo;
+    /* PDF BUTTON */
+    $("btnPdf").addEventListener("click", async () => {
+      if (!bill.length) return alert("Bill is empty!");
+      const finalCustName = custName.value.trim() || custPhone.value.trim() || "Walk-in Customer";
       const recv = parseFloat(inpReceived.value) || 0;
+      const bn = await nextBillNo();   // preview only — the number is reserved when you Save & Print
+      printBill(generateBillHTML(finalCustName, custPhone.value, payMode.value, getTotals(), bn.billNo, recv));
+    });
 
-      // 1. Save Bill to Firestore
-      await addDoc(collection(db, "bills"), {
-        billNo, billYear: bn.billYear, billSeq: bn.billSeq, items: bill, subtotal: t.sub, discount: t.discAmt, gst: t.gstAmt, totalAmount: t.grand,
-        customerName: customer, customerPhone: custPhone.value, paymentMode: payMode.value, date: serverTimestamp()
-      });
+    /* WHATSAPP BUTTON */
+    $("btnWa").addEventListener("click", () => {
+      if (!bill.length) return alert("Bill is empty!");
+      if (!custPhone.value) return alert("Phone number enter pannunga!");
 
-      // 2. Reduce stock for each item
-      let stockUpdatedCount = 0;
-      let lowStockItems = [];
+      let t = getTotals();
+      let text = `*AURA Clothing*\n\n`;
+      bill.forEach(i => text += `${i.name} - ${i.qty} x ₹${i.rate} = ₹${i.total.toFixed(2)}\n`);
+      text += `\nSubtotal: ₹${t.sub.toFixed(2)}\n`;
+      if (t.discAmt > 0) text += `Discount: - ₹${t.discAmt.toFixed(2)}\n`;
+      if (t.gstAmt > 0) text += `GST: + ₹${t.gstAmt.toFixed(2)}\n`;
+      text += `*TOTAL: ₹${t.grand.toFixed(2)}*\n\nPaid by: ${payMode.value}\n\nThank you! Visit again.`;
 
-      for (const item of bill) {
-        if (item.manual) continue;
+      window.open(`https://wa.me/91${custPhone.value}?text=${encodeURIComponent(text)}`, '_blank');
+    });
 
-        const prod = allProducts.find(p => p.id === item.id);
-        if (!prod) continue;
+    /* SAVE & PRINT (WITH STOCK REDUCTION & NOTIFICATION) */
+    $("btnSave").addEventListener("click", async () => {
+      if (!bill.length) return alert("Bill is empty!");
+      const btn = $("btnSave");
+      btn.disabled = true; btn.textContent = "Saving...";
 
-        const newStock = Math.max(0, prod.stock - item.qty);
+      try {
+        let t = getTotals();
+        let customer = custName.value.trim() || "Walk-in Customer";
+        const bn = await nextBillNo();
+        const billNo = bn.billNo;
+        const recv = parseFloat(inpReceived.value) || 0;
 
-        await updateDoc(doc(db, "products", item.id), {
-          stock: newStock,
-          updatedAt: serverTimestamp()
+        // 1. Save Bill to Firestore
+        await addDoc(collection(db, "bills"), {
+          billNo, billYear: bn.billYear, billSeq: bn.billSeq, items: bill, subtotal: t.sub, discount: t.discAmt, gst: t.gstAmt, totalAmount: t.grand,
+          customerName: customer, customerPhone: custPhone.value, paymentMode: payMode.value, date: serverTimestamp()
         });
 
-        stockUpdatedCount++;
+        // 2. Reduce stock for each item
+        let stockUpdatedCount = 0;
+        let lowStockItems = [];
 
-        if (newStock <= 5 && newStock > 0) {
-          lowStockItems.push(`${prod.name} (${newStock} left)`);
-        } else if (newStock <= 0) {
-          lowStockItems.push(`${prod.name} (OUT)`);
+        for (const item of bill) {
+          if (item.manual) continue;
+
+          const prod = allProducts.find(p => p.id === item.id);
+          if (!prod) continue;
+
+          const newStock = Math.max(0, prod.stock - item.qty);
+
+          await updateDoc(doc(db, "products", item.id), {
+            stock: newStock,
+            updatedAt: serverTimestamp()
+          });
+
+          stockUpdatedCount++;
+
+          if (newStock <= 5 && newStock > 0) {
+            lowStockItems.push(`${prod.name} (${newStock} left)`);
+          } else if (newStock <= 0) {
+            lowStockItems.push(`${prod.name} (OUT)`);
+          }
         }
+
+        // 3. Notifications
+        if (stockUpdatedCount > 0) {
+          showToast(`✅ Bill saved! ${stockUpdatedCount} product stock reduced.`, "success");
+        }
+        if (lowStockItems.length > 0) {
+          setTimeout(() => {
+            showToast(`⚠️ Low Stock: ${lowStockItems.join(', ')}`, "low");
+          }, 1500);
+        }
+
+        // 4. Print (HTML is generated BEFORE the bill is reset)
+        printBill(generateBillHTML(customer, custPhone.value, payMode.value, t, billNo, recv));
+
+        resetBill();
+
+      } catch (err) {
+        console.error(err);
+        alert("Error saving bill!");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-print"></i> Save & Print (F9)';
       }
+    });
 
-      // 3. Notifications
-      if (stockUpdatedCount > 0) {
-        showToast(`✅ Bill saved! ${stockUpdatedCount} product stock reduced.`, "success");
-      }
-      if (lowStockItems.length > 0) {
-        setTimeout(() => {
-          showToast(`⚠️ Low Stock: ${lowStockItems.join(', ')}`, "low");
-        }, 1500);
-      }
+    /* KEYBOARD SHORTCUTS */
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "F2") { e.preventDefault(); inpName.focus(); }
+      if (e.key === "F8") { e.preventDefault(); showHeldBills(); }
+      if (e.key === "F9") { e.preventDefault(); if (!$("btnSave").disabled) $("btnSave").click(); }
+    });
 
-      // 4. Print (HTML is generated BEFORE the bill is reset)
-      printBill(generateBillHTML(customer, custPhone.value, payMode.value, t, billNo, recv));
-
-      resetBill();
-
-    } catch (err) {
-      console.error(err);
-      alert("Error saving bill!");
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-print"></i> Save & Print (F9)';
-    }
-  });
-
-  /* KEYBOARD SHORTCUTS */
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "F2") { e.preventDefault(); inpName.focus(); }
-    if (e.key === "F8") { e.preventDefault(); showHeldBills(); }
-    if (e.key === "F9") { e.preventDefault(); if(!$("btnSave").disabled) $("btnSave").click(); }
-  });
-
-  /* INIT */
-  adminReady.then(() => {
-    initProductsListener();
-    inpName.focus();
-  });
-</script>
+    /* INIT */
+    adminReady.then(() => {
+      initProductsListener();
+      inpName.focus();
+    });
+  </script>
 </body>
+
 </html>

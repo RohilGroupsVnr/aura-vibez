@@ -1765,3 +1765,176 @@ html[data-theme="dark"] .slow {
 html[data-theme="dark"] .slow b {
     color: #ffffff !important; /* White heading inside */
 }
+
+/* ============================================================
+   FIX: PRODUCTS PAGE MODAL — DARK MODE COMPATIBILITY
+   ============================================================ */
+
+/* 1. Highlights Box (Dress Details) */
+html[data-theme="dark"] .highlights-grid {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+html[data-theme="dark"] .highlights-grid label {
+    color: var(--muted) !important;
+}
+html[data-theme="dark"] .highlights-grid input {
+    background: #2A1B22 !important;
+    color: var(--ink) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .highlights-grid input:focus {
+    border-color: var(--rose) !important;
+    background: var(--cream) !important;
+}
+
+/* 2. Color Add Box (Step 1 - Colors) */
+html[data-theme="dark"] .color-add-box {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+html[data-theme="dark"] .color-add-box input[type="text"] {
+    background: #2A1B22 !important;
+    color: var(--ink) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .color-add-box input[type="color"] {
+    background: #2A1B22 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 3. Variant Panel (Step 2 - Color-wise details) */
+html[data-theme="dark"] .var-panel {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+html[data-theme="dark"] .var-bar {
+    background: #2A1B22 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+html[data-theme="dark"] .var-bar select {
+    background: #1A1216 !important;
+    color: var(--ink) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .var-bar span {
+    color: var(--muted) !important;
+}
+
+/* 4. Variant Row (Price & MRP inputs) */
+html[data-theme="dark"] .var-row {
+    background: #2A1B22 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+html[data-theme="dark"] .var-row label {
+    color: var(--rose) !important; /* Keep pink for highlight */
+}
+html[data-theme="dark"] .var-row input, 
+html[data-theme="dark"] .var-row select {
+    background: #1A1216 !important;
+    color: var(--ink) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .var-copy button {
+    background: #1A1216 !important;
+    color: var(--rose) !important;
+    border-color: var(--rose) !important;
+}
+html[data-theme="dark"] .var-copy button:hover {
+    background: var(--rose) !important;
+    color: #fff !important;
+}
+
+/* 5. Size Price & Stock Grids */
+html[data-theme="dark"] .size-price-grid, 
+html[data-theme="dark"] .sold-box {
+    background: #2A1B22 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+html[data-theme="dark"] .size-price-grid:empty::before {
+    color: var(--muted) !important;
+}
+html[data-theme="dark"] .size-price-grid label,
+html[data-theme="dark"] .sold-box>label {
+    color: var(--muted) !important;
+}
+html[data-theme="dark"] .size-price-grid input {
+    background: #1A1216 !important;
+    color: var(--ink) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .sold-box small {
+    color: var(--muted) !important;
+}
+
+/* 6. Image Upload Boxes (4-grid) */
+html[data-theme="dark"] .img-4-box {
+    background: #2A1B22 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+html[data-theme="dark"] .img-4-box label.box-title {
+    color: var(--rose) !important;
+}
+html[data-theme="dark"] .img-4-box input[type="text"] {
+    background: #1A1216 !important;
+    color: var(--ink) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+html[data-theme="dark"] .upload-btn {
+    background: #1A1216 !important;
+    color: var(--rose) !important;
+    border-color: var(--rose) !important;
+}
+html[data-theme="dark"] .upload-btn:hover {
+    background: var(--rose) !important;
+    color: #fff !important;
+}
+
+/* 7. SEO Section */
+html[data-theme="dark"] .seo-section {
+    background: rgba(52, 152, 219, 0.1) !important;
+    border-color: rgba(52, 152, 219, 0.3) !important;
+}
+html[data-theme="dark"] .seo-section label {
+    color: #7abaf0 !important;
+}
+html[data-theme="dark"] .seo-section input,
+html[data-theme="dark"] .seo-section textarea {
+    background: #2A1B22 !important;
+    color: var(--ink) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 8. Related Products Box */
+html[data-theme="dark"] .related-products-box {
+    background: rgba(232, 185, 35, 0.05) !important;
+    border-color: rgba(232, 185, 35, 0.3) !important;
+}
+html[data-theme="dark"] .related-products-box h4 {
+    color: #F3D56B !important; /* Soft yellow */
+}
+html[data-theme="dark"] .related-item {
+    background: #2A1B22 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+html[data-theme="dark"] .related-item:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: var(--rose) !important;
+}
+html[data-theme="dark"] .related-item span {
+    color: var(--ink) !important;
+}/* =========================================
+   FIX: TOTAL STOCK READONLY FIELD (DARK MODE)
+   ========================================= */
+html[data-theme="dark"] #fStock[readonly] {
+    background: #2A1B22 !important; /* Dark brown/pinkish background */
+    color: #F3E9ED !important;      /* White text to match dark theme */
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    opacity: 1 !important;          /* Remove any default fading */
+}
+
+/* Optional: Light mode-ku inum konjam clear-a kaata */
+#fStock[readonly] {
+    color: #2B1B21 !important;
+    font-weight: 600;
+}

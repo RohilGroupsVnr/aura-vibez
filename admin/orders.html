@@ -15,6 +15,59 @@
     .ord-pm { font-size: 12px; margin-bottom: 4px; color: var(--muted); }
     .ord-id { font-weight: 600; color: var(--rose-dark); white-space: nowrap; }
     html[data-theme="dark"] .ord-id { color: #F4D3DC; }
+
+    /* UPI verification */
+    .verify-banner { display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; padding: 12px 14px; border-radius: 10px; background: #FFF4D6; border: 1px solid #F0D98A; color: #6b4e00; font-size: 14px; }
+    .verify-banner.show { display: flex; }
+    .verify-banner button { padding: 6px 12px; border-radius: 8px; border: 1px solid #b88a00; background: #fff; color: #6b4e00; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+    tr.needs-verify { background: #FFFAEB; }
+    html[data-theme="dark"] tr.needs-verify { background: rgba(240, 217, 138, .08); }
+
+    .utr-box { margin-top: 6px; padding: 6px 8px; border-radius: 8px; background: #FFF4D6; border: 1px dashed #D9B84A; font-size: 12px; color: #6b4e00; line-height: 1.5; }
+    .utr-box b { letter-spacing: .04em; font-size: 13px; }
+    .utr-box .amt { display: block; }
+    .utr-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .utr-actions button { padding: 4px 10px; border-radius: 6px; border: 1px solid transparent; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .btn-paid { background: #11a95e; color: #fff; }
+    .btn-paid:hover { background: #0b8a4f; }
+    .btn-reject { background: #fff; color: #d93025; border-color: #d93025 !important; }
+    .btn-reject:hover { background: #d93025; color: #fff; }
+    .btn-copy { background: #fff; color: #6b4e00; border-color: #D9B84A !important; }
+    .utr-actions button:disabled { opacity: .5; cursor: wait; }
+
+    /* items in the table + details popup */
+    .it-line { margin-bottom: 6px; font-size: 13px; line-height: 1.35; }
+    .it-line b { display: block; font-weight: 500; }
+    .it-line span { font-size: 12px; color: var(--muted); }
+    .btn-view { margin-top: 4px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--rose-dark, #a3194a); background: transparent; color: var(--rose-dark, #a3194a); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .btn-view:hover { background: var(--rose-dark, #a3194a); color: #fff; }
+
+    .om { position: fixed; inset: 0; z-index: 900; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(20, 8, 14, .55); }
+    .om.show { display: flex; }
+    .om-box { position: relative; width: min(720px, 100%); max-height: 92vh; overflow-y: auto; padding: 24px; border-radius: 14px; background: var(--cream, #fff); color: var(--ink, #2b1a20); box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .5); }
+    .om-x { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line, #ead9df); background: transparent; color: inherit; font-size: 18px; cursor: pointer; }
+    .om h2 { margin: 0 0 2px; font-size: 20px; }
+    .om-sub { margin: 0 0 16px; font-size: 13px; color: var(--muted, #7a6a70); }
+    .om h4 { margin: 18px 0 8px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted, #7a6a70); }
+    .om-item { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line, #ead9df); }
+    .om-item img { width: 64px; height: 82px; object-fit: cover; border-radius: 8px; background: #f3e6ea; }
+    .om-item b { display: block; font-weight: 500; margin-bottom: 4px; }
+    .om-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .om-tags span { padding: 2px 10px; border-radius: 999px; background: #f3e6ea; color: #6e0e33; font-size: 12px; font-weight: 600; }
+    .om-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .om-card { padding: 12px 14px; border: 1px solid var(--line, #ead9df); border-radius: 10px; font-size: 14px; line-height: 1.6; }
+    .om-card a { color: inherit; }
+    .om-rows div { display: flex; justify-content: space-between; padding: 3px 0; font-size: 14px; }
+    .om-rows .t { margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--line, #ead9df); font-weight: 600; font-size: 15px; }
+    .om-copy { margin-top: 8px; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--line, #ead9df); background: transparent; color: inherit; font: inherit; font-size: 12px; cursor: pointer; }
+    @media (max-width: 600px) { .om-grid { grid-template-columns: 1fr; } }
+
+    .pay-chip { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .pay-chip.verification { background: #FFF4D6; color: #8a6400; }
+    .pay-chip.paid { background: #e3f6ec; color: #0b7a45; }
+    .pay-chip.failed { background: #fde8e6; color: #d93025; }
+    .pay-chip.refunded { background: #e8eefc; color: #2b4cb3; }
+    .pay-chip.pending { background: #f0ebe6; color: #6c5b61; }
   </style>
 </head>
 <body>
@@ -27,9 +80,14 @@
       <div class="admin-user"><b id="adminEmail"></b></div>
     </div>
 
+    <div class="verify-banner" id="verifyBanner">
+      <span id="verifyTxt"></span>
+      <button type="button" id="verifyShow">Show these orders</button>
+    </div>
+
     <div class="admin-card scroll-x">
       <div class="admin-filters">
-        <input type="search" id="orderSearch" placeholder="Search by order ID, customer, phone or email…">
+        <input type="search" id="orderSearch" placeholder="Search by order ID, customer, phone, email or UTR…">
         <select id="statusFilter">
           <option value="">All Status</option>
           <option value="pending">Pending</option>
@@ -38,10 +96,26 @@
           <option value="cancelled">Cancelled</option>
           <option value="return_requested">Return requested</option>
         </select>
+        <select id="payFilter">
+          <option value="">All Payments</option>
+          <option value="verification">Needs verification</option>
+          <option value="paid">Paid</option>
+          <option value="pending">Payment pending</option>
+          <option value="failed">Failed</option>
+          <option value="refunded">Refunded</option>
+        </select>
       </div>
       <div id="ordersWrap"><p style="color:var(--muted)">Loading…</p></div>
     </div>
   </main>
+</div>
+
+<!-- ORDER DETAILS POPUP -->
+<div class="om" id="ordModal" role="dialog" aria-modal="true" aria-labelledby="omTitle">
+  <div class="om-box">
+    <button type="button" class="om-x" id="omClose" aria-label="Close">&times;</button>
+    <div id="omBody"></div>
+  </div>
 </div>
 
 <script type="module">
@@ -54,19 +128,37 @@
   const nice = s => { s = String(s || "").replace(/_/g, " "); return s.charAt(0).toUpperCase() + s.slice(1); };
 
   const STATUS = ["pending", "shipped", "delivered", "cancelled", "return_requested"];
-  const PAY_STATUS = ["pending", "paid", "failed", "refunded"];
-  let all = [];
+  const PAY_STATUS = ["pending", "verification", "paid", "failed", "refunded"];
+  const PAY_LABEL = { verification: "VERIFYING" };
+  const payLabel = x => PAY_LABEL[x] || x.toUpperCase();
+  let all = [], loadError = null;
 
   async function load() {
+    loadError = null;
     try {
       const snap = await getDocs(query(collection(db, "orders"), orderBy("createdAt", "desc")));
       all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (e) {
       console.warn("ordered query failed, retrying plain:", e.code || e);
       try { all = (await getDocs(collection(db, "orders"))).docs.map(d => ({ id: d.id, ...d.data() })); }
-      catch (e2) { console.error(e2); all = []; }
+      catch (e2) { console.error("Orders load failed:", e2); all = []; loadError = e2; }
     }
     render();
+  }
+
+  /* show the REAL reason when orders can't be loaded (instead of a plain "No orders yet") */
+  function errorBox(e) {
+    const code = e.code || "error";
+    const hint = code === "permission-denied"
+      ? "Firestore rules are blocking this admin account from reading the <b>orders</b> collection. Update the rules (allow read/update on <code>orders</code> for admins) and publish them."
+      : code === "unavailable" || code === "failed-precondition"
+        ? "Firestore is unreachable or needs an index. Check your internet / the console link in the browser console."
+        : "Open the browser console (F12) to see the full error.";
+    return `<div style="padding:16px 18px;border-radius:10px;background:#fde8e6;border:1px solid #f3b8b3;color:#8a1c14;line-height:1.6">
+      <b>Couldn't load orders</b> (<code>${esc(code)}</code>)<br>${hint}<br>
+      <small>${esc(e.message || "")}</small><br>
+      <button type="button" id="reloadOrders" style="margin-top:10px;padding:6px 14px;border-radius:8px;border:1px solid #8a1c14;background:#fff;color:#8a1c14;font:inherit;font-weight:600;cursor:pointer">↻ Reload</button>
+    </div>`;
   }
 
   /* new orders: "AURA#01"  |  old orders: "AURA68739954" -> "#AURA68739954" */
@@ -76,15 +168,102 @@
     return id.includes("#") ? id : "#" + id;
   };
   const dateOf = o => o.createdAt?.toDate?.().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) || "—";
+  const needsVerify = o => (o.paymentStatus || "pending") === "verification";
+
+  /* product / size / color / qty lines shown inside the table */
+  const itemLines = o => (o.items || []).map(i =>
+    `<div class="it-line"><b>${esc(i.name || "Product")}</b><span>${[i.size && "Size " + esc(i.size), i.color && esc(i.color), "Qty " + (Number(i.qty) || 1)].filter(Boolean).join(" · ")}</span></div>`
+  ).join("") || "—";
+
+  /* full address as plain text (for the courier / copy button) */
+  const addrText = o => {
+    const a = o.address || {};
+    return [a.name || o.customerName, [a.flat, a.area].filter(Boolean).join(", "), a.landmark && "Landmark: " + a.landmark,
+      [a.city, a.state].filter(Boolean).join(", ") + (a.pin ? " - " + a.pin : ""), "Phone: " + (o.phone || a.phone || "—")].filter(Boolean).join("\n");
+  };
+
+  /* details popup */
+  function detailsHTML(o) {
+    const a = o.address || {};
+    const phone = o.phone || a.phone || "";
+    const email = o.email || o.customerEmail || a.email || "";
+    const items = (o.items || []).map(i => `
+      <div class="om-item">
+        <img src="${esc(i.image || "")}" alt="" onerror="this.style.visibility='hidden'">
+        <div>
+          <b>${esc(i.name || "Product")}</b>
+          <div class="om-tags">
+            ${i.size ? `<span>Size: ${esc(i.size)}</span>` : ""}
+            ${i.color ? `<span>Color: ${esc(i.color)}</span>` : ""}
+            <span>Qty: ${Number(i.qty) || 1}</span>
+          </div>
+        </div>
+        <div>${inr((Number(i.price) || 0) * (Number(i.qty) || 1))}</div>
+      </div>`).join("") || "<p>No items saved with this order.</p>";
+
+    const row = (l, v, cls = "") => v ? `<div class="${cls}"><span>${l}</span><span>${v}</span></div>` : "";
+    return `
+      <h2 id="omTitle">${esc(label(o))}</h2>
+      <p class="om-sub">${esc(dateOf(o))} · Status: <b>${esc(nice(o.status || "pending"))}</b></p>
+
+      <h4>Products ordered</h4>${items}
+
+      <div class="om-grid">
+        <div>
+          <h4>Customer &amp; delivery address</h4>
+          <div class="om-card">
+            <b>${esc(a.name || o.customerName || "—")}</b><br>
+            ${esc([a.flat, a.area].filter(Boolean).join(", ")) || "—"}<br>
+            ${a.landmark ? "Landmark: " + esc(a.landmark) + "<br>" : ""}
+            ${esc([a.city, a.state].filter(Boolean).join(", "))}${a.pin ? " - " + esc(a.pin) : ""}<br>
+            ${phone ? `📞 <a href="tel:${esc(phone)}">${esc(phone)}</a><br>` : ""}
+            ${email ? `✉️ <a href="mailto:${esc(email)}">${esc(email)}</a>` : ""}
+            <br><button type="button" class="om-copy" data-copyaddr="${esc(o.id)}">Copy address</button>
+          </div>
+        </div>
+        <div>
+          <h4>Payment</h4>
+          <div class="om-card om-rows">
+            ${row("Method", esc((o.paymentMethod || "—").toUpperCase()))}
+            ${row("Status", esc(payLabel(o.paymentStatus || "pending")))}
+            ${row("UTR / Ref", esc(o.paymentId))}
+            ${row("UPI ID", esc(o.upiId))}
+            <hr style="border:0;border-top:1px dashed var(--line,#ead9df);margin:8px 0">
+            ${row("Subtotal", inr(o.subtotal))}
+            ${row("Shipping", Number(o.shipping) ? inr(o.shipping) : "Free")}
+            ${Number(o.discount) ? row("Coupon" + (o.coupon ? " (" + esc(o.coupon) + ")" : ""), "− " + inr(o.discount)) : ""}
+            ${Number(o.prepaidDiscount) ? row("Prepaid discount", "− " + inr(o.prepaidDiscount)) : ""}
+            ${Number(o.codFee) ? row("COD fee", inr(o.codFee)) : ""}
+            ${row("Total", inr(o.total), "t")}
+          </div>
+        </div>
+      </div>`;
+  }
+  const openDetails = id => {
+    const o = all.find(x => x.id === id); if (!o) return;
+    $("omBody").innerHTML = detailsHTML(o);
+    $("ordModal").classList.add("show");
+  };
+  const closeDetails = () => $("ordModal").classList.remove("show");
 
   function render() {
-    const q = $("orderSearch").value.trim().toLowerCase(), s = $("statusFilter").value;
+    const q = $("orderSearch").value.trim().toLowerCase(), s = $("statusFilter").value, ps = $("payFilter").value;
+
+    /* banner: how many UPI payments are waiting for you */
+    const waiting = all.filter(needsVerify).length;
+    $("verifyBanner").classList.toggle("show", waiting > 0);
+    $("verifyTxt").textContent = `${waiting} UPI payment${waiting > 1 ? "s" : ""} waiting for verification. Match the UTR with your GPay / bank history, then mark as paid.`;
+
     const list = all.filter(o =>
       (!s || (o.status || "pending") === s) &&
-      (!q || [label(o), o.orderId, o.customerName, o.email, o.customerEmail, o.phone].some(v => String(v || "").toLowerCase().includes(q))));
+      (!ps || (o.paymentStatus || "pending") === ps) &&
+      (!q || [label(o), o.orderId, o.customerName, o.email, o.customerEmail, o.phone, o.paymentId].some(v => String(v || "").toLowerCase().includes(q))));
+
+    if (loadError) { $("ordersWrap").innerHTML = errorBox(loadError); return; }
 
     if (!list.length) {
-      $("ordersWrap").innerHTML = `<p style="color:var(--muted)">${all.length ? "No matching orders." : "No orders yet."}</p>`;
+      $("ordersWrap").innerHTML = `<p style="color:var(--muted)">${all.length ? "No matching orders." : "No orders in the database yet. If a customer just ordered, check that the order really saved (see console)."}</p>
+        <button type="button" id="reloadOrders" style="margin-top:8px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--cream);color:var(--ink);font:inherit;cursor:pointer">↻ Reload</button>`;
       return;
     }
 
@@ -94,17 +273,32 @@
         const st = o.status || "pending";
         const pst = o.paymentStatus || "pending";
         const n = (o.items || []).reduce((a, i) => a + (Number(i.qty) || 1), 0);
+        const isUpi = (o.paymentMethod || "") === "upi";
+        const nv = needsVerify(o);
 
-        return `<tr data-id="${o.id}">
+        /* UTR box for UPI orders */
+        const utrBox = isUpi && o.paymentId ? `
+          <div class="utr-box">
+            <span class="amt">Expect: <b>${inr(o.total)}</b></span>
+            UTR: <b>${esc(o.paymentId)}</b>
+            ${nv ? `<div class="utr-actions">
+              <button type="button" class="btn-paid" data-act="paid">✓ Mark paid</button>
+              <button type="button" class="btn-reject" data-act="reject">✕ Reject</button>
+              <button type="button" class="btn-copy" data-act="copy" data-utr="${esc(o.paymentId)}">Copy UTR</button>
+            </div>` : ""}
+          </div>` : "";
+
+        return `<tr data-id="${o.id}" class="${nv ? "needs-verify" : ""}">
           <td class="ord-id">${esc(label(o))}</td>
           <td>${esc(o.customerName || "—")}</td>
           <td>${esc(o.phone || o.email || o.customerEmail || "—")}</td>
-          <td>${n || "—"}</td>
+          <td>${itemLines(o)}<button type="button" class="btn-view" data-view>View details</button></td>
           <td>
             <div class="ord-pm">${esc((o.paymentMethod || "—").toUpperCase())}</div>
             <select class="ord-sel sm" data-paystatus aria-label="Payment status">
-              ${PAY_STATUS.map(x => `<option value="${x}" ${x === pst ? "selected" : ""}>${x.toUpperCase()}</option>`).join("")}
+              ${PAY_STATUS.map(x => `<option value="${x}" ${x === pst ? "selected" : ""}>${payLabel(x)}</option>`).join("")}
             </select>
+            ${utrBox}
           </td>
           <td class="price">${inr(o.total)}</td>
           <td>${esc(dateOf(o))}</td>
@@ -117,7 +311,14 @@
       }).join("")}</tbody></table>`;
   }
 
-  /* update order status / payment status */
+  /* save fields to Firestore + keep the local copy in sync */
+  async function patch(id, fields) {
+    await updateDoc(doc(db, "orders", id), { ...fields, updatedAt: serverTimestamp() });
+    const o = all.find(x => x.id === id);
+    Object.assign(o, fields);
+  }
+
+  /* update order status / payment status from the dropdowns */
   $("ordersWrap").addEventListener("change", async e => {
     const sel = e.target.closest("select");
     if (!sel) return;
@@ -131,31 +332,67 @@
 
     sel.disabled = true;
     try {
-// 🔥 Ithu dhaan pudhu code 🔥
-if (sel.value === "delivered" && !isPayment) {
-    // Order Delivered-ah maarumbothu deliveredAt save aaganum
-    await updateDoc(doc(db, "orders", id), { 
-        status: "delivered", 
-        deliveredAt: serverTimestamp(), // 🔥 7 days timer start aagum
-        updatedAt: serverTimestamp() 
-    });
-} else {
-    // Vera status-ku normal update
-    await updateDoc(doc(db, "orders", id), { 
-        [field]: sel.value, 
-        updatedAt: serverTimestamp() 
-    });
-}      o[field] = sel.value;
+      const fields = { [field]: sel.value };
+      if (!isPayment && sel.value === "delivered") fields.deliveredAt = serverTimestamp();           // 7-day return timer starts
+      if (isPayment && sel.value === "paid") fields.paymentVerifiedAt = serverTimestamp();
+      await patch(id, fields);
+      render();
     } catch (err) {
       console.error(field + " update error:", err);
       sel.value = prev;
       alert(`Couldn't update ${isPayment ? "payment" : "order"} status. Check Firestore rules.`);
+      sel.disabled = false;
     }
-    sel.disabled = false;
   });
 
+  /* Mark paid / Reject / Copy UTR buttons */
+  $("ordersWrap").addEventListener("click", async e => {
+    if (e.target.closest("[data-view]")) { openDetails(e.target.closest("tr").dataset.id); return; }
+    if (e.target.closest("#reloadOrders")) { $("ordersWrap").innerHTML = "<p style='color:var(--muted)'>Loading…</p>"; load(); return; }
+    const btn = e.target.closest("[data-act]");
+    if (!btn) return;
+    const id = btn.closest("tr").dataset.id;
+    const o = all.find(x => x.id === id);
+    const act = btn.dataset.act;
+
+    if (act === "copy") {
+      try { await navigator.clipboard.writeText(btn.dataset.utr); btn.textContent = "Copied ✓"; setTimeout(() => (btn.textContent = "Copy UTR"), 1500); }
+      catch (err) { alert("UTR: " + btn.dataset.utr); }
+      return;
+    }
+
+    if (act === "paid") {
+      if (!confirm(`Confirm that ${inr(o.total)} with UTR ${o.paymentId} is received in your account?`)) return;
+      btn.disabled = true;
+      try { await patch(id, { paymentStatus: "paid", paymentVerifiedAt: serverTimestamp() }); render(); }
+      catch (err) { console.error(err); alert("Couldn't mark as paid. Check Firestore rules."); btn.disabled = false; }
+    }
+
+    if (act === "reject") {
+      if (!confirm(`Reject this payment (UTR ${o.paymentId})?\nThe order will be cancelled and payment marked FAILED.`)) return;
+      btn.disabled = true;
+      try { await patch(id, { paymentStatus: "failed", status: "cancelled" }); render(); }
+      catch (err) { console.error(err); alert("Couldn't reject. Check Firestore rules."); btn.disabled = false; }
+    }
+  });
+
+  /* details popup: close + copy address */
+  $("omClose").addEventListener("click", closeDetails);
+  $("ordModal").addEventListener("click", async e => {
+    if (e.target === $("ordModal")) return closeDetails();
+    const c = e.target.closest("[data-copyaddr]");
+    if (c) {
+      const o = all.find(x => x.id === c.dataset.copyaddr);
+      try { await navigator.clipboard.writeText(addrText(o)); c.textContent = "Copied ✓"; setTimeout(() => (c.textContent = "Copy address"), 1500); }
+      catch (err) { alert(addrText(o)); }
+    }
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetails(); });
+
+  $("verifyShow").addEventListener("click", () => { $("payFilter").value = "verification"; $("statusFilter").value = ""; render(); });
   $("orderSearch").addEventListener("input", render);
   $("statusFilter").addEventListener("change", render);
+  $("payFilter").addEventListener("change", render);
   adminReady.then(load);
 </script>
 </body>

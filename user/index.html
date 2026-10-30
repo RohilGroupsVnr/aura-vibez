@@ -189,7 +189,8 @@
       }
 
       #motion-section .hm-pane.on {
-        height: 340px;
+        flex: none;
+        height: clamp(280px, 90vw, 380px);
       }
 
       #motion-section .hm-pane .lab {
@@ -530,6 +531,28 @@
       transform: rotate(180deg) !important;
       color: var(--rose) !important;
     }
+
+    /* =======================================================
+   🔥 MOBILE DROPDOWN ARROW FIX 🔥
+   ======================================================= */
+
+    /* Sub-dropdown open aagumbodhu arrow mela (up) thirumbum */
+    .m-dropdown-sub.open>.m-sub-toggle i {
+      transform: rotate(180deg) !important;
+      color: var(--rose, #a3194a) !important;
+    }
+
+    /* Parent (Shop) open aagumbodhu arrow mela (up) thirumbum */
+    .m-dropdown.open>.m-dropdown-toggle i {
+      transform: rotate(180deg) !important;
+      color: var(--rose, #a3194a) !important;
+    }
+
+    /* Closed state-la irukkumbodhu arrow normal-a (down) irukkanum */
+    .m-dropdown-toggle i {
+      transition: transform 0.3s ease, color 0.3s ease;
+      transform: rotate(0deg);
+    }
   </style>
 </head>
 
@@ -626,7 +649,8 @@
         <div class="dd-menu" role="menu" aria-label="Shop categories">
           <a href="shop.html?cat=kurta-sets" role="menuitem">Kurta Sets</a>
           <a href="shop.html?cat=tops" role="menuitem">Tops</a>
-          <a href="shop.html?cat=college-wear" role="menuitem">College Wear</a>
+          <a href="shop.html?cat=college-wear" role="menuitem">College
+            Wear</a>
           <a href="shop.html?cat=office-wear" role="menuitem">Office Wear</a>
           <a href="shop.html?cat=jump-suit" role="menuitem">Jump Suits</a>
           <a href="shop.html?cat=night-suits" role="menuitem">Night Suits</a>
@@ -662,7 +686,8 @@
 
           <a href="shop.html?cat=shawls" role="menuitem">Shawls</a>
           <a href="shop.html?cat=t-shirt" role="menuitem">T-shirt</a>
-          <a href="shop.html" role="menuitem" class="dd-all">View all products</a>
+          <a href="shop.html" role="menuitem" class="dd-all">View all
+            products</a>
         </div>
       </div>
 
@@ -743,7 +768,7 @@
     <a href="index.html" class="act">Home</a>
     <a href="newcollections.html">New Collection</a>
 
-    <!-- Shop dropdown -->
+    <!-- Shop dropdown (MAIN) -->
     <div class="m-dropdown">
       <button type="button" class="m-dropdown-toggle" aria-expanded="false">
         <span>Shop</span>
@@ -758,23 +783,25 @@
         <a href="shop.html?cat=jump-suit">Jump Suits</a>
         <a href="shop.html?cat=night-suits">Night Suits</a>
 
-        <!-- Dresses submenu -->
-        <div class="m-dropdown">
-          <button type="button" class="m-dropdown-toggle" aria-expanded="false">
+        <!-- Dresses submenu (SUB) -->
+        <div class="m-dropdown m-dropdown-sub">
+          <button type="button" class="m-dropdown-toggle m-sub-toggle" aria-expanded="false">
             <span>Dresses</span>
             <i class="fa-solid fa-chevron-down"></i>
           </button>
 
           <div class="m-dropdown-menu">
             <a href="shop.html?cat=dresses&type=maxi-dresses">Maxi Dresses</a>
-            <a href="shop.html?cat=dresses&type=casual-dresses">Casual Dresses</a>
-            <a href="shop.html?cat=dresses&type=floral-dresses">Floral Dresses</a>
+            <a href="shop.html?cat=dresses&type=casual-dresses">Casual
+              Dresses</a>
+            <a href="shop.html?cat=dresses&type=floral-dresses">Floral
+              Dresses</a>
           </div>
         </div>
 
-        <!-- Bottomwear submenu -->
-        <div class="m-dropdown">
-          <button type="button" class="m-dropdown-toggle" aria-expanded="false">
+        <!-- Bottomwear submenu (SUB) -->
+        <div class="m-dropdown m-dropdown-sub">
+          <button type="button" class="m-dropdown-toggle m-sub-toggle" aria-expanded="false">
             <span>Bottomwear</span>
             <i class="fa-solid fa-chevron-down"></i>
           </button>
@@ -793,8 +820,6 @@
 
     <a href="trackorder.html">Track Order</a>
   </div>
-
-
   <!-- ===== HERO ===== -->
   <header class="hm-hero" data-io-pause>
     <div class="hm-hero-bg" aria-hidden="true">
@@ -920,7 +945,7 @@
         <!-- 7. Leggings (File Manager Image) -->
         <a class="hm-arch" href="shop.html?cat=leggings">
           <span class="hm-ph" style="--g1:#D8B4C8;--g2:#713B58">
-            <img src="../images/realtime-images/redtop-closeup.PNG" alt="Leggings" loading="lazy" draggable="false"
+            <img src="../realtime-images/leggins(black).PNG" alt="Leggings" loading="lazy" draggable="false"
               onerror="this.remove()">
           </span>
           <span>Leggings</span>
@@ -947,7 +972,8 @@
         <!-- 10. T-Shirt (File Manager Image) -->
         <a class="hm-arch" href="shop.html?cat=t-shirt">
           <span class="hm-ph" style="--g1:#B9CBB0;--g2:#405B3D">
-            <img src="../realtime-images/" alt="T-Shirt" loading="lazy" draggable="false" onerror="this.remove()">
+            <img src="../realtime-images/t-shirt(pink).PNG" alt="T-Shirt" loading="lazy" draggable="false"
+              onerror="this.remove()">
           </span>
           <span>T-Shirt</span>
         </a>
@@ -1027,7 +1053,6 @@
       </div>
     </section>
 
-
     <!-- Featured Products -->
     <section class="section" id="featured">
       <div class="container">
@@ -1054,8 +1079,8 @@
     <section class="section cmp">
       <div class="container cmp-split">
         <div class="cmp-media arch-shape reveal-img" data-tone="rose"><img class="wm" src="assets/logo.png" alt><img
-            class="ph" src="../images/home-banner.png" alt="Model in an AURA rose silk drape" loading="lazy"
-            decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
+            class="ph" src="../realtime-images/white-with-pink-kurta.png" alt="Model in an AURA rose silk drape"
+            loading="lazy" decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
         <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">01</span><span class="eyebrow reveal"
             style="--d:60ms">Discover Your Style</span>
           <h2 class="title reveal" style="--d:140ms">Dressed in <em>quiet
@@ -1073,7 +1098,7 @@
     <section class="section cmp">
       <div class="container cmp-split rev">
         <div class="cmp-media reveal-img" data-tone="blush"><img class="wm" src="assets/logo.png" alt><img class="ph"
-            src="../images/sareewithbanner.png" alt="AURA beauty products on a blush backdrop" loading="lazy"
+            src="../realtime-images/ramar-green.PNG" alt="AURA beauty products on a blush backdrop" loading="lazy"
             decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
         <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">02</span><span class="eyebrow reveal"
             style="--d:60ms">Beauty in Every Detail</span>
@@ -1176,56 +1201,133 @@
 
     <!-- ===== MOTION ===== -->
     <section class="hm-sec" id="motion-section">
-      <div class="hm-motion-head"><span class="hm-eyebrow reveal">EXPLORE
-          COLLECTIONS</span>
-        <h2 class="hm-h2 reveal" style="--d:80ms">Style that moves <em>with
-            you</em></h2>
-        <p class="hm-motion-sub reveal" style="--d:120ms">From everyday
-          looks
-          to special moments, find your favourite
-          style.</p>
+
+      <div class="hm-motion-head">
+        <span class="hm-eyebrow reveal">EXPLORE COLLECTIONS</span>
+
+        <h2 class="hm-h2 reveal" style="--d:80ms">
+          Style that moves <em>with you</em>
+        </h2>
+
+        <p class="hm-motion-sub reveal" style="--d:120ms">
+          From everyday looks to special moments, find your favourite style.
+        </p>
       </div>
+
       <div class="hm-motion reveal" id="motion">
-        <a class="hm-pane on" href="shop.html?cat=trending-dresses"><span class="hm-ph"
-            style="--g1:#F4C7D5;--g2:#741D3B"><img src="../images/stylemoves/casualwear.webp"
-              alt="Trending girls dresses" loading="lazy" onerror="this.remove()"></span><span class="lab">Girls
-            Wear</span><span class="cap"><small>01 /
-              COLLECTION</small><b>Everyday pretty</b><u>Shop Now
-              ↗</u></span></a>
-        <a class="hm-pane" href="shop.html?cat=tops-with-pants"><span class="hm-ph"
-            style="--g1:#B8D5E8;--g2:#263F59"><img src="../images/stylemoves/jeans.png" alt="Modern jeans and tops"
-              loading="lazy" onerror="this.remove()"></span><span class="lab">Jeans & Tops</span><span
-            class="cap"><small>02 / COLLECTION</small><b>Casual. Cool.
-              Always.</b><u>Shop Now ↗</u></span></a>
-        <a class="hm-pane" href="shop.html?cat=half-saree"><span class="hm-ph" style="--g1:#E9B7C8;--g2:#761F42"><img
-              src="../images/stylemoves/traditionalwear.png" alt="Traditional half saree collection" loading="lazy"
-              onerror="this.remove()"></span><span class="lab">Half
-            Saree</span><span class="cap"><small>03 /
-              COLLECTION</small><b>Tradition meets trend</b><u>Shop Now
-              ↗</u></span></a>
-        <a class="hm-pane" href="shop.html?cat=crop-tops"><span class="hm-ph" style="--g1:#F3C7D8;--g2:#A43D68"><img
-              src="../images/stylemoves/croptop.png" alt="Modern crop tops" loading="lazy"
-              onerror="this.remove()"></span><span class="lab">Crop
-            Tops</span><span class="cap"><small>04 /
-              COLLECTION</small><b>Small top. Big style.</b><u>Shop Now
-              ↗</u></span></a>
-        <a class="hm-pane" href="shop.html?cat=lehenga"><span class="hm-ph" style="--g1:#D9C5F0;--g2:#50316D"><img
-              src="../images/stylemoves/lehenga.png" alt="Elegant lehenga collection" loading="lazy"
-              onerror="this.remove()"></span><span class="lab">Lehenga</span><span class="cap"><small>05 /
-              COLLECTION</small><b>Made for celebrations</b><u>Shop Now
-              ↗</u></span></a>
-        <a class="hm-pane" href="shop.html?cat=skirts-with-tops"><span class="hm-ph"
-            style="--g1:#C8D9B5;--g2:#354A2D"><img src="../images/stylemoves/skirt-top.png"
-              alt="Skirts paired with stylish tops" loading="lazy" onerror="this.remove()"></span><span
-            class="lab">Skirts & Tops</span><span class="cap"><small>06 /
-              COLLECTION</small><b>Simple. Stylish.
-              You.</b><u>Shop Now ↗</u></span></a>
-        <a class="hm-pane" href="shop.html?cat=party-wear"><span class="hm-ph" style="--g1:#F0C4CE;--g2:#722B45"><img
-              src="../images/stylemoves/partywear.png" alt="Stylish party dresses for women" loading="lazy"
-              onerror="this.remove()"></span><span class="lab">Party
-            Dresses</span><span class="cap"><small>07 /
-              COLLECTION</small><b>Dress up. Stand out.</b><u>Shop Now
-              ↗</u></span></a>
+
+        <!-- 01 - Girls Wear -->
+        <a class="hm-pane on" href="shop.html?cat=trending-dresses">
+          <span class="hm-ph" style="--g1:#F4C7D5;--g2:#741D3B">
+            <img src="../realtime-images/black-set.PNG" alt="Trending girls dresses" loading="lazy"
+              onerror="this.remove()">
+          </span>
+
+          <span class="lab">Girls Wear</span>
+
+          <span class="cap">
+            <small>01 / COLLECTION</small>
+            <b>Everyday pretty</b>
+            <u>Shop Now ↗</u>
+          </span>
+        </a>
+
+        <!-- 02 - Jeans & Tops -->
+        <a class="hm-pane" href="shop.html?cat=tops-with-pants">
+          <span class="hm-ph" style="--g1:#B8D5E8;--g2:#263F59">
+            <img src="../realtime-images/miblue-top.PNG" alt="Modern jeans and tops" loading="lazy"
+              onerror="this.remove()">
+          </span>
+
+          <span class="lab">Tops</span>
+
+          <span class="cap">
+            <small>02 / COLLECTION</small>
+            <b>Casual. Cool. Always.</b>
+            <u>Shop Now ↗</u>
+          </span>
+        </a>
+
+        <!-- 03 - Jump Suits -->
+        <a class="hm-pane" href="shop.html?cat=jump-suit">
+          <span class="hm-ph" style="--g1:#E9B7C8;--g2:#761F42">
+            <img src="../realtime-images/Jump Suite.PNG" alt="Stylish jumpsuit collection" loading="lazy"
+              onerror="this.remove()">
+          </span>
+
+          <span class="lab">Jump Suits</span>
+
+          <span class="cap">
+            <small>03 / COLLECTION</small>
+            <b>One piece, endless style</b>
+            <u>Shop Now ↗</u>
+          </span>
+        </a>
+
+        <!-- 04 - Crop Tops -->
+        <a class="hm-pane" href="shop.html?cat=crop-tops">
+          <span class="hm-ph" style="--g1:#F3C7D8;--g2:#A43D68">
+            <img src="../realtime-images/croptop-purple.PNG" alt="Modern crop tops" loading="lazy"
+              onerror="this.remove()">
+          </span>
+
+          <span class="lab">Crop Tops</span>
+
+          <span class="cap">
+            <small>04 / COLLECTION</small>
+            <b>Small top. Big style.</b>
+            <u>Shop Now ↗</u>
+          </span>
+        </a>
+
+        <!-- 05 - Night Suits -->
+        <a class="hm-pane" href="shop.html?cat=night-suits">
+          <span class="hm-ph" style="--g1:#D9C5F0;--g2:#50316D">
+            <img src="../realtime-images/nightsuite-blue.PNG" alt="Comfortable night suits collection" loading="lazy"
+              onerror="this.remove()">
+          </span>
+
+          <span class="lab">Night Suits</span>
+
+          <span class="cap">
+            <small>05 / COLLECTION</small>
+            <b>Comfort meets style</b>
+            <u>Shop Now ↗</u>
+          </span>
+        </a>
+
+        <!-- 06 - Skirts & Tops -->
+        <a class="hm-pane" href="shop.html?cat=skirts-with-tops">
+          <span class="hm-ph" style="--g1:#C8D9B5;--g2:#354A2D">
+            <img src="../realtime-images/Indigo Floral Kurta in a Modern Courtyard.png"
+              alt="Skirts paired with stylish tops" loading="lazy" onerror="this.remove()">
+          </span>
+
+          <span class="lab">Skirts &amp; Tops</span>
+
+          <span class="cap">
+            <small>06 / COLLECTION</small>
+            <b>Simple. Stylish. You.</b>
+            <u>Shop Now ↗</u>
+          </span>
+        </a>
+
+        <!-- 07 - Floral Dresses -->
+        <a class="hm-pane" href="shop.html?cat=dresses&type=floral-dresses">
+          <span class="hm-ph" style="--g1:#F0C4CE;--g2:#722B45">
+            <img src="../realtime-images/floral.PNG" alt="Beautiful floral dresses" loading="lazy"
+              onerror="this.remove()">
+          </span>
+
+          <span class="lab">Floral Dresses</span>
+
+          <span class="cap">
+            <small>07 / COLLECTION</small>
+            <b>Bloom in your style</b>
+            <u>Shop Now ↗</u>
+          </span>
+        </a>
+
       </div>
     </section>
 
@@ -1776,7 +1878,12 @@
         var canHover = matchMedia('(hover: hover)').matches;
         panes.forEach(function (pane, j) { if (canHover) pane.addEventListener('mouseenter', function () { if (!down && Date.now() > hoverLock) setActive(j); }); pane.addEventListener('focusin', function () { setActive(j); }); pane.addEventListener('click', function (e) { if (!pane.classList.contains('on')) { e.preventDefault(); setActive(j); } }); });
         var paused = false; box.addEventListener('mouseenter', function () { paused = true; }); box.addEventListener('mouseleave', function () { paused = false; }); box.addEventListener('touchstart', function () { paused = true; }, { passive: true }); box.addEventListener('touchend', function () { setTimeout(function () { paused = false; }, 2500); });
-        setInterval(function () { if (paused || down || document.hidden) return; setActive(idx + 1); }, 4000);
+        setInterval(function () {
+          if (paused || down || document.hidden) return;
+          var r = box.getBoundingClientRect();
+          if (r.bottom < 0 || r.top > window.innerHeight) return;   // screen-la theriyumbodhu mattum
+          setActive(idx + 1);
+        }, 4000);
       }
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initMotion); else initMotion();
 
@@ -1800,6 +1907,25 @@
       if (burger) burger.addEventListener('click', function () { document.body.classList.add('mmenu-open'); if (burger) burger.setAttribute('aria-expanded', 'true'); });
       if (mclose) mclose.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); if (burger) burger.setAttribute('aria-expanded', 'false'); });
       document.querySelectorAll('#mmenu a').forEach(function (a) { a.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); }); });
+
+      // MOBILE SHOP DROPDOWNS (Shop / Dresses / Bottomwear)
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest('#mmenu .m-dropdown-toggle');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        var box = btn.parentElement;
+        var willOpen = !box.classList.contains('open');
+        // same level-la vera dropdown open-a irundha close pannu
+        box.parentElement.querySelectorAll(':scope > .m-dropdown.open').forEach(function (s) {
+          if (s === box) return;
+          s.classList.remove('open');
+          var t = s.querySelector(':scope > .m-dropdown-toggle');
+          if (t) t.setAttribute('aria-expanded', 'false');
+        });
+        box.classList.toggle('open', willOpen);
+        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      }, true);
 
       // BADGES & BACK TO TOP
       document.addEventListener('DOMContentLoaded', function () {
@@ -2502,6 +2628,7 @@
       });
     });
   </script>
+  <script src="js/nav-menu.js"></script>
 
   <!-- ============ ADMIN SETTINGS -> FOOTER CONTACT + SOCIAL LINKS ============ -->
   <script type="module" src="js/site-settings.js"></script>

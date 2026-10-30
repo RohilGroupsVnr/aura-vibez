@@ -180,9 +180,6 @@ html[data-theme="dark"] .acct .avatar{background:#2A1722;border-color:var(--line
     overflow-y: auto;
     padding: 24px;
 }
-
-
-
 /* Mobile Menu Logo Styling */
 .mmenu-logo {
     display: block;
@@ -1351,6 +1348,160 @@ body.home .aura-fashion-categories{padding-top:65px;padding-bottom:75px}
 
   .aura-lightbox-toolbar {
     bottom: 20px;
+  }
+}
+
+
+/* =========================================
+   AURA FASHION CATEGORIES - MOBILE RESPONSIVE
+========================================= */
+
+/* Tablet View */
+@media (max-width: 768px) {
+
+  .aura-fashion-categories {
+    padding: 45px 0;
+  }
+
+  .aura-fashion-categories .head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .aura-fashion-categories .title {
+    font-size: clamp(28px, 6vw, 38px);
+  }
+
+  .aura-fashion-categories .category-subtitle {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .aura-fashion-categories .category-view-all {
+    margin-top: 5px;
+  }
+
+  .aura-fashion-categories .cats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .aura-fashion-categories .cat-large {
+    grid-column: span 2;
+    min-height: 350px;
+  }
+
+  .aura-fashion-categories .cat-col {
+    display: contents;
+  }
+
+  .aura-fashion-categories .cat-small {
+    min-height: 260px;
+  }
+
+  .aura-fashion-categories .cat-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .aura-fashion-categories .aura-cat-content {
+    padding: 18px;
+  }
+
+  .aura-fashion-categories .aura-cat-content h3 {
+    font-size: 22px;
+  }
+
+}
+
+/* Small Mobile View */
+@media (max-width: 480px) {
+
+  .aura-fashion-categories {
+    padding: 35px 0;
+  }
+
+  .aura-fashion-categories .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .aura-fashion-categories .head {
+    gap: 12px;
+  }
+
+  .aura-fashion-categories .eyebrow {
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+
+  .aura-fashion-categories .title {
+    font-size: 29px;
+    line-height: 1.2;
+  }
+
+  .aura-fashion-categories .category-subtitle {
+    font-size: 13px;
+  }
+
+  .aura-fashion-categories .category-view-all {
+    font-size: 12px;
+  }
+
+  .aura-fashion-categories .cats {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .aura-fashion-categories .cat-large,
+  .aura-fashion-categories .cat-small {
+    grid-column: span 1;
+    min-height: 300px;
+  }
+
+  .aura-fashion-categories .cat-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .aura-fashion-categories .aura-cat-content {
+    padding: 20px;
+  }
+
+  .aura-fashion-categories .aura-cat-number {
+    font-size: 10px;
+  }
+
+  .aura-fashion-categories .aura-cat-content h3 {
+    font-size: 23px;
+  }
+
+  .aura-fashion-categories .cat-desc {
+    font-size: 12px;
+  }
+
+  .aura-fashion-categories .go {
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+}
+
+/* Extra Small Mobile */
+@media (max-width: 360px) {
+
+  .aura-fashion-categories .cat-large,
+  .aura-fashion-categories .cat-small {
+    min-height: 260px;
+  }
+
+  .aura-fashion-categories .aura-cat-content h3 {
+    font-size: 20px;
   }
 }
 

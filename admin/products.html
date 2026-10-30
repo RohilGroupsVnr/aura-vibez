@@ -113,6 +113,21 @@
       background: #6e0e33;
     }
 
+    /* CATEGORY CHIPS */
+    .cat-box {
+      background: #fdfaf6;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px dashed #e8e1d3;
+    }
+
+    .cat-box small {
+      display: block;
+      margin-top: 8px;
+      font-size: 11px;
+      color: #8b8378;
+    }
+
     /* COLOR VARIANT PANEL */
     .var-panel {
       background: #fdfaf6;
@@ -465,6 +480,7 @@
           <p>Add, edit and remove the products shown in your shop.</p>
         </div>
         <div class="topbar-actions">
+          <a class="btn-admin" href="import-products.html"><i class="fa-solid fa-file-import"></i> Import Excel</a>
           <button class="btn-admin primary" id="addBtn" type="button">
             <i class="fa-solid fa-plus"></i> Add product
           </button>
@@ -500,7 +516,7 @@
               <tr>
                 <th></th>
                 <th>Product</th>
-                <th>Category</th>
+                <th>Categories</th>
                 <th>Price</th>
                 <th>Stock</th>
                 <th>Sizes</th>
@@ -537,12 +553,16 @@
           <input type="text" id="fName" placeholder="e.g. Kurti and Pajma with Duppatta" required>
         </label>
 
-        <label class="prod-field">Category
-          <select id="fCategory" required>
-            <option value="">Select category</option>
-          </select>
-        </label>
-        <label class="prod-field">Status
+        <!-- MULTIPLE CATEGORIES -->
+        <div class="prod-field full">
+          <label>Categories (select one or more — product will show in every selected category)</label>
+          <div class="cat-box">
+            <div class="chips-wrap" id="catChips"></div>
+            <small>Example: a Kurta Set can be shown in Kurta Sets + Party Wear + Office Wear.</small>
+          </div>
+        </div>
+
+        <label class="prod-field full">Status
           <select id="fState">
             <option value="active">Active (visible in shop)</option>
             <option value="draft">Draft (hidden)</option>
@@ -735,8 +755,8 @@
     const storage = getStorage(app);
 
     const CATS = [
-      ["kurta-sets", "Kurta Sets"], ["anarkali", "Anarkali"], ["sarees", "Sarees"], ["half-saree", "Half Saree"],
-      ["lehenga", "Lehenga"], ["party-wear", "Party Wear"], ["office-wear", "Office Wear"], ["college-wear", "College Wear"],
+      ["kurta-sets", "Kurta Sets"], 
+     ["office-wear", "Office Wear"], ["college-wear", "College Wear"],
       ["maxi-dresses", "Maxi Dresses"], ["casual-dresses", "Casual Dresses"], ["floral-dresses", "Floral Dresses"], ["tops", "Tops"],
       ["t-shirt", "T-shirts"], ["crop-tops", "Crop Tops"], ["leggings", "Leggings"], ["palazzo", "Palazzo"],
       ["jeans", "Jeans & Denim"], ["skirts", "Skirts"], ["night-suits", "Night Suits"], ["shawls", "Shawls"]
@@ -752,8 +772,12 @@
     const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     const catLabel = v => (CATS.find(c => c[0] === v) || [v, v])[1];
 
+    // a product's categories (new `categories` array, falls back to the old single `category`)
+    const catsOf = p => (Array.isArray(p?.categories) && p.categories.length) ? p.categories : (p?.category ? [p.category] : []);
+
     let products = [], editId = null, pickedColors = new Set(), tT;
     let pickedRelated = new Set();
+    let pickedCats = new Set();
 
     /* variantData: one entry per color, like a Meesho variant
        { Pink: { price, mrp, sizes:[], sizePrices:{}, sizeStock:{}, sold:[], images:{front,back,side,quality} } } */
@@ -778,9 +802,22 @@
       clearTimeout(tT); tT = setTimeout(() => t.classList.remove("show"), 2600);
     }
 
+    // filter dropdown (table filter) only — product form uses chips
     CATS.forEach(([v, l]) => {
       $("fCat").insertAdjacentHTML("beforeend", `<option value="${v}">${l}</option>`);
-      $("fCategory").insertAdjacentHTML("beforeend", `<option value="${v}">${l}</option>`);
+    });
+
+    /* ---------- MULTI CATEGORY CHIPS ---------- */
+    function drawCatChips() {
+      $("catChips").innerHTML = CATS.map(([v, l]) =>
+        `<button type="button" class="chip-opt ${pickedCats.has(v) ? "on" : ""}" data-cat="${esc(v)}">${esc(l)}</button>`
+      ).join("");
+    }
+
+    $("catChips").addEventListener("click", e => {
+      const b = e.target.closest("[data-cat]"); if (!b) return;
+      pickedCats.has(b.dataset.cat) ? pickedCats.delete(b.dataset.cat) : pickedCats.add(b.dataset.cat);
+      drawCatChips();
     });
 
     /* ---------- RELATED PRODUCTS ---------- */
@@ -1003,7 +1040,11 @@
 
     function render() {
       const q = $("fSearch").value.trim().toLowerCase(), cat = $("fCat").value, st = $("fStatus").value;
-      const list = products.filter(p => (!q || (p.name || "").toLowerCase().includes(q)) && (!cat || p.category === cat) && (!st || (p.status || "active") === st));
+      const list = products.filter(p =>
+        (!q || (p.name || "").toLowerCase().includes(q)) &&
+        (!cat || catsOf(p).includes(cat)) &&
+        (!st || (p.status || "active") === st)
+      );
 
       $("sTotal").textContent = products.length;
       $("sIn").textContent = products.filter(p => (p.stock ?? 0) > LOW).length;
@@ -1015,10 +1056,11 @@
         const price = p.price ?? 0, mrp = p.mrp ?? 0, off = mrp > price ? Math.round((1 - price / mrp) * 100) : 0, status = p.status || "active";
         const img = p.image || (Array.isArray(p.images) ? p.images[0] : "") || "";
         const nColors = (p.colors || []).length;
+        const catPills = catsOf(p).map(c => `<span class="cat-pill">${esc(catLabel(c))}</span>`).join(" ");
         return `<tr>
         <td class="prod-thumb-cell"><img src="${esc(img)}" alt="" onerror="this.style.opacity=.2"></td>
         <td><div class="prod-name">${esc(p.name || "Untitled")}</div><div class="prod-meta">${p.badge ? esc(p.badge) : ""}${p.isNew ? (p.badge ? " · " : "") + "In new collection" : ""}${nColors ? ((p.badge || p.isNew) ? " · " : "") + nColors + " color" + (nColors > 1 ? "s" : "") : ""}</div></td>
-        <td><span class="cat-pill">${esc(catLabel(p.category))}</span></td>
+        <td>${catPills}</td>
         <td><div class="prod-price">₹${Number(price).toLocaleString("en-IN")}</div>${off ? `<div class="prod-mrp">₹${Number(mrp).toLocaleString("en-IN")}<b>${off}% off</b></div>` : ""}</td>
         <td><span class="stock-num">${p.stock ?? 0}</span>${stockBadge(p.stock ?? 0)}${colorStockHtml(p)}</td>
         <td>${(p.sizes || []).map(s => `<span class="size-chip">${esc(s)}</span>`).join("")}</td>
@@ -1041,7 +1083,7 @@
       const p = id ? products.find(x => x.id === id) : null;
       $("mTitle").textContent = p ? "Edit product" : "Add product";
 
-      $("fName").value = p?.name || ""; $("fCategory").value = p?.category || ""; $("fState").value = p?.status || "active";
+      $("fName").value = p?.name || ""; $("fState").value = p?.status || "active";
       $("fPrice").value = p?.price ?? ""; $("fMrp").value = p?.mrp ?? ""; $("fStock").value = p?.stock ?? "";
       $("fBadge").value = p?.badge || ""; $("fDesc").value = p?.description || ""; $("fNew").checked = !!p?.isNew;
       $("fVideo").value = p?.video || "";
@@ -1049,6 +1091,8 @@
 
       $("hlFit").value = p?.fit || ""; $("hlFabric").value = p?.fabric || ""; $("hlNeck").value = p?.neck || "";
       $("hlSleeve").value = p?.sleeveStyling || ""; $("hlSleeveLen").value = p?.sleeveLength || ""; $("hlTech").value = p?.technique || "";
+
+      pickedCats = new Set(catsOf(p));
 
       COLORS = { ...BASE_COLORS };
       if (p?.colorHex) Object.assign(COLORS, p.colorHex);
@@ -1083,6 +1127,7 @@
       $("newColorName").value = "";
       $("newColorHex").value = "#FFC0CB";
       $("mMsg").textContent = "";
+      drawCatChips();
       drawColorChips();
       updateRelatedGrid();
       $("modal").classList.add("open");
@@ -1092,7 +1137,7 @@
 
     /* ---------- NEVER LOSE WHAT YOU TYPED ---------- */
     const DRAFT_KEY = "aura_admin_product_draft";
-    const DRAFT_FIELDS = ["fName", "fCategory", "fState", "fPrice", "fMrp", "fStock", "fBadge", "fVideo", "fDesc",
+    const DRAFT_FIELDS = ["fName", "fState", "fPrice", "fMrp", "fStock", "fBadge", "fVideo", "fDesc",
       "hlFit", "hlFabric", "hlNeck", "hlSleeve", "hlSleeveLen", "hlTech", "seoTitle", "seoDesc", "seoKeywords"];
     const isOpen = () => $("modal").classList.contains("open");
     let draftT;
@@ -1102,6 +1147,7 @@
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify({
           editId, f: Object.fromEntries(DRAFT_FIELDS.map(i => [i, $(i).value])), isNew: $("fNew").checked,
+          cats: [...pickedCats],
           colors: [...pickedColors], colorHex: COLORS, related: [...pickedRelated],
           variants: variantData, cur: currentSelectedColor
         }));
@@ -1118,6 +1164,8 @@
       $("mTitle").textContent = editId ? "Edit product" : "Add product";
       DRAFT_FIELDS.forEach(i => { $(i).value = d.f?.[i] ?? ""; });
       $("fNew").checked = !!d.isNew;
+      // old drafts stored a single category in f.fCategory
+      pickedCats = new Set(d.cats || (d.f?.fCategory ? [d.f.fCategory] : []));
       COLORS = { ...BASE_COLORS, ...(d.colorHex || {}) };
       pickedColors = new Set(d.colors || []);
       pickedRelated = new Set(d.related || []);
@@ -1125,6 +1173,7 @@
       Object.keys(variantData).forEach(c => getV(c)); // make sure old drafts get a sizeStock object
       currentSelectedColor = d.cur || "";
       $("mMsg").textContent = "";
+      drawCatChips();
       drawColorChips();
       updateRelatedGrid();
       $("modal").classList.add("open");
@@ -1146,7 +1195,7 @@
 
     // close only with the X / Cancel buttons (no outside-click, no Escape)
     const askClose = () => {
-      const dirty = $("fName").value.trim() || pickedColors.size;
+      const dirty = $("fName").value.trim() || pickedColors.size || pickedCats.size;
       if (dirty && !confirm("Close without saving? What you entered will be discarded.")) return;
       closeModal();
     };
@@ -1159,11 +1208,13 @@
     $("pForm").addEventListener("submit", async e => {
       e.preventDefault();
       const err = txt => { $("mMsg").dataset.kind = "error"; $("mMsg").textContent = txt; };
-      const name = $("fName").value.trim(), category = $("fCategory").value;
+      const name = $("fName").value.trim();
+      const categories = CATS.map(c => c[0]).filter(c => pickedCats.has(c));   // keep CATS order
+      const category = categories[0] || "";                                    // primary category (old code compatible)
       const price = Number($("fPrice").value), mrp = Number($("fMrp").value) || price;
 
       if (!name) return err("Enter the product name.");
-      if (!category) return err("Choose a category.");
+      if (!categories.length) return err("Choose at least one category.");
       if (!(price > 0)) return err("Enter a default selling price above 0.");
       if (mrp < price) return err("Default MRP can't be lower than the selling price.");
       if (!pickedColors.size) return err("Pick at least one color.");
@@ -1215,7 +1266,7 @@
         const mainImageUrl = f0.front || f0.back || f0.side || f0.quality || "../images/partywear.webp";
 
         const data = {
-          name, category, price, mrp, stock: totalStock, colorStock, status: $("fState").value, badge: $("fBadge").value || "",
+          name, category, categories, price, mrp, stock: totalStock, colorStock, status: $("fState").value, badge: $("fBadge").value || "",
           image: mainImageUrl,
           colors: colorsArr,
           colorHex,
