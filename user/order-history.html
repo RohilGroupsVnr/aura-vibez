@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account — AURA</title>
+    <link rel="icon" href="assets/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+
+    <link rel="stylesheet" href="../user/css/style.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <script>
+    try { if (localStorage.getItem('aura_auth_hint') === '1') document.documentElement.classList.add('is-user'); } catch (e) { }
+    document.documentElement.classList.add('js', 'ready', 'reveal-all');
+  </script>
+
+    <!-- ===== ACCOUNT MENU CSS ===== -->
+    <style>
+    /* ... [Unga palaya CSS apdiye irukattum, naan edit pannala] ... */
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+    .acct { position: relative; align-items: center; }
+    .is-user .acct { display: flex !important; }
+    .acct .avatar { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid #ead8dd; border-radius: 50%; background: #fff9f0; color: #8b1e3f; font-size: 17px; cursor: pointer; }
+    .acct .menu { position: absolute; top: calc(100% + 12px); right: 0; width: 230px; padding: 12px; border: 1px solid #eee0e3; border-radius: 12px; background: #fffaf5; box-shadow: 0 12px 35px rgba(43, 27, 33, .16); z-index: 500; display: none; }
+    .acct.open .menu { display: block; }
+    .acct .who { display: grid; gap: 5px; padding: 10px 9px 14px; margin-bottom: 5px; border-bottom: 1px solid #eee0e3; overflow-wrap: anywhere; }
+    .acct .who b { color: #2b1b21; font-size: 14px; }
+    .acct .who small { color: #827078; font-size: 12px; }
+    .acct .menu a, .acct .menu>button { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 10px; border: 0; border-radius: 8px; background: transparent; color: #35232b; font: inherit; font-size: 14px; text-decoration: none; text-align: left; cursor: pointer; }
+    .acct .menu a:hover, .acct .menu>button:hover { background: #f8e9ee; color: #8b1e3f; }
+    .acct .menu a.cur { background: #f8e9ee; color: #8b1e3f; }
+    .acct .menu>button { margin-top: 5px; border: 1px solid #ead8dd; justify-content: center; }
+    @media (max-width: 700px) {
+      .nav-actions { gap: 7px; }
+      .acct .avatar { width: 38px; height: 38px; }
+      .acct .menu { position: fixed; top: 76px; right: 12px; width: min(270px, calc(100vw - 24px)); }
+    }
+
+    /* ===== PAGE CSS ===== */
+    .oh-page { max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; font-family: 'Jost', sans-serif; }
+    .oh-layout { display: grid; grid-template-columns: 320px 1fr; gap: 28px; align-items: flex-start; }
+    .oh-side { background: #fff; border: 1px solid #ead9df; border-radius: 16px; padding: 16px 0 10px; box-shadow: 0 8px 22px -14px rgba(43, 27, 33, .12); overflow: hidden; }
+    .oh-usercard { margin: 0 16px 18px; padding: 16px; border: 1px solid #f0e6ea; border-radius: 12px; }
+    .oh-user { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid #f0e6ea; margin-bottom: 14px; }
+    .oh-user-info h3 { font-size: 16px; font-weight: 600; margin: 0 0 6px; color: #2b1a20; }
+    .oh-user-info small { font-size: 12px; color: #4a3a40; display: block; overflow-wrap: anywhere; }
+    .oh-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #a3194a, #6e0e33); color: #fff; display: grid; place-items: center; font-size: 17px; font-weight: 600; flex: none; }
+    .oh-count { display: inline-block; padding: 8px 18px; border: 1px solid #f0e6ea; border-radius: 8px; background: #fff; text-align: center; }
+    .oh-count b { display: block; font-size: 16px; font-weight: 600; color: #2b1a20; line-height: 1.2; }
+    .oh-count small { font-size: 12px; color: #4a3a40; display: block; }
+    .oh-side-title { font-size: 16px; font-weight: 600; color: #2b1a20; margin: 0 0 10px 24px; }
+    .oh-nav { display: grid; border-top: 1px solid #f0e6ea; }
+    .oh-nav a { display: flex; align-items: center; gap: 16px; padding: 14px 20px 14px 24px; border-bottom: 1px solid #f0e6ea; color: #2b1a20; text-decoration: none; transition: background .2s; }
+    .oh-nav a:hover { background: #fbf5f7; }
+    .oh-nav a.active { background: #f8e9ee; }
+    .oh-nav a>i.ic { width: 20px; text-align: center; font-size: 17px; color: #2b1a20; }
+    .oh-nav a.active>i.ic { color: #a3194a; }
+    .oh-nav .t { flex: 1; }
+    .oh-nav .t b { display: block; font-size: 15px; font-weight: 500; }
+    .oh-nav .t small { display: block; font-size: 12px; color: #6b5a60; margin-top: 2px; }
+    .oh-nav a>i.ch { font-size: 12px; color: #2b1a20; }
+    .oh-logout { display: flex; align-items: center; gap: 14px; width: 100%; padding: 20px 24px 14px; margin-top: 18px; border: 0; background: transparent; color: #c0334f; font-family: inherit; font-size: 15px; cursor: pointer; text-align: left; }
+    .oh-logout:hover { background: #fdeef4; }
+    .oh-logout i { width: 20px; text-align: center; font-size: 18px; }
+    .oh-main { display: grid; gap: 22px; }
+    .oh-card { background: #fff; border: 1px solid #ead9df; border-radius: 16px; padding: 26px 28px; box-shadow: 0 8px 22px -14px rgba(43, 27, 33, .12); min-height: 300px; }
+    .oh-card h2 { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; margin: 0 0 18px; color: #2b1a20; }
+    .oh-sub { font-size: 16px; font-weight: 500; margin: 0 0 12px; color: #2b1a20; }
+    .oh-sub.mt { margin-top: 26px; }
+    .oh-more { display: inline-block; margin-top: 12px; font-size: 13px; color: #a3194a; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+    
+    .oh-empty, .oh-addr { display: grid; grid-template-columns: 100px 1fr; gap: 20px; align-items: center; padding: 22px 20px; background: #fbf5f7; border: 1px solid #f0e6ea; border-radius: 14px; }
+    .oh-empty-img, .oh-addr-img { width: 100px; height: 100px; display: grid; place-items: center; background: #fff; border-radius: 10px; color: #b7a3ab; font-size: 42px; }
+    .oh-empty-body h3, .oh-addr-body h3 { font-size: 16px; font-weight: 500; margin: 0 0 6px; color: #2b1a20; }
+    .oh-empty-body p, .oh-addr-body p { font-size: 13px; color: #7a6a70; margin: 0; line-height: 1.6; }
+    .oh-empty-body a, .oh-addr-body a { color: #a3194a; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+    .oh-addr-list, .oh-list { display: grid; gap: 12px; }
+
+    .oh-order { display: grid; grid-template-columns: 90px 1fr auto; gap: 18px; padding: 16px; background: #fff; border: 1px solid #f0e6ea; border-radius: 12px; text-decoration: none; color: inherit; transition: box-shadow .2s, transform .2s; }
+    .oh-order:hover { box-shadow: 0 12px 30px -18px rgba(163, 25, 74, .35); transform: translateY(-2px); }
+    .oh-order-img { width: 90px; height: 116px; object-fit: cover; border-radius: 10px; background: #f3e6ea; }
+    .oh-order-info b { display: block; font-size: 15px; font-weight: 500; margin-bottom: 4px; color: #2b1a20; }
+    .oh-order-info small { display: block; font-size: 13px; color: #7a6a70; margin-bottom: 8px; }
+    .oh-badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; background: #fdeef4; color: #a3194a; }
+    .oh-badge.delivered { background: #e7f6ec; color: #287443; }
+    .oh-badge.shipped { background: #e6f1fb; color: #1e63a8; }
+    .oh-badge.cancelled { background: #fdeef4; color: #c0334f; }
+    .oh-badge.return_requested { background: #fff3cd; color: #856404; }
+    .oh-order-price { text-align: right; color: #a3194a; font-weight: 600; font-size: 16px; }
+    .oh-order-price small { display: block; font-size: 11px; color: #7a6a70; font-weight: 400; margin-bottom: 4px; letter-spacing: .1em; text-transform: uppercase; }
+    
+    /* Return Button */
+    .btn-return { display: inline-block; margin-top: 10px; padding: 6px 12px; background: #fdeef4; color: #a3194a; border: 1px solid #a3194a; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; transition: background .2s, color .2s; }
+    .btn-return:hover { background: #a3194a; color: #fff; }
+    .return-closed { display: inline-block; margin-top: 10px; font-size: 12px; color: #c0334f; }
+
+    @media (max-width: 900px) {
+      .oh-layout { grid-template-columns: 1fr; }
+      .oh-order { grid-template-columns: 70px 1fr; }
+      .oh-order-price { grid-column: 2; text-align: left; margin-top: 4px; }
+      .oh-empty, .oh-addr { grid-template-columns: 1fr; text-align: center; }
+      .oh-empty-img, .oh-addr-img { margin: 0 auto; }
+    }
+
+    
+/* back to top */
+.back-to-top{position:fixed;right:28px;bottom:28px;z-index:999;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.3);border-radius:50%;color:#fff;background:linear-gradient(135deg,var(--rose),var(--rose-dark));box-shadow:0 8px 24px rgba(163,25,74,.25);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(15px) scale(.9);transition:opacity .3s,visibility .3s,transform .3s,box-shadow .3s,background .3s}
+.back-to-top.show{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+.back-to-top:hover{background:linear-gradient(135deg,#ff8fbd,#f43f8c);transform:translateY(-5px) scale(1.06);box-shadow:0 12px 28px rgba(244,63,140,.4),0 0 0 5px rgba(255,143,189,.15)}
+.back-to-top:hover svg{animation:arrowUp .45s}@keyframes arrowUp{50%{transform:translateY(-4px)}}
+  </style>
+  </head>
+
+  <body>
+
+    <!-- icon sprite -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path
+            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11"
+            r="7" /><path d="m20 20-3.5-3.5" /></symbol>
+        <symbol id="i-chev" viewBox="0 0 24 24"><path
+            d="m6 9 6 6 6-6" /></symbol>
+      </defs>
+    </svg>
+
+    <!-- Announcement Bar -->
+    <div class="hm-ann">
+      <span>Discover Your New Favourite Look</span>
+      <span class="pill">New Arrivals</span>
+      <span>Style Delivered to Your Doorstep</span>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="index.html" class="brand"><img src="../assets/logo.png"
+          alt="AURA"></a>
+      <div class="links">
+        <a href="index.html">Home</a>
+        <a href="newcollections.html">New Collection</a>
+        <div class="nav-dd" id="shopDD">
+          <a href="shop.html" class="nav-dd-trigger" aria-haspopup="true"
+            aria-expanded="false">Shop <svg class="dd-caret" width="12"
+              height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true"><use href="#i-chev" /></svg></a>
+          <div class="dd-menu" role="menu" aria-label="Shop categories">
+            <a href="shop.html?cat=kurta-sets" role="menuitem">Kurta Sets</a><a
+              href="shop.html?cat=anarkali" role="menuitem">Anarkali</a><a
+              href="shop.html?cat=sarees" role="menuitem">Sarees</a>
+
+            <!-- 🔥 NEWLY ADDED: College & Office Wear 🔥 -->
+            <a href="shop.html?cat=college-wear" role="menuitem">College
+              Wear</a>
+            <a href="shop.html?cat=office-wear" role="menuitem">Office Wear</a>
+            <div class="dd-sub"><button type="button" class="dd-sub-toggle"
+                aria-expanded="false"><span>Dresses</span><svg width="14"
+                  height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true"><use
+                    href="#i-chev" /></svg></button><div class="dd-sub-list"><a
+                  href="shop.html?cat=dresses&type=party-wear"
+                  role="menuitem">Party Wear</a><a
+                  href="shop.html?cat=dresses&type=maxi-dresses"
+                  role="menuitem">Maxi Dresses</a><a
+                  href="shop.html?cat=dresses&type=casual-dresses"
+                  role="menuitem">Casual Dresses</a><a
+                  href="shop.html?cat=dresses&type=floral-dresses"
+                  role="menuitem">Floral Dresses</a></div></div>
+            <a href="shop.html?cat=night-suits" role="menuitem">Night Suits</a>
+            <div class="dd-sub"><button type="button" class="dd-sub-toggle"
+                aria-expanded="false"><span>Bottomwear</span><svg width="14"
+                  height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true"><use
+                    href="#i-chev" /></svg></button><div class="dd-sub-list"><a
+                  href="shop.html?cat=leggings" role="menuitem">Leggings</a><a
+                  href="shop.html?cat=palazzo"
+                  role="menuitem">Palazzo</a></div></div>
+            <a href="shop.html?cat=shawls" role="menuitem">Shawls</a><a
+              href="shop.html?cat=t-shirt" role="menuitem">T-shirt</a><a
+              href="shop.html" role="menuitem" class="dd-all">View all
+              products</a>
+          </div>
+        </div>
+        <a href="./trackorder.html">Track Order</a>
+      </div>
+      <form class="hm-search" id="hmSearch" role="search" action="shop.html"
+        method="get"><svg width="16" height="16" fill="none"
+          stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+          aria-hidden="true"><use href="#i-search" /></svg><input class="hm-in"
+          type="search" name="q"
+          placeholder="Search fashion, beauty, jewellery…"
+          aria-label="Search products" autocomplete="off"></form>
+      <div class="nav-actions">
+        <button class="icon-btn" id="wishBtn" aria-label="Wishlist"
+          onclick="location.href='wishlist.html'"><svg width="21" height="21"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true"><use href="#i-heart" /></svg><span class="badge"
+            id="wishBadge">0</span></button>
+        <button class="icon-btn" id="cartBtn" aria-label="Shopping Cart"
+          onclick="location.href='cart.html'"><svg width="21" height="21"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true"><circle cx="9" cy="21" r="1"></circle><circle
+              cx="19" cy="21" r="1"></circle><path
+              d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span
+            class="badge" id="cartBadge">0</span></button>
+        <div class="acct" id="acct" style="display:none">
+          <button class="avatar" id="avatarBtn" type="button"
+            aria-label="Account menu" aria-haspopup="true"
+            aria-expanded="false"><i class="fa-regular fa-user"></i></button>
+          <div class="menu" id="acctMenu"><div class="who"><b id="userName">AURA
+                Customer</b><small id="userEmail">Signed in</small></div><a
+              href="order-history.html" class="cur"><i
+                class="fa-solid fa-box"></i> Order History</a><a
+              href="wishlist.html"><i class="fa-regular fa-heart"></i>
+              Wishlist</a><button type="button" id="logoutBtn"><i
+                class="fa-solid fa-arrow-right-from-bracket"></i>
+              Logout</button></div>
+        </div>
+        <button class="icon-btn burger" id="burger" aria-label="Open menu"
+          aria-expanded="false" aria-controls="mmenu"><svg width="24"
+            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path
+              d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="mmenu" id="mmenu" role="dialog" aria-modal="true"
+      aria-label="Menu">
+      <button class="icon-btn mclose" id="mclose" aria-label="Close menu"><i
+          class="fa-solid fa-xmark"></i></button>
+      <a href="index.html" class="mmenu-logo"><img src="../assets/logo.png"
+          alt="AURA"></a>
+      <div class="mmenu-icons"><a href="wishlist.html" class="m-icon-link"><i
+            class="fa-regular fa-heart"></i><span>Wishlist</span><span
+            class="badge" id="mWishBadge">0</span></a><a href="cart.html"
+          class="m-icon-link"><i
+            class="fa-solid fa-bag-shopping"></i><span>Cart</span><span
+            class="badge" id="mCartBadge">0</span></a></div>
+      <a href="index.html" class="act">Home</a><a href="newcollections.html">New
+        Collections</a>
+      <div class="m-dropdown"><button type="button"
+          class="m-dropdown-toggle"><span>Shop</span><i
+            class="fa-solid fa-chevron-down"></i></button><div
+          class="m-dropdown-menu"><a href="shop.html?cat=kurta-sets">Kurta
+            Sets</a><a href="shop.html?cat=anarkali">Anarkali</a><a
+            href="shop.html?cat=sarees">Sarees</a>
+          <!-- 🔥 NEWLY ADDED: Mobile Menu College & Office Wear 🔥 -->
+          <a href="shop.html?cat=college-wear">College Wear</a>
+          <a href="shop.html?cat=office-wear">Office Wear</a><a
+            href="shop.html?cat=night-suits">Night Suits</a><a
+            href="shop.html?cat=shawls">Shawls</a><a
+            href="shop.html?cat=t-shirt">T-shirt</a><a href="shop.html">View All
+            Products</a></div></div>
+      <div class="m-dropdown"><button type="button"
+          class="m-dropdown-toggle"><span>Bottomwear</span><i
+            class="fa-solid fa-chevron-down"></i></button><div
+          class="m-dropdown-menu"><a
+            href="shop.html?cat=leggings">Leggings</a><a
+            href="shop.html?cat=palazzo">Palazzo</a></div></div>
+      <a href="trackorder.html">Track Order</a>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="oh-page">
+      <div class="oh-layout">
+        <aside class="oh-side">
+          <div class="oh-usercard">
+            <div class="oh-user"><div class="oh-user-info"><h3 id="ohName">Hey,
+                  User</h3><small id="ohPhone">—</small></div><div
+                class="oh-avatar" id="ohAvatar">U</div></div>
+            <div class="oh-count"><b id="ohTotalOrders">0</b><small>Total
+                Orders</small></div>
+          </div>
+          <h4 class="oh-side-title">Account</h4>
+          <nav class="oh-nav" id="ohNav">
+            <a href="#overview" data-view="overview"><i
+                class="ic fa-solid fa-house"></i><span
+                class="t"><b>Overview</b><small>All details at one place, easy
+                  to access</small></span><i
+                class="ch fa-solid fa-chevron-right"></i></a>
+            <a href="#orders" data-view="orders"><i
+                class="ic fa-solid fa-bag-shopping"></i><span class="t"><b>My
+                  Orders</b><small>Track your recent purchases</small></span><i
+                class="ch fa-solid fa-chevron-right"></i></a>
+            <a href="#address" data-view="address"><i
+                class="ic fa-solid fa-location-dot"></i><span class="t"><b>My
+                  Address</b><small>Manage shipping addresses</small></span><i
+                class="ch fa-solid fa-chevron-right"></i></a>
+            <a href="#returns" data-view="returns"><i
+                class="ic fa-solid fa-rotate-left"></i><span class="t"><b>My
+                  Returns</b><small>Track your recent returns</small></span><i
+                class="ch fa-solid fa-chevron-right"></i></a>
+          </nav>
+          <button type="button" class="oh-logout" id="ohLogout"><i
+              class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+        </aside>
+
+        <div class="oh-main">
+          <section class="oh-card">
+            <h2 id="ohTitle">Overview</h2>
+            <div id="ohContent"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- Return Modal -->
+    <div id="returnModal"
+      style="display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.6); align-items: center; justify-content: center;">
+      <div
+        style="background: #fff; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px;">
+        <h3
+          style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; margin-bottom: 15px;">Return
+          Order</h3>
+        <p style="font-size: 13px; color: #7a6a70; margin-bottom: 15px;">Please
+          provide a reason for returning the item.</p>
+        <textarea id="returnReason" placeholder="Reason for return..."
+          style="width: 100%; height: 80px; padding: 10px; border: 1px solid #ead9df; border-radius: 8px; margin-bottom: 15px; font-family: inherit;"></textarea>
+        <div style="display: flex; gap: 10px;">
+          <button id="cancelReturnBtn"
+            style="flex: 1; padding: 10px; border: 1px solid #ead9df; border-radius: 6px; background: #fff; color: #35232b; cursor: pointer;">Cancel</button>
+          <button id="submitReturnBtn"
+            style="flex: 1; padding: 10px; border: 1px solid #a3194a; border-radius: 6px; background: #a3194a; color: #fff; cursor: pointer;">Submit
+            Request</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back To Top -->
+    <button id="backToTop" class="back-to-top" type="button"
+      aria-label="Back to top" title="Back to top">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true"><path
+          d="M12 19V5"></path><path d="M5 12l7-7 7 7"></path></svg>
+    </button>
+
+    <script src="js/theme.js"></script>
+
+    <!-- NAV DROPDOWN + MOBILE MENU + WISHLIST BADGE -->
+    <script>
+    (function () {
+      'use strict';
+      function init() {
+        var dd = document.getElementById('shopDD');
+        if (!dd) return;
+        var trigger = dd.querySelector('.nav-dd-trigger');
+        if (!trigger) return;
+        var timer = null;
+        function openMenu() { clearTimeout(timer); dd.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+        function closeSubs() { dd.querySelectorAll('.dd-sub.open').forEach(function (sub) { sub.classList.remove('open'); var t = sub.querySelector('.dd-sub-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); }); }
+        function closeMenu() { dd.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); closeSubs(); }
+        dd.addEventListener('mouseenter', openMenu);
+        dd.addEventListener('mouseleave', function () { timer = setTimeout(closeMenu, 160); });
+        dd.addEventListener('focusin', openMenu);
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeMenu(); trigger.blur(); } });
+        trigger.addEventListener('click', function (e) { if (matchMedia('(hover: none)').matches && !dd.classList.contains('open')) { e.preventDefault(); openMenu(); } });
+        dd.querySelectorAll('.dd-sub-toggle').forEach(function (btn) { btn.addEventListener('click', function (e) { e.stopPropagation(); var sub = btn.parentElement; var willOpen = !sub.classList.contains('open'); closeSubs(); if (willOpen) { sub.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); } }); });
+        document.addEventListener('click', function (e) { if (!dd.contains(e.target)) closeMenu(); });
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    })();
+
+    (function () {
+      try {
+        var w = JSON.parse(localStorage.getItem('aura_wishlist')) || [];
+        var b = document.getElementById('wishBadge'); if (b) b.textContent = w.length;
+        var c = (JSON.parse(localStorage.getItem('aura_cart')) || []).reduce(function (s, x) { return s + (x.qty || 1); }, 0);
+        var cb = document.getElementById('cartBadge'); if (cb) cb.textContent = c;
+      } catch (e) { }
+    })();
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var burger = document.getElementById("burger"); var mclose = document.getElementById("mclose");
+      if (burger) burger.addEventListener("click", function () { document.body.classList.add("mmenu-open"); });
+      if (mclose) mclose.addEventListener("click", function () { document.body.classList.remove("mmenu-open"); });
+    });
+  </script>
+
+    <script type="module" src="js/session.js"></script>
+
+    <!-- ============ PAGE LOGIC ============ -->
+    <script type="module">
+    import {
+      auth, db, onAuthStateChanged, signOut, isCustomerUser,
+      collection, getDocs, query, where, addDoc, doc, updateDoc, serverTimestamp
+    } from "./js/firebase.js";
+
+    const ohAvatar = document.getElementById("ohAvatar");
+    const ohName = document.getElementById("ohName");
+    const ohPhone = document.getElementById("ohPhone");
+    const ohTotal = document.getElementById("ohTotalOrders");
+    const ohLogout = document.getElementById("ohLogout");
+    const ohTitle = document.getElementById("ohTitle");
+    const ohContent = document.getElementById("ohContent");
+    const navLinks = document.querySelectorAll("#ohNav a");
+
+    let ORDERS = [];
+    let ADDRESSES = [];
+    let currentOrderForReturn = null;
+
+    function inr(n) { return "₹" + Number(n || 0).toLocaleString("en-IN"); }
+    function fmtDate(ts) {
+      if (!ts) return "—";
+      const d = typeof ts.toDate === "function" ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+    }
+    function esc(v) {
+      return String(v == null ? "" : v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+    function statusClass(s) {
+      s = String(s || "pending").toLowerCase();
+      if (s === "delivered") return "delivered";
+      if (s === "cancelled") return "cancelled";
+      if (s === "shipped" || s === "dispatched") return "shipped";
+      if (s === "return_requested") return "return_requested";
+      return "";
+    }
+
+    function emptyBox(icon, title, html) {
+      return `<div class="oh-empty"><div class="oh-empty-img"><i class="fa-solid ${icon}"></i></div><div class="oh-empty-body"><h3>${title}</h3><p>${html}</p></div></div>`;
+    }
+
+    function ordersHTML(limit) {
+      if (!ORDERS.length) return emptyBox("fa-box-open", "No Past Orders Yet", `Start your first order to see it here. <a href="shop.html">Shop Now</a>`);
+      const list = limit ? ORDERS.slice(0, limit) : ORDERS;
+      
+      let html = `<div class="oh-list">${list.map(o => {
+        const first = (o.items && o.items[0]) || {};
+        const st = String(o.status || "pending").toLowerCase();
+        
+   // 🔥 7-DAY RETURN WINDOW LOGIC 🔥
+let returnBtnHTML = "";
+if (st === 'delivered') {
+    let isWithin7Days = false;
+    
+    // Admin order-ah 'delivered' nu mark panna date (deliveredAt) edukkirom. 
+    // Athu illana updatedAt/createdAt edukkirom.
+    let deliveryDate = o.deliveredAt || o.updatedAt || o.createdAt;
+    
+    if (deliveryDate) {
+        let deliveredTime;
+        if (typeof deliveryDate.toDate === "function") {
+            deliveredTime = deliveryDate.toDate().getTime(); // Firestore Timestamp
+        } else {
+            deliveredTime = new Date(deliveryDate).getTime(); // Normal Date
+        }
+        
+        const now = new Date().getTime();
+        const diffDays = (now - deliveredTime) / (1000 * 3600 * 24); // Days calculation
+        
+        if (diffDays <= 7 && diffDays >= 0) {
+            isWithin7Days = true;
+        }
+    } else {
+        isWithin7Days = true; // Fallback
+    }
+
+    if (isWithin7Days) {
+        returnBtnHTML = `<button class="btn-return" data-id="${o.id}" data-orderid="${o.orderId}" data-name="${first.name}">Return</button>`;
+    } else {
+        returnBtnHTML = `<span class="return-closed">Return window closed (7 Days Over)</span>`;
+    }
+}
+
+        return `
+          <a class="oh-order" href="#">
+            <img class="oh-order-img" src="${esc(first.image || "../images/partywear.webp")}" alt="" onerror="this.style.visibility='hidden'">
+            <div class="oh-order-info">
+              <b>Order #${esc(o.orderId || o.id || "—")}</b>
+              <small>${fmtDate(o.createdAt)} &nbsp;·&nbsp; ${(o.items || []).length} item(s)</small>
+              <span class="oh-badge ${statusClass(st)}">${esc(st.replace(/_/g, " "))}</span>
+              ${returnBtnHTML}
+            </div>
+            <div class="oh-order-price"><small>Total</small>${inr(o.total)}</div>
+          </a>`;
+      }).join("")}</div>`;
+      if (limit && ORDERS.length > limit) html += `<a class="oh-more" href="#orders">View all orders</a>`;
+      return html;
+    }
+
+    function addressHTML(all) {
+      if (!ADDRESSES.length) return `<div class="oh-addr"><div class="oh-addr-img"><i class="fa-solid fa-location-dot"></i></div><div class="oh-addr-body"><h3>No Address Saved Yet</h3><p>Tap to add and shop faster <a href="cart.html">Add New Address Now</a></p></div></div>`;
+      const list = all ? ADDRESSES : ADDRESSES.slice(0, 1);
+      let html = `<div class="oh-addr-list">${list.map(a => `<div class="oh-addr"><div class="oh-addr-img"><i class="fa-solid fa-location-dot"></i></div><div class="oh-addr-body"><h3>${esc(a.name || "Saved Address")}</h3><p>${esc(a.flat || "")}${a.flat ? ", " : ""}${esc(a.area || "")}<br>${esc(a.city || "")}, ${esc(a.state || "")} — ${esc(a.pin || "")}<br>${esc(a.phone || "")}</p></div></div>`).join("")}</div>`;
+      if (!all && ADDRESSES.length > 1) html += `<a class="oh-more" href="#address">View all addresses</a>`;
+      return html;
+    }
+
+    function render() {
+      let view = (location.hash || "#overview").slice(1);
+      if (!["overview", "orders", "address", "returns"].includes(view)) view = "overview";
+      navLinks.forEach(a => a.classList.toggle("active", a.dataset.view === view));
+
+      if (view === "overview") {
+        ohTitle.textContent = "Overview";
+        ohContent.innerHTML = `<h3 class="oh-sub">My Orders</h3>${ordersHTML(3)}<h3 class="oh-sub mt">Saved Addresses</h3>${addressHTML(false)}`;
+      } else if (view === "orders") {
+        ohTitle.textContent = "My Orders";
+        ohContent.innerHTML = ordersHTML(0);
+        attachReturnListeners();
+      } else if (view === "address") {
+        ohTitle.textContent = "My Address";
+        ohContent.innerHTML = addressHTML(true);
+      } else {
+        ohTitle.textContent = "My Returns";
+        ohContent.innerHTML = emptyBox("fa-rotate-left", "No Returns Yet", `You haven't requested any returns. <a href="shop.html">Continue Shopping</a>`);
+      }
+    }
+
+    // 🔥 Return Button Listeners
+    function attachReturnListeners() {
+      document.querySelectorAll('.btn-return').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault(); 
+          currentOrderForReturn = {
+            id: this.getAttribute('data-id'),
+            orderId: this.getAttribute('data-orderid'),
+            name: this.getAttribute('data-name')
+          };
+          document.getElementById('returnModal').style.display = 'flex';
+        });
+      });
+    }
+
+    window.addEventListener("hashchange", () => { render(); window.scrollTo({ top: 0, behavior: "smooth" }); });
+    render();
+
+    async function loadOrders(user) {
+      try {
+        const snap = await getDocs(query(collection(db, "orders"), where("uid", "==", user.uid)));
+        ORDERS = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+      } catch (e) {
+        console.warn("Orders query failed:", e.code || e);
+        ORDERS = [];
+      }
+      ohTotal.textContent = ORDERS.length;
+    }
+
+    function loadAddress(user) {
+      try {
+        const all = JSON.parse(localStorage.getItem("aura_addr_" + user.uid) || "{}");
+        const keys = Object.keys(all).filter(k => k !== "last" && all[k] && typeof all[k] === "object");
+        keys.sort((a, b) => (a === all.last ? -1 : b === all.last ? 1 : 0));
+        ADDRESSES = keys.map(k => all[k]);
+      } catch (e) {
+        ADDRESSES = [];
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!isCustomerUser(user)) {
+        location.replace("index.html");
+        return;
+      }
+      const name = user.displayName || "User";
+      ohAvatar.textContent = name.charAt(0).toUpperCase();
+      ohName.textContent = "Hey, " + name;
+      ohPhone.textContent = "Logged with " + user.phoneNumber;
+      loadAddress(user);
+      await loadOrders(user);
+      render();
+    });
+
+    ohLogout.addEventListener("click", async () => {
+      ohLogout.disabled = true;
+      try { await signOut(auth); location.replace("index.html"); }
+      catch (e) { console.error("Logout failed:", e); ohLogout.disabled = false; }
+    });
+
+    // Mobile Dropdown Toggle Logic
+    document.addEventListener('DOMContentLoaded', function () {
+      var dropdownToggles = document.querySelectorAll('.m-dropdown-toggle');
+      dropdownToggles.forEach(function (toggle) {
+        toggle.addEventListener('click', function (e) {
+          e.preventDefault(); e.stopPropagation();
+          var parent = this.parentElement;
+          var isOpen = parent.classList.contains('open');
+          if (isOpen) { parent.classList.remove('open'); } else { parent.classList.add('open'); }
+        });
+      });
+    });
+
+    // 🔥 Handle Return Submission
+    document.getElementById('cancelReturnBtn').addEventListener('click', function () {
+      document.getElementById('returnModal').style.display = 'none';
+      currentOrderForReturn = null;
+    });
+
+    document.getElementById('submitReturnBtn').addEventListener('click', async function () {
+      const reason = document.getElementById('returnReason').value.trim();
+      if (!reason) { alert("Please enter a reason for return."); return; }
+      if (!currentOrderForReturn) return;
+
+      this.disabled = true;
+      this.textContent = "Submitting...";
+
+      try {
+        // 1. Save to Returns Collection
+        await addDoc(collection(db, "returns"), {
+          orderId: currentOrderForReturn.orderId,
+          productName: currentOrderForReturn.name,
+          reason: reason,
+          uid: auth.currentUser.uid,
+          status: "pending",
+          createdAt: serverTimestamp()
+        });
+
+        // 2. Update Order Status to return_requested
+        await updateDoc(doc(db, "orders", currentOrderForReturn.id), {
+          status: "return_requested",
+          updatedAt: serverTimestamp()
+        });
+
+        alert("Return request submitted successfully!");
+        document.getElementById('returnModal').style.display = 'none';
+        document.getElementById('returnReason').value = '';
+        currentOrderForReturn = null;
+
+        // Reload data
+        if (auth.currentUser) {
+          await loadOrders(auth.currentUser);
+          render();
+        }
+
+      } catch (err) {
+        console.error("Return failed:", err);
+        alert("Failed to submit return request.");
+      } finally {
+        this.disabled = false;
+        this.textContent = "Submit Request";
+      }
+    });
+
+    
+//Back To Top Arrow
+    document.addEventListener("DOMContentLoaded", function () {
+  var btn = document.getElementById("backToTop");
+  if (!btn) return;
+
+  function toggleBtn() {
+    btn.classList.toggle("show", window.scrollY > 300);
+  }
+  window.addEventListener("scroll", toggleBtn, { passive: true });
+  toggleBtn(); // page load la already scroll aagi irundha
+
+  btn.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+});
+</script>
+    <script type="module" src="js/site-settings.js"></script>
+    <script type="module" src="js/session.js"></script>
+  </body>
+
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA</title>
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/splash.css">
+</head>
+
+<body>
+  <div id="loader">
+    <div class="loader-in">
+      <img src="../assets/logo.png" alt="AURA">
+      <div class="lbar"><i></i></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const loader = document.getElementById('loader');
+      const MIN_SHOW = 1800;
+      const MAX_SHOW = 3200;
+      const start = Date.now();
+      let done = false;
+
+      // 🔥 Use sessionStorage - splash only once per session
+      const SEEN = 'aura_splash_seen';
+
+      // Check if splash was already seen in this session
+      if (sessionStorage.getItem(SEEN)) {
+        window.location.replace('index.html');
+        return;
+      }
+
+      function finish() {
+        if (done) return;
+        done = true;
+        sessionStorage.setItem(SEEN, '1'); // 🔥 Save to sessionStorage
+        loader.classList.add('out');
+        setTimeout(() => {
+          window.location.replace('index.html');
+        }, 600);
+      }
+
+      const logo = new Image();
+      logo.src = 'assets/logo.png';
+      logo.onload = logo.onerror = () => {
+        const wait = Math.max(0, MIN_SHOW - (Date.now() - start));
+        setTimeout(finish, wait);
+      };
+
+      setTimeout(finish, MAX_SHOW);
+    })();
+  </script>
+</body>
+
+</html>

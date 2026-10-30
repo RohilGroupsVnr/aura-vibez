@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products — AURA Admin</title>
+  <link rel="icon" href="../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="css/admin.css">
+
+  <style>
+    .upload-btn {
+      display: inline-block;
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #a3194a;
+      color: #a3194a;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.2s;
+      background: #fff;
+    }
+
+    .upload-btn:hover {
+      background: #a3194a;
+      color: #fff;
+    }
+
+    .upload-btn input[type="file"] {
+      display: none;
+    }
+
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      background: #fdfaf6;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #e8e1d3;
+      margin-top: 10px;
+    }
+
+    .highlights-grid label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #8b8378;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .highlights-grid input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e8e1d3;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .color-add-box {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      background: #fdfaf6;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px dashed #e8e1d3;
+      align-items: center;
+    }
+
+    .color-add-box input[type="text"] {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #e8e1d3;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .color-add-box input[type="color"] {
+      width: 40px;
+      height: 36px;
+      padding: 0;
+      border: 1px solid #e8e1d3;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .color-add-box button {
+      background: #a3194a;
+      color: #fff;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: 0.2s;
+    }
+
+    .color-add-box button:hover {
+      background: #6e0e33;
+    }
+
+    /* COLOR VARIANT PANEL */
+    .var-panel {
+      background: #fdfaf6;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #e8e1d3;
+    }
+
+    .var-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #a3194a;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .var-bar {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #e8e1d3;
+    }
+
+    .var-bar>label {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .var-bar select {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #e8e1d3;
+      flex: 1;
+      min-width: 140px;
+      font-weight: 600;
+      color: #a3194a;
+    }
+
+    .var-bar span {
+      font-size: 12px;
+      color: #7a6a70;
+    }
+
+    #varBody {
+      transition: opacity .2s;
+    }
+
+    .var-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.4fr;
+      gap: 12px;
+      align-items: end;
+      background: #fff;
+      padding: 12px;
+      border: 1px solid #e8e1d3;
+      border-radius: 6px;
+    }
+
+    .var-row label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a3194a;
+      display: block;
+    }
+
+    .var-row input,
+    .var-row select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e8e1d3;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .var-copy {
+      display: flex;
+      gap: 6px;
+      align-items: end;
+    }
+
+    .var-copy select {
+      margin-top: 0;
+    }
+
+    .var-copy button {
+      white-space: nowrap;
+      background: #fff;
+      border: 1px solid #a3194a;
+      color: #a3194a;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .var-copy button:hover {
+      background: #a3194a;
+      color: #fff;
+    }
+
+    .var-sub {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a3194a;
+      display: block;
+      margin: 14px 0 6px;
+    }
+
+    .size-price-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      background: #fff;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #e8e1d3;
+    }
+
+    .size-price-grid:empty::before {
+      content: "Pick sizes above to set size-wise prices";
+      grid-column: 1 / -1;
+      font-size: 12px;
+      color: #8b8378;
+    }
+
+    .size-price-grid label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #8b8378;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .size-price-grid input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e8e1d3;
+      border-radius: 6px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .sold-box {
+      margin-top: 12px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #e8e1d3;
+    }
+
+    .sold-box>label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a3194a;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .sold-box small {
+      color: #8b8378;
+      font-size: 11px;
+      display: block;
+      margin-top: 6px;
+    }
+
+    .cs-row {
+      font-size: 11px;
+      color: #7a6a70;
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .cs-row i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, .2);
+      flex: none;
+    }
+
+    .cs-row b {
+      color: #2b1a20;
+    }
+
+    #fStock[readonly] {
+      background: #f3ece6;
+      cursor: not-allowed;
+    }
+
+    .img-4-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 14px;
+    }
+
+    .img-4-box {
+      background: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #e8e1d3;
+    }
+
+    .img-4-box label.box-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a3194a;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .img-4-box input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e8e1d3;
+      border-radius: 6px;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+
+    .img-4-box .preview-wrap {
+      margin-top: 5px;
+    }
+
+    .seo-section {
+      background: #f0f8ff;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #3498db;
+      margin-top: 10px;
+    }
+
+    .seo-section label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #2980b9;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .seo-section input,
+    .seo-section textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #bdc3c7;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .related-products-box {
+      background: #fef9f4;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #e8b923;
+      margin-top: 10px;
+    }
+
+    .related-products-box h4 {
+      font-size: 13px;
+      color: #a3194a;
+      margin-bottom: 10px;
+    }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 5px;
+    }
+
+    .related-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #eee;
+      background: #fff;
+      transition: 0.2s;
+    }
+
+    .related-item:hover {
+      border-color: #a3194a;
+      background: #fdf9f4;
+    }
+
+    .related-item input {
+      width: auto;
+    }
+
+    .related-item img {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .related-item span {
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+
+      .img-4-grid,
+      .highlights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .size-price-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .var-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .var-copy {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="admin-layout">
+
+    <aside class="admin-side" id="adminSide"></aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <h1>Products</h1>
+          <p>Add, edit and remove the products shown in your shop.</p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn-admin primary" id="addBtn" type="button">
+            <i class="fa-solid fa-plus"></i> Add product
+          </button>
+        </div>
+      </div>
+
+      <div class="prod-stats">
+        <div class="prod-stat"><span>Total</span><b id="sTotal">0</b></div>
+        <div class="prod-stat green"><span>In stock</span><b id="sIn">0</b></div>
+        <div class="prod-stat amber"><span>Low stock</span><b id="sLow">0</b></div>
+        <div class="prod-stat red"><span>Out of stock</span><b id="sOut">0</b></div>
+      </div>
+
+      <div class="admin-card">
+        <div class="prod-filters">
+          <div class="prod-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" id="fSearch" placeholder="Search by product name…" aria-label="Search products">
+          </div>
+          <select id="fCat" aria-label="Filter by category">
+            <option value="">All categories</option>
+          </select>
+          <select id="fStatus" aria-label="Filter by status">
+            <option value="">All status</option>
+            <option value="active">Active</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
+
+        <div class="prod-table-wrap">
+          <table class="admin-table prod-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Sizes</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr>
+                <td colspan="8" class="admin-empty">Loading products…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="prod-empty" id="empty" hidden>
+          <i class="fa-solid fa-box-open"></i>
+          <p>No products found. Click <b>Add product</b> to create one.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADD / EDIT MODAL -->
+  <div class="a-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <form class="a-modal-box" id="pForm" novalidate>
+      <div class="a-modal-head">
+        <h2 id="mTitle">Add product</h2>
+        <button type="button" class="icon-action" id="mClose" aria-label="Close"><i
+            class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="prod-grid">
+        <label class="prod-field full">Product name
+          <input type="text" id="fName" placeholder="e.g. Kurti and Pajma with Duppatta" required>
+        </label>
+
+        <label class="prod-field">Category
+          <select id="fCategory" required>
+            <option value="">Select category</option>
+          </select>
+        </label>
+        <label class="prod-field">Status
+          <select id="fState">
+            <option value="active">Active (visible in shop)</option>
+            <option value="draft">Draft (hidden)</option>
+          </select>
+        </label>
+
+        <label class="prod-field">Default selling price (₹)
+          <input type="number" id="fPrice" min="0" step="1" placeholder="397" required>
+        </label>
+        <label class="prod-field">Default MRP (₹)
+          <input type="number" id="fMrp" min="0" step="1" placeholder="417">
+        </label>
+
+        <label class="prod-field">Total stock (auto)
+          <input type="number" id="fStock" min="0" step="1" placeholder="Auto" readonly>
+        </label>
+        <label class="prod-field">Badge
+          <select id="fBadge">
+            <option value="">None</option>
+            <option>New Arrival</option>
+            <option>Trending</option>
+            <option>Bestseller</option>
+          </select>
+        </label>
+
+        <!-- STEP 1: PICK COLORS -->
+        <div class="prod-field full">
+          <label>Step 1 · Colors (pick every color this dress is available in)</label>
+          <div class="chips-wrap" id="colorChips" style="margin-bottom: 5px;"></div>
+          <div class="color-add-box">
+            <input type="text" id="newColorName" placeholder="Color name (e.g. Peach)">
+            <input type="color" id="newColorHex" value="#FFC0CB" title="Pick Color">
+            <button type="button" id="addColorBtn" title="Add Color"><i class="fa-solid fa-plus"></i></button>
+          </div>
+        </div>
+
+        <!-- STEP 2: PER-COLOR DETAILS (like Meesho) -->
+        <div class="prod-field full var-panel">
+          <label class="var-title">Step 2 · Color-wise details (price, sizes, stock, images — each color is its own
+            variant)</label>
+
+          <div class="var-bar">
+            <label>Select Color:</label>
+            <select id="imgColorSelect">
+              <option value="">-- Pick colors above first --</option>
+            </select>
+            <span id="colorImgStatus">Nothing added yet</span>
+          </div>
+
+          <div id="varBody">
+            <div class="var-row">
+              <label>Selling price (₹) for this color
+                <input type="number" id="vPrice" min="0" step="1" placeholder="Default">
+              </label>
+              <label>MRP (₹) for this color
+                <input type="number" id="vMrp" min="0" step="1" placeholder="Default">
+              </label>
+              <div class="var-copy">
+                <label style="flex:1">Copy details from
+                  <select id="vCopyFrom"></select>
+                </label>
+                <button type="button" id="vCopyBtn">Copy</button>
+              </div>
+            </div>
+
+            <span class="var-sub">Sizes available in this color</span>
+            <div class="chips-wrap" id="sizeChips"></div>
+
+            <span class="var-sub">Size-wise price (optional — blank = this color's price)</span>
+            <div class="size-price-grid" id="sizePriceGrid"></div>
+
+            <div class="sold-box" id="soldBox">
+              <label>Stock for each size in this color</label>
+              <div class="size-price-grid" id="sizeStockGrid"></div>
+              <small>0 = sold out (customer-ku faded &amp; crossed-out). This color total: <b
+                  id="colorStockTotal">0</b></small>
+            </div>
+
+            <div class="img-4-grid" id="colorImgBoxes">
+              <div class="img-4-box">
+                <label class="box-title">1. Front Image</label>
+                <input type="text" id="imgFrontUrl" placeholder="Paste URL...">
+                <label class="upload-btn" style="font-size: 12px; padding: 6px;">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
+                  <input type="file" id="imgFrontFile" accept="image/*">
+                </label>
+                <div id="prevFront" class="preview-wrap"></div>
+              </div>
+              <div class="img-4-box">
+                <label class="box-title">2. Back Image</label>
+                <input type="text" id="imgBackUrl" placeholder="Paste URL...">
+                <label class="upload-btn" style="font-size: 12px; padding: 6px;">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
+                  <input type="file" id="imgBackFile" accept="image/*">
+                </label>
+                <div id="prevBack" class="preview-wrap"></div>
+              </div>
+              <div class="img-4-box">
+                <label class="box-title">3. Side Image</label>
+                <input type="text" id="imgSideUrl" placeholder="Paste URL...">
+                <label class="upload-btn" style="font-size: 12px; padding: 6px;">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
+                  <input type="file" id="imgSideFile" accept="image/*">
+                </label>
+                <div id="prevSide" class="preview-wrap"></div>
+              </div>
+              <div class="img-4-box">
+                <label class="box-title">4. Quality Image (Close-up)</label>
+                <input type="text" id="imgQualityUrl" placeholder="Paste URL...">
+                <label class="upload-btn" style="font-size: 12px; padding: 6px;">
+                  <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
+                  <input type="file" id="imgQualityFile" accept="image/*">
+                </label>
+                <div id="prevQuality" class="preview-wrap"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prod-field full">
+          <label>Product Video URL (Optional)</label>
+          <input type="text" id="fVideo" placeholder="https://youtube.com/... or .mp4 link"
+            style="width:100%; padding:8px; border:1px solid #e8e1d3; border-radius:6px;">
+        </div>
+
+        <div class="prod-field full">
+          <label>Key Highlights (Dress Details)</label>
+          <div class="highlights-grid">
+            <div><label>Fit</label><input type="text" id="hlFit" placeholder="e.g. Regular / Straight"></div>
+            <div><label>Top Fabric</label><input type="text" id="hlFabric" placeholder="e.g. Cotton / Silk"></div>
+            <div><label>Neck</label><input type="text" id="hlNeck" placeholder="e.g. Round Neck / V-Neck"></div>
+            <div><label>Sleeve Styling</label><input type="text" id="hlSleeve" placeholder="e.g. Short / 3/4th"></div>
+            <div><label>Sleeve Length</label><input type="text" id="hlSleeveLen" placeholder="e.g. 8 Inches"></div>
+            <div><label>Top Technique</label><input type="text" id="hlTech" placeholder="e.g. Printed / Solid"></div>
+          </div>
+        </div>
+
+        <label class="prod-field full">Description
+          <textarea id="fDesc" rows="3" placeholder="Fabric, fit, wash care…"></textarea>
+        </label>
+
+        <div class="prod-field full">
+          <label>SEO Details (For Google Search)</label>
+          <div class="seo-section">
+            <label>SEO Title</label>
+            <input type="text" id="seoTitle" placeholder="e.g. Kurti and Pajma Set | AURA">
+            <label>Meta Description</label>
+            <textarea id="seoDesc" rows="2" placeholder="Short description for search results..."></textarea>
+            <label>Keywords (comma separated)</label>
+            <input type="text" id="seoKeywords" placeholder="kurta set, silk kurta, mustard kurta">
+          </div>
+        </div>
+
+        <div class="prod-field full">
+          <label>Related Products (You May Also Like)</label>
+          <div class="related-products-box">
+            <h4>Select products to show as "You May Also Like":</h4>
+            <div class="related-grid" id="relatedGrid"></div>
+          </div>
+        </div>
+
+        <label class="a-check full"><input type="checkbox" id="fNew"> Show in New Collection</label>
+      </div>
+
+      <p class="prod-msg" id="mMsg" aria-live="polite" style="margin-top:14px"></p>
+      <div class="a-modal-foot">
+        <button type="button" class="btn-admin ghost" id="mCancel">Cancel</button>
+        <button type="submit" class="btn-admin primary" id="mSave">Save product</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="a-toast" id="toast" role="status"></div>
+
+  <script type="module">
+    import { adminReady } from "./js/admin-shell.js";
+    import { db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "./js/firebase.js";
+    import { ref, uploadBytes, getDownloadURL, getStorage } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDv425kiGK02A5r9HggmKK-o6vjxYHhkKM",
+      authDomain: "aura-8a9b5.firebaseapp.com",
+      projectId: "aura-8a9b5",
+      storageBucket: "aura-8a9b5.firebasestorage.app",
+      messagingSenderId: "661416561997",
+      appId: "1:661416561997:web:a1fb59fa32f816a8b73b04"
+    };
+    const app = initializeApp(firebaseConfig, "aura-admin-products");
+    const storage = getStorage(app);
+
+    const CATS = [
+      ["kurta-sets", "Kurta Sets"], ["anarkali", "Anarkali"], ["sarees", "Sarees"], ["half-saree", "Half Saree"],
+      ["lehenga", "Lehenga"], ["party-wear", "Party Wear"], ["office-wear", "Office Wear"], ["college-wear", "College Wear"],
+      ["maxi-dresses", "Maxi Dresses"], ["casual-dresses", "Casual Dresses"], ["floral-dresses", "Floral Dresses"], ["tops", "Tops"],
+      ["t-shirt", "T-shirts"], ["crop-tops", "Crop Tops"], ["leggings", "Leggings"], ["palazzo", "Palazzo"],
+      ["jeans", "Jeans & Denim"], ["skirts", "Skirts"], ["night-suits", "Night Suits"], ["shawls", "Shawls"]
+    ];
+
+    const SIZES = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "3XL", "4XL", "5XL", "Free Size"];
+    const BASE_COLORS = { Black: "#000", White: "#fff", Red: "#C0334F", Pink: "#E879A9", Rose: "#A3194A", Navy: "#1F2E5A", Green: "#2F6B3A", Yellow: "#F3D56B", Beige: "#E8D5B7", Maroon: "#6E0E33" };
+    let COLORS = { ...BASE_COLORS };
+    const LOW = 5;
+    const IMG_KEYS = ["front", "back", "side", "quality"];
+
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const catLabel = v => (CATS.find(c => c[0] === v) || [v, v])[1];
+
+    let products = [], editId = null, pickedColors = new Set(), tT;
+    let pickedRelated = new Set();
+
+    /* variantData: one entry per color, like a Meesho variant
+       { Pink: { price, mrp, sizes:[], sizePrices:{}, sizeStock:{}, sold:[], images:{front,back,side,quality} } } */
+    let variantData = {};
+    let currentSelectedColor = "";
+    const newV = () => ({ price: "", mrp: "", sizes: [], sizePrices: {}, sizeStock: {}, sold: [], images: { front: "", back: "", side: "", quality: "" } });
+    const getV = c => {
+      if (!c) return null;
+      const v = (variantData[c] = variantData[c] || newV());
+      if (!v.sizeStock) v.sizeStock = {};
+      if (!v.sizePrices) v.sizePrices = {};
+      if (!v.sizes) v.sizes = [];
+      if (!v.sold) v.sold = [];
+      return v;
+    };
+    const cur = () => getV(currentSelectedColor);
+
+    function toast(msg, kind = "ok") {
+      const t = $("toast");
+      t.className = "a-toast show " + kind;
+      t.innerHTML = `<i class="fa-solid ${kind === "ok" ? "fa-circle-check" : "fa-circle-exclamation"}"></i> ${esc(msg)}`;
+      clearTimeout(tT); tT = setTimeout(() => t.classList.remove("show"), 2600);
+    }
+
+    CATS.forEach(([v, l]) => {
+      $("fCat").insertAdjacentHTML("beforeend", `<option value="${v}">${l}</option>`);
+      $("fCategory").insertAdjacentHTML("beforeend", `<option value="${v}">${l}</option>`);
+    });
+
+    /* ---------- RELATED PRODUCTS ---------- */
+    function updateRelatedGrid() {
+      const others = products.filter(p => p.id !== editId);
+      $("relatedGrid").innerHTML = others.map(p => `
+      <label class="related-item">
+        <input type="checkbox" value="${esc(p.id)}" ${pickedRelated.has(p.id) ? "checked" : ""}>
+        <img src="${esc(p.image || "../images/partywear.webp")}" alt="" onerror="this.src='../images/partywear.webp'">
+        <span>${esc(p.name)}</span>
+      </label>
+    `).join("");
+      $("relatedGrid").onchange = e => {
+        const cb = e.target;
+        if (cb.type === "checkbox") cb.checked ? pickedRelated.add(cb.value) : pickedRelated.delete(cb.value);
+      };
+    }
+
+    /* ---------- PER-COLOR VARIANT UI ---------- */
+    const SLOTS = [
+      ["front", "imgFrontUrl", "imgFrontFile", "prevFront"],
+      ["back", "imgBackUrl", "imgBackFile", "prevBack"],
+      ["side", "imgSideUrl", "imgSideFile", "prevSide"],
+      ["quality", "imgQualityUrl", "imgQualityFile", "prevQuality"]
+    ];
+
+    const showPrev = (prevId, v) => {
+      $(prevId).innerHTML = v ? `<img src="${esc(v)}" style="width:100%;height:80px;object-fit:cover;border-radius:6px;border:1px solid #ddd" onerror="this.style.opacity=.2">` : "";
+    };
+
+    function updateStatus() {
+      const v = cur();
+      if (!v) { $("colorImgStatus").textContent = "Nothing added yet"; return; }
+      const n = IMG_KEYS.filter(k => v.images[k]).length;
+      $("colorImgStatus").textContent = `${n}/4 images · ${v.sizes.length} size${v.sizes.length === 1 ? "" : "s"}`;
+    }
+
+    function drawSizeChips() {
+      const v = cur();
+      $("sizeChips").innerHTML = SIZES.map(s => `<button type="button" class="chip-opt ${v && v.sizes.includes(s) ? "on" : ""}" data-size="${esc(s)}">${esc(s)}</button>`).join("");
+    }
+
+    function drawSizePriceGrid() {
+      const v = cur();
+      $("sizePriceGrid").innerHTML = !v ? "" : SIZES.filter(s => v.sizes.includes(s)).map(s => `
+      <div><label>${esc(s)} (₹)</label><input type="number" min="0" data-sp="${esc(s)}" placeholder="Default" value="${v.sizePrices[s] || ""}"></div>
+    `).join("");
+    }
+
+    /* ---------- SIZE-WISE STOCK ---------- */
+    const colorTotal = v => v.sizes.reduce((a, s) => a + (Number(v.sizeStock[s]) || 0), 0);
+
+    function updateStockTotals() {
+      const v = cur();
+      $("colorStockTotal").textContent = v ? colorTotal(v) : 0;
+      // product total = sum of every color (only once stock has been entered)
+      const has = [...pickedColors].some(c => Object.keys(getV(c).sizeStock).length);
+      if (has) $("fStock").value = [...pickedColors].reduce((a, c) => a + colorTotal(getV(c)), 0);
+    }
+
+    function drawSizeStockGrid() {
+      const v = cur();
+      $("sizeStockGrid").innerHTML = !v ? "" : SIZES.filter(s => v.sizes.includes(s)).map(s => `
+      <div><label>${esc(s)} (qty)</label><input type="number" min="0" data-ss="${esc(s)}" placeholder="0" value="${v.sizeStock[s] ?? ""}"></div>
+    `).join("");
+      updateStockTotals();
+    }
+
+    function drawCopySelect() {
+      const others = Array.from(pickedColors).filter(c => c !== currentSelectedColor);
+      $("vCopyFrom").innerHTML = others.length ? others.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join("") : `<option value="">No other color</option>`;
+    }
+
+    function renderVariant() {
+      const v = cur();
+      $("varBody").style.opacity = v ? "1" : "0.5";
+      $("varBody").style.pointerEvents = v ? "auto" : "none";
+      $("vPrice").value = v && v.price !== "" ? v.price : "";
+      $("vMrp").value = v && v.mrp !== "" ? v.mrp : "";
+      SLOTS.forEach(([key, urlId, fileId, prevId]) => {
+        const val = v ? v.images[key] : "";
+        $(urlId).value = val || "";
+        $(fileId).value = "";
+        showPrev(prevId, val || "");
+      });
+      drawSizeChips(); drawSizePriceGrid(); drawSizeStockGrid(); drawCopySelect(); updateStatus();
+    }
+
+    function syncColorSelect() {
+      const select = $("imgColorSelect");
+      const colorsArr = Array.from(pickedColors);
+      if (!colorsArr.length) {
+        select.innerHTML = `<option value="">-- Pick colors above first --</option>`;
+        currentSelectedColor = "";
+      } else {
+        if (!colorsArr.includes(currentSelectedColor)) currentSelectedColor = colorsArr[0];
+        colorsArr.forEach(getV);
+        select.innerHTML = colorsArr.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join("");
+        select.value = currentSelectedColor;
+      }
+      renderVariant();
+    }
+
+    $("imgColorSelect").addEventListener("change", e => { currentSelectedColor = e.target.value; renderVariant(); });
+
+    // price + MRP of the selected color (live)
+    $("vPrice").addEventListener("input", e => { const v = cur(); if (v) v.price = e.target.value === "" ? "" : Number(e.target.value); });
+    $("vMrp").addEventListener("input", e => { const v = cur(); if (v) v.mrp = e.target.value === "" ? "" : Number(e.target.value); });
+
+    // sizes of the selected color
+    $("sizeChips").addEventListener("click", e => {
+      const b = e.target.closest("[data-size]"), v = cur(); if (!b || !v) return;
+      const s = b.dataset.size;
+      if (v.sizes.includes(s)) {
+        v.sizes = v.sizes.filter(x => x !== s);
+        delete v.sizePrices[s];
+        delete v.sizeStock[s];
+      } else v.sizes.push(s);
+      drawSizeChips(); drawSizePriceGrid(); drawSizeStockGrid(); updateStatus();
+    });
+
+    // size-wise price (live)
+    $("sizePriceGrid").addEventListener("input", e => {
+      const el = e.target.closest("[data-sp]"), v = cur(); if (!el || !v) return;
+      const n = parseFloat(el.value);
+      if (n > 0) v.sizePrices[el.dataset.sp] = n; else delete v.sizePrices[el.dataset.sp];
+    });
+
+    // size-wise stock (live)
+    $("sizeStockGrid").addEventListener("input", e => {
+      const el = e.target.closest("[data-ss]"), v = cur(); if (!el || !v) return;
+      if (el.value === "") delete v.sizeStock[el.dataset.ss];
+      else v.sizeStock[el.dataset.ss] = Math.max(0, parseInt(el.value) || 0);
+      updateStockTotals();
+    });
+
+    // copy from another color (price, mrp, sizes, size prices — not images / stock)
+    $("vCopyBtn").addEventListener("click", () => {
+      const from = $("vCopyFrom").value, v = cur();
+      if (!from || !v || !variantData[from]) { toast("Pick another color to copy from", "err"); return; }
+      const s = variantData[from];
+      v.price = s.price; v.mrp = s.mrp; v.sizes = [...s.sizes]; v.sizePrices = { ...s.sizePrices }; v.sizeStock = {};
+      renderVariant();
+      toast(`Copied from ${from} — now enter stock for each size`);
+    });
+
+    // images (live + upload)
+    SLOTS.forEach(([key, urlId, fileId, prevId]) => {
+      $(urlId).addEventListener("input", () => {
+        const v = cur(); if (!v) return;
+        v.images[key] = $(urlId).value.trim();
+        showPrev(prevId, v.images[key]); updateStatus();
+      });
+      $(fileId).addEventListener("change", async e => {
+        const file = e.target.files[0]; if (!file) return;
+        const color = currentSelectedColor;
+        if (!color) { toast("Pick a color first", "err"); e.target.value = ""; return; }
+        if (file.size > 3 * 1024 * 1024) { toast("Image must be under 3MB", "err"); e.target.value = ""; return; }
+        $(prevId).innerHTML = `<small style="color:#a3194a">Uploading…</small>`;
+        try {
+          const r = ref(storage, `products/${Date.now()}_${key}_${Math.random().toString(36).slice(2, 8)}.jpg`);
+          const snap = await uploadBytes(r, file);
+          const url = await getDownloadURL(snap.ref);
+          getV(color).images[key] = url;
+          if (color === currentSelectedColor) { $(urlId).value = url; showPrev(prevId, url); }
+          updateStatus(); scheduleDraft();
+          toast(`${color} · ${key} image uploaded`);
+        } catch (err) {
+          console.error(err);
+          toast("Upload failed: " + (err.code || err.message), "err");
+          const v = cur(); showPrev(prevId, v ? v.images[key] : "");
+        }
+        e.target.value = "";
+      });
+    });
+
+    /* ---------- COLOR CHIPS ---------- */
+    function drawColorChips() {
+      $("colorChips").innerHTML = Object.entries(COLORS).map(([n, hex]) => `<button type="button" class="chip-opt color ${pickedColors.has(n) ? "on" : ""}" style="--sw:${esc(hex)}" data-color="${esc(n)}">${esc(n)}</button>`).join("");
+      syncColorSelect();
+    }
+
+    $("colorChips").addEventListener("click", e => {
+      const b = e.target.closest("[data-color]"); if (!b) return;
+      pickedColors.has(b.dataset.color) ? pickedColors.delete(b.dataset.color) : pickedColors.add(b.dataset.color);
+      drawColorChips();
+    });
+
+    $("addColorBtn").addEventListener("click", () => {
+      const name = $("newColorName").value.trim();
+      const hex = $("newColorHex").value;
+      if (!name) { toast("Enter color name", "err"); return; }
+      COLORS[name] = hex;
+      pickedColors.add(name);
+      $("newColorName").value = "";
+      $("newColorHex").value = "#FFC0CB";
+      drawColorChips();
+      toast(`Color "${name}" added!`);
+    });
+
+    /* ---------- LOAD + TABLE ---------- */
+    async function load() {
+      try {
+        products = (await getDocs(collection(db, "products"))).docs.map(d => ({ id: d.id, ...d.data() }));
+        products.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+      } catch (err) {
+        console.error(err);
+        toast("Could not load products", "err");
+        products = [];
+      }
+      render();
+    }
+
+    const stockBadge = n => n <= 0 ? `<span class="badge out-of-stock">Out of stock</span>` : n <= LOW ? `<span class="badge low-stock">Low stock</span>` : `<span class="badge in-stock">In stock</span>`;
+
+    const colorStockHtml = p => (p.colors || []).map(c => {
+      const n = p.variants?.[c]?.stock;
+      return `<div class="cs-row"><i style="background:${esc((p.colorHex || {})[c] || "#ccc")}"></i>${esc(c)}: <b>${n == null ? "—" : n}</b></div>`;
+    }).join("");
+
+    function render() {
+      const q = $("fSearch").value.trim().toLowerCase(), cat = $("fCat").value, st = $("fStatus").value;
+      const list = products.filter(p => (!q || (p.name || "").toLowerCase().includes(q)) && (!cat || p.category === cat) && (!st || (p.status || "active") === st));
+
+      $("sTotal").textContent = products.length;
+      $("sIn").textContent = products.filter(p => (p.stock ?? 0) > LOW).length;
+      $("sLow").textContent = products.filter(p => (p.stock ?? 0) > 0 && (p.stock ?? 0) <= LOW).length;
+      $("sOut").textContent = products.filter(p => (p.stock ?? 0) <= 0).length;
+
+      $("empty").hidden = list.length > 0;
+      $("tbody").innerHTML = list.map(p => {
+        const price = p.price ?? 0, mrp = p.mrp ?? 0, off = mrp > price ? Math.round((1 - price / mrp) * 100) : 0, status = p.status || "active";
+        const img = p.image || (Array.isArray(p.images) ? p.images[0] : "") || "";
+        const nColors = (p.colors || []).length;
+        return `<tr>
+        <td class="prod-thumb-cell"><img src="${esc(img)}" alt="" onerror="this.style.opacity=.2"></td>
+        <td><div class="prod-name">${esc(p.name || "Untitled")}</div><div class="prod-meta">${p.badge ? esc(p.badge) : ""}${p.isNew ? (p.badge ? " · " : "") + "In new collection" : ""}${nColors ? ((p.badge || p.isNew) ? " · " : "") + nColors + " color" + (nColors > 1 ? "s" : "") : ""}</div></td>
+        <td><span class="cat-pill">${esc(catLabel(p.category))}</span></td>
+        <td><div class="prod-price">₹${Number(price).toLocaleString("en-IN")}</div>${off ? `<div class="prod-mrp">₹${Number(mrp).toLocaleString("en-IN")}<b>${off}% off</b></div>` : ""}</td>
+        <td><span class="stock-num">${p.stock ?? 0}</span>${stockBadge(p.stock ?? 0)}${colorStockHtml(p)}</td>
+        <td>${(p.sizes || []).map(s => `<span class="size-chip">${esc(s)}</span>`).join("")}</td>
+        <td><span class="badge ${status === "active" ? "delivered" : "pending"}">${status === "active" ? "Active" : "Draft"}</span></td>
+        <td><div class="prod-actions-cell"><button class="icon-action" data-edit="${esc(p.id)}" aria-label="Edit"><i class="fa-solid fa-pen"></i></button><button class="icon-action danger" data-del="${esc(p.id)}" aria-label="Delete"><i class="fa-solid fa-trash"></i></button></div></td>
+      </tr>`;
+      }).join("");
+    }
+
+    ["fSearch", "fCat", "fStatus"].forEach(id => $(id).addEventListener("input", render));
+    $("tbody").addEventListener("click", e => {
+      const ed = e.target.closest("[data-edit]"), dl = e.target.closest("[data-del]");
+      if (ed) openModal(ed.dataset.edit);
+      if (dl) removeProduct(dl.dataset.del);
+    });
+
+    /* ---------- MODAL ---------- */
+    function openModal(id = null) {
+      editId = id;
+      const p = id ? products.find(x => x.id === id) : null;
+      $("mTitle").textContent = p ? "Edit product" : "Add product";
+
+      $("fName").value = p?.name || ""; $("fCategory").value = p?.category || ""; $("fState").value = p?.status || "active";
+      $("fPrice").value = p?.price ?? ""; $("fMrp").value = p?.mrp ?? ""; $("fStock").value = p?.stock ?? "";
+      $("fBadge").value = p?.badge || ""; $("fDesc").value = p?.description || ""; $("fNew").checked = !!p?.isNew;
+      $("fVideo").value = p?.video || "";
+      $("seoTitle").value = p?.seoTitle || ""; $("seoDesc").value = p?.seoDesc || ""; $("seoKeywords").value = p?.seoKeywords || "";
+
+      $("hlFit").value = p?.fit || ""; $("hlFabric").value = p?.fabric || ""; $("hlNeck").value = p?.neck || "";
+      $("hlSleeve").value = p?.sleeveStyling || ""; $("hlSleeveLen").value = p?.sleeveLength || ""; $("hlTech").value = p?.technique || "";
+
+      COLORS = { ...BASE_COLORS };
+      if (p?.colorHex) Object.assign(COLORS, p.colorHex);
+      pickedColors = new Set(p?.colors || []);
+      pickedRelated = new Set(p?.relatedProducts || []);
+      variantData = {};
+      currentSelectedColor = "";
+
+      if (p) {
+        // legacy product with no colors: keep its images under a "Default" color
+        if (!pickedColors.size) { pickedColors.add("Default"); COLORS.Default = "#cccccc"; }
+        const oldImgs = Array.isArray(p.images) && p.images.length ? p.images : (p.image ? [p.image] : []);
+        Array.from(pickedColors).forEach((c, idx) => {
+          const v = newV(), sv = p.variants?.[c];
+          if (sv) {
+            v.price = sv.price ?? ""; v.mrp = sv.mrp ?? "";
+            v.sizes = [...(sv.sizes || [])]; v.sizePrices = { ...(sv.sizePrices || {}) };
+            v.sizeStock = { ...(sv.sizeStock || {}) }; v.sold = [...(sv.soldSizes || [])];
+            Object.assign(v.images, sv.images || {});
+          } else {
+            // older save format: sizes/prices were shared by every color
+            v.sizes = [...(p.sizes || [])]; v.sizePrices = { ...(p.sizePrices || {}) };
+            v.sold = [...((p.colorSold && p.colorSold[c]) || p.soldSizes || [])];
+            const ci = p.colorImages?.[c];
+            if (ci) Object.assign(v.images, ci);
+            else if (idx === 0 && oldImgs.length) v.images = { front: oldImgs[0] || "", back: oldImgs[1] || "", side: oldImgs[2] || "", quality: oldImgs[3] || "" };
+          }
+          variantData[c] = v;
+        });
+      }
+
+      $("newColorName").value = "";
+      $("newColorHex").value = "#FFC0CB";
+      $("mMsg").textContent = "";
+      drawColorChips();
+      updateRelatedGrid();
+      $("modal").classList.add("open");
+      setTimeout(() => $("fName").focus(), 60);
+    }
+    const closeModal = () => { $("modal").classList.remove("open"); clearDraft(); };
+
+    /* ---------- NEVER LOSE WHAT YOU TYPED ---------- */
+    const DRAFT_KEY = "aura_admin_product_draft";
+    const DRAFT_FIELDS = ["fName", "fCategory", "fState", "fPrice", "fMrp", "fStock", "fBadge", "fVideo", "fDesc",
+      "hlFit", "hlFabric", "hlNeck", "hlSleeve", "hlSleeveLen", "hlTech", "seoTitle", "seoDesc", "seoKeywords"];
+    const isOpen = () => $("modal").classList.contains("open");
+    let draftT;
+
+    function saveDraft() {
+      if (!isOpen()) return;
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({
+          editId, f: Object.fromEntries(DRAFT_FIELDS.map(i => [i, $(i).value])), isNew: $("fNew").checked,
+          colors: [...pickedColors], colorHex: COLORS, related: [...pickedRelated],
+          variants: variantData, cur: currentSelectedColor
+        }));
+      } catch (e) { /* storage full: ignore */ }
+    }
+    function scheduleDraft() { clearTimeout(draftT); draftT = setTimeout(saveDraft, 250); }
+    function clearDraft() { clearTimeout(draftT); try { localStorage.removeItem(DRAFT_KEY); } catch (e) { } }
+
+    function restoreDraft() {
+      let d = null;
+      try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); } catch (e) { }
+      if (!d) return;
+      editId = d.editId || null;
+      $("mTitle").textContent = editId ? "Edit product" : "Add product";
+      DRAFT_FIELDS.forEach(i => { $(i).value = d.f?.[i] ?? ""; });
+      $("fNew").checked = !!d.isNew;
+      COLORS = { ...BASE_COLORS, ...(d.colorHex || {}) };
+      pickedColors = new Set(d.colors || []);
+      pickedRelated = new Set(d.related || []);
+      variantData = d.variants || {};
+      Object.keys(variantData).forEach(c => getV(c)); // make sure old drafts get a sizeStock object
+      currentSelectedColor = d.cur || "";
+      $("mMsg").textContent = "";
+      drawColorChips();
+      updateRelatedGrid();
+      $("modal").classList.add("open");
+      toast("Your unsaved product was restored");
+    }
+
+    // any typing / clicking / uploading inside the form updates the draft
+    ["input", "change", "click"].forEach(ev => $("pForm").addEventListener(ev, scheduleDraft));
+
+    // warn before refresh / closing the tab while the form is open
+    window.addEventListener("beforeunload", e => {
+      if (isOpen() && ($("fName").value.trim() || pickedColors.size)) { saveDraft(); e.preventDefault(); e.returnValue = ""; }
+    });
+
+    // Enter key inside a field must NOT submit (it was saving + closing the form by accident)
+    $("pForm").addEventListener("keydown", e => {
+      if (e.key === "Enter" && e.target.tagName === "INPUT" && e.target.type !== "submit") e.preventDefault();
+    });
+
+    // close only with the X / Cancel buttons (no outside-click, no Escape)
+    const askClose = () => {
+      const dirty = $("fName").value.trim() || pickedColors.size;
+      if (dirty && !confirm("Close without saving? What you entered will be discarded.")) return;
+      closeModal();
+    };
+
+    $("addBtn").addEventListener("click", () => { clearDraft(); openModal(); });
+    $("mClose").addEventListener("click", askClose);
+    $("mCancel").addEventListener("click", askClose);
+
+    /* ---------- SAVE ---------- */
+    $("pForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const err = txt => { $("mMsg").dataset.kind = "error"; $("mMsg").textContent = txt; };
+      const name = $("fName").value.trim(), category = $("fCategory").value;
+      const price = Number($("fPrice").value), mrp = Number($("fMrp").value) || price;
+
+      if (!name) return err("Enter the product name.");
+      if (!category) return err("Choose a category.");
+      if (!(price > 0)) return err("Enter a default selling price above 0.");
+      if (mrp < price) return err("Default MRP can't be lower than the selling price.");
+      if (!pickedColors.size) return err("Pick at least one color.");
+
+      // build variants (one per color)
+      const variants = {}, colorImages = {}, colorHex = {}, colorSold = {};
+      const unionSizes = new Set();
+      let totalStock = 0; const colorStock = {};
+      for (const color of pickedColors) {
+        const v = getV(color);
+        const sizes = SIZES.filter(s => v.sizes.includes(s));
+        if (!sizes.length) { currentSelectedColor = color; $("imgColorSelect").value = color; renderVariant(); return err(`"${color}": pick at least one size.`); }
+        const imgs = { front: v.images.front || "", back: v.images.back || "", side: v.images.side || "", quality: v.images.quality || "" };
+        if (!IMG_KEYS.some(k => imgs[k])) { currentSelectedColor = color; $("imgColorSelect").value = color; renderVariant(); return err(`"${color}": add at least one image (front recommended).`); }
+        const vp = Number(v.price) > 0 ? Number(v.price) : price;
+        const vm = Number(v.mrp) > 0 ? Number(v.mrp) : Math.max(mrp, vp);
+        if (vm < vp) { currentSelectedColor = color; $("imgColorSelect").value = color; renderVariant(); return err(`"${color}": MRP can't be lower than the selling price.`); }
+        const sizePrices = {};
+        sizes.forEach(s => { if (v.sizePrices[s] > 0) sizePrices[s] = Number(v.sizePrices[s]); });
+
+        // size-wise stock (0 = sold out)
+        const sizeStock = {};
+        for (const s of sizes) {
+          const n = v.sizeStock[s];
+          if (n === undefined || n === "" || isNaN(n)) {
+            currentSelectedColor = color; $("imgColorSelect").value = color; renderVariant();
+            return err(`"${color}": size ${s} ku stock enter pannunga (0 = sold out).`);
+          }
+          sizeStock[s] = Math.max(0, Math.floor(Number(n)));
+        }
+        const soldSizes = sizes.filter(s => sizeStock[s] <= 0);
+        const cTotal = sizes.reduce((a, s) => a + sizeStock[s], 0);
+        totalStock += cTotal; colorStock[color] = cTotal;
+
+        variants[color] = { price: vp, mrp: vm, sizes, sizePrices, soldSizes, sizeStock, stock: cTotal, images: imgs };
+        colorImages[color] = imgs;
+        colorSold[color] = soldSizes;
+        colorHex[color] = COLORS[color] || "#cccccc";
+        sizes.forEach(s => unionSizes.add(s));
+      }
+
+      const btn = $("mSave");
+      btn.disabled = true; btn.textContent = "Saving…";
+
+      try {
+        const colorsArr = Array.from(pickedColors);
+        const first = variants[colorsArr[0]];
+        const f0 = first.images;
+        const mainImageUrl = f0.front || f0.back || f0.side || f0.quality || "../images/partywear.webp";
+
+        const data = {
+          name, category, price, mrp, stock: totalStock, colorStock, status: $("fState").value, badge: $("fBadge").value || "",
+          image: mainImageUrl,
+          colors: colorsArr,
+          colorHex,
+          variants,                          // per-color price / mrp / sizes / size prices / size stock / images
+          colorImages,                       // kept for the rest of the site
+          colorSold,
+          images: IMG_KEYS.map(k => f0[k]).filter(Boolean),
+          sizes: SIZES.filter(s => unionSizes.has(s)),   // all sizes across colors (for table / filters)
+          sizePrices: first.sizePrices,
+          soldSizes: [],
+          video: $("fVideo").value.trim(),
+          description: $("fDesc").value.trim(), isNew: $("fNew").checked,
+          seoTitle: $("seoTitle").value.trim(),
+          seoDesc: $("seoDesc").value.trim(),
+          seoKeywords: $("seoKeywords").value.trim(),
+          relatedProducts: Array.from(pickedRelated),
+          fit: $("hlFit").value.trim(), fabric: $("hlFabric").value.trim(), neck: $("hlNeck").value.trim(),
+          sleeveStyling: $("hlSleeve").value.trim(), sleeveLength: $("hlSleeveLen").value.trim(), technique: $("hlTech").value.trim()
+        };
+
+        if (editId) {
+          await updateDoc(doc(db, "products", editId), { ...data, updatedAt: serverTimestamp() });
+          toast("Product updated");
+        } else {
+          await addDoc(collection(db, "products"), { ...data, createdAt: serverTimestamp() });
+          toast("Product added");
+        }
+        closeModal();
+        await load();
+      } catch (er) {
+        console.error(er);
+        err("Couldn't save. " + (er?.message || "Please try again."));
+      } finally {
+        btn.disabled = false; btn.textContent = "Save product";
+      }
+    });
+
+    async function removeProduct(id) {
+      const p = products.find(x => x.id === id);
+      if (!p || !confirm(`Delete "${p.name}"? This can't be undone.`)) return;
+      try {
+        await deleteDoc(doc(db, "products", id));
+        toast("Product deleted");
+        await load();
+      } catch (err) { toast("Couldn't delete the product", "err"); }
+    }
+
+    adminReady.then(() => load()).then(restoreDraft);
+  </script>
+</body>
+
+</html>

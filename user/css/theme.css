@@ -1,0 +1,489 @@
+/* ===== AURA — theme layer (Light = default, Dark = html[data-theme="dark"]) =====
+   Load AFTER css/style.css on EVERY page.
+   It only re-maps colours, so every page using the AURA variables switches theme.
+   Page-specific blocks at the bottom fix pages that have hard-coded inline colours. */
+
+:root{
+  color-scheme:light;
+  --surface:#fff; --surface-2:#FFFDF9;
+  --nav-glass:rgba(255,248,241,.78); --menu-glass:rgba(255,248,241,.97);
+  --on-accent:#fff;
+}
+
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --ivory:#150B10; --ivory-2:#1D1017; --cream:#1B0F15;
+  --pink:#EE6A93; --rose:#D2467A; --rose-dark:#8E1A47;
+  --rose-soft:rgba(238,106,147,.22); --blush:#2A1520; --gold:#D9B77B; --hm-gold:#E2C089;
+  --ink:#F7EBEF; --muted:#BBA1AA; --line:rgba(255,255,255,.13);
+  --surface:#22121B; --surface-2:#2A1722;
+  --nav-glass:rgba(21,11,16,.8); --menu-glass:rgba(21,11,16,.97);
+  --shadow-sm:0 4px 14px rgba(0,0,0,.45); --shadow:0 18px 50px -14px rgba(0,0,0,.7); --shadow-lg:0 40px 90px -24px rgba(0,0,0,.85);
+}
+
+/* smooth cross-fade while toggling (class removed again by theme.js) */
+html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{
+  transition:background-color .35s ease,color .35s ease,border-color .35s ease,fill .35s ease!important}
+
+/* ---------- toggle button ---------- */
+.theme-btn{display:inline-flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:0;color:inherit}
+.theme-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.theme-btn:hover svg{transform:rotate(35deg)}
+.theme-fab{position:fixed;right:18px;bottom:18px;z-index:90;width:46px;height:46px;border-radius:50%;background:var(--surface);color:var(--ink);box-shadow:var(--shadow);border:1px solid var(--line)}
+
+/* ---------- shared surfaces (nav stays SOLID on every page — no glass override) ---------- */
+html[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#4a2434}
+html[data-theme="dark"] .brand img,html[data-theme="dark"] .loader-in img{filter:brightness(1.45) saturate(1.1)}
+.acct .menu,.chips a,.chip,.review,.sbar,input:not([type=radio]):not([type=checkbox]),textarea,select{background:var(--surface)}
+.btn-light{background:var(--surface)}
+html[data-theme="dark"] .glass{background:rgba(34,18,27,.72);color:var(--ink)}
+html[data-theme="dark"] .pheart,html[data-theme="dark"] .col-card-wish{color:#2B1B21}
+html[data-theme="dark"] .msg.err{background:#40161f;color:#ffb3c2}
+html[data-theme="dark"] .msg.ok{background:#12301f;color:#9be3b6}
+html[data-theme="dark"] .toast{background:#F7EBEF;color:#2B1B21}
+html[data-theme="dark"] .toast.err{background:var(--rose-dark);color:#fff}
+html[data-theme="dark"] .modal-card,html[data-theme="dark"] .drawer{background:var(--cream)}
+html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:#8f7882}
+html[data-theme="dark"] .footer{background:radial-gradient(80vw 40vw at 80% 0,rgba(210,70,122,.25),transparent 60%),linear-gradient(180deg,#1b0b13,#0b0408)}
+html[data-theme="dark"] .skel .pmedia,html[data-theme="dark"] .skel .pinfo i,html[data-theme="dark"] .hy-skel,html[data-theme="dark"] .col-skeleton{
+  background:linear-gradient(100deg,#2a1722 30%,#3a2230 50%,#2a1722 70%);background-size:300% 100%}
+html[data-theme="dark"] .col-card-soldout,html[data-theme="dark"] .cl-sizes{background:rgba(34,18,27,.9)}
+html[data-theme="dark"] .cd-track{background:#3a2630}
+html[data-theme="dark"] .cd-ms{border-color:#3a2630}
+
+/* ---------- account menu (index, shop, wishlist, product, track) ---------- */
+html[data-theme="dark"] .acct .menu{background:var(--surface);border-color:var(--line)}
+html[data-theme="dark"] .acct .who{border-color:var(--line)}
+html[data-theme="dark"] .acct .who b{color:var(--ink)}
+html[data-theme="dark"] .acct .who small{color:var(--muted)}
+html[data-theme="dark"] .acct .menu a,html[data-theme="dark"] .acct .menu>button{color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] .acct .menu a:hover,html[data-theme="dark"] .acct .menu>button:hover{background:var(--blush);color:var(--pink)}
+html[data-theme="dark"] .acct .avatar{background:var(--surface);color:var(--pink);border-color:var(--line)}
+
+/* ---------- login popups (OTP + email) ---------- */
+html[data-theme="dark"] .aura-login-card,html[data-theme="dark"] .aura-auto-login-card{background:var(--cream);color:var(--ink)}
+html[data-theme="dark"] .aura-login-body h2,html[data-theme="dark"] .aura-auto-login-body h2,
+html[data-theme="dark"] .aura-login-field>span,html[data-theme="dark"] .aura-auto-login-field>span{color:var(--ink)}
+html[data-theme="dark"] .aura-login-h2 em,html[data-theme="dark"] .aura-login-body h2 em,html[data-theme="dark"] .aura-auto-login-body h2 em{color:var(--pink)}
+html[data-theme="dark"] .aura-login-sub,html[data-theme="dark"] .aura-login-switch,html[data-theme="dark"] .aura-login-remember,
+html[data-theme="dark"] .aura-auto-login-sub,html[data-theme="dark"] .aura-auto-login-switch,html[data-theme="dark"] .aura-auto-login-remember,
+html[data-theme="dark"] .aura-login-eyebrow,html[data-theme="dark"] .aura-auto-login-eyebrow{color:var(--muted)}
+html[data-theme="dark"] .aura-login-field input,html[data-theme="dark"] .aura-auto-login-field input{background:var(--surface);border-color:var(--line);color:var(--ink)}
+html[data-theme="dark"] .aura-login-x,html[data-theme="dark"] .aura-auto-login-close{background:var(--surface);color:var(--ink)}
+html[data-theme="dark"] .aura-login-switch a,html[data-theme="dark"] .aura-auto-login-switch a{color:var(--pink)}
+
+/* ---------- wishlist page ---------- */
+html[data-theme="dark"] [style*="fff9f0" i]{background-color:var(--ivory)!important}
+html[data-theme="dark"] .wishlist-hero{background-color:var(--ivory)}
+html[data-theme="dark"] .wishlist-hero .title{color:var(--ink)}
+html[data-theme="dark"] .wishlist-hero .title em{color:var(--pink)}
+html[data-theme="dark"] .wishlist-hero .eyebrow{color:var(--muted)}
+html[data-theme="dark"] .wishlist-card{background:var(--surface)}
+html[data-theme="dark"] .wishlist-card .card-info h3,html[data-theme="dark"] .empty-wishlist h3{color:var(--ink)}
+html[data-theme="dark"] .wishlist-card .card-info p{color:var(--pink)}
+html[data-theme="dark"] .wishlist-card .remove-btn{background:var(--surface)}
+html[data-theme="dark"] .empty-wishlist p{color:var(--muted)}
+
+/* ---------- track order page ---------- */
+html[data-theme="dark"] .track-hero{background:linear-gradient(160deg,var(--ivory-2),var(--ivory))}
+html[data-theme="dark"] .track-hero h1,html[data-theme="dark"] .track-card h2,html[data-theme="dark"] .track-result h3,
+html[data-theme="dark"] .track-field>span,html[data-theme="dark"] .track-steps li b,html[data-theme="dark"] .track-steps li.done{color:var(--ink)}
+html[data-theme="dark"] .track-hero h1 em,html[data-theme="dark"] .track-hero .eyebrow{color:var(--pink)}
+html[data-theme="dark"] .track-hero p,html[data-theme="dark"] .track-card .hint,html[data-theme="dark"] .order-meta,html[data-theme="dark"] .track-steps li{color:var(--muted)}
+html[data-theme="dark"] .track-card{background:var(--surface);border-color:var(--line)}
+html[data-theme="dark"] .track-field input{background:var(--surface-2);border-color:var(--line);color:var(--ink)}
+html[data-theme="dark"] .track-steps::before{background:var(--line)}
+html[data-theme="dark"] .track-steps li::before{background:var(--surface);border-color:var(--line)}
+html[data-theme="dark"] .track-steps li.done::before{background:var(--rose);border-color:var(--rose)}
+
+/* ---------- product page ---------- */
+html[data-theme="dark"] .pd-page{--pd-ink:#f4e9ed;--pd-soft:#2a1a21;--pd-line:#4a3640;--pd-muted:#b7a3ab;--pd-bg:#1c1317;--pd-pink-box:#2a1722;--pd-strike:#7a6a70;--pd-accent:#e0457b}
+html[data-theme="dark"] .pd-gift{background:var(--surface);border-color:var(--line)}
+html[data-theme="dark"] .pd-size.sel,html[data-theme="dark"] .pd-btn:not(.primary):hover:not(:disabled){color:#150B10}
+html[data-theme="dark"] .pd-urgency-bar{background:#3a2630}
+html[data-theme="dark"] .pd-img,html[data-theme="dark"] .pd-card-media{background:var(--surface-2)}
+
+/* ---------- user panel (css/panel.css) ---------- */
+.side{background:var(--surface)}
+html[data-theme="dark"] .side{background:rgba(34,18,27,.8)}
+.stat,.card,.order,.empty-state,.tbl-wrap{background:var(--surface)}
+html[data-theme="dark"] tbody tr:hover{background:#2a1722}
+html[data-theme="dark"] .a-top{background:rgba(21,11,16,.85)}
+html[data-theme="dark"] .sw i{background:#5a4650}
+html[data-theme="dark"] .cancelled-note{background:#40161f;color:#ffb3c2}
+html[data-theme="dark"] .s-Placed{background:#3c2f10;color:#ffd98a}
+html[data-theme="dark"] .s-Packed{background:#2c2552;color:#cfc4ff}
+html[data-theme="dark"] .s-Shipped{background:#14304f;color:#a9d0ff}
+html[data-theme="dark"] .s-Delivered{background:#12301f;color:#9be3b6}
+html[data-theme="dark"] .s-Cancelled{background:#40161f;color:#ffb3c2}
+
+/* ---------- FAQ (dark) ---------- */
+html[data-theme="dark"] .aura-faq-section{background:var(--ivory)}
+html[data-theme="dark"] .aura-faq-head .eyebrow{color:var(--pink)}
+html[data-theme="dark"] .aura-faq-head .title{color:var(--ink)}
+html[data-theme="dark"] .aura-faq-head .title em{color:var(--pink)}
+html[data-theme="dark"] .aura-faq-head p{color:var(--muted)}
+html[data-theme="dark"] .aura-faq-item{background:var(--surface);border-color:var(--line);box-shadow:none}
+html[data-theme="dark"] .aura-faq-item.open{border-color:var(--pink);box-shadow:0 12px 28px -16px rgba(238,106,147,.35)}
+html[data-theme="dark"] .aura-faq-q{color:var(--ink)}
+html[data-theme="dark"] .aura-faq-q:hover{color:var(--pink)}
+html[data-theme="dark"] .aura-faq-q i{background:var(--blush);color:var(--pink)}
+html[data-theme="dark"] .aura-faq-item.open .aura-faq-q i{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff}
+html[data-theme="dark"] .aura-faq-a p{color:var(--muted)}
+html[data-theme="dark"] .aura-faq-a a{color:var(--pink)}
+html[data-theme="dark"] .aura-faq-foot p{color:var(--ink)}
+
+/* ---------- REVIEWS (index) – inline styles ah override panna !important ---------- */
+html[data-theme="dark"] .aura-reviews-section{background:var(--ivory)!important}
+html[data-theme="dark"] .aura-reviews-section .title{color:var(--ink)!important}
+html[data-theme="dark"] .aura-reviews-section .title em{color:var(--pink)!important}
+html[data-theme="dark"] .aura-reviews-section .eyebrow{color:var(--pink)!important}
+html[data-theme="dark"] .aura-reviews-section .head span[style*="font-weight: 500"]{color:var(--ink)!important}
+
+/* cards */
+html[data-theme="dark"] .rev-card{background:var(--surface)!important;border-color:var(--line)!important;box-shadow:none!important}
+html[data-theme="dark"] .rev-img{background:var(--surface-2)!important}
+html[data-theme="dark"] .rev-body p{color:var(--muted)!important}
+html[data-theme="dark"] .rev-body b{color:var(--ink)!important}
+html[data-theme="dark"] .rev-body small{color:var(--muted)!important}
+
+/* prev / next arrows */
+html[data-theme="dark"] .rev-nav{background:var(--surface)!important;border-color:var(--line)!important;color:var(--pink)!important}
+
+/* "Loading reviews..." text */
+html[data-theme="dark"] #reviewsTrack>p{color:var(--muted)!important}
+
+/* Write a Review modal inputs */
+html[data-theme="dark"] #reviewForm input,
+html[data-theme="dark"] #reviewForm textarea{background:var(--surface-2)!important;border-color:var(--line)!important;color:var(--ink)!important}
+html[data-theme="dark"] #reviewForm small{color:var(--muted)!important}
+html[data-theme="dark"] #reviewModalOverlay h2{color:var(--ink)!important}
+html[data-theme="dark"] #reviewModalOverlay h2 em{color:var(--pink)!important}
+
+
+/* =====================================================
+   INFO PAGES (privacy-policy, terms, contact, shipping, returns...)
+   ===================================================== */
+html[data-theme="dark"] body.ip-page{background:var(--ivory);color:var(--ink)}
+
+/* hero */
+html[data-theme="dark"] .ip-hero{background:linear-gradient(160deg,var(--ivory-2),var(--ivory))}
+html[data-theme="dark"] .ip-hero h1{color:var(--ink)}
+html[data-theme="dark"] .ip-hero h1 em{color:var(--pink)}
+html[data-theme="dark"] .ip-hero p{color:var(--muted)}
+html[data-theme="dark"] .ip-eyebrow{color:var(--pink)}
+html[data-theme="dark"] .ip-crumb,
+html[data-theme="dark"] .ip-crumb a{color:var(--muted)}
+html[data-theme="dark"] .ip-crumb a:hover{color:var(--pink)}
+
+/* content card (privacy / terms text) */
+html[data-theme="dark"] .ip-card{background:var(--surface);border-color:var(--line);color:var(--ink);box-shadow:none}
+html[data-theme="dark"] .ip-card h2,
+html[data-theme="dark"] .ip-card h3,
+html[data-theme="dark"] .ip-card b{color:var(--ink)}
+html[data-theme="dark"] .ip-card p,
+html[data-theme="dark"] .ip-card li{color:var(--muted)}
+html[data-theme="dark"] .ip-card a{color:var(--pink)}
+html[data-theme="dark"] .ip-card hr{border-color:var(--line)}
+
+/* button */
+html[data-theme="dark"] .ip-btn{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff}
+
+/* contact: left info cards */
+html[data-theme="dark"] .ct-card{background:var(--surface);border-color:var(--line);box-shadow:none}
+html[data-theme="dark"] .ct-card small{color:var(--muted)}
+html[data-theme="dark"] .ct-card b{color:var(--ink)}
+html[data-theme="dark"] a.ct-card:hover{border-color:var(--pink)}
+
+/* contact: form */
+html[data-theme="dark"] .ct-field>span{color:var(--ink)}
+html[data-theme="dark"] .ct-field input,
+html[data-theme="dark"] .ct-field textarea{background:var(--surface-2);border-color:var(--line);color:var(--ink)}
+html[data-theme="dark"] .ct-field input:focus,
+html[data-theme="dark"] .ct-field textarea:focus{border-color:var(--pink)}
+html[data-theme="dark"] .ct-msg{color:#ffb3c2}
+html[data-theme="dark"] .ct-msg.ok{color:#9be3b6}
+
+/* contact: "Connect with us" block (inline styles -> !important) */
+html[data-theme="dark"] .ip-wrap>div[style*="text-align: center"]>span{color:var(--pink)!important}
+html[data-theme="dark"] .ip-wrap>div[style*="text-align: center"]>h3{color:var(--ink)!important}
+html[data-theme="dark"] .ip-wrap>div[style*="text-align: center"]>h3 em{color:var(--pink)!important}
+html[data-theme="dark"] .ip-wrap>div[style*="text-align: center"]>p{color:var(--muted)!important}
+
+/* =====================================================
+   ORDER HISTORY / MY ACCOUNT (order-history.html)
+   ===================================================== */
+
+/* left sidebar */
+html[data-theme="dark"] .oh-side,
+html[data-theme="dark"] .oh-card{background:var(--surface);border-color:var(--line);box-shadow:none}
+html[data-theme="dark"] .oh-usercard{border-color:var(--line);background:var(--surface-2)}
+html[data-theme="dark"] .oh-user{border-bottom-color:var(--line)}
+html[data-theme="dark"] .oh-user-info h3,
+html[data-theme="dark"] .oh-side-title,
+html[data-theme="dark"] .oh-count b{color:var(--ink)}
+html[data-theme="dark"] .oh-user-info small,
+html[data-theme="dark"] .oh-count small,
+html[data-theme="dark"] .oh-nav .t small{color:var(--muted)}
+html[data-theme="dark"] .oh-count{background:var(--surface);border-color:var(--line)}
+
+/* nav list */
+html[data-theme="dark"] .oh-nav{border-top-color:var(--line)}
+html[data-theme="dark"] .oh-nav a{color:var(--ink);border-bottom-color:var(--line)}
+html[data-theme="dark"] .oh-nav a:hover{background:var(--blush)}
+html[data-theme="dark"] .oh-nav a.active{background:var(--blush)}
+html[data-theme="dark"] .oh-nav a>i.ic,
+html[data-theme="dark"] .oh-nav a>i.ch{color:var(--ink)}
+html[data-theme="dark"] .oh-nav a.active>i.ic{color:var(--pink)}
+html[data-theme="dark"] .oh-logout{color:#ff8fa8}
+html[data-theme="dark"] .oh-logout:hover{background:#40161f}
+
+/* main card */
+html[data-theme="dark"] .oh-card h2,
+html[data-theme="dark"] .oh-sub{color:var(--ink)}
+html[data-theme="dark"] .oh-more{color:var(--pink)}
+
+/* empty + address boxes */
+html[data-theme="dark"] .oh-empty,
+html[data-theme="dark"] .oh-addr{background:var(--surface-2);border-color:var(--line)}
+html[data-theme="dark"] .oh-empty-img,
+html[data-theme="dark"] .oh-addr-img{background:var(--surface);color:var(--muted)}
+html[data-theme="dark"] .oh-empty-body h3,
+html[data-theme="dark"] .oh-addr-body h3{color:var(--ink)}
+html[data-theme="dark"] .oh-empty-body p,
+html[data-theme="dark"] .oh-addr-body p{color:var(--muted)}
+html[data-theme="dark"] .oh-empty-body a,
+html[data-theme="dark"] .oh-addr-body a{color:var(--pink)}
+
+/* order rows */
+html[data-theme="dark"] .oh-order{background:var(--surface-2);border-color:var(--line)}
+html[data-theme="dark"] .oh-order:hover{box-shadow:0 12px 30px -18px rgba(238,106,147,.35)}
+html[data-theme="dark"] .oh-order-img{background:var(--surface)}
+html[data-theme="dark"] .oh-order-info b{color:var(--ink)}
+html[data-theme="dark"] .oh-order-info small,
+html[data-theme="dark"] .oh-order-price small{color:var(--muted)}
+html[data-theme="dark"] .oh-order-price{color:var(--pink);border-top-color:var(--line)}
+
+/* status badges */
+html[data-theme="dark"] .oh-badge{background:#40161f;color:#ffb3c2}
+html[data-theme="dark"] .oh-badge.delivered{background:#12301f;color:#9be3b6}
+html[data-theme="dark"] .oh-badge.shipped{background:#14304f;color:#a9d0ff}
+html[data-theme="dark"] .oh-badge.cancelled{background:#40161f;color:#ffb3c2}
+html[data-theme="dark"] .oh-badge.return_requested{background:#3c2f10;color:#ffd98a}
+
+/* return button */
+html[data-theme="dark"] .btn-return{background:transparent;color:var(--pink);border-color:var(--pink)}
+html[data-theme="dark"] .btn-return:hover{background:var(--rose);color:#fff;border-color:var(--rose)}
+html[data-theme="dark"] .return-closed{color:#ff8fa8}
+
+/* account dropdown (page inline CSS la "cur" link) */
+html[data-theme="dark"] .acct .menu a.cur{background:var(--blush);color:var(--pink)}
+
+/* return modal (inline styles -> !important) */
+html[data-theme="dark"] #returnModal>div{background:var(--surface)!important}
+html[data-theme="dark"] #returnModal h3{color:var(--ink)!important}
+html[data-theme="dark"] #returnModal p{color:var(--muted)!important}
+html[data-theme="dark"] #returnReason{background:var(--surface-2)!important;border-color:var(--line)!important;color:var(--ink)!important}
+html[data-theme="dark"] #cancelReturnBtn{background:transparent!important;border-color:var(--line)!important;color:var(--ink)!important}
+
+/* =====================================================
+   CHECKOUT POPUP (checkout.js -> .ck-*)
+   ===================================================== */
+html[data-theme="dark"] .ck-box,
+html[data-theme="dark"] .ck-body,
+html[data-theme="dark"] .ck-foot{background:var(--cream);color:var(--ink)}
+html[data-theme="dark"] .ck-head{background:var(--surface);border-color:var(--line);color:var(--ink)}
+html[data-theme="dark"] .ck-logo{filter:brightness(1.45) saturate(1.1)}
+html[data-theme="dark"] .ck-back,
+html[data-theme="dark"] .ck-sum,
+html[data-theme="dark"] .ck-sum b,
+html[data-theme="dark"] .ck-sum small{color:var(--ink)}
+html[data-theme="dark"] .ck-x{background:var(--surface);color:var(--ink)}
+html[data-theme="dark"] .ck-dim{background:rgba(0,0,0,.6)}
+
+/* item list under header */
+html[data-theme="dark"] .ck-items{background:var(--surface);border-color:var(--line)}
+html[data-theme="dark"] .ck-it{border-color:var(--line)}
+html[data-theme="dark"] .ck-it b,
+html[data-theme="dark"] .ck-it span{color:var(--ink)}
+html[data-theme="dark"] .ck-it small{color:var(--muted)}
+
+/* cards */
+html[data-theme="dark"] .ck-card{background:var(--surface);border-color:var(--line);box-shadow:none;color:var(--ink)}
+html[data-theme="dark"] .ck-sec,
+html[data-theme="dark"] .ck-line b{color:var(--ink)}
+html[data-theme="dark"] .ck-line svg,
+html[data-theme="dark"] .ck-cp svg,
+html[data-theme="dark"] .ck-gift svg,
+html[data-theme="dark"] .ck-del>svg{color:var(--ink)}
+html[data-theme="dark"] .ck-gbanner{background:var(--blush);color:var(--pink)}
+
+/* coupon + gift */
+html[data-theme="dark"] .ck-cp{background:var(--surface-2);border-color:var(--line)}
+html[data-theme="dark"] .ck-cp input{background:transparent;color:var(--ink)}
+html[data-theme="dark"] .ck-cp input::placeholder{color:var(--muted)}
+html[data-theme="dark"] .ck-cp button,
+html[data-theme="dark"] .ck-gift button,
+html[data-theme="dark"] .ck-ok button{color:var(--pink)}
+html[data-theme="dark"] .ck-ok{background:#12301f;color:#9be3b6;border-color:transparent}
+html[data-theme="dark"] .ck-gift{color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] .ck-err,
+html[data-theme="dark"] .ck-ferr{color:#ff8fa8}
+
+/* mobile number box */
+html[data-theme="dark"] .ck-ph{background:var(--surface-2);border-color:var(--line)}
+html[data-theme="dark"] .ck-ph small{color:var(--muted)}
+html[data-theme="dark"] .ck-ph input,
+html[data-theme="dark"] .ck-ph em{color:var(--ink);background:transparent}
+html[data-theme="dark"] .ck-ph i{background:var(--line)}
+html[data-theme="dark"] .ck-note,
+html[data-theme="dark"] .ck-fine,
+html[data-theme="dark"] .ck-help{color:var(--muted)}
+html[data-theme="dark"] .ck-fine a{color:var(--pink)}
+
+/* address bottom sheet (screenshot la white a irundhadhu) */
+html[data-theme="dark"] .ck-sheet,
+html[data-theme="dark"] .ck-sheet-b,
+html[data-theme="dark"] .ck-sheet-f{background:var(--surface);color:var(--ink);border-color:var(--line)}
+html[data-theme="dark"] .ck-title,
+html[data-theme="dark"] .ck-sub{color:var(--ink)}
+html[data-theme="dark"] .ck-f input{background:transparent;border-color:var(--line);color:var(--ink)}
+html[data-theme="dark"] .ck-f input:focus{border-color:var(--pink)}
+html[data-theme="dark"] .ck-f label{background:var(--surface);color:var(--muted)}
+html[data-theme="dark"] .ck-f input:focus+label{color:var(--pink)}
+html[data-theme="dark"] .ck-f.err input{border-color:#ff8fa8}
+html[data-theme="dark"] .ck-pillr{background:transparent;border-color:var(--line);color:var(--ink)}
+html[data-theme="dark"] .ck-pillr:has(input:checked){border-color:var(--pink);color:var(--pink);background:var(--blush)}
+
+/* delivery summary */
+html[data-theme="dark"] .ck-del b{color:var(--ink)}
+html[data-theme="dark"] .ck-del p{color:var(--muted)}
+html[data-theme="dark"] .ck-change{color:var(--pink)}
+html[data-theme="dark"] .ck-ship{border-color:var(--line);color:var(--ink)}
+html[data-theme="dark"] .ck-pill{background:#12301f;color:#9be3b6}
+
+/* price rows */
+html[data-theme="dark"] .ck-rows>div{color:var(--ink)}
+html[data-theme="dark"] .ck-rows>div.g{color:#9be3b6}
+html[data-theme="dark"] .ck-rows>div.t{border-color:var(--line)}
+
+/* payment options */
+html[data-theme="dark"] .ck-banner{background:var(--blush);color:var(--pink)}
+html[data-theme="dark"] .ck-pay{background:var(--surface);border-color:var(--line)}
+html[data-theme="dark"] .ck-pay-h{color:var(--ink)}
+html[data-theme="dark"] .ck-pay-h .ico{color:var(--ink)}
+html[data-theme="dark"] .ck-pay-h s{color:var(--muted)}
+html[data-theme="dark"] .ck-pay.open{border-color:var(--pink)}
+html[data-theme="dark"] .ck-pay-b{border-color:var(--line)}
+html[data-theme="dark"] .ck-pay-h em.ok{color:#9be3b6}
+html[data-theme="dark"] .ck-pay-h em.bad{color:#ff8fa8}
+
+/* logged-in strip */
+html[data-theme="dark"] .ck-login{background:var(--surface);border-color:var(--line);color:var(--ink)}
+html[data-theme="dark"] .ck-login button{color:var(--pink)}
+
+/* order placed screen */
+html[data-theme="dark"] .ck-done h3{color:var(--ink)}
+html[data-theme="dark"] .ck-done p{color:var(--muted)}
+html[data-theme="dark"] .ck-done .id{background:var(--blush);color:var(--pink)}
+html[data-theme="dark"] .ck-btn.line{background:transparent;color:var(--ink);border-color:var(--line)}
+
+/* toast + flash */
+html[data-theme="dark"] .ck-toast{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+html[data-theme="dark"] .ck-flash{background:#12301f;color:#9be3b6}
+
+/* ---------- CHECKOUT: floating labels + autofill fix ---------- */
+html[data-theme="dark"] .ck-sheet,
+html[data-theme="dark"] .ck-sheet-b,
+html[data-theme="dark"] .ck-sheet-f{background:var(--surface)!important}
+
+/* label background = sheet background (so border line label kitta cut aagum) */
+html[data-theme="dark"] .ck-f label,
+html[data-theme="dark"] .ck-f input:focus+label,
+html[data-theme="dark"] .ck-f input:not(:placeholder-shown)+label,
+html[data-theme="dark"] .ck-f input:-webkit-autofill+label,
+html[data-theme="dark"] .ck-f.err label{
+  background:var(--surface)!important;
+  color:var(--muted)!important;
+}
+html[data-theme="dark"] .ck-f input:focus+label{color:var(--pink)!important}
+html[data-theme="dark"] .ck-f.err input:not(:focus)+label{color:#ff8fa8!important}
+
+/* inputs */
+html[data-theme="dark"] .ck-f input{
+  background:transparent!important;
+  color:var(--ink)!important;
+  border-color:var(--line)!important;
+}
+html[data-theme="dark"] .ck-f input:focus{border-color:var(--pink)!important}
+html[data-theme="dark"] .ck-f input[readonly]{color:var(--ink)!important;opacity:.9}
+
+/* Chrome autofill (bluish / white background) override */
+html[data-theme="dark"] .ck-f input:-webkit-autofill,
+html[data-theme="dark"] .ck-f input:-webkit-autofill:hover,
+html[data-theme="dark"] .ck-f input:-webkit-autofill:focus{
+  -webkit-box-shadow:0 0 0 1000px var(--surface) inset!important;
+  box-shadow:0 0 0 1000px var(--surface) inset!important;
+  -webkit-text-fill-color:var(--ink)!important;
+  caret-color:var(--ink);
+  transition:background-color 9999s ease-in-out 0s;
+}
+
+/* ---------- CHECKOUT: offer pills visibility ---------- */
+html[data-theme="dark"] .ck-pay-h em.ok,
+html[data-theme="dark"] .ck-pay-h .nm em.ok{
+  background:#12301f!important;
+  color:#9be3b6!important;
+  border:1px solid rgba(155,227,182,.35)!important;
+  padding:2px 8px;
+  border-radius:4px;
+  font-weight:600;
+}
+
+/* COD fee text */
+html[data-theme="dark"] .ck-pay-h em.bad,
+html[data-theme="dark"] .ck-pay-h .nm em.bad{
+  background:transparent!important;
+  color:#ff8fa8!important;
+}
+
+/* "Extra ₹40 off on Prepaid" banner */
+html[data-theme="dark"] .ck-banner{
+  background:var(--blush)!important;
+  color:#ffb3c2!important;
+  border:1px solid rgba(255,179,194,.25);
+  font-weight:500;
+}
+
+/* "Free" pill in shipping row */
+html[data-theme="dark"] .ck-pill{
+  background:#12301f!important;
+  color:#9be3b6!important;
+  border:1px solid rgba(155,227,182,.35);
+}
+
+/* strike-through old price a konjam clear-a */
+html[data-theme="dark"] .ck-pay-h .amt s{color:var(--muted)!important}
+
+/* ---------- CHECKOUT: back arrow hover ---------- */
+html[data-theme="dark"] .ck-back{
+  color:var(--ink)!important;
+  background:transparent!important;
+  transition:background .25s,color .25s;
+}
+html[data-theme="dark"] .ck-back:hover,
+html[data-theme="dark"] .ck-back:focus-visible{
+  background:var(--blush)!important;   /* dark rose circle */
+  color:var(--pink)!important;         /* arrow theriyum */
+}
+html[data-theme="dark"] .ck-back svg{stroke:currentColor!important}
+
+/* same fix: close (X) + summary dropdown button hover */
+html[data-theme="dark"] .ck-x:hover{
+  background:var(--rose)!important;
+  color:#fff!important;
+}
+html[data-theme="dark"] .ck-sum:hover{
+  background:var(--blush)!important;
+  color:var(--ink)!important;
+}

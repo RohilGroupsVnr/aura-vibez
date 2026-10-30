@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Collection — AURA</title>
+        <meta name="description"
+            content="Discover the latest AURA arrivals. Fresh silhouettes, crafted for the season.">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <link rel="icon" type="image/png" href="../assets/favicon.png">
+
+        <!-- ✅ External CSS only -->
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="stylesheet" href="./css/theme.css">
+        <link rel="stylesheet" href="./css/subscribe-popup.css">
+        <link rel="stylesheet" href="./css/checkout.css">
+        <script>
+        try { if (localStorage.getItem('aura_auth_hint') === '1') document.documentElement.classList.add('is-user'); } catch (e) { }
+    </script>
+    </head>
+
+    <body class="collections-page hy-page">
+
+        <!-- icon sprite -->
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+            <defs>
+                <symbol id="i-heart" viewBox="0 0 24 24">
+                    <path
+                        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                </symbol>
+                <symbol id="i-bag" viewBox="0 0 24 24">
+                    <path d="M6 7h12l1 13H5L6 7Z" />
+                    <path d="M9 7a3 3 0 0 1 6 0" />
+                </symbol>
+                <symbol id="i-search" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m20 20-3.5-3.5" />
+                </symbol>
+                <symbol id="i-arrow" viewBox="0 0 24 24">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                </symbol>
+                <symbol id="i-user" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+                </symbol>
+                <symbol id="i-chev" viewBox="0 0 24 24">
+                    <path d="m6 9 6 6 6-6" />
+                </symbol>
+                <symbol id="i-x" viewBox="0 0 24 24">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                </symbol>
+            </defs>
+        </svg>
+
+        <div class="cursor-glow" aria-hidden="true"></div>
+
+        <!-- Announcement Bar -->
+        <div class="hm-ann">
+            <span>Explore the Latest Trends</span>
+            <span class="pill">Shop Your Favorites</span>
+            <span>Find Your Perfect Outfit</span>
+        </div>
+
+        <!-- Navbar -->
+        <nav class="nav" id="nav" aria-label="Main">
+            <a href="index.html" class="brand"><img src="../assets/logo.png"
+                    alt="AURA"></a>
+            <div class="links">
+                <a href="index.html">Home</a>
+
+                <a href="newcollections.html" class="act">New Collection</a>
+
+                <div class="nav-dd" id="shopDD">
+                    <a href="shop.html" class="nav-dd-trigger"
+                        aria-haspopup="true" aria-expanded="false">
+                        Shop <svg class="dd-caret" width="12" height="12"
+                            viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <use href="#i-chev" />
+                        </svg>
+                    </a>
+                    <div class="dd-menu" role="menu"
+                        aria-label="Shop categories">
+                        <a href="shop.html?cat=kurta-sets" role="menuitem">Kurta
+                            Sets</a>
+
+                                            <!-- 🔥 NEW: Tops Added Here 🔥 -->
+            <a href="shop.html?cat=tops" role="menuitem">Tops</a>
+                        <a href="shop.html?cat=anarkali"
+                            role="menuitem">Anarkali</a>
+                        <a href="shop.html?cat=sarees"
+                            role="menuitem">Sarees</a>
+
+                        <!-- 🔥 NEWLY ADDED: College & Office Wear 🔥 -->
+                        <a href="shop.html?cat=college-wear"
+                            role="menuitem">College Wear</a>
+                        <a href="shop.html?cat=office-wear"
+                            role="menuitem">Office Wear</a>
+                        <div class="dd-sub">
+                            <button type="button" class="dd-sub-toggle"
+                                aria-expanded="false"><span>Dresses</span><svg
+                                    width="14" height="14" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" aria-hidden="true">
+                                    <use href="#i-chev" />
+                                </svg></button>
+                            <div class="dd-sub-list">
+                                <a href="shop.html?cat=dresses&type=party-wear"
+                                    role="menuitem">Party Wear</a>
+                                <a
+                                    href="shop.html?cat=dresses&type=maxi-dresses"
+                                    role="menuitem">Maxi Dresses</a>
+                                <a
+                                    href="shop.html?cat=dresses&type=casual-dresses"
+                                    role="menuitem">Casual Dresses</a>
+                                <a
+                                    href="shop.html?cat=dresses&type=floral-dresses"
+                                    role="menuitem">Floral Dresses</a>
+                            </div>
+                        </div>
+                        <a href="shop.html?cat=night-suits"
+                            role="menuitem">Night Suits</a>
+                        <div class="dd-sub">
+                            <button type="button" class="dd-sub-toggle"
+                                aria-expanded="false"><span>Bottomwear</span><svg
+                                    width="14" height="14" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" aria-hidden="true">
+                                    <use href="#i-chev" />
+                                </svg></button>
+                            <div class="dd-sub-list">
+                                <a href="shop.html?cat=leggings"
+                                    role="menuitem">Leggings</a>
+                                <a href="shop.html?cat=palazzo"
+                                    role="menuitem">Palazzo</a>
+                            </div>
+                        </div>
+                        <a href="shop.html?cat=shawls"
+                            role="menuitem">Shawls</a>
+                        <a href="shop.html?cat=t-shirt"
+                            role="menuitem">T-shirt</a>
+                        <a href="shop.html" role="menuitem" class="dd-all">View
+                            all products</a>
+                    </div>
+                </div>
+                <a href="./trackorder.html">Track Order</a>
+            </div>
+
+            <form class="hm-search" id="hmSearch" role="search">
+                <svg width="16" height="16" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round"
+                    aria-hidden="true">
+                    <use href="#i-search" />
+                </svg>
+                <input class="hm-in" type="search" name="q"
+                    placeholder="Search fashion, beauty, jewellery…"
+                    aria-label="Search products" autocomplete="off">
+            </form>
+
+            <div class="nav-actions">
+                <button type="button" class="hm-login" id="hmLogin"
+                    aria-haspopup="dialog" aria-controls="auraLoginOverlay">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <use href="#i-user" />
+                    </svg>
+                    <span>Login</span>
+                </button>
+                <button class="icon-btn" id="wishBtn" aria-label="Wishlist"
+                    onclick="location.href='wishlist.html'">
+                    <svg width="21" height="21" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <use href="#i-heart" />
+                    </svg>
+                    <span class="badge" id="wishBadge">0</span>
+                </button>
+                <button class="icon-btn" id="cartBtn" aria-label="Shopping Cart"
+                    type="button">
+                    <svg width="21" height="21" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="19" cy="21" r="1"></circle>
+                        <path
+                            d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="badge" id="cartBadge">0</span>
+                </button>
+
+                <div class="acct" id="acct" style="display:none">
+                    <button class="avatar" id="avatarBtn" type="button"
+                        aria-label="Account menu" aria-haspopup="true"
+                        aria-expanded="false"><i
+                            class="fa-regular fa-user"></i></button>
+                    <div class="menu" id="acctMenu">
+                        <div class="who"><b id="userName">AURA
+                                Customer</b><small id="userEmail">Signed
+                                in</small></div>
+                        <a href="order-history.html"><i
+                                class="fa-solid fa-box"></i> Order History</a>
+                        <a href="wishlist.html"><i
+                                class="fa-regular fa-heart"></i> Wishlist</a>
+                        <button type="button" id="logoutBtn"><i
+                                class="fa-solid fa-arrow-right-from-bracket"></i>
+                            Logout</button>
+                    </div>
+                </div>
+
+                <button class="icon-btn burger" id="burger"
+                    aria-label="Open menu" aria-expanded="false"
+                    aria-controls="mmenu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" aria-hidden="true">
+                        <path d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile menu -->
+        <div class="mmenu" id="mmenu" role="dialog" aria-modal="true"
+            aria-label="Menu">
+            <button class="icon-btn mclose" id="mclose" aria-label="Close menu">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Logo -->
+            <a href="index.html" class="mmenu-logo">
+                <img src="../assets/logo.png" alt="AURA">
+            </a>
+
+            <!-- 🔥 Icons Section (Premium) -->
+            <div class="mmenu-icons">
+                <a href="wishlist.html" class="m-icon-link">
+                    <i class="fa-regular fa-heart"></i>
+                    <span>Wishlist</span>
+                    <span class="badge" id="mWishBadge">0</span>
+                </a>
+                <a href="cart.html" class="m-icon-link">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span>Cart</span>
+                    <span class="badge" id="mCartBadge">0</span>
+                </a>
+
+            </div>
+
+            <!-- Links -->
+            <a href="index.html" class="act">Home</a>
+            <a href="newcollections.html">New Collections</a>
+
+            <!-- Shop Dropdown -->
+            <div class="m-dropdown">
+                <button type="button" class="m-dropdown-toggle">
+                    <span>Shop</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div class="m-dropdown-menu">
+                    <a href="shop.html?cat=kurta-sets">Kurta Sets</a>
+                    <a href="shop.html?cat=anarkali">Anarkali</a>
+                    <a href="shop.html?cat=sarees">Sarees</a>
+                    <!-- 🔥 NEWLY ADDED: Mobile Menu College & Office Wear 🔥 -->
+                    <a href="shop.html?cat=college-wear">College Wear</a>
+                    <a href="shop.html?cat=office-wear">Office Wear</a>
+                    <a href="shop.html?cat=night-suits">Night Suits</a>
+                    <a href="shop.html?cat=shawls">Shawls</a>
+                    <a href="shop.html?cat=t-shirt">T-shirt</a>
+                    <a href="shop.html">View All Products</a>
+                </div>
+            </div>
+
+            <!-- Bottomwear Dropdown -->
+            <div class="m-dropdown">
+                <button type="button" class="m-dropdown-toggle">
+                    <span>Bottomwear</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div class="m-dropdown-menu">
+                    <a href="shop.html?cat=leggings">Leggings</a>
+                    <a href="shop.html?cat=palazzo">Palazzo</a>
+                </div>
+            </div>
+
+            <a href="trackorder.html">Track Order</a>
+        </div>
+
+        <!-- ===== MAIN LAYOUT ===== -->
+        <h1 class="hy-title" id="pageTitle">New Collection</h1>
+
+        <section class="hy-wrap">
+            <div class="hy-bar">
+                <div class="hy-bar-l">
+                    <button type="button" class="hy-filter-btn" id="openFilters"
+                        aria-haspopup="dialog"
+                        aria-controls="drawer">
+                        <i
+                            class="fa-solid fa-sliders"></i><span>Filter</span><span
+                            class="n" id="filterN">0</span>
+                    </button>
+                    <div class="hy-sort">
+                        <select id="sortSel" aria-label="Sort by">
+                            <option value="new">Date, new to old</option>
+                            <option value="low">Price, low to high</option>
+                            <option value="high">Price, high to low</option>
+                            <option value="discount">Biggest discount</option>
+                            <option value="az">Alphabetically, A-Z</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="hy-view" id="viewToggle" aria-label="Grid view">
+                    <button type="button" data-cols="2"
+                        aria-label="2 columns"><span
+                            class="ic"><i></i><i></i></span><sup>2</sup></button>
+                    <button type="button" data-cols="3" class="on"
+                        aria-label="3 columns"><span
+                            class="ic"><i></i><i></i><i></i></span><sup>3</sup></button>
+                    <button type="button" data-cols="4"
+                        aria-label="4 columns"><span
+                            class="ic"><i></i><i></i><i></i><i></i></span><sup>4</sup></button>
+                </div>
+            </div>
+
+            <div class="hy-pills" id="quickSizes"
+                aria-label="Select your size"></div>
+
+            <div class="hy-meta">
+                <div class="hy-active" id="activeRow"></div>
+                <span id="countTxt"></span>
+            </div>
+
+            <div class="hy-grid c3" id="grid" aria-live="polite">
+                <div class="hy-skel"></div>
+                <div class="hy-skel"></div>
+                <div class="hy-skel"></div>
+            </div>
+
+            <div class="hy-empty" id="empty" hidden>
+                <i class="fa-solid fa-box-open"></i>
+                <h3 id="emptyTitle">No new arrivals yet</h3>
+                <p id="emptyText">Check back soon for fresh drops.</p>
+                <button type="button" class="hy-btn" id="emptyClear">Browse All
+                    Products</button>
+            </div>
+
+            <div class="hy-more" id="more" hidden>
+                <p id="moreTxt"></p>
+                <div class="hy-prog"><i id="moreBar"></i></div>
+                <button type="button" class="hy-btn ghost" id="moreBtn">Show
+                    more</button>
+            </div>
+        </section>
+
+        <!-- FILTER DRAWER -->
+        <div class="hy-overlay" id="overlay"></div>
+        <aside class="hy-drawer" id="drawer" role="dialog" aria-modal="true"
+            aria-label="Filters">
+            <div class="hy-d-top">
+                <b>Filter</b><span id="dCount">0 products</span>
+                <button type="button" class="hy-d-close" id="closeFilters"
+                    aria-label="Close filters"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="hy-d-body">
+                <div id="dMain">
+                    <button type="button" class="hy-row"
+                        data-panel="avail">Availability <em class="bd"
+                            data-bd="avail"></em><i
+                            class="fa-solid fa-arrow-right"></i></button>
+                    <button type="button" class="hy-row"
+                        data-panel="price">Price <em class="bd"
+                            data-bd="price"></em><i
+                            class="fa-solid fa-arrow-right"></i></button>
+                    <button type="button" class="hy-row" data-panel="size">Size
+                        <em class="bd" data-bd="size"></em><i
+                            class="fa-solid fa-arrow-right"></i></button>
+                    <button type="button" class="hy-row"
+                        data-panel="color">Color <em class="bd"
+                            data-bd="color"></em><i
+                            class="fa-solid fa-arrow-right"></i></button>
+                    <button type="button" class="hy-row" data-panel="cat"
+                        id="fgCatBox">Product type <em class="bd"
+                            data-bd="cat"></em><i
+                            class="fa-solid fa-arrow-right"></i></button>
+                </div>
+                <div class="hy-d-sub" id="dSub" hidden>
+                    <button type="button" id="dBack" aria-label="Back"><i
+                            class="fa-solid fa-arrow-left"></i></button>
+                    <span class="vl"></span><b id="dSubTitle"></b>
+                </div>
+                <div class="hy-d-panel" data-p="avail" hidden>
+                    <div id="fgAvail"></div>
+                </div>
+                <div class="hy-d-panel" data-p="price" hidden>
+                    <div class="hy-prow"><span>From</span><span
+                            class="cur">₹</span><input type="number" id="minP"
+                            min="0"
+                            inputmode="numeric" placeholder="0"
+                            aria-label="Minimum price"></div>
+                    <div class="hy-prow"><span>To</span><span
+                            class="cur">₹</span><input type="number" id="maxP"
+                            min="0"
+                            inputmode="numeric" placeholder="0"
+                            aria-label="Maximum price"></div>
+                </div>
+                <div class="hy-d-panel" data-p="size" hidden>
+                    <div id="fgSize"></div>
+                </div>
+                <div class="hy-d-panel" data-p="color" hidden>
+                    <div id="fgColor"></div>
+                </div>
+                <div class="hy-d-panel" data-p="cat" hidden>
+                    <div id="fgCat"></div>
+                </div>
+            </div>
+            <div class="hy-d-foot">
+                <button type="button" class="hy-btn"
+                    id="drawerApply">Apply</button>
+                <button type="button" class="hy-clearlink"
+                    id="drawerClear">Clear</button>
+            </div>
+        </aside>
+
+        <!-- ===== AURA PREMIUM FOOTER ===== -->
+        <footer class="footer aura-footer" id="footer">
+            <svg class="fwave" viewBox="0 0 1440 80" preserveAspectRatio="none"
+                aria-hidden="true">
+                <path
+                    d="M0,40 C240,0 480,110 720,60 C960,10 1200,100 1440,40 L1440,0 L0,0 Z" />
+            </svg>
+            <div class="fmark" aria-hidden="true">AURA</div>
+            <div class="aura-footer-intro"><span
+                    class="aura-footer-kicker">DRESSED IN YOUR OWN WAY</span>
+                <h2>Every outfit tells <em>your story.</em></h2>
+                <p>Discover styles that celebrate your individuality, from
+                    everyday essentials to the moments worth dressing up
+                    for.</p><a href="shop.html" class="aura-footer-cta">Discover
+                    Your Style <span>↗</span></a>
+            </div>
+            <div class="fgrid aura-footer-grid">
+                <div class="fbrand aura-footer-brand"><a href="index.html"
+                        aria-label="AURA Home"><img src="../assets/logo.png"
+                            alt="AURA"></a>
+                    <p>AURA brings together timeless elegance and modern
+                        fashion, with thoughtfully selected styles for every
+                        mood,
+                        moment and occasion.</p>
+                    <div class="aura-footer-note"><span>Made for your
+                            moments.</span><span>Designed for your
+                            AURA.</span></div>
+                    <div class="social aura-social">
+                        <a href="#" data-site-link="instagram"
+                            aria-label="Instagram" title="Instagram"><i
+                                class="fa-brands fa-instagram"></i></a>
+                        <a href="#" data-site-link="facebook"
+                            aria-label="Facebook" title="Facebook"><i
+                                class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" data-site-link="pinterest"
+                            aria-label="Pinterest" title="Pinterest"><i
+                                class="fa-brands fa-pinterest-p"></i></a>
+                        <a href="#" data-site-link="youtube"
+                            aria-label="YouTube" title="YouTube"><i
+                                class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="aura-footer-links">
+                    <h5>Explore</h5><a href="shop.html">All Collections</a><a
+                        href="shop.html?cat=new-arrivals">New Arrivals</a><a
+                        href="shop.html?cat=trending-dresses">Trending
+                        Dresses</a><a href="shop.html?cat=western-wear">Western
+                        Wear</a><a href="shop.html?cat=ethnic-wear">Ethnic
+                        Wear</a><a href="shop.html?cat=party-wear">Party
+                        Wear</a><a
+                        href="shop.html?cat=casual-wear">Casual Wear</a>
+                </div>
+                <div class="aura-footer-links">
+                    <h5>Our Styles</h5><a
+                        href="shop.html?cat=tops-with-pants">Tops &amp;
+                        Pants</a><a
+                        href="shop.html?cat=jeans">Jeans &amp; Denim</a><a
+                        href="shop.html?cat=kurta-sets">Kurta Sets</a><a
+                        href="shop.html?cat=sarees">Sarees</a><a
+                        href="shop.html?cat=palazzo">Palazzo Sets</a><a
+                        href="shop.html?cat=leggings">Leggings</a><a
+                        href="shop.html?cat=skirts">Skirts &amp; Tops</a>
+                </div>
+                <div class="aura-footer-links">
+                    <h5>Customer Care</h5><a href="contact.html">Contact
+                        Us</a><a href="trackorder.html">Track Your Order</a><a
+                        href="shipping.html">Shipping Information</a><a
+                        href="returns.html">Returns &amp; Exchanges</a><a
+                        href="faq.html">Frequently Asked Questions</a><a
+                        href="size-guide.html">Size Guide</a><a
+                        href="privacy-policy.html">Privacy Policy</a><a
+                        href="terms.html">Terms &amp; Conditions</a>
+                </div>
+            </div>
+            <!-- ===== AURA STYLE CONCIERGE (Social Media Version) ===== -->
+            <div class="aura-footer-newsletter"
+                style="background: linear-gradient(135deg, #2B1B21, #1A0A11); border-radius: 16px; padding: 50px; margin: 60px auto; max-width: 1200px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between; align-items: center; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+
+                <!-- Background Glow Effect -->
+                <div
+                    style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(163,25,74,0.4) 0%, transparent 60%); border-radius: 50%; pointer-events: none;"></div>
+
+                <!-- Left Content: Text -->
+                <div
+                    style="flex: 1; min-width: 300px; position: relative; z-index: 2;">
+                    <span
+                        style="display: inline-block; color: #E8A5BB; font-size: 11px; letter-spacing: 0.3em; font-weight: 600; text-transform: uppercase; margin-bottom: 12px;">The
+                        AURA Style Concierge</span>
+                    <h3
+                        style="font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 3vw, 3rem); color: #FFF8F1; margin: 0 0 16px; font-weight: 500; line-height: 1.1;">
+                        Not sure what to wear?<br><em
+                            style="color: #E8A5BB; font-style: italic;">We've
+                            got you.</em>
+                    </h3>
+                    <p
+                        style="color: rgba(255, 248, 241, 0.7); font-size: 1rem; line-height: 1.6; max-width: 450px; margin: 0;">
+                        Get personalised outfit recommendations, sizing help,
+                        and styling advice from our expert curators. Connect
+                        with us on social media.
+                    </p>
+                </div>
+
+                <!-- Right Content: Social Links -->
+                <div
+                    style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 2; min-width: 280px;">
+
+                    <!-- Instagram Action -->
+                    <a href="https://instagram.com/auraclothing.vnr"
+                        target="_blank"
+                        style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
+                        onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+                        <div
+                            style="width: 44px; height: 44px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 20px;">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                        <div>
+                            <b
+                                style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Follow
+                                on Instagram</b>
+                            <small
+                                style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">@auraclothing.vnr</small>
+                        </div>
+                    </a>
+
+                    <!-- Facebook Action -->
+                    <a href="https://facebook.com/auraclothing.vnr"
+                        target="_blank"
+                        style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
+                        onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+                        <div
+                            style="width: 44px; height: 44px; background: #1877F2; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 20px;">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </div>
+                        <div>
+                            <b
+                                style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Connect
+                                on Facebook</b>
+                            <small
+                                style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">AURA
+                                Clothing</small>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- Mobile Responsive Fix -->
+            <style>
+      @media (max-width: 768px) {
+        .aura-footer-newsletter {
+          padding: 30px 20px !important;
+          text-align: center;
+        }
+        .aura-footer-newsletter > div {
+          justify-content: center;
+          width: 100%;
+        }
+        .aura-footer-newsletter a {
+          justify-content: flex-start; /* Mobile-layum left align-a irukkum */
+          text-align: left;
+        }
+      }
+    </style>
+            <div class="fbottom aura-footer-bottom"><span>© 2026 AURA. All
+                    rights reserved.</span><span
+                    class="aura-footer-made">Developed by <span
+                        style="color: #E8A5BB; font-weight: 500;">Rohil
+                        Technologies</span></span>
+                <div class="aura-footer-bottom-links"><a
+                        href="privacy-policy.html">Privacy</a><a
+                        href="terms.html">Terms</a><a
+                        href="contact.html">Support</a></div>
+            </div>
+        </footer>
+
+        <button id="backToTop" class="back-to-top" type="button"
+            aria-label="Back to top" title="Back to top">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
+                <path d="M12 19V5"></path>
+                <path d="M5 12l7-7 7 7"></path>
+            </svg>
+        </button>
+
+        <!-- ============ PHONE OTP LOGIN POPUP HTML ============ -->
+        <div class="aura-login-overlay" id="auraLoginOverlay" role="dialog"
+            aria-modal="true"
+            aria-labelledby="auraLoginTitle" aria-hidden="true">
+            <div class="aura-login-card">
+                <button class="aura-login-x" type="button"
+                    aria-label="Close login"><i
+                        class="fa-solid fa-xmark"></i></button>
+                <div class="aura-login-img">
+                    <img src="../images/partywear.webp" alt="AURA"
+                        onerror="this.remove()">
+                </div>
+                <div class="aura-login-body">
+                    <span class="aura-login-eyebrow">AURA ACCOUNT</span>
+                    <h2 id="auraLoginTitle">Welcome <em>back.</em></h2>
+                    <p class="aura-login-sub">Sign in with your mobile number to
+                        save favourites and track your orders.</p>
+
+                    <form id="auraPhoneForm" novalidate>
+                        <label class="aura-login-field">
+                            <span>Mobile number (10 digits)</span> <input
+                                type="tel" id="auraPhone"
+                                placeholder="+919876543210" autocomplete="tel"
+                                inputmode="tel" required>
+                        </label>
+                        <div id="recaptcha-container"></div>
+                        <button type="submit" class="aura-login-submit"
+                            id="auraSendOtp">Send OTP</button>
+                        <div id="auraOtpSection" hidden>
+                            <label class="aura-login-field">
+                                <span>Enter 6-digit OTP</span>
+                                <input type="text" id="auraOtp"
+                                    placeholder="Enter OTP" inputmode="numeric"
+                                    autocomplete="one-time-code" maxlength="6">
+                            </label>
+                            <button type="button" class="aura-login-submit"
+                                id="auraVerifyOtp">Verify OTP</button>
+                        </div>
+                        <p class="aura-login-msg" id="auraPhoneMsg"
+                            role="status" aria-live="polite"></p>
+                    </form>
+
+                    <p class="aura-login-switch">
+                        By continuing, you agree to our <a
+                            href="terms.html">Terms</a> and <a
+                            href="privacy-policy.html">Privacy Policy</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ LOGIC SCRIPTS ============ -->
+
+        <!-- Navbar logic -->
+        <script>
+        (function () {
+            function init() {
+                var dd = document.getElementById('shopDD'); if (!dd) return;
+                var trigger = dd.querySelector('.nav-dd-trigger'); if (!trigger) return;
+                var timer = null;
+                function openMenu() { clearTimeout(timer); dd.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+                function closeSubs() { dd.querySelectorAll('.dd-sub.open').forEach(function (s) { s.classList.remove('open'); var t = s.querySelector('.dd-sub-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); }); }
+                function closeMenu() { dd.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); closeSubs(); }
+                dd.addEventListener('mouseenter', openMenu);
+                dd.addEventListener('mouseleave', function () { timer = setTimeout(closeMenu, 160); });
+                dd.addEventListener('focusin', openMenu);
+                document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeMenu(); trigger.blur(); } });
+                trigger.addEventListener('click', function (e) { if (matchMedia('(hover: none)').matches && !dd.classList.contains('open')) { e.preventDefault(); openMenu(); } });
+                dd.querySelectorAll('.dd-sub-toggle').forEach(function (btn) {
+                    btn.addEventListener('click', function (e) {
+                        e.stopPropagation(); var sub = btn.parentElement, willOpen = !sub.classList.contains('open');
+                        closeSubs(); if (willOpen) { sub.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+                    });
+                });
+                document.addEventListener('click', function (e) { if (!dd.contains(e.target)) closeMenu(); });
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+        })();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var btn = document.getElementById('backToTop');
+            if (btn) {
+                var toggle = function () { btn.classList.toggle('show', window.scrollY > 300); };
+                window.addEventListener('scroll', toggle, { passive: true });
+                btn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+                toggle();
+            }
+            var burger = document.getElementById('burger'), mclose = document.getElementById('mclose');
+            if (burger) burger.addEventListener('click', function () { document.body.classList.add('mmenu-open'); });
+            if (mclose) mclose.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); });
+            var s = document.getElementById('hmSearch');
+            if (s) s.addEventListener('submit', function (e) { e.preventDefault(); var q = s.q.value.trim(); if (q) location.href = 'shop.html?q=' + encodeURIComponent(q); });
+        });
+    </script>
+
+        <!-- New Collection Logic -->
+        <script>
+        (function () {
+            var IMG = "../images/partywear.webp";
+            function $(id) { return document.getElementById(id); }
+            function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+            function fmt(n) { return "₹ " + Number(n).toLocaleString("en-IN"); }
+            function cap(s) { return String(s).replace(/-/g, " ").replace(/\b\w/g, function (c) { return c.toUpperCase(); }); }
+            function key(s) { return String(s || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").replace(/s$/, ""); }
+
+            var SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "3XL", "Free Size"];
+            var HEX = { Black: "#000", White: "#fff", Red: "#C0334F", Pink: "#E879A9", Rose: "#A3194A", Navy: "#1F2E5A", Green: "#2F6B3A", Yellow: "#F3D56B", Beige: "#E8D5B7", Maroon: "#6E0E33" };
+            var STEP = 12;
+
+            function sortSizes(a) { return a.slice().sort(function (x, y) { return SIZE_ORDER.indexOf(x) - SIZE_ORDER.indexOf(y); }); }
+
+            var state = { all: [], scope: [], list: [], shown: STEP, cols: 3, sort: "new", q: "", f: { cat: new Set(), size: new Set(), color: new Set(), avail: new Set(), min: null, max: null } };
+
+            function withTimeout(p, ms) { return Promise.race([p, new Promise(function (_, rej) { setTimeout(function () { rej(new Error("timeout")); }, ms); })]); }
+
+            async function fetchProducts() {
+                try {
+                    var m = await withTimeout(import("./js/firebase.js"), 7000);
+                    // Fetch only new products
+                    var q = m.query(m.collection(m.db, "products"), m.where("isNew", "==", true), m.where("status", "==", "active"));
+                    var snap = await withTimeout(m.getDocs(q), 8000);
+                    return snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+                } catch (err) { console.warn("Firebase products not loaded:", err); return []; }
+            }
+
+            async function load() {
+                var rows = await fetchProducts();
+                state.all = rows;
+                state.scope = rows;
+                buildFacets();
+                apply();
+            }
+
+            function tally(fn) { var m = new Map(); state.scope.forEach(function (p) { (fn(p) || []).forEach(function (v) { m.set(v, (m.get(v) || 0) + 1); }); }); return m; }
+
+            function buildFacets() {
+                var cats = tally(function (p) { return [p.category]; });
+                var sizes = Array.from(tally(function (p) { return p.sizes; })).sort(function (a, b) { return SIZE_ORDER.indexOf(a[0]) - SIZE_ORDER.indexOf(b[0]); });
+                var colors = Array.from(tally(function (p) { return p.colors; })).sort(function (a, b) { return b[1] - a[1]; });
+
+                function opt(f, v, label, n, extra) {
+                    var dis = n === 0;
+                    return '<label class="hy-opt' + (dis ? ' dis' : '') + '"><input type="checkbox" data-f="' + f + '" value="' + esc(v) + '"' + (dis ? ' disabled' : '') + '><span class="bx"></span>' + (extra || '') + '<span class="tx">' + esc(label) + '</span><small>(' + n + ')</small></label>';
+                }
+                var sc = {};
+                state.scope.forEach(function (p) { var sold = p.soldSizes || []; (p.sizes || []).forEach(function (z) { if (sold.indexOf(z) < 0) sc[z] = (sc[z] || 0) + 1; }); });
+                var STD = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
+                var anyStd = sizes.some(function (e) { return STD.indexOf(e[0]) > -1; });
+                var sizeList = sizes.map(function (e) { return e[0]; });
+                if (anyStd) STD.forEach(function (z) { if (sizeList.indexOf(z) < 0) sizeList.push(z); });
+                sizeList.sort(function (x, y) { return SIZE_ORDER.indexOf(x) - SIZE_ORDER.indexOf(y); });
+                $("fgCat").innerHTML = Array.from(cats).map(function (e) { return opt("cat", e[0], cap(e[0]), e[1]); }).join("");
+                $("fgSize").innerHTML = sizeList.map(function (z) { return opt("size", z, z, sc[z] || 0); }).join("");
+                $("quickSizes").innerHTML = sizes.map(function (e) { return '<button type="button" class="hy-pill" data-q="' + esc(e[0]) + '">' + esc(e[0]) + '</button>'; }).join("");
+                $("fgColor").innerHTML = colors.map(function (e) { return opt("color", e[0], e[0], e[1], '<i class="sw" style="--sw:' + (HEX[e[0]] || "#ccc") + '"></i>'); }).join("");
+                var inN = state.scope.filter(function (p) { return (p.stock || 0) > 0; }).length;
+                $("fgAvail").innerHTML = opt("avail", "in", "In stock", inN) + opt("avail", "out", "Out of stock", state.scope.length - inN);
+            }
+
+            function discOf(p) { return p.mrp > p.price ? 1 - p.price / p.mrp : 0; }
+            function ms(p) { return (p.createdAt && p.createdAt.toMillis && p.createdAt.toMillis()) || 0; }
+
+            var SORTS = {
+                "new": function (a, b) { return ms(b) - ms(a); },
+                low: function (a, b) { return (a.price || 0) - (b.price || 0); },
+                high: function (a, b) { return (b.price || 0) - (a.price || 0); },
+                discount: function (a, b) { return discOf(b) - discOf(a); },
+                az: function (a, b) { return (a.name || "").localeCompare(b.name || ""); }
+            };
+
+            function apply(resetShown) {
+                var f = state.f;
+                var both = f.avail.has("in") && f.avail.has("out");
+                state.list = state.scope.filter(function (p) {
+                    var price = p.price || 0, stock = p.stock || 0, sold = p.soldSizes || [];
+                    if (f.cat.size && !f.cat.has(p.category)) return false;
+                    if (f.size.size && !(p.sizes || []).some(function (s) { return f.size.has(s) && sold.indexOf(s) < 0; })) return false;
+                    if (f.color.size && !(p.colors || []).some(function (c) { return f.color.has(c); })) return false;
+                    if (f.min != null && price < f.min) return false;
+                    if (f.max != null && price > f.max) return false;
+                    if (!both && f.avail.has("in") && stock <= 0) return false;
+                    if (!both && f.avail.has("out") && stock > 0) return false;
+                    return true;
+                }).sort(SORTS[state.sort] || SORTS["new"]);
+                if (resetShown !== false) state.shown = STEP;
+                syncUI(); render();
+            }
+
+            function card(p) {
+                var price = p.price || 0, mrp = p.mrp || price;
+                var off = mrp > price ? Math.round((1 - price / mrp) * 100) : 0;
+                var sold = (p.stock || 0) <= 0;
+                var imgs = (p.images && p.images.length) ? p.images : [p.image || p.image1, p.image2, p.image3].filter(Boolean);
+                if (!imgs.length) imgs = [IMG];
+                var link = "product.html?id=" + esc(p.id);
+                var soldSizes = p.soldSizes || [];
+                var avail = sortSizes(p.sizes || []).filter(function (s) { return soldSizes.indexOf(s) < 0; });
+                var tag = p.promo ? '<span class="hy-tag dark">' + esc(p.promo) + '</span>' : (p.badge || p.isNew) ? '<span class="hy-tag">' + esc(p.badge || "New") + '</span>' : "";
+                return '<article class="hy-card ' + (sold ? "is-sold" : "") + '">' +
+                    '<div class="hy-media"><div class="hy-track">' +
+                    imgs.map(function (src, i) { return '<a class="hy-slide" href="' + link + '" tabindex="' + (i ? -1 : 0) + '"><img src="' + esc(src) + '" alt="' + esc(p.name) + '" loading="lazy" onerror="this.style.opacity=.25"></a>'; }).join("") +
+                    '</div>' + tag + (sold ? '<span class="hy-soldtag">Sold out</span>' : "") +
+                    '<button type="button" class="hy-wish" data-wish aria-label="Add to wishlist"><i class="fa-regular fa-heart"></i></button>' +
+                    (imgs.length > 1 ? '<button type="button" class="hy-arr prev" data-arr="-1" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button><button type="button" class="hy-arr next" data-arr="1" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>' : "") +
+                    '<div class="hy-dots">' + (imgs.length > 1 ? imgs.map(function (_, i) { return '<i class="' + (i ? "" : "on") + '" data-dot="' + i + '"></i>'; }).join("") : "") + '</div></div>' +
+                    '<div class="hy-nameRow"><a class="hy-name" href="' + link + '"><span>' + esc(p.name || "Untitled") + '</span></a></div>' +
+                    '<div class="hy-price"><span>' + fmt(price) + '</span>' + (off ? '<s>' + fmt(mrp) + '</s><em>' + off + '%</em>' : "") + '</div>' +
+                    (avail.length ? '<div class="hy-sizes">' + avail.map(function (s) { return '<a class="hy-sz ' + (state.f.size.has(s) ? "sel" : "") + '" href="' + link + '&size=' + encodeURIComponent(s) + '">' + esc(s) + '</a>'; }).join("") + '</div>' : "") +
+                    '<p class="hy-sold-note">Currently unavailable</p></article>';
+            }
+
+            function render() {
+                var total = state.list.length;
+                var grid = $("grid");
+                grid.className = "hy-grid c" + state.cols;
+                $("empty").hidden = total > 0;
+                grid.hidden = total === 0;
+                $("more").hidden = true;
+                $("countTxt").textContent = total + " product" + (total === 1 ? "" : "s");
+                if (!total) {
+                    $("emptyTitle").textContent = "No new arrivals yet";
+                    $("emptyText").textContent = "Check back soon for fresh drops.";
+                    return;
+                }
+                var slice = state.list.slice(0, state.shown);
+                grid.innerHTML = slice.map(card).join("");
+                if (total > state.shown) {
+                    $("more").hidden = false;
+                    $("moreTxt").textContent = "Showing " + slice.length + " of " + total + " products";
+                    $("moreBar").style.width = (slice.length / total * 100) + "%";
+                }
+            }
+
+            function syncUI() {
+                var f = state.f;
+                document.querySelectorAll("input[data-f]").forEach(function (cb) { cb.checked = f[cb.dataset.f].has(cb.value); });
+                document.querySelectorAll(".hy-pill").forEach(function (b) { b.classList.toggle("on", f.size.has(b.dataset.q)); });
+                if (document.activeElement !== $("minP")) $("minP").value = f.min == null ? "" : f.min;
+                if (document.activeElement !== $("maxP")) $("maxP").value = f.max == null ? "" : f.max;
+                $("sortSel").value = state.sort;
+                document.querySelectorAll("#viewToggle button").forEach(function (b) { b.classList.toggle("on", Number(b.dataset.cols) === state.cols); });
+                var chips = [];
+                ["cat", "size", "color", "avail"].forEach(function (k) {
+                    f[k].forEach(function (v) {
+                        chips.push({ k: k, v: v, label: k === "cat" ? cap(v) : k === "avail" ? (v === "in" ? "Availability: In stock" : "Availability: Out of stock") : k === "size" ? "Size: " + v : "Color: " + v });
+                    });
+                });
+                if (f.min != null || f.max != null) chips.push({ k: "price", v: "", label: "Price: " + (f.min != null ? fmt(f.min) : "₹0") + " – " + (f.max != null ? fmt(f.max) : "Any") });
+                var n = chips.length;
+                $("filterN").textContent = n; $("filterN").classList.toggle("show", n > 0);
+                $("activeRow").innerHTML = n ? '<button type="button" class="clear" id="chipClear"><i class="fa-solid fa-xmark"></i> Clear all</button><span class="sep"></span>' + chips.map(function (c) { return '<button type="button" data-k="' + c.k + '" data-v="' + esc(c.v) + '"><i class="fa-solid fa-xmark"></i> ' + esc(c.label) + '</button>'; }).join("") : "";
+                $("dCount").textContent = state.list.length + " product" + (state.list.length === 1 ? "" : "s");
+                var bd = { avail: f.avail.size, price: (f.min != null || f.max != null) ? 1 : 0, size: f.size.size, color: f.color.size, cat: f.cat.size };
+                document.querySelectorAll("[data-bd]").forEach(function (el) { var v = bd[el.dataset.bd] || 0; el.textContent = v; el.classList.toggle("show", v > 0); });
+            }
+
+            function clearAll() { var f = state.f; f.cat.clear(); f.size.clear(); f.color.clear(); f.avail.clear(); f.min = f.max = null; state.q = ""; apply(); }
+
+            document.addEventListener("change", function (e) {
+                var cb = e.target.closest("input[data-f]"); if (!cb) return;
+                var set = state.f[cb.dataset.f];
+                if (cb.checked) set.add(cb.value); else set.delete(cb.value);
+                apply();
+            });
+
+            var pt;
+            ["minP", "maxP"].forEach(function (id) {
+                $(id).addEventListener("input", function () {
+                    clearTimeout(pt);
+                    pt = setTimeout(function () {
+                        var a = $("minP").value, b = $("maxP").value;
+                        state.f.min = a === "" ? null : Number(a);
+                        state.f.max = b === "" ? null : Number(b);
+                        apply();
+                    }, 350);
+                });
+            });
+
+            $("quickSizes").addEventListener("click", function (e) {
+                var b = e.target.closest("[data-q]"); if (!b) return;
+                var s = state.f.size; if (s.has(b.dataset.q)) s.delete(b.dataset.q); else s.add(b.dataset.q);
+                apply();
+            });
+
+            $("activeRow").addEventListener("click", function (e) {
+                if (e.target.closest("#chipClear")) return clearAll();
+                var b = e.target.closest("[data-k]"); if (!b) return;
+                if (b.dataset.k === "price") { state.f.min = state.f.max = null; }
+                else state.f[b.dataset.k].delete(b.dataset.v);
+                apply();
+            });
+
+            $("sortSel").addEventListener("change", function (e) { state.sort = e.target.value; apply(); });
+
+            $("viewToggle").addEventListener("click", function (e) {
+                var b = e.target.closest("[data-cols]"); if (!b) return;
+                state.cols = Number(b.dataset.cols); render(); syncUI();
+            });
+
+            $("moreBtn").addEventListener("click", function () { state.shown += STEP; render(); });
+            $("drawerClear").addEventListener("click", clearAll);
+
+            $("emptyClear").addEventListener("click", function () {
+                location.href = "shop.html";
+            });
+
+            // Wishlist logic
+            $("grid").addEventListener("click", function (e) {
+                var w = e.target.closest("[data-wish]");
+                if (w) {
+                    e.preventDefault();
+                    var productLink = w.closest('.hy-card').querySelector('.hy-name').getAttribute('href');
+                    var productId = new URLSearchParams(productLink.split('?')[1]).get('id');
+                    var productName = w.closest('.hy-card').querySelector('.hy-name span').textContent;
+                    var productPrice = w.closest('.hy-card').querySelector('.hy-price span').textContent;
+                    var productImage = w.closest('.hy-card').querySelector('.hy-slide img').getAttribute('src');
+                    w.classList.toggle("on");
+                    var isNowLiked = w.classList.contains("on");
+                    w.querySelector("i").className = isNowLiked ? "fa-solid fa-heart" : "fa-regular fa-heart";
+                    let wishlist = JSON.parse(localStorage.getItem('aura_wishlist')) || [];
+                    const existingIndex = wishlist.findIndex(item => item.id === productId);
+                    if (isNowLiked) {
+                        if (existingIndex === -1) { wishlist.push({ id: productId, name: productName, price: productPrice, image: productImage }); }
+                    } else {
+                        if (existingIndex > -1) { wishlist.splice(existingIndex, 1); }
+                    }
+                    localStorage.setItem('aura_wishlist', JSON.stringify(wishlist));
+                    updateWishlistBadge();
+                    return;
+                }
+            });
+
+            function updateWishlistBadge() {
+                const wishlist = JSON.parse(localStorage.getItem('aura_wishlist')) || [];
+                document.querySelectorAll('#wishBadge').forEach(badge => { badge.textContent = wishlist.length; });
+            }
+            document.addEventListener('DOMContentLoaded', () => { updateWishlistBadge(); });
+
+            var drawer = $("drawer"), overlay = $("overlay");
+            var PT = { avail: "Availability", price: "Price", size: "Size", color: "Color", cat: "Product type" };
+            function showMain() { document.querySelectorAll(".hy-d-panel").forEach(function (p) { p.hidden = true; }); $("dSub").hidden = true; $("dMain").hidden = false; }
+            function showPanel(id) { $("dMain").hidden = true; $("dSub").hidden = false; $("dSubTitle").textContent = PT[id] || ""; document.querySelectorAll(".hy-d-panel").forEach(function (p) { p.hidden = p.dataset.p !== id; }); document.querySelector(".hy-d-body").scrollTop = 0; }
+            function openD() { showMain(); drawer.classList.add("open"); overlay.classList.add("on"); document.body.style.overflow = "hidden"; }
+            function closeD() { drawer.classList.remove("open"); overlay.classList.remove("on"); document.body.style.overflow = ""; }
+            $("dMain").addEventListener("click", function (e) { var r = e.target.closest("[data-panel]"); if (r) showPanel(r.dataset.panel); });
+            $("dBack").addEventListener("click", showMain);
+            $("openFilters").addEventListener("click", openD);
+            $("closeFilters").addEventListener("click", closeD);
+            $("drawerApply").addEventListener("click", closeD);
+            overlay.addEventListener("click", closeD);
+            document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeD(); });
+
+            load();
+        })();
+
+        // Mobile Dropdown Toggle Logic
+        document.addEventListener('DOMContentLoaded', function () {
+            var dropdownToggles = document.querySelectorAll('.m-dropdown-toggle');
+
+            dropdownToggles.forEach(function (toggle) {
+                toggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var parent = this.parentElement;
+                    var isOpen = parent.classList.contains('open');
+
+                    // (Optional) Matha ellathayum close pannanum na intha line use pannunga:
+                    // document.querySelectorAll('.m-dropdown').forEach(function(d) { d.classList.remove('open'); });
+
+                    if (isOpen) {
+                        parent.classList.remove('open');
+                    } else {
+                        parent.classList.add('open');
+                    }
+                });
+            });
+        });
+    </script>
+        <!-- ============ BADGES UPDATE (Wishlist + Cart + Mobile) ============ -->
+        <script>
+  function updateAllBadges() {
+    try {
+      // 1. Wishlist Update
+      const wishlist = JSON.parse(localStorage.getItem('aura_wishlist')) || [];
+      const wishCount = wishlist.length;
+      
+      // ID-ah vachu update pannum (Desktop + Mobile)
+      const wishBadges = document.querySelectorAll('#wishBadge, #mWishBadge');
+      wishBadges.forEach(b => {
+        if (b) {
+          b.textContent = wishCount;
+          b.style.display = wishCount > 0 ? 'grid' : 'none'; // 0 iruntha hide pannum
+        }
+      });
+
+      // 2. Cart Update
+      let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+      // Qty add panni total edukirom
+      const cartCount = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+      
+      const cartBadges = document.querySelectorAll('#cartBadge, #mCartBadge');
+      cartBadges.forEach(b => {
+        if (b) {
+          b.textContent = cartCount;
+          b.style.display = cartCount > 0 ? 'grid' : 'none';
+        }
+      });
+
+    } catch (e) {
+      console.warn('Badge update failed:', e);
+    }
+  }
+
+  // Page load aagum pothu run pannum
+  document.addEventListener('DOMContentLoaded', updateAllBadges);
+
+  // Vera tab-la irunthu localStorage change aana udane update aagum
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'aura_wishlist' || e.key === 'aura_cart') {
+      updateAllBadges();
+    }
+  });
+</script>
+        <script type="module" src="js/site-settings.js"></script>
+        <script defer src="./js/subscribe-popup.js"></script>
+        <script src="js/theme.js"></script>
+        <script src="js/cart-drawer.js"></script>
+        <script type="module" src="js/checkout.js"></script>
+
+        <!-- ============ LOGIN + ACCOUNT MENU + LOGOUT (only place this logic lives) ============ -->
+        <script type="module" src="js/session.js"></script>
+    </body>
+
+</html>

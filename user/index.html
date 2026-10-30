@@ -1,0 +1,2513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA — Premium Storefront</title>
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/subscribe-popup.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/aura-newsletter-popup.css">
+  <link rel="stylesheet" href="css/login-popup.css">
+  <script>
+    try { if (localStorage.getItem('aura_auth_hint') === '1') document.documentElement.classList.add('is-user'); } catch (e) { }
+  </script>
+
+  <!-- ===== MOTION SECTION & LOGIN CSS ===== -->
+  <style>
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .wishlist-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 5;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      font-size: 18px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .wishlist-btn:hover {
+      transform: scale(1.1);
+      background: #fff;
+    }
+
+    #motion-section .hm-motion {
+      display: flex;
+      gap: 10px;
+      height: clamp(360px, 64vh, 560px);
+      padding-inline: var(--hm-pad);
+      cursor: grab;
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    #motion-section .hm-motion.dragging {
+      cursor: grabbing;
+    }
+
+    #motion-section .hm-motion.dragging .hm-pane {
+      transition-duration: .45s;
+    }
+
+    #motion-section .hm-pane {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      border-radius: 4px;
+      color: #fff;
+      transition: flex .9s cubic-bezier(.2, .8, .2, 1), filter .9s cubic-bezier(.2, .8, .2, 1);
+      filter: grayscale(1) brightness(.85);
+      display: block;
+      -webkit-user-drag: none;
+    }
+
+    #motion-section .hm-pane.on {
+      flex: 7;
+      filter: none;
+    }
+
+    #motion-section .hm-pane .hm-ph {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, var(--g1, #D3567E), var(--g2, #6E0E33));
+    }
+
+    #motion-section .hm-pane .hm-ph>img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      -webkit-user-drag: none;
+    }
+
+    #motion-section .hm-pane::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(0deg, rgba(15, 4, 9, .8), transparent 55%);
+    }
+
+    #motion-section .hm-pane .lab {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      bottom: 18px;
+      writing-mode: vertical-rl;
+      transform: translateX(-50%) rotate(180deg);
+      font-size: .78rem;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      transition: opacity .4s;
+    }
+
+    #motion-section .hm-pane.on .lab {
+      opacity: 0;
+    }
+
+    #motion-section .hm-pane .cap {
+      position: absolute;
+      z-index: 3;
+      left: 24px;
+      bottom: 24px;
+      right: 24px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all .7s cubic-bezier(.2, .8, .2, 1) .2s;
+    }
+
+    #motion-section .hm-pane.on .cap {
+      opacity: 1;
+      transform: none;
+    }
+
+    #motion-section .hm-pane .cap small {
+      display: block;
+      font-size: .74rem;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      opacity: .8;
+    }
+
+    #motion-section .hm-pane .cap b {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      line-height: 1.05;
+      margin: 4px 0 8px;
+    }
+
+    #motion-section .hm-pane .cap u {
+      font-size: .76rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      text-underline-offset: 4px;
+    }
+
+    @media (max-width: 1000px) {
+      #motion-section .hm-motion {
+        flex-direction: column;
+        height: auto;
+      }
+
+      #motion-section .hm-pane {
+        flex: none;
+        height: 70px;
+        transition: height .8s cubic-bezier(.2, .8, .2, 1), filter .8s cubic-bezier(.2, .8, .2, 1);
+      }
+
+      #motion-section .hm-pane.on {
+        height: 340px;
+      }
+
+      #motion-section .hm-pane .lab {
+        writing-mode: horizontal-tb;
+        transform: none;
+        left: 20px;
+        bottom: 50%;
+        margin-bottom: -.6em;
+      }
+    }
+
+    /* ===== LOGIN POPUP CSS ===== */
+    .aura-login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 121;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(20, 8, 14, .58);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .35s ease, visibility .35s;
+    }
+
+    .aura-login-overlay.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .aura-login-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: min(780px, 100%);
+      min-height: 440px;
+      overflow: hidden;
+      background: #FFF9F0;
+      color: #2B1B21;
+      border-radius: 18px;
+      box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .55);
+      transform: translateY(24px) scale(.97);
+      transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .aura-login-overlay.show .aura-login-card {
+      transform: none;
+    }
+
+    .aura-login-x {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 3;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #2B1B21;
+      border: 0;
+      cursor: pointer;
+      font-size: 1.15rem;
+      box-shadow: 0 4px 14px -6px rgba(0, 0, 0, .4);
+      transition: transform .3s, background .3s, color .3s;
+    }
+
+    .aura-login-x:hover {
+      transform: rotate(90deg);
+      background: #A3194A;
+      color: #fff;
+    }
+
+    .aura-login-img {
+      position: relative;
+      background: linear-gradient(160deg, #D3567E, #6E0E33);
+      min-height: 240px;
+    }
+
+    .aura-login-img img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .aura-login-body {
+      padding: 44px 40px 36px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .aura-login-eyebrow {
+      display: block;
+      margin-bottom: 10px;
+      font-size: .68rem;
+      font-weight: 500;
+      letter-spacing: .3em;
+      color: #8B8378;
+      text-transform: uppercase;
+    }
+
+    .aura-login-body h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1.08;
+      margin: 0 0 6px;
+      color: #2B1B21;
+    }
+
+    .aura-login-body h2 em {
+      color: #A3194A;
+      font-style: italic;
+    }
+
+    .aura-login-sub {
+      font-size: .9rem;
+      color: #7B6A6F;
+      margin: 0 0 22px;
+      line-height: 1.5;
+    }
+
+    .aura-login-body form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .aura-login-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .aura-login-field>span {
+      font-size: .78rem;
+      font-weight: 500;
+      color: #2B1B21;
+      letter-spacing: .02em;
+    }
+
+    .aura-login-field input,
+    .aura-login-field textarea {
+      width: 100%;
+      padding: 13px 15px;
+      border: 1.5px solid #E8E1D3;
+      border-radius: 10px;
+      background: #fff;
+      font-family: inherit;
+      font-size: .94rem;
+      color: #2B1B21;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .aura-login-field input::placeholder,
+    .aura-login-field textarea::placeholder {
+      color: #B8AEA0;
+    }
+
+    .aura-login-field input:focus,
+    .aura-login-field textarea:focus {
+      border-color: #A3194A;
+      box-shadow: 0 0 0 4px rgba(163, 25, 74, .1);
+    }
+
+    .aura-login-submit {
+      width: 100%;
+      padding: 15px 20px;
+      border-radius: 999px;
+      border: 0;
+      background: linear-gradient(135deg, #A3194A, #6E0E33);
+      color: #fff;
+      font-family: inherit;
+      font-size: .86rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 12px 26px -12px rgba(163, 25, 74, .8);
+      transition: transform .25s, box-shadow .25s;
+      margin-top: 4px;
+    }
+
+    .aura-login-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px -12px rgba(163, 25, 74, .9);
+    }
+
+    .aura-login-msg {
+      min-height: 1.3em;
+      font-size: .85rem;
+      text-align: center;
+      margin: 4px 0 0;
+      color: #C0334F;
+    }
+
+    @media (max-width: 700px) {
+      .aura-login-card {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+
+      .aura-login-img {
+        min-height: 0;
+        height: 160px;
+      }
+
+      .aura-login-body {
+        padding: 28px 22px 24px;
+      }
+
+      .acct .menu {
+        position: fixed;
+        top: 76px;
+        right: 12px;
+        width: min(270px, calc(100vw - 24px));
+      }
+    }
+
+    /* Explore link mattum hover pannumbodhu hand cursor */
+    .aura-cat-content .go {
+      cursor: pointer;
+    }
+
+    /* Explore hover pannumbodhu zoom effect vendaam */
+    .aura-cat-content .go:hover {
+      transform: none;
+      scale: none;
+    }
+
+    /* Card hover image zoom disable */
+    .aura-girls-cats .cat:hover .cat-img {
+      transform: none !important;
+      scale: none !important;
+    }
+
+    /* Explore text mattum clickable cursor */
+    .aura-girls-cats .go {
+      cursor: pointer;
+    }
+
+
+    /* Mobile menu responsive */
+    .mmenu {
+      box-sizing: border-box;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      max-height: 100dvh;
+      padding: 24px 20px;
+    }
+
+    .mmenu a,
+    .mmenu button {
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+
+    .mmenu-logo img {
+      display: block;
+      max-width: 140px;
+      height: auto;
+    }
+
+    .mmenu-icons {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .m-dropdown {
+      width: 100%;
+    }
+
+    .m-dropdown-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .m-dropdown-menu {
+      display: none;
+      width: 100%;
+      box-sizing: border-box;
+      padding-left: 14px;
+    }
+
+    .m-dropdown.open>.m-dropdown-menu {
+      display: block;
+    }
+
+    .m-dropdown-menu a {
+      display: block;
+      width: 100%;
+      padding: 12px 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .m-dropdown-toggle i {
+      transition: transform 0.25s ease;
+    }
+
+
+    @media (max-width: 768px) {
+      .mmenu {
+        width: min(88vw, 360px);
+      }
+
+      .mmenu a,
+      .mmenu button {
+        font-size: 15px;
+      }
+    }
+
+    /* Main Dropdown arrow */
+    .m-dropdown.open>.m-dropdown-toggle i {
+      transform: rotate(180deg) !important;
+      color: var(--rose) !important;
+    }
+
+    /* Sub Dropdown (Dresses/Bottomwear) arrow */
+    .m-dropdown-sub.open>.m-sub-toggle i {
+      transform: rotate(180deg) !important;
+      color: var(--rose) !important;
+    }
+  </style>
+</head>
+
+<body class="home">
+
+  <!-- icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-heart" viewBox="0 0 24 24">
+        <path
+          d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+      </symbol>
+      <symbol id="i-bag" viewBox="0 0 24 24">
+        <path d="M6 7h12l1 13H5L6 7Z" />
+        <path d="M9 7a3 3 0 0 1 6 0" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-share" viewBox="0 0 24 24">
+        <circle cx="18" cy="5" r="3" />
+        <circle cx="6" cy="12" r="3" />
+        <circle cx="18" cy="19" r="3" />
+        <path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" />
+      </symbol>
+      <symbol id="i-play" viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z" fill="currentColor" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="M20 6 9 17l-5-5" />
+      </symbol>
+      <symbol id="i-truck" viewBox="0 0 24 24">
+        <path d="M2 6h11v10H2zM13 10h4l3 3v3h-7" />
+        <circle cx="7" cy="17" r="1.8" />
+        <circle cx="17" cy="17" r="1.8" />
+      </symbol>
+      <symbol id="i-return" viewBox="0 0 24 24">
+        <path d="M4 4v6h6" />
+        <path d="M4.5 14a8 8 0 1 0 2-8.3L4 10" />
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6l-8-3Z" />
+        <path d="m9 12 2 2 4-4" />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect x="5" y="11" width="14" height="9" rx="2" />
+        <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+      </symbol>
+      <symbol id="i-user" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 24 24">
+        <path d="M18 6 6 18M6 6l12 12" />
+      </symbol>
+      <symbol id="i-chev" viewBox="0 0 24 24">
+        <path d="m6 9 6 6 6-6" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="cursor-glow" aria-hidden="true"></div>
+
+  <!-- Announcement Bar -->
+  <div class="hm-ann">
+    <span>Discover Your New Favourite Look</span>
+    <span class="pill">New Arrivals</span>
+    <span>Style Delivered to Your Doorstep</span>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="nav" id="nav" aria-label="Main">
+    <a href="index.html" class="brand"><img src="../assets/logo.png" alt="AURA"></a>
+    <div class="links">
+      <a href="index.html" class="act" aria-current="page">Home</a>
+      <a href="newcollections.html">New Collection</a>
+
+      <div class="nav-dd" id="shopDD">
+        <a href="shop.html" class="nav-dd-trigger" aria-haspopup="true" aria-expanded="false">
+          Shop
+          <svg class="dd-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <use href="#i-chev" />
+          </svg>
+        </a>
+
+        <div class="dd-menu" role="menu" aria-label="Shop categories">
+          <a href="shop.html?cat=kurta-sets" role="menuitem">Kurta Sets</a>
+          <a href="shop.html?cat=tops" role="menuitem">Tops</a>
+          <a href="shop.html?cat=college-wear" role="menuitem">College Wear</a>
+          <a href="shop.html?cat=office-wear" role="menuitem">Office Wear</a>
+          <a href="shop.html?cat=jump-suit" role="menuitem">Jump Suits</a>
+          <a href="shop.html?cat=night-suits" role="menuitem">Night Suits</a>
+          <div class="dd-sub">
+            <button type="button" class="dd-sub-toggle" aria-expanded="false">
+              <span>Dresses</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <use href="#i-chev" />
+              </svg>
+            </button>
+
+            <div class="dd-sub-list">
+              <a href="shop.html?cat=dresses&type=maxi-dresses" role="menuitem">Maxi Dresses</a>
+              <a href="shop.html?cat=dresses&type=casual-dresses" role="menuitem">Casual Dresses</a>
+              <a href="shop.html?cat=dresses&type=floral-dresses" role="menuitem">Floral Dresses</a>
+            </div>
+          </div>
+          <div class="dd-sub">
+            <button type="button" class="dd-sub-toggle" aria-expanded="false">
+              <span>Bottomwear</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <use href="#i-chev" />
+              </svg>
+            </button>
+
+            <div class="dd-sub-list">
+              <a href="shop.html?cat=leggings" role="menuitem">Leggings</a>
+              <a href="shop.html?cat=palazzo" role="menuitem">Palazzo</a>
+            </div>
+          </div>
+
+          <a href="shop.html?cat=shawls" role="menuitem">Shawls</a>
+          <a href="shop.html?cat=t-shirt" role="menuitem">T-shirt</a>
+          <a href="shop.html" role="menuitem" class="dd-all">View all products</a>
+        </div>
+      </div>
+
+      <a href="./trackorder.html">Track Order</a>
+    </div>
+
+    <form class="hm-search" id="hmSearch" role="search">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        aria-hidden="true">
+        <use href="#i-search" />
+      </svg>
+      <input class="hm-in" type="search" name="q" placeholder="Search fashion, beauty, jewellery…"
+        aria-label="Search products" autocomplete="off">
+    </form>
+
+    <div class="nav-actions">
+      <button type="button" class="hm-login" id="hmLogin" aria-haspopup="dialog" aria-controls="auraLoginOverlay"><svg
+          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <use href="#i-user" />
+        </svg><span>Login</span></button>
+      <button class="icon-btn" id="wishBtn" aria-label="Wishlist" onclick="location.href='wishlist.html'"><svg
+          width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <use href="#i-heart" />
+        </svg><span class="badge" id="wishBadge">0</span></button>
+      <button class="icon-btn" id="cartBtn" aria-label="Shopping Cart" onclick="location.href='cart.html'"><svg
+          width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="19" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg><span class="badge" id="cartBadge">0</span></button>
+      <div class="acct" id="acct" style="display:none">
+        <button class="avatar" id="avatarBtn" type="button" aria-label="Account menu" aria-haspopup="true"
+          aria-expanded="false"><i class="fa-regular fa-user"></i></button>
+        <div class="menu" id="acctMenu">
+          <div class="who"><b id="userName">AURA Customer</b><small id="userEmail">Signed in</small></div><a
+            href="order-history.html"><i class="fa-solid fa-box"></i> Order
+            History</a><a href="wishlist.html"><i class="fa-regular fa-heart"></i> Wishlist</a><button type="button"
+            id="logoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i>
+            Logout</button>
+        </div>
+      </div>
+      <button class="icon-btn burger" id="burger" aria-label="Open menu" aria-expanded="false"
+        aria-controls="mmenu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg></button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu">
+
+    <button class="icon-btn mclose" id="mclose" aria-label="Close menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <a href="index.html" class="mmenu-logo">
+      <img src="../assets/logo.png" alt="AURA">
+    </a>
+
+    <div class="mmenu-icons">
+      <a href="wishlist.html" class="m-icon-link">
+        <i class="fa-regular fa-heart"></i>
+        <span>Wishlist</span>
+        <span class="badge" id="mWishBadge">0</span>
+      </a>
+
+      <a href="cart.html" class="m-icon-link">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Cart</span>
+        <span class="badge" id="mCartBadge">0</span>
+      </a>
+    </div>
+
+    <a href="index.html" class="act">Home</a>
+    <a href="newcollections.html">New Collection</a>
+
+    <!-- Shop dropdown -->
+    <div class="m-dropdown">
+      <button type="button" class="m-dropdown-toggle" aria-expanded="false">
+        <span>Shop</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+
+      <div class="m-dropdown-menu">
+        <a href="shop.html?cat=kurta-sets">Kurta Sets</a>
+        <a href="shop.html?cat=tops">Tops</a>
+        <a href="shop.html?cat=college-wear">College Wear</a>
+        <a href="shop.html?cat=office-wear">Office Wear</a>
+        <a href="shop.html?cat=jump-suit">Jump Suits</a>
+        <a href="shop.html?cat=night-suits">Night Suits</a>
+
+        <!-- Dresses submenu -->
+        <div class="m-dropdown">
+          <button type="button" class="m-dropdown-toggle" aria-expanded="false">
+            <span>Dresses</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="m-dropdown-menu">
+            <a href="shop.html?cat=dresses&type=maxi-dresses">Maxi Dresses</a>
+            <a href="shop.html?cat=dresses&type=casual-dresses">Casual Dresses</a>
+            <a href="shop.html?cat=dresses&type=floral-dresses">Floral Dresses</a>
+          </div>
+        </div>
+
+        <!-- Bottomwear submenu -->
+        <div class="m-dropdown">
+          <button type="button" class="m-dropdown-toggle" aria-expanded="false">
+            <span>Bottomwear</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="m-dropdown-menu">
+            <a href="shop.html?cat=leggings">Leggings</a>
+            <a href="shop.html?cat=palazzo">Palazzo</a>
+          </div>
+        </div>
+
+        <a href="shop.html?cat=shawls">Shawls</a>
+        <a href="shop.html?cat=t-shirt">T-shirt</a>
+        <a href="shop.html">View All Products</a>
+      </div>
+    </div>
+
+    <a href="trackorder.html">Track Order</a>
+  </div>
+
+
+  <!-- ===== HERO ===== -->
+  <header class="hm-hero" data-io-pause>
+    <div class="hm-hero-bg" aria-hidden="true">
+      <video class="hero-video on" id="heroVideo" autoplay muted loop playsinline preload="auto" tabindex="-1" poster>
+        <source src="../video/Aura .mp4" type="video/mp4">Your browser
+        does not support the video tag.
+      </video>
+      <div class="hm-shade"></div>
+    </div>
+    <div class="hm-hero-in">
+
+    </div>
+
+  </header>
+
+  <!-- ribbon -->
+  <div class="hm-ribbon" aria-hidden="true">
+    <div>
+      <span>Exclusive Dress Collection</span>
+      <span>Premium Lace &amp; Silk</span>
+      <span>Perfect Party Wear</span>
+      <span>Made-to-order Fit</span>
+      <span>Trendy Maxi &amp; Midi</span>
+      <span>Elegant Styles for Every Occasion</span>
+
+      <span>Exclusive Dress Collection</span>
+      <span>Premium Lace &amp; Silk</span>
+      <span>Perfect Party Wear</span>
+      <span>Made-to-order Fit</span>
+      <span>Trendy Maxi &amp; Midi</span>
+      <span>Elegant Styles for Every Occasion</span>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="hm-main">
+    <!-- Promo Band -->
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="promo reveal">
+          <h2>Festive Sale · <em>Up to 60% OFF</em></h2>
+          <p>Celebrate the season with our curated festive collection.
+            Limited
+            time offer.</p>
+          <div class="count">
+            <div><b id="cd-d">02</b><small>Days</small></div>
+            <div><b id="cd-h">14</b><small>Hours</small></div>
+            <div><b id="cd-m">36</b><small>Mins</small></div>
+            <div><b id="cd-s">22</b><small>Secs</small></div>
+          </div>
+          <a href="shop.html" class="btn btn-light">Shop the Sale →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== GIRLS' DRESS COLLECTION (Static Custom Layout) ===== -->
+    <section class="hm-sec" id="moods">
+      <div class="hm-moods-head">
+        <div><span class="hm-eyebrow reveal">The AURA Edit</span>
+          <h2 class="hm-display reveal" style="--d:80ms;font-size:clamp(2.8rem,6.4vw,5rem)">Girls'
+            Dresses.<span class="hm-script">Every look, your style</span></h2>
+        </div>
+        <p class="reveal" style="--d:160ms">Explore beautiful dresses for
+          every occasion, from elegant everyday outfits
+          to glamorous party wear and dreamy bridal looks.</p>
+      </div>
+
+      <div class="hm-arches reveal" data-drag>
+        <!-- 1. Kurta Sets (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=kurta-sets">
+          <span class="hm-ph" style="--g1:#E879A9;--g2:#8A1640">
+            <img src="../realtime-images/green-trends-model-set.PNG" alt="Kurta Sets" loading="lazy" draggable="false"
+              onerror="this.remove()">
+          </span>
+          <span>Kurta Sets</span>
+        </a>
+
+        <!-- 2. Maxi Dresses (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=dresses&type=maxi-dresses">
+          <span class="hm-ph" style="--g1:#E8CFA0;--g2:#B88A4B">
+            <img src="../realtime-images/Mediterranean Courtyard Dash-Print Dress.png" alt="Maxi Dresses" loading="lazy"
+              draggable="false" onerror="this.remove()">
+          </span>
+          <span>Flared Kurti</span>
+        </a>
+
+        <!-- 3. Office Wear (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=office-wear">
+          <span class="hm-ph" style="--g1:#B4708B;--g2:#5C1A38">
+            <img src="../realtime-images/black-set.PNG" alt="Office Wear" loading="lazy" draggable="false"
+              onerror="this.remove()">
+          </span>
+          <span>Office Wear</span>
+        </a>
+
+        <!-- 4. College Dresses (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=college-wear">
+          <span class="hm-ph" style="--g1:#F2BCCB;--g2:#D6657F">
+            <img src="../realtime-images/green-set.PNG" alt="College Dresses" loading="lazy" draggable="false"
+              onerror="this.remove()">
+          </span>
+          <span>College Dresses</span>
+        </a>
+
+        <!-- 5. Jumpsuit (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=sarees">
+          <span class="hm-ph" style="--g1:#C93A68;--g2:#4B1230">
+            <img src="../realtime-images/Jump Suite.PNG" alt="Sarees" loading="lazy" draggable="false"
+              onerror="this.remove()">
+          </span>
+          <span>Jumpsuit</span>
+        </a>
+
+        <!-- 6. Night Suits (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=night-suits">
+          <span class="hm-ph" style="--g1:#B7A0E8;--g2:#513477">
+            <img src="../realtime-images/nightsuite-lightrose.PNG" alt="Night Suits" loading="lazy" draggable="false"
+              onerror="this.remove()">
+          </span>
+          <span>Night Suits</span>
+        </a>
+
+        <!-- 7. Leggings (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=leggings">
+          <span class="hm-ph" style="--g1:#D8B4C8;--g2:#713B58">
+            <img src="../images/realtime-images/redtop-closeup.PNG" alt="Leggings" loading="lazy" draggable="false"
+              onerror="this.remove()">
+          </span>
+          <span>Leggings</span>
+        </a>
+
+        <!-- 8. Palazzo (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=palazzo">
+          <span class="hm-ph" style="--g1:#D9C6A5;--g2:#80613D">
+            <img src="../realtime-images/palazzo-front(sandal).PNG" alt="Palazzo" loading="lazy" draggable="false"
+              onerror="this.remove()">
+          </span>
+          <span>Palazzo</span>
+        </a>
+
+        <!-- 9. Shawls (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=shawls">
+          <span class="hm-ph" style="--g1:#E8B8C8;--g2:#8D3455">
+            <img src="../realtime-images/shawl-white.PNG" alt="Shawls" loading="lazy" draggable="false"
+              onerror="this.remove()">
+          </span>
+          <span>Shawls</span>
+        </a>
+
+        <!-- 10. T-Shirt (File Manager Image) -->
+        <a class="hm-arch" href="shop.html?cat=t-shirt">
+          <span class="hm-ph" style="--g1:#B9CBB0;--g2:#405B3D">
+            <img src="../realtime-images/" alt="T-Shirt" loading="lazy" draggable="false" onerror="this.remove()">
+          </span>
+          <span>T-Shirt</span>
+        </a>
+
+        <!-- NOTE: Party Wear and Anarkali have been REMOVED as requested -->
+      </div>
+    </section>
+
+    <!-- ===== GIRLS FASHION CATEGORIES ===== -->
+    <section class="section aura-fashion-categories">
+      <div class="container">
+        <div class="head">
+          <div>
+            <span class="eyebrow reveal">THE AURA EDIT</span>
+            <h2 class="title reveal" style="--d:80ms">Find Your
+              <em>Style</em>
+            </h2>
+            <p class="category-subtitle reveal" style="--d:120ms">From
+              everyday charm to unforgettable moments.</p>
+          </div>
+          <a href="shop.html?cat=fashion" class="category-view-all">View All
+            Collections <span>↗</span></a>
+        </div>
+
+        <div class="cats aura-girls-cats" data-stagger>
+
+          <!-- 01 — LARGE -->
+          <a href="shop.html?cat=jump-suit" class="cat cat-large reveal">
+            <img class="cat-img" src="../realtime-images/Women's Printed Wide-Leg Jumpsuit2.PNG" alt="Jump Suits"
+              loading="lazy">
+            <div class="aura-cat-overlay"></div>
+            <div class="aura-cat-content">
+              <span class="aura-cat-number">01 / COLLECTION</span>
+              <h3>Jump Suits</h3>
+              <p class="cat-desc">One piece, endless ease.</p>
+              <span class="go">Explore Collection ↗</span>
+            </div>
+          </a>
+
+          <!-- 02 & 03 — SMALL STACK -->
+          <div class="cat-col">
+            <a href="shop.html?cat=kurta" class="cat cat-small reveal">
+              <img class="cat-img" src="../realtime-images/Elegant Teal Floral Veranda Portrait.png" alt="Kurtas"
+                loading="lazy">
+              <div class="aura-cat-overlay"></div>
+              <div class="aura-cat-content">
+                <span class="aura-cat-number">02</span>
+                <h3>Kurta</h3>
+                <span class="go">Explore ↗</span>
+              </div>
+            </a>
+
+            <a href="shop.html?cat=crop-tops" class="cat cat-small reveal">
+              <img class="cat-img" src="../realtime-images/croptop-purple.PNG" alt="Crop Tops" loading="lazy">
+              <div class="aura-cat-overlay"></div>
+              <div class="aura-cat-content">
+                <span class="aura-cat-number">03</span>
+                <h3>Crop Top</h3>
+                <span class="go">Explore ↗</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- 04 — LARGE -->
+          <a href="shop.html?cat=maxi-dress" class="cat cat-large reveal">
+            <img class="cat-img" src="../realtime-images/courttype-with-court.png" alt="Maxi Dresses" loading="lazy">
+            <div class="aura-cat-overlay"></div>
+            <div class="aura-cat-content">
+              <span class="aura-cat-number">04 / COLLECTION</span>
+              <h3>Maxi Dress</h3>
+              <p class="cat-desc">Flowing, graceful, effortless.</p>
+              <span class="go">Explore Collection ↗</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Featured Products -->
+    <section class="section" id="featured">
+      <div class="container">
+        <div class="head">
+          <div><span class="eyebrow reveal">The AURA Selection</span>
+            <h2 class="title reveal" style="--d:80ms">Most Loved
+              <em>Styles</em>
+            </h2>
+            <p class="reveal" style="--d:120ms">From everyday favourites to
+              statement looks, discover the styles everyone's falling
+              for.</p>
+          </div><a href="shop.html" class="btn btn-ghost btn-sm reveal" style="--d:160ms">Explore All Styles →</a>
+        </div>
+
+        <!-- 🔥 Ippo intha grid la dynamic-a products varum 🔥 -->
+        <div class="grid" id="featuredGrid">
+          <p style="padding: 20px; color: #827078;">Loading styles...</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Campaign 1 -->
+    <section class="section cmp">
+      <div class="container cmp-split">
+        <div class="cmp-media arch-shape reveal-img" data-tone="rose"><img class="wm" src="assets/logo.png" alt><img
+            class="ph" src="../images/home-banner.png" alt="Model in an AURA rose silk drape" loading="lazy"
+            decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
+        <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">01</span><span class="eyebrow reveal"
+            style="--d:60ms">Discover Your Style</span>
+          <h2 class="title reveal" style="--d:140ms">Dressed in <em>quiet
+              confidence.</em></h2>
+          <p class="reveal" style="--d:220ms">From timeless ethnic elegance
+            to
+            modern everyday styles, discover
+            thoughtfully chosen pieces for every moment that deserves to
+            feel
+            special.</p><a href="shop.html?cat=fashion" class="btn btn-primary reveal" style="--d:300ms">Shop Fashion
+            →</a>
+        </div>
+      </div>
+    </section>
+    <section class="section cmp">
+      <div class="container cmp-split rev">
+        <div class="cmp-media reveal-img" data-tone="blush"><img class="wm" src="assets/logo.png" alt><img class="ph"
+            src="../images/sareewithbanner.png" alt="AURA beauty products on a blush backdrop" loading="lazy"
+            decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
+        <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">02</span><span class="eyebrow reveal"
+            style="--d:60ms">Beauty in Every Detail</span>
+          <h2 class="title reveal" style="--d:140ms">A glow that <em>feels
+              like you.</em></h2>
+          <p class="reveal" style="--d:220ms">Curated styles, beautiful
+            details, and effortless elegance — discover
+            pieces that celebrate your individuality, every day and every
+            occasion.</p><a href="shop.html?cat=beauty" class="btn btn-primary reveal" style="--d:300ms">Shop Beauty
+            →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 🔥 3-VIDEO GRID SECTION 🔥 -->
+    <!-- ========================================== -->
+    <section class="video-grid-section">
+      <div class="vg-header">
+        <span class="vg-kicker">AURA COLLECTIONS</span>
+        <h2 class="vg-title">Style <em>Redefined</em></h2>
+      </div>
+
+      <div class="vg-container">
+        <!-- Video 1 - Office Wear -->
+        <div class="vg-card">
+          <video class="vg-video" autoplay muted loop playsinline preload="metadata"
+            poster="../images/hompage-story/story1.png">
+            <source src="../video/v1.mp4" type="video/mp4">
+          </video>
+          <div class="vg-overlay">
+            <h3>Office Wear</h3>
+            <a href="shop.html?cat=office" class="vg-btn">Explore &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Video 2 - College Wear -->
+        <div class="vg-card">
+          <video class="vg-video" autoplay muted loop playsinline preload="metadata"
+            poster="../images/hompage-story/story2.png">
+            <source src="../video/v2.mp4" type="video/mp4">
+          </video>
+          <div class="vg-overlay">
+            <h3>College Wear</h3>
+            <a href="shop.html?cat=college" class="vg-btn">Explore
+              &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Video 3 - Saree -->
+        <div class="vg-card">
+          <video class="vg-video" autoplay muted loop playsinline preload="metadata"
+            poster="../images/hompage-story/story3.png">
+            <source src="../video/v3.mp4" type="video/mp4">
+          </video>
+          <div class="vg-overlay">
+            <h3>Saree Elegance</h3>
+            <a href="shop.html?cat=saree" class="vg-btn">Explore &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Video popup player -->
+    <div class="vgm" id="vgModal" role="dialog" aria-modal="true" aria-hidden="true">
+      <button class="vgm-close" id="vgmClose" aria-label="Close">&times;</button>
+      <button class="vgm-nav prev" id="vgmPrev" aria-label="Previous video">&#8249;</button>
+      <div class="vgm-box">
+        <video id="vgModalVideo" playsinline controls autoplay preload="auto"></video>
+        <div class="vgm-bar">
+          <h3 id="vgModalTitle"></h3>
+          <a id="vgModalLink" href="shop.html" class="vgm-shop">Shop Now
+            &rarr;</a>
+        </div>
+      </div>
+      <button class="vgm-nav next" id="vgmNext" aria-label="Next video">&#8250;</button>
+    </div>
+
+    <section class="section cmp">
+      <div class="container">
+        <div class="cmp-banner reveal-img" data-tone="gold">
+          <img class="wm" src="assets/logo.png" alt>
+          <img class="ph" src="assets/campaign-jewellery.jpg" alt="Premium AURA Collection" loading="lazy"
+            decoding="async" data-parallax="0.1" onerror="this.remove()">
+          <div class="cmp-banner-copy">
+            <span class="eyebrow reveal">The Signature Collection</span>
+            <h2 class="title reveal" style="--d:100ms">Timeless pieces,
+              <em>unforgettable presence.</em>
+            </h2>
+            <p class="reveal" style="--d:180ms">Curated fashion for the
+              modern
+              woman. Discover statement looks and everyday elegance,
+              designed
+              to make you feel extraordinary.</p>
+            <a href="shop.html" class="btn btn-light reveal" style="--d:260ms">Shop The Collection →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MOTION ===== -->
+    <section class="hm-sec" id="motion-section">
+      <div class="hm-motion-head"><span class="hm-eyebrow reveal">EXPLORE
+          COLLECTIONS</span>
+        <h2 class="hm-h2 reveal" style="--d:80ms">Style that moves <em>with
+            you</em></h2>
+        <p class="hm-motion-sub reveal" style="--d:120ms">From everyday
+          looks
+          to special moments, find your favourite
+          style.</p>
+      </div>
+      <div class="hm-motion reveal" id="motion">
+        <a class="hm-pane on" href="shop.html?cat=trending-dresses"><span class="hm-ph"
+            style="--g1:#F4C7D5;--g2:#741D3B"><img src="../images/stylemoves/casualwear.webp"
+              alt="Trending girls dresses" loading="lazy" onerror="this.remove()"></span><span class="lab">Girls
+            Wear</span><span class="cap"><small>01 /
+              COLLECTION</small><b>Everyday pretty</b><u>Shop Now
+              ↗</u></span></a>
+        <a class="hm-pane" href="shop.html?cat=tops-with-pants"><span class="hm-ph"
+            style="--g1:#B8D5E8;--g2:#263F59"><img src="../images/stylemoves/jeans.png" alt="Modern jeans and tops"
+              loading="lazy" onerror="this.remove()"></span><span class="lab">Jeans & Tops</span><span
+            class="cap"><small>02 / COLLECTION</small><b>Casual. Cool.
+              Always.</b><u>Shop Now ↗</u></span></a>
+        <a class="hm-pane" href="shop.html?cat=half-saree"><span class="hm-ph" style="--g1:#E9B7C8;--g2:#761F42"><img
+              src="../images/stylemoves/traditionalwear.png" alt="Traditional half saree collection" loading="lazy"
+              onerror="this.remove()"></span><span class="lab">Half
+            Saree</span><span class="cap"><small>03 /
+              COLLECTION</small><b>Tradition meets trend</b><u>Shop Now
+              ↗</u></span></a>
+        <a class="hm-pane" href="shop.html?cat=crop-tops"><span class="hm-ph" style="--g1:#F3C7D8;--g2:#A43D68"><img
+              src="../images/stylemoves/croptop.png" alt="Modern crop tops" loading="lazy"
+              onerror="this.remove()"></span><span class="lab">Crop
+            Tops</span><span class="cap"><small>04 /
+              COLLECTION</small><b>Small top. Big style.</b><u>Shop Now
+              ↗</u></span></a>
+        <a class="hm-pane" href="shop.html?cat=lehenga"><span class="hm-ph" style="--g1:#D9C5F0;--g2:#50316D"><img
+              src="../images/stylemoves/lehenga.png" alt="Elegant lehenga collection" loading="lazy"
+              onerror="this.remove()"></span><span class="lab">Lehenga</span><span class="cap"><small>05 /
+              COLLECTION</small><b>Made for celebrations</b><u>Shop Now
+              ↗</u></span></a>
+        <a class="hm-pane" href="shop.html?cat=skirts-with-tops"><span class="hm-ph"
+            style="--g1:#C8D9B5;--g2:#354A2D"><img src="../images/stylemoves/skirt-top.png"
+              alt="Skirts paired with stylish tops" loading="lazy" onerror="this.remove()"></span><span
+            class="lab">Skirts & Tops</span><span class="cap"><small>06 /
+              COLLECTION</small><b>Simple. Stylish.
+              You.</b><u>Shop Now ↗</u></span></a>
+        <a class="hm-pane" href="shop.html?cat=party-wear"><span class="hm-ph" style="--g1:#F0C4CE;--g2:#722B45"><img
+              src="../images/stylemoves/partywear.png" alt="Stylish party dresses for women" loading="lazy"
+              onerror="this.remove()"></span><span class="lab">Party
+            Dresses</span><span class="cap"><small>07 /
+              COLLECTION</small><b>Dress up. Stand out.</b><u>Shop Now
+              ↗</u></span></a>
+      </div>
+    </section>
+
+    <!-- ===== STORY ===== -->
+    <section class="hm-story" id="story" aria-label="AURA stories">
+      <div class="hm-sc on" data-title="First Light" data-kick="The ceremony story" data-href="shop.html?cat=fashion">
+        <span class="hm-ph" style="--g1:#C9722B;--g2:#2B0F12"><img src="../images/hompage-story/story1.png" alt
+            loading="lazy" onerror="this.remove()"></span>
+      </div>
+      <div class="hm-sc" data-title="Wedding Circle" data-kick="The celebration story"
+        data-href="shop.html?cat=jewellery"><span class="hm-ph" style="--g1:#8A7455;--g2:#1E1410"><img
+            src="../images/hompage-story/story2.png" alt loading="lazy" onerror="this.remove()"></span></div>
+      <div class="hm-sc" data-title="Golden Hour" data-kick="The evening story" data-href="shop.html?cat=beauty"><span
+          class="hm-ph" style="--g1:#B3204D;--g2:#1A0A11"><img src="../images/hompage-story/story3.png" alt
+            loading="lazy" onerror="this.remove()"></span></div>
+      <img class="hm-st-brand" src="../assets/logo.png" alt="AURA">
+      <div class="hm-st-title" id="stTitleBox">
+        <h2 id="stTitle">First Light</h2>
+      </div>
+      <a class="hm-st-shop" id="stShop" href="shop.html?cat=fashion">Shop
+        this
+        story</a>
+      <div class="hm-st-kick" id="stKick">The ceremony story</div>
+      <div class="hm-thumbs" role="tablist" aria-label="Choose a story">
+        <button class="hm-th on" role="tab" aria-label="First Light"><span class="hm-ph"
+            style="--g1:#C9722B;--g2:#2B0F12"><img src="../images/hompage-story/story1.png" alt loading="lazy"
+              onerror="this.remove()"></span></button>
+        <button class="hm-th" role="tab" aria-label="Wedding Circle"><span class="hm-ph"
+            style="--g1:#8A7455;--g2:#1E1410"><img src="../images/hompage-story/story2.png" alt loading="lazy"
+              onerror="this.remove()"></span></button>
+        <button class="hm-th" role="tab" aria-label="Golden Hour"><span class="hm-ph"
+            style="--g1:#B3204D;--g2:#1A0A11"><img src="../images/hompage-story/story3.png" alt loading="lazy"
+              onerror="this.remove()"></span></button>
+      </div>
+      <div class="hm-st-foot">
+        <div class="hm-st-prog"><span id="stNum">01</span><i class="hm-st-bar" id="stBar"></i><span>03</span></div>
+        <span>Tap a story, or use the arrow keys</span>
+      </div>
+    </section>
+
+    <!-- ===== LATEST TRENDS ===== -->
+    <section class="hm-trends" id="trends">
+      <div><span class="hm-pill reveal">Explore collection</span>
+        <h2 class="hm-display reveal" style="--d:80ms">Latest<br>Trends</h2><a href="shop.html"
+          class="btn btn-primary reveal" style="--d:160ms">Discover Now</a>
+        <h4 class="reveal" style="--d:220ms">Stories behind the style</h4>
+        <p class="reveal" style="--d:280ms">Every piece carries a small
+          story,
+          stitched into silk and set in gold. Here
+          is what everyone is reaching for right now.</p>
+      </div>
+      <div class="reveal" style="--d:120ms; width: 100%;">
+        <div class="hm-stack" id="trStack">
+          <div class="hm-tc" data-pos="0"><span class="hm-ph" style="--g1:#D3567E;--g2:#6E0E33"><img
+                src="../images/latest-trends/trend-1.png" alt loading="lazy" onerror="this.remove()"></span></div>
+          <div class="hm-tc" data-pos="1"><span class="hm-ph" style="--g1:#E8CFA0;--g2:#B88A4B"><img
+                src="../images/latest-trends/trend-2.png" alt loading="lazy" onerror="this.remove()"></span></div>
+          <div class="hm-tc" data-pos="2"><span class="hm-ph" style="--g1:#F2BCCB;--g2:#A3194A"><img
+                src="../images/latest-trends/trend-3.png" alt loading="lazy" onerror="this.remove()"></span></div>
+        </div>
+        <div class="hm-pager"><button type="button" id="trPrev" aria-label="Previous">‹</button><span id="trNum">1 /
+            3</span><button type="button" id="trNext" aria-label="Next">›</button></div>
+      </div>
+      <div class="hm-range reveal" style="--d:200ms">
+        <h5>Explore the range</h5><a href="shop.html?cat=trending-dresses">Trending Dresses
+          <span>→</span></a><a href="shop.html?cat=tops-with-pants">Tops &
+          Pants
+          <span>→</span></a><a href="shop.html?cat=kurta-sets">Kurta
+          Sets <span>→</span></a><a href="shop.html?cat=party-wear">Party
+          Wear
+          <span>→</span></a>
+      </div>
+    </section>
+
+    <!-- ============ AURA CUSTOMER REVIEWS (Dynamic Carousel) ============ -->
+    <section class="section aura-reviews-section" id="reviews"
+      style="background: #fff9f0; padding: 60px 0; overflow: hidden;">
+      <div class="container">
+        <div class="head" style="text-align: center; margin-bottom: 40px;">
+          <span class="eyebrow reveal"
+            style="display:block; font-size: 12px; letter-spacing: 0.2em; color: #a3194a; margin-bottom: 8px;">REAL
+            STORIES</span>
+          <h2 class="title reveal"
+            style="font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 46px); color: #2b1b21;">Loved
+            by <em>Thousands</em></h2>
+          <div class="reveal"
+            style="margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; font-family: 'Jost', sans-serif;">
+            <span style="color: #f5a623; font-size: 20px; letter-spacing: 2px;">★★★★★</span>
+            <span style="font-size: 15px; color: #2b1b21; font-weight: 500;">4.90
+              ★ (Reviews)</span>
+          </div>
+          <button type="button" id="openReviewModal" class="btn btn-primary reveal"
+            style="margin-top: 20px; padding: 10px 24px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em;">
+            Write a Review
+          </button>
+        </div>
+
+        <div class="reviews-slider-wrap reveal" style="position: relative; width: 100%;">
+          <button class="rev-nav prev" id="revPrev" aria-label="Previous"
+            style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 10; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ead9df; background: #fff; color: #a3194a; display: grid; place-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"><i
+              class="fa-solid fa-chevron-left"></i></button>
+          <button class="rev-nav next" id="revNext" aria-label="Next"
+            style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 10; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ead9df; background: #fff; color: #a3194a; display: grid; place-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"><i
+              class="fa-solid fa-chevron-right"></i></button>
+
+          <div class="reviews-track" id="reviewsTrack"
+            style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 10px 0 20px;">
+            <p style="padding: 20px; color: #827078;">Loading reviews...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ AURA FAQ ============ -->
+  <section class="section aura-faq-section" id="faq" aria-labelledby="faqTitle">
+    <div class="container">
+      <div class="aura-faq-head">
+        <span class="eyebrow">NEED HELP?</span>
+        <h2 class="title" id="faqTitle">Frequently Asked
+          <em>Questions</em>
+        </h2>
+        <p>Quick answers about orders, delivery, returns and sizing.</p>
+      </div>
+
+      <div class="aura-faq-list" id="auraFaq">
+
+        <div class="aura-faq-item">
+          <button type="button" class="aura-faq-q" aria-expanded="false">
+            <span>How long does delivery take?</span><i class="fa-solid fa-plus"></i>
+          </button>
+          <div class="aura-faq-a">
+            <p>Orders are processed and dispatched
+              within 24–48 working hours. After dispatch, delivery usually
+              takes 3–7 working days depending on your location.</p>
+          </div>
+        </div>
+
+        <div class="aura-faq-item">
+          <button type="button" class="aura-faq-q" aria-expanded="false">
+            <span>Is shipping free?</span><i class="fa-solid fa-plus"></i>
+          </button>
+          <div class="aura-faq-a">
+            <p>Yes, shipping is free across India on
+              orders over ₹999.</p>
+          </div>
+        </div>
+
+        <div class="aura-faq-item">
+          <button type="button" class="aura-faq-q" aria-expanded="false">
+            <span>What is your return and exchange policy?</span><i class="fa-solid fa-plus"></i>
+          </button>
+          <div class="aura-faq-a">
+            <p>We offer easy 7-day returns and
+              exchanges
+              on unworn items with original tags intact. Custom-stitched or
+              altered items are non-returnable. You can raise a return from
+              <a href="order-history.html#orders">My Orders</a>.
+            </p>
+          </div>
+        </div>
+
+        <div class="aura-faq-item">
+          <button type="button" class="aura-faq-q" aria-expanded="false">
+            <span>How can I track my order?</span><i class="fa-solid fa-plus"></i>
+          </button>
+          <div class="aura-faq-a">
+            <p>Go to <a href="trackorder.html">Track
+                Order</a> and enter your order details. You can also see all
+              your orders under Order History after logging in.</p>
+          </div>
+        </div>
+
+        <div class="aura-faq-item">
+          <button type="button" class="aura-faq-q" aria-expanded="false">
+            <span>Which payment methods do you accept?</span><i class="fa-solid fa-plus"></i>
+          </button>
+          <div class="aura-faq-a">
+            <p>We accept UPI, debit/credit cards, net
+              banking, wallets and Cash on Delivery.</p>
+          </div>
+        </div>
+
+        <div class="aura-faq-item">
+          <button type="button" class="aura-faq-q" aria-expanded="false">
+            <span>How do I choose the right size?</span><i class="fa-solid fa-plus"></i>
+          </button>
+          <div class="aura-faq-a">
+            <p>Check our <a href="size-guide.html">Size
+                Guide</a> for chest, waist and hip measurements. If you are
+              between two sizes, we suggest choosing the larger
+              one.</p>
+          </div>
+        </div>
+
+        <div class="aura-faq-item">
+          <button type="button" class="aura-faq-q" aria-expanded="false">
+            <span>Do you offer gift boxes?</span><i class="fa-solid fa-plus"></i>
+          </button>
+          <div class="aura-faq-a">
+            <p>Yes. You can add the AURA Gift Box for
+              ₹399 on the product page before adding to cart.</p>
+          </div>
+        </div>
+
+        <div class="aura-faq-item">
+          <button type="button" class="aura-faq-q" aria-expanded="false">
+            <span>How do I contact customer support?</span><i class="fa-solid fa-plus"></i>
+          </button>
+          <div class="aura-faq-a">
+            <p>Visit our <a href="contact.html">Contact
+                page</a> or message us on Instagram. We reply Mon–Sat, 10 AM
+              –
+              7 PM.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="aura-faq-foot">
+        <p>Still have questions?</p>
+        <a href="contact.html" class="btn btn-primary">Contact Us →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AURA SIGNATURE LOOK SECTION ===== -->
+  <section class="section aura-signature-section">
+    <div class="container">
+      <div class="aura-signature-card reveal"><span class="aura-signature-eyebrow">Your Next Favourite Look</span>
+        <h2 class="aura-signature-title">Find the piece that <em>feels like
+            AURA.</em></h2>
+        <p class="aura-signature-description">New arrivals land every week.
+          Be
+          the first to see what's next.</p>
+        <div class="aura-signature-actions"><a href="shop.html" class="aura-signature-btn aura-signature-primary">Start
+            Shopping <span>→</span></a><a href="wishlist.html" class="aura-signature-btn aura-signature-secondary">View
+            Wishlist</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AURA PREMIUM FOOTER ===== -->
+  <footer class="footer aura-footer" id="footer">
+    <svg class="fwave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,40 C240,0 480,110 720,60 C960,10 1200,100 1440,40 L1440,0 L0,0 Z" />
+    </svg>
+    <div class="fmark" data-site-text="storeName" aria-hidden="true">AURA</div>
+    <div class="aura-footer-intro"><span class="aura-footer-kicker">DRESSED
+        IN
+        YOUR OWN WAY</span>
+      <h2>Every outfit tells <em>your story.</em></h2>
+      <p>Discover styles that celebrate your individuality, from everyday
+        essentials to the moments worth dressing up
+        for.</p><a href="shop.html" class="aura-footer-cta">Discover Your
+        Style <span>↗</span></a>
+    </div>
+    <div class="fgrid aura-footer-grid">
+      <div class="fbrand aura-footer-brand"><a href="index.html" aria-label="AURA Home"><img src="../assets/logo.png"
+            alt="AURA"></a>
+        <p data-site-text="storeDesc">AURA brings together timeless elegance
+          and modern fashion, with
+          thoughtfully selected styles for every mood,
+          moment and occasion.</p>
+        <div class="aura-footer-note"><span>Made for your
+            moments.</span><span>Designed for your AURA.</span></div>
+
+        <!-- Social icons (auto-updated from Admin > Settings) -->
+        <div class="social aura-social">
+          <a href="#" data-site-link="instagram" aria-label="Instagram" title="Instagram"><i
+              class="fa-brands fa-instagram"></i></a>
+          <a href="#" data-site-link="facebook" aria-label="Facebook" title="Facebook"><i
+              class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" data-site-link="pinterest" aria-label="Pinterest" title="Pinterest"><i
+              class="fa-brands fa-pinterest-p"></i></a>
+          <a href="#" data-site-link="youtube" aria-label="YouTube" title="YouTube"><i
+              class="fa-brands fa-youtube"></i></a>
+        </div>
+
+        <!-- Contact details (auto-updated from Admin > Settings) -->
+        <div class="aura-footer-contact">
+          <a href="#" data-site-link="supportEmail" style="display:none"><i class="fa-solid fa-envelope"></i> <span
+              data-site-text="supportEmail"></span></a>
+          <a href="#" data-site-link="supportPhone" style="display:none"><i class="fa-solid fa-phone"></i> <span
+              data-site-text="supportPhone"></span></a>
+          <a href="#" data-site-link="whatsappNumber" style="display:none"><i class="fa-brands fa-whatsapp"></i> <span
+              data-site-text="whatsappNumber"></span></a>
+          <p data-site-item style="display:none"><i class="fa-solid fa-location-dot"></i> <span
+              data-site-text="storeAddress"></span></p>
+        </div>
+        <style>
+          .aura-footer-contact {
+            display: grid;
+            gap: 10px;
+            margin-top: 16px;
+            font-size: 14px;
+          }
+
+          .aura-footer-contact a,
+          .aura-footer-contact p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+            color: inherit;
+            text-decoration: none;
+            opacity: .85;
+            transition: opacity .2s;
+          }
+
+          .aura-footer-contact a:hover {
+            opacity: 1;
+          }
+
+          .aura-footer-contact i {
+            width: 16px;
+            text-align: center;
+          }
+        </style>
+      </div>
+      <div class="aura-footer-links">
+        <h5>Explore</h5><a href="shop.html">All Collections</a><a href="shop.html?cat=new-arrivals">New Arrivals</a><a
+          href="shop.html?cat=trending-dresses">Trending Dresses</a><a href="shop.html?cat=western-wear">Western
+          Wear</a><a href="shop.html?cat=ethnic-wear">Ethnic Wear</a><a href="shop.html?cat=party-wear">Party Wear</a><a
+          href="shop.html?cat=casual-wear">Casual Wear</a>
+      </div>
+      <div class="aura-footer-links">
+        <h5>Our Styles</h5><a href="shop.html?cat=tops-with-pants">Tops
+          &amp;
+          Pants</a><a href="shop.html?cat=jeans">Jeans &amp; Denim</a><a href="shop.html?cat=kurta-sets">Kurta
+          Sets</a><a href="shop.html?cat=sarees">Sarees</a><a href="shop.html?cat=palazzo">Palazzo Sets</a><a
+          href="shop.html?cat=leggings">Leggings</a><a href="shop.html?cat=skirts">Skirts &amp; Tops</a>
+      </div>
+      <div class="aura-footer-links">
+        <h5>Customer Care</h5><a href="contact.html">Contact Us</a><a href="trackorder.html">Track Your Order</a><a
+          href="shipping.html">Shipping Information</a><a href="returns.html">Returns &amp; Exchanges</a><a
+          href="faq.html">Frequently Asked Questions</a><a href="size-guide.html">Size Guide</a><a
+          href="privacy-policy.html">Privacy Policy</a><a href="terms.html">Terms &amp; Conditions</a>
+      </div>
+    </div>
+    <!-- ===== AURA STYLE CONCIERGE (Social Media Version) ===== -->
+    <div class="aura-footer-newsletter"
+      style="background: linear-gradient(135deg, #2B1B21, #1A0A11); border-radius: 16px; padding: 50px; margin: 60px auto; max-width: 1200px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between; align-items: center; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+
+      <!-- Background Glow Effect -->
+      <div
+        style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(163,25,74,0.4) 0%, transparent 60%); border-radius: 50%; pointer-events: none;">
+      </div>
+
+      <!-- Left Content: Text -->
+      <div style="flex: 1; min-width: 300px; position: relative; z-index: 2;">
+        <span
+          style="display: inline-block; color: #E8A5BB; font-size: 11px; letter-spacing: 0.3em; font-weight: 600; text-transform: uppercase; margin-bottom: 12px;">The
+          AURA Style Concierge</span>
+        <h3
+          style="font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 3vw, 3rem); color: #FFF8F1; margin: 0 0 16px; font-weight: 500; line-height: 1.1;">
+          Not sure what to wear?<br><em style="color: #E8A5BB; font-style: italic;">We've got you.</em>
+        </h3>
+        <p style="color: rgba(255, 248, 241, 0.7); font-size: 1rem; line-height: 1.6; max-width: 450px; margin: 0;">
+          Get personalised outfit recommendations, sizing help, and styling
+          advice from our expert curators. Connect with us on social media.
+        </p>
+      </div>
+
+      <!-- Right Content: Social Links (auto-updated from Admin > Settings) -->
+      <div
+        style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 2; min-width: 280px;">
+
+        <!-- Instagram Action -->
+        <a href="https://instagram.com/auraclothing.vnr" data-site-link="instagram" target="_blank" rel="noopener"
+          style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
+          onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
+          onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+          <div
+            style="width: 44px; height: 44px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 20px;">
+            <i class="fa-brands fa-instagram"></i>
+          </div>
+          <div>
+            <b style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Follow
+              on Instagram</b>
+            <small data-site-handle="instagram"
+              style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">@auraclothing.vnr</small>
+          </div>
+        </a>
+
+        <!-- Facebook Action -->
+        <a href="https://facebook.com/auraclothing.vnr" data-site-link="facebook" target="_blank" rel="noopener"
+          style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
+          onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
+          onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+          <div
+            style="width: 44px; height: 44px; background: #1877F2; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 20px;">
+            <i class="fa-brands fa-facebook-f"></i>
+          </div>
+          <div>
+            <b style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Connect
+              on Facebook</b>
+            <small data-site-handle="facebook"
+              style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">AURA
+              Clothing</small>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- Mobile Responsive Fix -->
+    <style>
+      @media (max-width: 768px) {
+        .aura-footer-newsletter {
+          padding: 30px 20px !important;
+          text-align: center;
+        }
+
+        .aura-footer-newsletter>div {
+          justify-content: center;
+          width: 100%;
+        }
+
+        .aura-footer-newsletter a {
+          justify-content: flex-start;
+          /* Mobile-layum left align-a irukkum */
+          text-align: left;
+        }
+      }
+    </style>
+    <div class="fbottom aura-footer-bottom"><span>© 2026 AURA. All rights
+        reserved.</span><span class="aura-footer-made">Developed by <span
+          style="color: #E8A5BB; font-weight: 500;">Rohil
+          Technologies</span></span>
+      <div class="aura-footer-bottom-links"><a href="privacy-policy.html">Privacy</a><a href="terms.html">Terms</a><a
+          href="contact.html">Support</a></div>
+    </div>
+  </footer>
+
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top"><svg width="22"
+      height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+      stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5"></path>
+      <path d="M5 12l7-7 7 7"></path>
+    </svg></button>
+
+  <!-- ===== AURA PHONE OTP LOGIN POPUP ===== -->
+  <div class="aura-login-overlay" id="auraLoginOverlay" role="dialog" aria-modal="true" aria-labelledby="auraLoginTitle"
+    aria-hidden="true">
+    <div class="aura-login-card">
+      <button class="aura-login-x" type="button" aria-label="Close login"><i class="fa-solid fa-xmark"></i></button>
+      <div class="aura-login-img"><img src="../images/partywear.webp" alt="AURA" onerror="this.remove()"></div>
+      <div class="aura-login-body">
+        <span class="aura-login-eyebrow">AURA ACCOUNT</span>
+        <h2 id="auraLoginTitle">Welcome <em>back.</em></h2>
+        <p class="aura-login-sub">Sign in with your mobile number to save
+          favourites and track your orders.</p>
+        <form id="auraPhoneForm" novalidate>
+          <label class="aura-login-field"><span>Mobile number (10
+              digits)</span><input type="tel" id="auraPhone" placeholder="+919876543210" autocomplete="tel"
+              inputmode="tel" required></label>
+          <div id="recaptcha-container"></div>
+          <button type="submit" class="aura-login-submit" id="auraSendOtp">Send OTP</button>
+          <div id="auraOtpSection" hidden>
+            <label class="aura-login-field"><span>Enter 6-digit
+                OTP</span><input type="text" id="auraOtp" placeholder="Enter OTP" inputmode="numeric"
+                autocomplete="one-time-code" maxlength="6"></label>
+            <button type="button" class="aura-login-submit" id="auraVerifyOtp">Verify OTP</button>
+          </div>
+          <p class="aura-login-msg" id="auraPhoneMsg" role="status" aria-live="polite"></p>
+        </form>
+        <p class="aura-login-switch">By continuing, you agree to our <a href="terms.html">Terms</a> and <a
+            href="privacy-policy.html">Privacy Policy</a>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WRITE A REVIEW MODAL ===== -->
+  <div class="aura-login-overlay" id="reviewModalOverlay" role="dialog" aria-modal="true" aria-hidden="true"
+    style="z-index: 1000;">
+    <div class="aura-login-card" style="max-width: 500px; grid-template-columns: 1fr; min-height: auto;">
+      <button class="aura-login-x" type="button" id="closeReviewModal" aria-label="Close"><i
+          class="fa-solid fa-xmark"></i></button>
+      <div class="aura-login-body" style="padding: 30px;">
+        <h2 style="font-family: 'Cormorant Garamond', serif; margin-bottom: 20px;">Write
+          a <em>Review</em></h2>
+        <form id="reviewForm" style="display: grid; gap: 15px;">
+          <div class="aura-login-field">
+            <span>Your Name</span>
+            <input type="text" id="revName" placeholder="Type your name here..." required
+              style="width: 100%; padding: 12px; border: 1.5px solid #E8E1D3; border-radius: 10px; font-family: inherit; background: #fff;">
+          </div>
+          <div class="aura-login-field">
+            <span>Rating</span>
+            <div class="star-rating" style="font-size: 24px; color: #f5a623; cursor: pointer; display: flex; gap: 5px;">
+              <i class="fa-solid fa-star" data-val="1"></i><i class="fa-solid fa-star" data-val="2"></i><i
+                class="fa-solid fa-star" data-val="3"></i><i class="fa-solid fa-star" data-val="4"></i><i
+                class="fa-solid fa-star" data-val="5"></i>
+            </div>
+            <input type="hidden" id="revRating" value="5" required>
+          </div>
+          <div class="aura-login-field">
+            <span>Upload Image (Optional)</span>
+            <input type="file" id="revImageFile" accept="image/*"
+              style="width: 100%; padding: 10px; border: 1.5px solid #E8E1D3; border-radius: 10px; font-family: inherit; background: #fff;">
+            <small style="color: #827078; font-size: 11px;">Max size:
+              2MB</small>
+          </div>
+          <div class="aura-login-field">
+            <span>Your Review</span>
+            <textarea id="revText" placeholder="Tell us what you loved..." required
+              style="width: 100%; padding: 12px; border: 1.5px solid #E8E1D3; border-radius: 10px; font-family: inherit; resize: vertical; min-height: 80px;"></textarea>
+          </div>
+          <button type="submit" class="aura-login-submit" style="margin-top: 10px;">Submit Review</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCRIPTS ============ -->
+  <script defer src="./js/home.js"></script>
+  <script defer src="./js/subscribe-popup.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/cart-drawer.js"></script>
+
+  <!-- Common Nav, Motion, Badges & Slider Logic -->
+  <script>
+    (function () {
+      function initMotion() {
+        var box = document.getElementById('motion');
+        if (!box) return;
+        var panes = box.querySelectorAll('.hm-pane');
+        if (!panes.length) return;
+        var idx = 0;
+        panes.forEach(function (p, i) { if (p.classList.contains('on')) idx = i; });
+        function setActive(k) { idx = (k + panes.length) % panes.length; panes.forEach(function (p, i) { p.classList.toggle('on', i === idx); }); }
+        setActive(idx);
+        box.querySelectorAll('a, img').forEach(function (el) { el.setAttribute('draggable', 'false'); });
+        box.addEventListener('dragstart', function (e) { e.preventDefault(); });
+        function isRow() { return getComputedStyle(box).flexDirection === 'row'; }
+        var SWIPE_STEP = 60, down = false, moved = false, startX = 0, lastX = 0, pid = null, hoverLock = 0;
+        box.addEventListener('pointerdown', function (e) { if (e.pointerType === 'mouse' && e.button !== 0) return; down = true; moved = false; startX = lastX = e.clientX; pid = e.pointerId; });
+        box.addEventListener('pointermove', function (e) {
+          if (!down) return;
+          if (!moved) { if (Math.abs(e.clientX - startX) < 6) return; moved = true; if (box.setPointerCapture && pid !== null) { try { box.setPointerCapture(pid); } catch (err) { } } box.classList.add('dragging'); }
+          if (isRow()) { var r = box.getBoundingClientRect(); var ratio = Math.min(0.999, Math.max(0, (e.clientX - r.left) / r.width)); var k = Math.floor(ratio * panes.length); if (k !== idx) setActive(k); }
+          else { var dx = e.clientX - lastX; if (Math.abs(dx) >= SWIPE_STEP) { setActive(idx + (dx < 0 ? 1 : -1)); lastX = e.clientX; } }
+        });
+        function endDrag() { if (!down) return; down = false; hoverLock = Date.now() + 700; if (pid !== null) { try { box.releasePointerCapture(pid); } catch (err) { } pid = null; } box.classList.remove('dragging'); setTimeout(function () { moved = false; }, 0); }
+        box.addEventListener('pointerup', endDrag); box.addEventListener('pointercancel', endDrag); box.addEventListener('lostpointercapture', endDrag);
+        box.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+        var canHover = matchMedia('(hover: hover)').matches;
+        panes.forEach(function (pane, j) { if (canHover) pane.addEventListener('mouseenter', function () { if (!down && Date.now() > hoverLock) setActive(j); }); pane.addEventListener('focusin', function () { setActive(j); }); pane.addEventListener('click', function (e) { if (!pane.classList.contains('on')) { e.preventDefault(); setActive(j); } }); });
+        var paused = false; box.addEventListener('mouseenter', function () { paused = true; }); box.addEventListener('mouseleave', function () { paused = false; }); box.addEventListener('touchstart', function () { paused = true; }, { passive: true }); box.addEventListener('touchend', function () { setTimeout(function () { paused = false; }, 2500); });
+        setInterval(function () { if (paused || down || document.hidden) return; setActive(idx + 1); }, 4000);
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initMotion); else initMotion();
+
+
+      // NAV DROPDOWN
+      var dd = document.getElementById('shopDD');
+      if (dd) {
+        var trigger = dd.querySelector('.nav-dd-trigger'); var timer = null;
+        function openMenu() { clearTimeout(timer); dd.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+        function closeSubs() { dd.querySelectorAll('.dd-sub.open').forEach(function (sub) { sub.classList.remove('open'); var t = sub.querySelector('.dd-sub-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); }); }
+        function closeMenu() { dd.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); closeSubs(); }
+        dd.addEventListener('mouseenter', openMenu); dd.addEventListener('mouseleave', function () { timer = setTimeout(closeMenu, 160); }); dd.addEventListener('focusin', openMenu);
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeMenu(); trigger.blur(); } });
+        trigger.addEventListener('click', function (e) { if (matchMedia('(hover: none)').matches && !dd.classList.contains('open')) { e.preventDefault(); openMenu(); } });
+        dd.querySelectorAll('.dd-sub-toggle').forEach(function (btn) { btn.addEventListener('click', function (e) { e.stopPropagation(); var sub = btn.parentElement; var willOpen = !sub.classList.contains('open'); closeSubs(); if (willOpen) { sub.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); } }); });
+        document.addEventListener('click', function (e) { if (!dd.contains(e.target)) closeMenu(); });
+      }
+
+      // MOBILE MENU
+      var burger = document.getElementById('burger'), mclose = document.getElementById('mclose');
+      if (burger) burger.addEventListener('click', function () { document.body.classList.add('mmenu-open'); if (burger) burger.setAttribute('aria-expanded', 'true'); });
+      if (mclose) mclose.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); if (burger) burger.setAttribute('aria-expanded', 'false'); });
+      document.querySelectorAll('#mmenu a').forEach(function (a) { a.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); }); });
+
+      // BADGES & BACK TO TOP
+      document.addEventListener('DOMContentLoaded', function () {
+        var btn = document.getElementById("backToTop");
+        if (btn) { window.addEventListener("scroll", function () { btn.classList.toggle("show", window.scrollY > 300); }, { passive: true }); btn.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); }); }
+        function updateAllBadges() {
+          try {
+            const wishlist = JSON.parse(localStorage.getItem('aura_wishlist')) || [];
+            const wishCount = wishlist.length;
+            document.querySelectorAll('#wishBadge, #mWishBadge').forEach(b => { if (b) { b.textContent = wishCount; b.style.display = wishCount > 0 ? 'grid' : 'none'; } });
+            let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+            const cartCount = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+            document.querySelectorAll('#cartBadge, #mCartBadge').forEach(b => { if (b) { b.textContent = cartCount; b.style.display = cartCount > 0 ? 'grid' : 'none'; } });
+          } catch (e) { }
+        }
+        updateAllBadges();
+        window.addEventListener('storage', function (e) { if (e.key === 'aura_wishlist' || e.key === 'aura_cart') updateAllBadges(); });
+      });
+    })();
+  </script>
+
+  <!-- ============ FIREBASE REVIEWS LOGIC (File Upload) ============ -->
+  <script type="module">
+    import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp, storage, auth } from "./js/firebase.js";
+    import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+      const track = document.getElementById("reviewsTrack");
+      const prevBtn = document.getElementById("revPrev");
+      const nextBtn = document.getElementById("revNext");
+      const modal = document.getElementById('reviewModalOverlay');
+      const openBtn = document.getElementById('openReviewModal');
+      const closeBtn = document.getElementById('closeReviewModal');
+      const stars = document.querySelectorAll('.star-rating i');
+      const ratingInput = document.getElementById('revRating');
+      const nameInput = document.getElementById('revName');
+
+      if (track && nextBtn && prevBtn) {
+        nextBtn.addEventListener("click", () => { const w = track.querySelector(".rev-card")?.offsetWidth || 260; track.scrollBy({ left: w + 20, behavior: "smooth" }); });
+        prevBtn.addEventListener("click", () => { const w = track.querySelector(".rev-card")?.offsetWidth || 260; track.scrollBy({ left: -(w + 20), behavior: "smooth" }); });
+      }
+
+      const DEFAULT_REVIEWS = [
+        { name: "Preethi", rating: 5, image: "../images/partywear.webp", text: "Absolutely loved this piece. The quality, fit, and detailing feel so premium. Will order again!" },
+        { name: "Gayathri Arvind", rating: 5, image: "../images/maxidress.jfif", text: "I have many kurtas from AURA. Every piece is awesome. Am so happy to buy..." },
+        { name: "Suchi Kailash", rating: 5, image: "../images/casualdress.webp", text: "Great service! I needed this dress for my birthday and received it on time. Fits perfectly." },
+        { name: "Chinni", rating: 5, image: "../images/floraldress.webp", text: "Beautiful fabric, exactly as shown in the picture. The color is so vibrant. Highly recommended!" },
+        { name: "Abarna S.", rating: 5, image: "../images/kurtha.png", text: "The kurta set is so comfortable and elegant. Perfect for daily wear and office. Love it!" }
+      ];
+
+      function generateReviewHTML(data) {
+        const imgSrc = data.image || '../images/partywear.webp';
+        const stars = '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating);
+        const isNew = data.isNew ? '<span style="position:absolute; top:10px; right:10px; background:#a3194a; color:#fff; font-size:10px; padding:2px 8px; border-radius:10px; z-index:2;">New</span>' : '';
+        return `
+          <div class="rev-card" style="position:relative; flex: 0 0 calc(25% - 15px); min-width: 260px; scroll-snap-align: start; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #ead9df; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+            ${isNew}
+            <div class="rev-img" style="aspect-ratio: 4/5; background: #f3e6ea; overflow: hidden;"><img src="${imgSrc}" alt="Customer" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" onerror="this.src='../images/partywear.webp'"></div>
+            <div class="rev-body" style="padding: 20px; text-align: center;">
+              <div style="color: #2f8f5b; font-size: 16px; margin-bottom: 10px; letter-spacing: 1px;">${stars}</div>
+              <p style="font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 16px; font-family: 'Jost', sans-serif;">"${data.text}"</p>
+              <b style="display: block; font-family: 'Jost', sans-serif; font-size: 14px; color: #2b1b21; font-weight: 600;">${data.name}</b>
+              <small style="display: block; font-size: 12px; color: #827078; margin-top: 4px; letter-spacing: 1px; text-transform: uppercase;">AURA Customer</small>
+            </div>
+          </div>`;
+      }
+
+      async function loadReviews() {
+        if (!track) return;
+        try {
+          const q = query(collection(db, "reviews"), orderBy("createdAt", "desc"));
+          const snapshot = await getDocs(q);
+          let html = '';
+          if (snapshot.empty) {
+            html = DEFAULT_REVIEWS.map(generateReviewHTML).join('');
+          } else {
+            snapshot.forEach(doc => { html += generateReviewHTML(doc.data()); });
+          }
+          track.innerHTML = html;
+        } catch (e) {
+          console.error("Firestore fetch failed, loading defaults:", e);
+          track.innerHTML = DEFAULT_REVIEWS.map(generateReviewHTML).join('');
+        }
+      }
+      loadReviews();
+
+      function isUserLoggedIn() {
+        if (auth.currentUser) return true;
+        if (localStorage.getItem('aura_auth_hint') === '1') return true;
+        if (localStorage.getItem('aura_user')) return true;
+        const acctMenu = document.getElementById('acct');
+        if (acctMenu && acctMenu.style.display !== 'none') return true;
+        return false;
+      }
+
+      if (openBtn) {
+        openBtn.addEventListener('click', () => {
+          if (!isUserLoggedIn()) {
+            alert("Please login to write a review.");
+            const loginBtn = document.getElementById('hmLogin');
+            if (loginBtn) loginBtn.click();
+            return;
+          }
+          modal.classList.add('show');
+          modal.setAttribute('aria-hidden', 'false');
+        });
+      }
+
+      if (closeBtn) closeBtn.addEventListener('click', () => { modal.classList.remove('show'); modal.setAttribute('aria-hidden', 'true'); });
+      stars.forEach(star => { star.addEventListener('click', function () { const val = this.getAttribute('data-val'); ratingInput.value = val; stars.forEach(s => { s.style.color = s.getAttribute('data-val') <= val ? '#f5a623' : '#ccc'; }); }); });
+      stars.forEach(s => s.style.color = '#f5a623');
+
+      document.getElementById('reviewForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const btn = this.querySelector('button[type="submit"]');
+        const originalTxt = btn.textContent;
+        const name = document.getElementById('revName').value.trim();
+        const rating = Number(document.getElementById('revRating').value);
+        const text = document.getElementById('revText').value.trim();
+        const imageFile = document.getElementById('revImageFile').files[0];
+
+        if (!name) { alert("Please enter your name."); return; }
+        if (!text) { alert("Please write your review."); return; }
+
+        btn.textContent = "Submitting..."; btn.disabled = true;
+
+        try {
+          let finalImageUrl = "";
+          if (imageFile) {
+            if (imageFile.size > 2 * 1024 * 1024) {
+              alert("Image is too large. Please select an image under 2MB.");
+              btn.textContent = originalTxt; btn.disabled = false;
+              return;
+            }
+            const fileName = `reviews/${Date.now()}_${imageFile.name}`;
+            const storageRef = ref(storage, fileName);
+            await uploadBytes(storageRef, imageFile);
+            finalImageUrl = await getDownloadURL(storageRef);
+          }
+
+          await addDoc(collection(db, "reviews"), {
+            name: name, rating: rating, image: finalImageUrl, text: text, createdAt: serverTimestamp()
+          });
+
+          alert("Thank you! Your review has been submitted.");
+          modal.classList.remove('show');
+          this.reset();
+          document.getElementById('revRating').value = 5;
+          stars.forEach(s => s.style.color = '#f5a623');
+
+          const newHtml = generateReviewHTML({ name, rating, image: finalImageUrl, text, isNew: true });
+          track.insertAdjacentHTML('afterbegin', newHtml);
+          track.scrollTo({ left: 0, behavior: 'smooth' });
+          setTimeout(() => { const newTag = track.querySelector('.rev-card:first-child span'); if (newTag) newTag.remove(); }, 3000);
+
+        } catch (err) {
+          console.error("Review save failed:", err);
+          alert("Failed to submit review. Please try again.");
+        } finally {
+          btn.textContent = originalTxt; btn.disabled = false;
+        }
+      });
+    });
+  </script>
+
+  <!-- ============ SCROLL REVEAL ANIMATION ============ -->
+  <style>
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      will-change: opacity, transform;
+    }
+
+    .scroll-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const elementsToAnimate = document.querySelectorAll('.hm-sec, .section, .hm-trends, .aura-reviews-section, .aura-signature-card, .pcard, .cat, .cmp-copy, .cmp-media, .title, .hm-display, .head');
+      elementsToAnimate.forEach((el) => { el.classList.remove('reveal', 'in'); el.classList.add('scroll-reveal'); });
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
+        });
+      }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+      elementsToAnimate.forEach((el) => observer.observe(el));
+    });
+  </script>
+
+  <!-- ============ DYNAMIC FEATURED PRODUCTS LOGIC ============ -->
+  <script type="module">
+    import { db, collection, getDocs, query, where } from "./js/firebase.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+      const grid = document.getElementById("featuredGrid");
+      if (!grid) return;
+
+      try {
+        // 🔥 Mukkiyam: Admin-la `showOnHome: true` nu save aana products mattum fetch panrom 🔥
+        const q = query(collection(db, "products"), where("status", "==", "active"), where("showOnHome", "==", true));
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+          // Products illana onnum kaatta vendam
+          grid.innerHTML = '<p style="padding: 20px; color: #827078; text-align: center; width: 100%;">No featured styles available at the moment.</p>';
+          return;
+        }
+
+        let html = '';
+        snapshot.forEach(doc => {
+          const p = doc.data();
+          const id = doc.id;
+          const price = p.price || 0;
+          const mrp = p.mrp || price;
+          const image = p.images?.[0] || p.image || p.imageUrl || p.image1 || '../images/partywear.webp';
+          const link = "product.html?id=" + encodeURIComponent(id);
+          const off = mrp > price ? Math.round((1 - price / mrp) * 100) : 0;
+
+          html += `
+            <div class="pcard">
+              <div class="pmedia">
+                <a href="${link}"><img src="${image}" alt="${p.name}" loading="lazy" style="width:100%; height:100%; object-fit:cover;"></a>
+                ${off ? `<span class="product-badge">${off}% OFF</span>` : ''}
+                <button class="wishlist-btn" onclick="toggleWishlist('${id}', '${p.name.replace(/'/g, "\\'")}', '${image}', '₹${price}')" aria-label="Add to wishlist">
+                  <i class="fa-regular fa-heart"></i>
+                </button>
+              </div>
+              <div class="pinfo">
+                <h3><a href="${link}" style="color:inherit; text-decoration:none;">${p.name}</a></h3>
+                <p>₹${Number(price).toLocaleString('en-IN')} ${mrp > price ? `<s style="color:#999; font-size:12px; margin-left:5px;">₹${Number(mrp).toLocaleString('en-IN')}</s>` : ''}</p>
+                <a href="${link}" class="btn btn-primary" style="display:block; text-align:center; text-decoration:none; line-height: 1.2; padding: 12px;">View Product</a>
+              </div>
+            </div>
+          `;
+        });
+
+        grid.innerHTML = html;
+      } catch (err) {
+        console.warn("Could not load featured products:", err);
+        grid.innerHTML = '<p style="padding: 20px; color: #827078; text-align: center; width: 100%;">Failed to load styles.</p>';
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var list = document.getElementById("auraFaq");
+      if (!list) return;
+
+      function close(item) {
+        item.classList.remove("open");
+        item.querySelector(".aura-faq-q").setAttribute("aria-expanded", "false");
+        item.querySelector(".aura-faq-a").style.maxHeight = "0px";
+      }
+      function open(item) {
+        item.classList.add("open");
+        item.querySelector(".aura-faq-q").setAttribute("aria-expanded", "true");
+        var a = item.querySelector(".aura-faq-a");
+        a.style.maxHeight = a.scrollHeight + "px";
+      }
+
+      list.addEventListener("click", function (e) {
+        var btn = e.target.closest(".aura-faq-q");
+        if (!btn) return;
+        var item = btn.parentElement;
+        var wasOpen = item.classList.contains("open");
+        list.querySelectorAll(".aura-faq-item.open").forEach(close);   // one open at a time
+        if (!wasOpen) open(item);
+      });
+
+      // keep height correct on resize
+      window.addEventListener("resize", function () {
+        var o = list.querySelector(".aura-faq-item.open .aura-faq-a");
+        if (o) o.style.maxHeight = o.scrollHeight + "px";
+      });
+    });
+
+    /* =======================================================
+       🔥 SMART VIDEO PLAYER FOR 3-VIDEO GRID 🔥
+       ======================================================= */
+    document.addEventListener("DOMContentLoaded", () => {
+      const videos = document.querySelectorAll('.vg-video');
+
+      // Intersection Observer - Screen la theriyumbodhu mattum play aagum
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const video = entry.target;
+          if (entry.isIntersecting) {
+            // Play panna try pannu
+            let playPromise = video.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(() => {
+                // Autoplay block aana, poster image ah dhaan kaatum
+                console.log("Autoplay blocked on this device.");
+              });
+            }
+          } else {
+            // Screen ah vitu poana, pause pannu
+            video.pause();
+          }
+        });
+      }, { threshold: 0.2 }); // 20% theriyumbodhu trigger aagum
+
+      videos.forEach(video => {
+        videoObserver.observe(video);
+      });
+    });
+  </script>
+
+  <!-- ============ FULLY WORKING VIDEO SCRIPT ============ -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var cards = document.querySelectorAll('.vg-card');
+      var modal = document.getElementById('vgModal');
+      var inlineVideos = document.querySelectorAll('.vg-video');
+
+      if (!cards.length || !modal) return;
+
+      var mv = document.getElementById('vgModalVideo');
+      var ttl = document.getElementById('vgModalTitle');
+      var lnk = document.getElementById('vgModalLink');
+      var currentIdx = 0;
+
+      // 1. Background Videos Auto-Play (Scroll pannumbodhu)
+      inlineVideos.forEach(function (video) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              video.play().catch(function () { });
+            } else {
+              video.pause();
+            }
+          });
+        }, { threshold: 0.2 });
+        observer.observe(video);
+      });
+
+      function pauseInline() {
+        inlineVideos.forEach(function (v) { v.pause(); });
+      }
+
+      function playInline() {
+        inlineVideos.forEach(function (v) { v.play().catch(function () { }); });
+      }
+
+      // 2. Popup Video Load Function
+      function loadVideo(index) {
+        currentIdx = (index + cards.length) % cards.length;
+        var card = cards[currentIdx];
+
+        var source = card.querySelector('source').getAttribute('src');
+        var title = card.querySelector('h3').textContent;
+        var shopLink = card.querySelector('.vg-btn').getAttribute('href');
+        var poster = card.querySelector('video').getAttribute('poster');
+
+        mv.pause();
+        mv.src = source;
+        if (poster) mv.poster = poster;
+        ttl.textContent = title;
+        lnk.href = shopLink;
+
+        mv.load();
+
+        // 🔥 IMPORTANT: Browser la auto-play aaga video ah MUTE panni dhaan play panna mudiyum!
+        mv.muted = true;
+
+        var playPromise = mv.play();
+        if (playPromise !== undefined) {
+          playPromise.then(function () {
+            // Successfully play aachu
+            // Ungaluku sound venum na, inga `mv.muted = false;` nu podalam (aana sila browser la block aagum)
+          }).catch(function (error) {
+            console.log("Autoplay failed completely:", error);
+          });
+        }
+      }
+
+      // 3. Video Card Click Panna Modal Open Aaga
+      cards.forEach(function (card, i) {
+        card.addEventListener('click', function (e) {
+          if (e.target.closest('.vg-btn')) return;
+
+          pauseInline();
+          modal.classList.add('show');
+          modal.setAttribute('aria-hidden', 'false');
+          document.body.style.overflow = 'hidden';
+          loadVideo(i);
+        });
+      });
+
+      // Modal Close aaga
+      function closeModal() {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+
+        mv.pause();
+        mv.removeAttribute('src');
+        mv.load();
+
+        playInline();
+      }
+
+      document.getElementById('vgmClose').addEventListener('click', closeModal);
+
+      modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+      });
+
+      // 4. Next / Prev Button
+      document.getElementById('vgmPrev').addEventListener('click', function () {
+        loadVideo(currentIdx - 1);
+      });
+
+      document.getElementById('vgmNext').addEventListener('click', function () {
+        loadVideo(currentIdx + 1);
+      });
+
+      // 5. Video mudinja udane next video auto play aaga
+      mv.addEventListener('ended', function () {
+        loadVideo(currentIdx + 1);
+      });
+
+      // Keyboard controls
+      window.addEventListener('keydown', function (e) {
+        if (!modal.classList.contains('show')) return;
+        if (e.key === 'Escape') closeModal();
+        else if (e.key === 'ArrowRight') loadVideo(currentIdx + 1);
+        else if (e.key === 'ArrowLeft') loadVideo(currentIdx - 1);
+      });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const cards = document.querySelectorAll(".aura-girls-cats .cat");
+
+      if (!cards.length) return;
+
+      // Create lightbox
+      const lightbox = document.createElement("div");
+      lightbox.className = "aura-image-lightbox";
+      lightbox.setAttribute("role", "dialog");
+      lightbox.setAttribute("aria-modal", "true");
+      lightbox.setAttribute("aria-label", "Image viewer");
+
+      lightbox.innerHTML = `
+    <button class="aura-lightbox-close"
+      aria-label="Close image">&times;</button>
+
+    <div class="aura-lightbox-stage">
+      <img class="aura-lightbox-image" alt="">
+    </div>
+
+    <div class="aura-lightbox-toolbar">
+      <button class="aura-lightbox-control"
+        data-action="out" aria-label="Zoom out">−</button>
+
+      <span class="aura-lightbox-zoom-level">100%</span>
+
+      <button class="aura-lightbox-control"
+        data-action="in" aria-label="Zoom in">+</button>
+
+      <button class="aura-lightbox-control"
+        data-action="reset" aria-label="Reset zoom">↺</button>
+    </div>
+
+    <div class="aura-lightbox-hint">
+      Scroll to zoom · Drag to move · Esc to close
+    </div>
+  `;
+
+      document.body.appendChild(lightbox);
+
+      const stage = lightbox.querySelector(".aura-lightbox-stage");
+      const image = lightbox.querySelector(".aura-lightbox-image");
+      const closeBtn = lightbox.querySelector(".aura-lightbox-close");
+      const zoomLabel = lightbox.querySelector(".aura-lightbox-zoom-level");
+
+      let scale = 1;
+      let x = 0;
+      let y = 0;
+      let dragging = false;
+      let startX = 0;
+      let startY = 0;
+      let lastTouchDistance = 0;
+      let previousFocus = null;
+
+      const minZoom = 1;
+      const maxZoom = 4;
+
+      function updateImage() {
+        image.style.transform =
+          `translate(${x}px, ${y}px) scale(${scale})`;
+
+        zoomLabel.textContent = `${Math.round(scale * 100)}%`;
+
+        stage.style.cursor = scale > 1 ? "grab" : "default";
+      }
+
+      function resetZoom() {
+        scale = 1;
+        x = 0;
+        y = 0;
+        updateImage();
+      }
+
+      function zoomAt(nextScale, clientX, clientY) {
+        const oldScale = scale;
+        const rect = stage.getBoundingClientRect();
+
+        const px = clientX - rect.left - rect.width / 2;
+        const py = clientY - rect.top - rect.height / 2;
+
+        scale = Math.max(minZoom, Math.min(maxZoom, nextScale));
+
+        // Keep the point under the pointer in place while zooming.
+        x = px - (px - x) * (scale / oldScale);
+        y = py - (py - y) * (scale / oldScale);
+
+        if (scale === 1) {
+          x = 0;
+          y = 0;
+        }
+
+        updateImage();
+      }
+
+      function openLightbox(card) {
+        const thumb = card.querySelector(".cat-img");
+        if (!thumb) return;
+
+        previousFocus = document.activeElement;
+
+        // Use the original image URL if supplied, otherwise the image source.
+        const original = thumb.dataset.full || thumb.currentSrc || thumb.src;
+
+        image.src = original;
+        image.alt = thumb.alt || "AURA collection image";
+
+        resetZoom();
+
+        lightbox.classList.add("is-open");
+        document.body.style.overflow = "hidden";
+        closeBtn.focus();
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove("is-open");
+        document.body.style.overflow = "";
+
+        image.removeAttribute("src");
+        resetZoom();
+
+        if (previousFocus && typeof previousFocus.focus === "function") {
+          previousFocus.focus();
+        }
+      }
+
+
+      cards.forEach(card => {
+        card.addEventListener("click", event => {
+
+          // Explore link click pannina shop.html-ku pogattum
+          if (event.target.closest("a")) return;
+
+          // Button click normal-ah work aagattum
+          if (event.target.closest("button")) return;
+
+          // Image/card click pannina lightbox open aagattum
+          event.preventDefault();
+          openLightbox(card);
+
+        });
+      });
+
+
+      closeBtn.addEventListener("click", closeLightbox);
+
+      lightbox.addEventListener("click", event => {
+        if (event.target === lightbox) closeLightbox();
+      });
+
+      lightbox.querySelectorAll("[data-action]").forEach(button => {
+        button.addEventListener("click", () => {
+          const action = button.dataset.action;
+
+          if (action === "in") {
+            const rect = stage.getBoundingClientRect();
+            zoomAt(scale + 0.5, rect.left + rect.width / 2,
+              rect.top + rect.height / 2);
+          }
+
+          if (action === "out") {
+            const rect = stage.getBoundingClientRect();
+            zoomAt(scale - 0.5, rect.left + rect.width / 2,
+              rect.top + rect.height / 2);
+          }
+
+          if (action === "reset") resetZoom();
+        });
+      });
+
+      // Mouse wheel zoom
+      stage.addEventListener("wheel", event => {
+        event.preventDefault();
+
+        const factor = event.deltaY < 0 ? 1.2 : 1 / 1.2;
+        zoomAt(scale * factor, event.clientX, event.clientY);
+      }, { passive: false });
+
+      // Drag to move zoomed image
+      stage.addEventListener("pointerdown", event => {
+        if (event.pointerType === "touch" || scale <= 1) return;
+
+        dragging = true;
+        startX = event.clientX - x;
+        startY = event.clientY - y;
+
+        stage.classList.add("is-dragging");
+        stage.setPointerCapture(event.pointerId);
+      });
+
+      stage.addEventListener("pointermove", event => {
+        if (!dragging) return;
+
+        x = event.clientX - startX;
+        y = event.clientY - startY;
+        updateImage();
+      });
+
+      function stopDragging() {
+        dragging = false;
+        stage.classList.remove("is-dragging");
+      }
+
+      stage.addEventListener("pointerup", stopDragging);
+      stage.addEventListener("pointercancel", stopDragging);
+
+      // Mobile pinch-to-zoom
+      stage.addEventListener("touchstart", event => {
+        if (event.touches.length === 2) {
+          const a = event.touches[0];
+          const b = event.touches[1];
+
+          lastTouchDistance = Math.hypot(
+            b.clientX - a.clientX,
+            b.clientY - a.clientY
+          );
+        }
+      }, { passive: true });
+
+      stage.addEventListener("touchmove", event => {
+        if (event.touches.length !== 2) return;
+
+        event.preventDefault();
+
+        const a = event.touches[0];
+        const b = event.touches[1];
+
+        const distance = Math.hypot(
+          b.clientX - a.clientX,
+          b.clientY - a.clientY
+        );
+
+        if (lastTouchDistance > 0) {
+          const rect = stage.getBoundingClientRect();
+
+          zoomAt(
+            scale * (distance / lastTouchDistance),
+            (a.clientX + b.clientX) / 2,
+            (a.clientY + b.clientY) / 2
+          );
+        }
+
+        lastTouchDistance = distance;
+      }, { passive: false });
+
+      stage.addEventListener("touchend", event => {
+        if (event.touches.length < 2) lastTouchDistance = 0;
+      });
+
+      // Keyboard controls
+      document.addEventListener("keydown", event => {
+        if (!lightbox.classList.contains("is-open")) return;
+
+        if (event.key === "Escape") closeLightbox();
+
+        if (event.key === "+" || event.key === "=") {
+          const rect = stage.getBoundingClientRect();
+          zoomAt(scale + 0.5, rect.left + rect.width / 2,
+            rect.top + rect.height / 2);
+        }
+
+        if (event.key === "-") {
+          const rect = stage.getBoundingClientRect();
+          zoomAt(scale - 0.5, rect.left + rect.width / 2,
+            rect.top + rect.height / 2);
+        }
+      });
+    });
+  </script>
+
+  <!-- ============ ADMIN SETTINGS -> FOOTER CONTACT + SOCIAL LINKS ============ -->
+  <script type="module" src="js/site-settings.js"></script>
+
+  <!-- ============ LOGIN + ACCOUNT MENU + LOGOUT (only place this logic lives) ============ -->
+  <script type="module" src="js/session.js"></script>
+</body>
+
+</html>

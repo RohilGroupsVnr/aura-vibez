@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsletter Subscribers — AURA Admin</title>
+  <link rel="icon" href="../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+  <style>
+    .subs-stat{background:#fff;border:1px solid #ead9df;border-radius:14px;padding:22px 26px;margin-bottom:26px;max-width:340px;box-shadow:0 8px 22px -14px rgba(43,27,33,.12)}
+    .subs-stat small{display:block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#7a6a70;margin-bottom:8px}
+    .subs-stat b{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-size:40px;font-weight:600;color:#a3194a;line-height:1}
+    .subs-stat p{margin:6px 0 0;font-size:13px;color:#7a6a70}
+    .subs-panel{background:#fff;border:1px solid #ead9df;border-radius:14px;padding:24px 26px 26px;box-shadow:0 8px 22px -14px rgba(43,27,33,.12)}
+    .subs-panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+    .subs-panel-head h2{font-family:"Cormorant Garamond",Georgia,serif;font-size:22px;font-weight:600;margin:0 0 4px;color:#2b1a20}
+    .subs-panel-head p{margin:0;font-size:13px;color:#7a6a70}
+    .subs-btn{padding:11px 20px;border:0;border-radius:8px;cursor:pointer;font:500 13px "Jost",sans-serif;letter-spacing:.12em;text-transform:uppercase;transition:transform .2s,box-shadow .2s}
+    .subs-btn.ghost{background:#fff;color:#a3194a;border:1px solid #ead9df}.subs-btn.ghost:hover{border-color:#a3194a;transform:translateY(-2px)}
+    .subs-btn.primary{background:linear-gradient(135deg,#a3194a,#6e0e33);color:#fff;box-shadow:0 10px 22px -12px rgba(163,25,74,.8)}.subs-btn.primary:hover{transform:translateY(-2px)}
+    .subs-btn:disabled{opacity:.55;cursor:wait;transform:none}
+    .subs-search{width:100%;padding:13px 16px;margin-bottom:10px;border:1.5px solid #ead9df;border-radius:10px;background:#fff;font:400 14px "Jost",sans-serif;color:#2b1a20;outline:none}
+    .subs-search:focus{border-color:#a3194a;box-shadow:0 0 0 4px rgba(163,25,74,.1)}
+    .subs-status{min-height:20px;font-size:13px;color:#7a6a70;margin:0 0 14px}.subs-status.err{color:#c0334f}.subs-status.ok{color:#17805A}
+    .subs-table-wrap{overflow-x:auto}
+    .subs-table{width:100%;border-collapse:collapse;font-size:14px}
+    .subs-table th,.subs-table td{padding:14px 12px;text-align:left;border-bottom:1px solid #f0e6ea;white-space:nowrap}
+    .subs-table th{background:#fbf5f7;color:#7a6a70;font:500 11px "Jost",sans-serif;letter-spacing:.18em;text-transform:uppercase}
+    .subs-table td:first-child{color:#b7a3ab;width:40px}.subs-table td.email{font-weight:500;color:#2b1a20}
+    .status-pill{display:inline-block;padding:5px 11px;border-radius:999px;background:#e7f6ec;color:#287443;font-size:11px;font-weight:600;letter-spacing:.08em}
+    .subs-empty{padding:40px 10px;text-align:center;color:#7a6a70;font-size:14px}
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-side" id="adminSide"></aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><h1>Newsletter Subscribers</h1><p>Manage your AURA Letter community</p></div>
+      <div class="admin-user"><b id="adminEmail"></b></div>
+    </div>
+
+    <div class="subs-stat"><small>Total Subscribers</small><b id="totalSubscribers">0</b><p>Newsletter registrations</p></div>
+
+    <section class="subs-panel">
+      <div class="subs-panel-head">
+        <div><h2>Subscriber List</h2><p>Emails collected from your website</p></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button id="refreshBtn" class="subs-btn ghost" type="button">↻ Refresh</button>
+          <button id="exportBtn" class="subs-btn primary" type="button">Export CSV ↓</button>
+        </div>
+      </div>
+      <input type="search" id="searchInput" class="subs-search" placeholder="Search email address..." aria-label="Search subscribers">
+      <p id="statusMessage" class="subs-status" aria-live="polite">Loading subscribers...</p>
+      <div class="subs-table-wrap">
+        <table class="subs-table">
+          <thead><tr><th>#</th><th>Email Address</th><th>Subscribed Date</th><th>Status</th></tr></thead>
+          <tbody id="subscriberTable"><tr><td colspan="4" class="subs-empty">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+  import { db, collection, getDocs } from "./js/firebase.js";
+  import { adminReady } from "./js/admin-shell.js";
+
+  const COLLECTION = "newsletter_subscribers";
+  const $ = id => document.getElementById(id);
+  let subscribers = [];
+
+  const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmtDate = ts => ts?.toDate ? ts.toDate().toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+  function setStatus(t, kind) { $("statusMessage").textContent = t || ""; $("statusMessage").className = "subs-status" + (kind ? " " + kind : ""); }
+
+  function render() {
+    const q = $("searchInput").value.trim().toLowerCase();
+    const list = q ? subscribers.filter(s => (s.email || "").toLowerCase().includes(q)) : subscribers;
+    $("totalSubscribers").textContent = subscribers.length;
+    $("subscriberTable").innerHTML = list.length
+      ? list.map((s, i) => `<tr><td>${i + 1}</td><td class="email">${esc(s.email)}</td><td>${esc(fmtDate(s.subscribedAt))}</td><td><span class="status-pill">Subscribed</span></td></tr>`).join("")
+      : `<tr><td colspan="4" class="subs-empty">${subscribers.length ? "No matching subscribers found." : "No subscribers found yet."}</td></tr>`;
+  }
+
+  async function load() {
+    $("refreshBtn").disabled = true;
+    setStatus("Loading subscribers...");
+    try {
+      subscribers = (await getDocs(collection(db, COLLECTION))).docs.map(d => ({ id: d.id, ...d.data() }));
+      subscribers.sort((a, b) => (b.subscribedAt?.toMillis?.() || 0) - (a.subscribedAt?.toMillis?.() || 0));
+      render();
+      setStatus(`Loaded ${subscribers.length} subscriber(s).`, "ok");
+    } catch (err) {
+      console.error("Subscribers load failed:", err);
+      $("totalSubscribers").textContent = "—";
+      $("subscriberTable").innerHTML = `<tr><td colspan="4" class="subs-empty">Unable to load subscribers.</td></tr>`;
+      setStatus(err?.code ? `Firebase error: ${err.code}` : `Error: ${err?.message || "unknown"}`, "err");
+    } finally { $("refreshBtn").disabled = false; }
+  }
+
+  $("searchInput").addEventListener("input", render);
+  $("refreshBtn").addEventListener("click", load);
+  $("exportBtn").addEventListener("click", () => {
+    if (!subscribers.length) { setStatus("No subscribers available to export.", "err"); return; }
+    const rows = [["#", "Email Address", "Subscribed Date"], ...subscribers.map((s, i) => [i + 1, s.email || "", fmtDate(s.subscribedAt)])];
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\r\n");
+    const a = Object.assign(document.createElement("a"), {
+      href: URL.createObjectURL(new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" })),
+      download: `aura-newsletter-subscribers-${new Date().toISOString().slice(0, 10)}.csv`
+    });
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+    setStatus(`Exported ${subscribers.length} subscriber(s).`, "ok");
+  });
+
+  adminReady.then(load);
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+/* ===== AURA Splash Screen ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #ffffff;      /* white bg */
+  font-family: 'Jost', sans-serif;
+}
+
+#loader {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 40%, #ffffff 0%, #f4f2ee 70%);
+  z-index: 9999;
+  transition: opacity .6s ease, visibility .6s ease;
+}
+
+#loader.out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  animation: fadeUp .8s ease both;
+}
+
+.loader-in img {
+  width: clamp(140px, 22vw, 220px);
+  height: auto;
+  filter: drop-shadow(0 8px 26px rgba(0, 0, 0, .12));
+}
+
+/* progress bar */
+.lbar {
+  width: clamp(180px, 26vw, 260px);
+  height: 2px;
+  background: rgba(0, 0, 0, .10);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+
+.lbar i {
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, #d4a24c, #f4d59a, #d4a24c);
+  border-radius: 99px;
+  animation: slideBar 1.2s ease-in-out infinite;
+}
+
+@keyframes slideBar {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

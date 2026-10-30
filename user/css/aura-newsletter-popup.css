@@ -1,0 +1,264 @@
+
+/* =====================================
+   AURA NEWSLETTER POPUP / SECTION
+===================================== */
+
+.aura-footer-newsletter {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr minmax(280px, 0.85fr);
+  align-items: center;
+  gap: 28px;
+
+  padding: 42px 44px;
+  margin: 30px 0;
+
+  background: linear-gradient(135deg, #fffaf5, #fcebf0);
+  border: 1px solid rgba(169, 74, 103, 0.14);
+  border-radius: 20px;
+
+  font-family: "Jost", sans-serif;
+}
+
+/* Soft decorative circle */
+.aura-footer-newsletter::before {
+  content: "";
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  top: -120px;
+  right: -60px;
+
+  background: rgba(225, 155, 177, 0.16);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.aura-newsletter-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.aura-newsletter-copy > span {
+  display: inline-block;
+  margin-bottom: 12px;
+
+  color: #a34c68;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.aura-newsletter-copy h3 {
+  margin: 0;
+  color: #34232b;
+
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(27px, 3vw, 39px);
+  font-weight: 600;
+  line-height: 1.18;
+}
+
+.aura-newsletter-copy h3 em {
+  color: #b65d7b;
+  font-weight: 500;
+}
+
+.aura-newsletter-copy p {
+  max-width: 440px;
+  margin: 13px 0 0;
+
+  color: #77666d;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* Newsletter form */
+.aura-newsletter-form {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+
+  width: 100%;
+  padding: 7px;
+
+  background: #ffffff;
+  border: 1px solid #ead6dc;
+  border-radius: 12px;
+
+  transition: border-color 0.25s ease,
+              box-shadow 0.25s ease,
+              transform 0.25s ease;
+}
+
+.aura-newsletter-form:focus-within {
+  border-color: #bd6a86;
+  box-shadow: 0 0 0 4px rgba(189, 106, 134, 0.12);
+}
+
+.aura-newsletter-form input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+
+  padding: 13px 12px;
+
+  color: #34232b;
+  background: transparent;
+  border: none;
+  outline: none;
+
+  font: inherit;
+  font-size: 13px;
+}
+
+.aura-newsletter-form input::placeholder {
+  color: #a29399;
+}
+
+.aura-newsletter-form button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  padding: 13px 19px;
+
+  color: #ffffff;
+  background: #a94e6c;
+  border: none;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  cursor: pointer;
+  transition: background 0.25s ease,
+              transform 0.25s ease;
+}
+
+.aura-newsletter-form button span {
+  font-size: 19px;
+  line-height: 1;
+  transition: transform 0.25s ease;
+}
+
+.aura-newsletter-form button:hover {
+  background: #873650;
+}
+
+.aura-newsletter-form button:hover span {
+  transform: translateX(4px);
+}
+
+.aura-newsletter-form button:active {
+  transform: scale(0.97);
+}
+
+.aura-newsletter-form button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Success / error message */
+.aura-newsletter-message {
+  grid-column: 2;
+  min-height: 18px;
+  margin: -18px 0 0 4px;
+
+  color: #38734c;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.aura-newsletter-message:empty {
+  display: none;
+}
+
+/* Screen-reader-only label */
+.aura-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Tablet */
+@media (max-width: 760px) {
+  .aura-footer-newsletter {
+    grid-template-columns: 1fr;
+    gap: 23px;
+    padding: 30px 25px;
+    border-radius: 16px;
+  }
+
+  .aura-newsletter-copy h3 {
+    font-size: 32px;
+  }
+
+  .aura-newsletter-message {
+    grid-column: 1;
+    margin: -15px 0 0;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .aura-footer-newsletter {
+    gap: 20px;
+    padding: 25px 17px;
+    margin: 20px 0;
+  }
+
+  .aura-newsletter-copy > span {
+    font-size: 10px;
+    letter-spacing: 2.3px;
+  }
+
+  .aura-newsletter-copy h3 {
+    font-size: 29px;
+  }
+
+  .aura-newsletter-copy p {
+    font-size: 13px;
+  }
+
+  .aura-newsletter-form {
+    flex-direction: column;
+    gap: 5px;
+    padding: 7px;
+  }
+
+  .aura-newsletter-form input {
+    padding: 13px 10px;
+  }
+
+  .aura-newsletter-form button {
+    width: 100%;
+    padding: 13px;
+  }
+
+  .aura-newsletter-message {
+    margin-top: -12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura-newsletter-form,
+  .aura-newsletter-form button,
+  .aura-newsletter-form button span {
+    transition: none;
+  }
+}

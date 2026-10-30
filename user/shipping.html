@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Information — AURA</title>
+    <meta name="description"
+      content="AURA shipping information: dispatch time, delivery estimates, charges and tracking.">
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/login-popup.css">
+    <link rel="stylesheet" href="css/info-pages.css">
+    <script>
+    try { if (localStorage.getItem('aura_auth_hint') === '1') document.documentElement.classList.add('is-user'); } catch (e) { }
+  </script>
+  </head>
+
+  <body class="ip-page">
+
+    <!-- icon sprite -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path
+            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11"
+            r="7" /><path d="m20 20-3.5-3.5" /></symbol>
+        <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8"
+            r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></symbol>
+        <symbol id="i-chev" viewBox="0 0 24 24"><path
+            d="m6 9 6 6 6-6" /></symbol>
+      </defs>
+    </svg>
+
+    <div class="cursor-glow" aria-hidden="true"></div>
+
+    <!-- Announcement Bar -->
+    <div class="hm-ann">
+      <span>Free shipping over ₹999</span>
+      <span class="pill">New Arrivals Every Week</span>
+      <span>Style Delivered to Your Doorstep</span>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="index.html" class="brand"><img src="../assets/logo.png"
+          alt="AURA"></a>
+      <div class="links">
+        <a href="index.html">Home</a>
+        <a href="newcollections.html">New Collection</a>
+        <div class="nav-dd" id="shopDD">
+          <a href="shop.html" class="nav-dd-trigger" aria-haspopup="true"
+            aria-expanded="false">Shop <svg class="dd-caret" width="12"
+              height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true"><use href="#i-chev" /></svg></a>
+          <div class="dd-menu" role="menu" aria-label="Shop categories">
+            <a href="shop.html?cat=kurta-sets" role="menuitem">Kurta Sets</a><a
+              href="shop.html?cat=anarkali" role="menuitem">Anarkali</a><a
+              href="shop.html?cat=sarees" role="menuitem">Sarees</a>
+
+            <!-- 🔥 NEWLY ADDED: College & Office Wear 🔥 -->
+            <a href="shop.html?cat=college-wear" role="menuitem">College
+              Wear</a>
+            <a href="shop.html?cat=office-wear" role="menuitem">Office Wear</a>
+            <div class="dd-sub"><button type="button" class="dd-sub-toggle"
+                aria-expanded="false"><span>Dresses</span><svg width="14"
+                  height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true"><use
+                    href="#i-chev" /></svg></button><div class="dd-sub-list"><a
+                  href="shop.html?cat=dresses&type=party-wear"
+                  role="menuitem">Party Wear</a><a
+                  href="shop.html?cat=dresses&type=maxi-dresses"
+                  role="menuitem">Maxi Dresses</a><a
+                  href="shop.html?cat=dresses&type=casual-dresses"
+                  role="menuitem">Casual Dresses</a><a
+                  href="shop.html?cat=dresses&type=floral-dresses"
+                  role="menuitem">Floral Dresses</a></div></div>
+            <a href="shop.html?cat=night-suits" role="menuitem">Night Suits</a>
+            <div class="dd-sub"><button type="button" class="dd-sub-toggle"
+                aria-expanded="false"><span>Bottomwear</span><svg width="14"
+                  height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" aria-hidden="true"><use
+                    href="#i-chev" /></svg></button><div class="dd-sub-list"><a
+                  href="shop.html?cat=leggings" role="menuitem">Leggings</a><a
+                  href="shop.html?cat=palazzo"
+                  role="menuitem">Palazzo</a></div></div>
+            <a href="shop.html?cat=shawls" role="menuitem">Shawls</a><a
+              href="shop.html?cat=t-shirt" role="menuitem">T-shirt</a><a
+              href="shop.html" role="menuitem" class="dd-all">View all
+              products</a>
+          </div>
+        </div>
+        <a href="./trackorder.html">Track Order</a>
+      </div>
+
+      <form class="hm-search" id="hmSearch" role="search">
+        <svg width="16" height="16" fill="none" stroke="currentColor"
+          stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><use
+            href="#i-search" /></svg>
+        <input class="hm-in" type="search" name="q"
+          placeholder="Search fashion, beauty, jewellery…"
+          aria-label="Search products" autocomplete="off">
+      </form>
+
+      <div class="nav-actions">
+        <button type="button" class="hm-login" id="hmLogin"
+          aria-haspopup="dialog" aria-controls="auraLoginOverlay"><svg
+            width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true"><use
+              href="#i-user" /></svg><span>Login</span></button>
+        <button class="icon-btn" id="wishBtn" aria-label="Wishlist"
+          onclick="location.href='wishlist.html'"><svg width="21" height="21"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true"><use href="#i-heart" /></svg><span class="badge"
+            id="wishBadge">0</span></button>
+        <button class="icon-btn" id="cartBtn" aria-label="Shopping Cart"
+          onclick="location.href='cart.html'"><svg width="21" height="21"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true"><circle cx="9" cy="21" r="1"></circle><circle
+              cx="19" cy="21" r="1"></circle><path
+              d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span
+            class="badge" id="cartBadge">0</span></button>
+        <div class="acct" id="acct" style="display:none">
+          <button class="avatar" id="avatarBtn" type="button"
+            aria-label="Account menu" aria-haspopup="true"
+            aria-expanded="false"><i class="fa-regular fa-user"></i></button>
+          <div class="menu" id="acctMenu"><div class="who"><b id="userName">AURA
+                Customer</b><small id="userEmail">Signed in</small></div><a
+              href="order-history.html"><i class="fa-solid fa-box"></i> Order
+              History</a><a href="wishlist.html"><i
+                class="fa-regular fa-heart"></i> Wishlist</a><button
+              type="button" id="logoutBtn"><i
+                class="fa-solid fa-arrow-right-from-bracket"></i>
+              Logout</button></div>
+        </div>
+        <button class="icon-btn burger" id="burger" aria-label="Open menu"
+          aria-expanded="false" aria-controls="mmenu"><svg width="24"
+            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path
+              d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="mmenu" id="mmenu" role="dialog" aria-modal="true"
+      aria-label="Menu">
+      <button class="icon-btn mclose" id="mclose" aria-label="Close menu"><i
+          class="fa-solid fa-xmark"></i></button>
+      <a href="index.html" class="mmenu-logo"><img src="../assets/logo.png"
+          alt="AURA"></a>
+      <div class="mmenu-icons"><a href="wishlist.html" class="m-icon-link"><i
+            class="fa-regular fa-heart"></i><span>Wishlist</span><span
+            class="badge" id="mWishBadge">0</span></a><a href="cart.html"
+          class="m-icon-link"><i
+            class="fa-solid fa-bag-shopping"></i><span>Cart</span><span
+            class="badge" id="mCartBadge">0</span></a></div>
+      <a href="index.html">Home</a><a href="newcollections.html">New
+        Collections</a>
+      <div class="m-dropdown"><button type="button"
+          class="m-dropdown-toggle"><span>Shop</span><i
+            class="fa-solid fa-chevron-down"></i></button><div
+          class="m-dropdown-menu"><a href="shop.html?cat=kurta-sets">Kurta
+            Sets</a>                <!-- 🔥 NEW: Tops Added Here 🔥 -->
+            <a href="shop.html?cat=tops" role="menuitem">Tops</a><a href="shop.html?cat=anarkali">Anarkali</a><a
+            href="shop.html?cat=sarees">Sarees</a>
+          <!-- 🔥 NEWLY ADDED: Mobile Menu College & Office Wear 🔥 -->
+          <a href="shop.html?cat=college-wear">College Wear</a>
+          <a href="shop.html?cat=office-wear">Office Wear</a><a
+            href="shop.html?cat=night-suits">Night Suits</a><a
+            href="shop.html?cat=shawls">Shawls</a><a
+            href="shop.html?cat=t-shirt">T-shirt</a><a href="shop.html">View All
+            Products</a></div></div>
+      <div class="m-dropdown"><button type="button"
+          class="m-dropdown-toggle"><span>Bottomwear</span><i
+            class="fa-solid fa-chevron-down"></i></button><div
+          class="m-dropdown-menu"><a
+            href="shop.html?cat=leggings">Leggings</a><a
+            href="shop.html?cat=palazzo">Palazzo</a></div></div>
+      <a href="trackorder.html">Track Order</a>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <header class="ip-hero">
+      <div class="ip-crumb"><a href="index.html">Home</a><span>/</span>Shipping
+        Information</div>
+      <span class="ip-eyebrow">DELIVERY</span>
+      <h1>Shipping <em>Information</em></h1>
+      <p>Everything about dispatch, delivery times and shipping charges.</p>
+    </header>
+
+    <main class="ip-wrap">
+      <div class="ip-grid">
+        <div class="ip-mini"><i class="fa-solid fa-truck-fast"></i><b>Free
+            Shipping</b><small>On all orders over ₹999 across
+            India</small></div>
+        <div class="ip-mini"><i class="fa-regular fa-clock"></i><b>Fast
+            Dispatch</b><small>Dispatched within 24–48 working
+            hours</small></div>
+        <div class="ip-mini"><i class="fa-solid fa-location-dot"></i><b>Delivery
+            in 3–7 Days</b><small>Depending on your location</small></div>
+      </div>
+
+      <section class="ip-card">
+        <h2>Dispatch time</h2>
+        <p>Orders are processed and dispatched within <b>24–48 working hours</b>
+          of being placed. Orders placed on Sundays or public holidays are
+          processed on the next working day.</p>
+        <p>Made-to-order or custom-stitched items may need extra time. The
+          expected dispatch date is mentioned on the product page.</p>
+      </section>
+
+      <section class="ip-card">
+        <h2>Delivery time</h2>
+        <div class="ip-table-wrap"><table class="ip-table">
+            <thead><tr><th>Location</th><th>Estimated delivery</th></tr></thead>
+            <tbody>
+              <tr><td>Within your state</td><td>3–4 working days</td></tr>
+              <tr><td>Metro cities</td><td>4–5 working days</td></tr>
+              <tr><td>Rest of India</td><td>5–7 working days</td></tr>
+              <tr><td>Remote areas</td><td>7–10 working days</td></tr>
+            </tbody>
+          </table></div>
+        <div class="ip-note">Delivery timelines are estimates and may be
+          affected by weather, festivals or courier delays.</div>
+      </section>
+
+      <section class="ip-card">
+        <h2>Shipping charges</h2>
+        <ul>
+          <li><b>Free</b> shipping on orders above ₹999.</li>
+          <li>A small shipping fee is added at checkout for orders below
+            ₹999.</li>
+          <li>Cash on Delivery orders may carry a small COD handling fee, shown
+            at checkout.</li>
+        </ul>
+      </section>
+
+      <section class="ip-card">
+        <h2>Tracking your order</h2>
+        <ol class="ip-steps">
+          <li>You receive an update once your order is dispatched.</li>
+          <li>Open <a href="trackorder.html">Track Order</a> and enter your
+            order details.</li>
+          <li>Or log in and open <a href="order-history.html#orders">Order
+              History</a> to see the latest status.</li>
+        </ol>
+      </section>
+
+      <section class="ip-card">
+        <h2>Delivery issues</h2>
+        <p>If your parcel is delayed, damaged or incomplete, please <a
+            href="contact.html">contact us</a> within 48 hours of delivery with
+          your order ID and photos, and we will make it right.</p>
+      </section>
+    </main>
+
+    <!-- ===== AURA PREMIUM FOOTER ===== -->
+    <footer class="footer aura-footer" id="footer">
+      <svg class="fwave" viewBox="0 0 1440 80" preserveAspectRatio="none"
+        aria-hidden="true"><path
+          d="M0,40 C240,0 480,110 720,60 C960,10 1200,100 1440,40 L1440,0 L0,0 Z" /></svg>
+      <div class="fmark" data-site-text="storeName"
+        aria-hidden="true">AURA</div>
+      <div class="aura-footer-intro"><span class="aura-footer-kicker">DRESSED IN
+          YOUR OWN WAY</span>
+        <h2>Every outfit tells <em>your story.</em></h2>
+        <p>Discover styles that celebrate your individuality, from everyday
+          essentials to the moments worth dressing up for.</p><a
+          href="shop.html" class="aura-footer-cta">Discover Your Style
+          <span>↗</span></a>
+      </div>
+      <div class="fgrid aura-footer-grid">
+        <div class="fbrand aura-footer-brand"><a href="index.html"
+            aria-label="AURA Home"><img src="../assets/logo.png" alt="AURA"></a>
+          <p data-site-text="storeDesc">AURA brings together timeless elegance
+            and modern fashion, with thoughtfully selected styles for every
+            mood, moment and occasion.</p>
+          <div class="aura-footer-note"><span>Made for your
+              moments.</span><span>Designed for your AURA.</span></div>
+          <div class="social aura-social">
+            <a href="#" data-site-link="instagram" aria-label="Instagram"
+              title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" data-site-link="facebook" aria-label="Facebook"
+              title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" data-site-link="pinterest" aria-label="Pinterest"
+              title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+            <a href="#" data-site-link="youtube" aria-label="YouTube"
+              title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          </div>
+          <div class="aura-footer-contact">
+            <a href="#" data-site-link="supportEmail" style="display:none"><i
+                class="fa-solid fa-envelope"></i> <span
+                data-site-text="supportEmail"></span></a>
+            <a href="#" data-site-link="supportPhone" style="display:none"><i
+                class="fa-solid fa-phone"></i> <span
+                data-site-text="supportPhone"></span></a>
+            <a href="#" data-site-link="whatsappNumber" style="display:none"><i
+                class="fa-brands fa-whatsapp"></i> <span
+                data-site-text="whatsappNumber"></span></a>
+            <p data-site-item style="display:none"><i
+                class="fa-solid fa-location-dot"></i> <span
+                data-site-text="storeAddress"></span></p>
+          </div>
+          <style>
+          .aura-footer-contact { display: grid; gap: 10px; margin-top: 16px; font-size: 14px; }
+          .aura-footer-contact a, .aura-footer-contact p { display: flex; align-items: center; gap: 10px; margin: 0; color: inherit; text-decoration: none; opacity: .85; transition: opacity .2s; }
+          .aura-footer-contact a:hover { opacity: 1; }
+          .aura-footer-contact i { width: 16px; text-align: center; }
+        </style>
+        </div>
+        <div class="aura-footer-links">
+          <h5>Explore</h5><a href="shop.html">All Collections</a><a
+            href="shop.html?cat=new-arrivals">New Arrivals</a><a
+            href="shop.html?cat=trending-dresses">Trending Dresses</a><a
+            href="shop.html?cat=western-wear">Western Wear</a><a
+            href="shop.html?cat=ethnic-wear">Ethnic Wear</a><a
+            href="shop.html?cat=party-wear">Party Wear</a><a
+            href="shop.html?cat=casual-wear">Casual Wear</a>
+        </div>
+        <div class="aura-footer-links">
+          <h5>Our Styles</h5><a href="shop.html?cat=tops-with-pants">Tops &amp;
+            Pants</a><a href="shop.html?cat=jeans">Jeans &amp; Denim</a><a
+            href="shop.html?cat=kurta-sets">Kurta Sets</a><a
+            href="shop.html?cat=sarees">Sarees</a><a
+            href="shop.html?cat=palazzo">Palazzo Sets</a><a
+            href="shop.html?cat=leggings">Leggings</a><a
+            href="shop.html?cat=skirts">Skirts &amp; Tops</a>
+        </div>
+        <div class="aura-footer-links">
+          <h5>Customer Care</h5><a href="contact.html">Contact Us</a><a
+            href="trackorder.html">Track Your Order</a><a
+            href="shipping.html">Shipping Information</a><a
+            href="returns.html">Returns &amp; Exchanges</a><a
+            href="faq.html">Frequently Asked Questions</a><a
+            href="size-guide.html">Size Guide</a><a
+            href="privacy-policy.html">Privacy Policy</a><a
+            href="terms.html">Terms &amp; Conditions</a>
+        </div>
+      </div>
+      <div class="fbottom aura-footer-bottom"><span>© 2026 AURA. All rights
+          reserved.</span><span class="aura-footer-made">Developed by <span
+            style="color: #E8A5BB; font-weight: 500;">Rohil
+            Technologies</span></span>
+        <div class="aura-footer-bottom-links"><a
+            href="privacy-policy.html">Privacy</a><a
+            href="terms.html">Terms</a><a href="contact.html">Support</a></div>
+      </div>
+    </footer>
+
+    <button id="backToTop" class="back-to-top" type="button"
+      aria-label="Back to top" title="Back to top"><svg width="22" height="22"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path
+          d="M12 19V5"></path><path d="M5 12l7-7 7 7"></path></svg></button>
+
+    <!-- ===== AURA PHONE OTP LOGIN POPUP ===== -->
+    <div class="aura-login-overlay" id="auraLoginOverlay" role="dialog"
+      aria-modal="true" aria-labelledby="auraLoginTitle" aria-hidden="true">
+      <div class="aura-login-card">
+        <button class="aura-login-x" type="button" aria-label="Close login"><i
+            class="fa-solid fa-xmark"></i></button>
+        <div class="aura-login-img"><img src="../images/partywear.webp"
+            alt="AURA" onerror="this.remove()"></div>
+        <div class="aura-login-body">
+          <span class="aura-login-eyebrow">AURA ACCOUNT</span>
+          <h2 id="auraLoginTitle">Welcome <em>back.</em></h2>
+          <p class="aura-login-sub">Sign in with your mobile number to save
+            favourites and track your orders.</p>
+          <form id="auraPhoneForm" novalidate>
+            <label class="aura-login-field"><span>Mobile number (10
+                digits)</span><input type="tel" id="auraPhone"
+                placeholder="+919876543210" autocomplete="tel" inputmode="tel"
+                required></label>
+            <div id="recaptcha-container"></div>
+            <button type="submit" class="aura-login-submit"
+              id="auraSendOtp">Send OTP</button>
+            <div id="auraOtpSection" hidden>
+              <label class="aura-login-field"><span>Enter 6-digit
+                  OTP</span><input type="text" id="auraOtp"
+                  placeholder="Enter OTP" inputmode="numeric"
+                  autocomplete="one-time-code" maxlength="6"></label>
+              <button type="button" class="aura-login-submit"
+                id="auraVerifyOtp">Verify OTP</button>
+            </div>
+            <p class="aura-login-msg" id="auraPhoneMsg" role="status"
+              aria-live="polite"></p>
+          </form>
+          <p class="aura-login-switch">By continuing, you agree to our <a
+              href="terms.html">Terms</a> and <a
+              href="privacy-policy.html">Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SCRIPTS ============ -->
+    <script src="js/theme.js"></script>
+    <script src="js/cart-drawer.js"></script>
+
+    <script>
+    (function () {
+      // NAV DROPDOWN
+      var dd = document.getElementById('shopDD');
+      if (dd) {
+        var trigger = dd.querySelector('.nav-dd-trigger'); var timer = null;
+        function openMenu() { clearTimeout(timer); dd.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+        function closeSubs() { dd.querySelectorAll('.dd-sub.open').forEach(function (sub) { sub.classList.remove('open'); var t = sub.querySelector('.dd-sub-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); }); }
+        function closeMenu() { dd.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); closeSubs(); }
+        dd.addEventListener('mouseenter', openMenu); dd.addEventListener('mouseleave', function () { timer = setTimeout(closeMenu, 160); }); dd.addEventListener('focusin', openMenu);
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeMenu(); trigger.blur(); } });
+        trigger.addEventListener('click', function (e) { if (matchMedia('(hover: none)').matches && !dd.classList.contains('open')) { e.preventDefault(); openMenu(); } });
+        dd.querySelectorAll('.dd-sub-toggle').forEach(function (btn) { btn.addEventListener('click', function (e) { e.stopPropagation(); var sub = btn.parentElement; var willOpen = !sub.classList.contains('open'); closeSubs(); if (willOpen) { sub.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); } }); });
+        document.addEventListener('click', function (e) { if (!dd.contains(e.target)) closeMenu(); });
+      }
+
+      // MOBILE MENU
+      var burger = document.getElementById('burger'), mclose = document.getElementById('mclose');
+      if (burger) burger.addEventListener('click', function () { document.body.classList.add('mmenu-open'); burger.setAttribute('aria-expanded', 'true'); });
+      if (mclose) mclose.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); if (burger) burger.setAttribute('aria-expanded', 'false'); });
+      document.querySelectorAll('#mmenu a').forEach(function (a) { a.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); }); });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        // mobile dropdowns
+        document.querySelectorAll('.m-dropdown-toggle').forEach(function (t) {
+          t.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); this.parentElement.classList.toggle('open'); });
+        });
+        // search
+        var s = document.getElementById('hmSearch');
+        if (s) s.addEventListener('submit', function (e) { e.preventDefault(); var q = s.q.value.trim(); if (q) location.href = 'shop.html?q=' + encodeURIComponent(q); });
+        // back to top
+        var btn = document.getElementById('backToTop');
+        if (btn) { window.addEventListener('scroll', function () { btn.classList.toggle('show', window.scrollY > 300); }, { passive: true }); btn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }); }
+        // badges
+        function updateAllBadges() {
+          try {
+            var w = (JSON.parse(localStorage.getItem('aura_wishlist')) || []).length;
+            document.querySelectorAll('#wishBadge, #mWishBadge').forEach(function (b) { b.textContent = w; b.style.display = w > 0 ? 'grid' : 'none'; });
+            var c = (JSON.parse(localStorage.getItem('aura_cart')) || []).reduce(function (a, x) { return a + (Number(x.qty) || 1); }, 0);
+            document.querySelectorAll('#cartBadge, #mCartBadge').forEach(function (b) { b.textContent = c; b.style.display = c > 0 ? 'grid' : 'none'; });
+          } catch (e) { }
+        }
+        updateAllBadges();
+        window.addEventListener('storage', function (e) { if (e.key === 'aura_wishlist' || e.key === 'aura_cart') updateAllBadges(); });
+      });
+    })();
+  </script>
+
+    <script type="module" src="js/site-settings.js"></script>
+    <script type="module" src="js/session.js"></script>
+  </body>
+
+</html>

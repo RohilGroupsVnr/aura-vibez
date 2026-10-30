@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seed Products — AURA Admin</title>
+    <style>
+        body {
+            font-family: 'Jost', sans-serif;
+            background: #fdf9f4;
+            padding: 40px;
+            color: #2b1a20;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #a3194a;
+        }
+
+        p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #a3194a;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #6e0e33;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-danger {
+            background: #333;
+        }
+
+        .btn-danger:hover {
+            background: #000;
+        }
+
+        #log {
+            margin-top: 20px;
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .success {
+            color: #00ff00;
+        }
+
+        .error {
+            color: #ff4444;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🌱 Seed & Manage Products</h1>
+        <p>Use these buttons to add sample data or delete all products from your Firestore database.</p>
+        
+        <div class="btn-group">
+            <button id="seedBtn">Seed 31 Products</button>
+            <button id="deleteBtn" class="btn-danger">🗑️ Delete All Products</button>
+        </div>
+        
+        <div id="log" style="display:none;"></div>
+    </div>
+
+    <script type="module">
+        import { db, collection, addDoc, serverTimestamp, getDocs, deleteDoc, doc } from "./js/firebase.js";
+
+        const seedBtn = document.getElementById("seedBtn");
+        const deleteBtn = document.getElementById("deleteBtn");
+        const logDiv = document.getElementById("log");
+
+        // 🔥 31 Products from Invoice 28381 (Megh Mayur) - price, mrp, category, sizes, images to be added later in Admin
+        const products = [
+            {
+                name: "Malai Silk Cord Set",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 5,
+                sizes: [],
+                colors: ["Peach"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Rameshwaram SEH",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 5,
+                sizes: [],
+                colors: ["Rama"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Ryn Aliya 603 NMH",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 4,
+                sizes: [],
+                colors: ["Red"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Trends Foil Cord Set",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 10,
+                sizes: [],
+                colors: ["Red", "Liril"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Linen Club RAH",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 10,
+                sizes: [],
+                colors: ["Brown", "Blue"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Femina ENH",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 4,
+                sizes: [],
+                colors: ["N Blue"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Kitkat Plus RNH",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 4,
+                sizes: [],
+                colors: ["Peach"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Ckn Borer Slwr Nrh",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 8,
+                sizes: [],
+                colors: ["Peach", "Pink"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Nitya Vatican Emb",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 4,
+                sizes: [],
+                colors: ["N Blue"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Gunjan Mrn /biscut Set",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 7,
+                sizes: [],
+                colors: ["Maroon", "Biscuit"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Pano 1052",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 9,
+                sizes: [],
+                colors: ["Grey", "Beige"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "H/I Butta Sfj",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 7,
+                sizes: [],
+                colors: ["Purple", "B Green"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Twin Flower G/print RSH",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 4,
+                sizes: [],
+                colors: ["Maroon"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Gunjan V N/I Bgreen -Merron",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 5,
+                sizes: [],
+                colors: ["Maroon", "Bgreen"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Sniker Hevi Ryn Printed",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 10,
+                sizes: [],
+                colors: ["Ananda", "Lavander"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Honey Mulchenderi NEH",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 5,
+                sizes: [],
+                colors: ["Grey"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Crispy Silk Dgtl Ptd Ach",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 10,
+                sizes: [],
+                colors: ["N Blue", "White"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Ryn Crush Js 546",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 7,
+                sizes: [],
+                colors: ["B Green", "Blue"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Lien Lukni 1230",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 4,
+                sizes: [],
+                colors: ["Peach"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Liva Frk Emb 428 Aro",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 4,
+                sizes: [],
+                colors: ["Olive"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Ryn Wct 313 Nro",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 3,
+                sizes: [],
+                colors: [],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Vis Ryn Aliya 792 ATO",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 4,
+                sizes: [],
+                colors: ["Brown"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Rayon Smoking 500",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 3,
+                sizes: [],
+                colors: [],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Tanjore Set",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 1,
+                sizes: [],
+                colors: [],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Tanjore Kalamkari Duppata",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 1,
+                sizes: [],
+                colors: ["Red"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Simran SNH",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 3,
+                sizes: [],
+                colors: [],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "MIX",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 4,
+                sizes: [],
+                colors: [],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "MIX",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 8,
+                sizes: [],
+                colors: [],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "MIX",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 2,
+                sizes: [],
+                colors: [],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "MMSD 624",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 1,
+                sizes: [],
+                colors: [],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            },
+            {
+                name: "Sona Chandi Top",
+                category: "",
+                price: 0,
+                mrp: 0,
+                stock: 3,
+                sizes: [],
+                colors: ["Brown"],
+                badge: "",
+                image: "",
+                description: "",
+                isNew: true,
+                status: "active"
+            }
+        ];
+
+        // ➕ Add Products Function
+        seedBtn.addEventListener("click", async () => {
+            seedBtn.disabled = true;
+            deleteBtn.disabled = true;
+            seedBtn.textContent = "Seeding...";
+            logDiv.style.display = "block";
+            logDiv.innerHTML = "";
+
+            let successCount = 0;
+
+            for (let i = 0; i < products.length; i++) {
+                const p = products[i];
+                try {
+                    const data = {
+                        ...p,
+                        images: p.image ? [p.image] : [],
+                        soldSizes: [],
+                        createdAt: serverTimestamp()
+                    };
+
+                    await addDoc(collection(db, "products"), data);
+
+                    successCount++;
+                    logDiv.innerHTML += `<div class="success">✅ Added: ${p.name}</div>`;
+                } catch (error) {
+                    console.error("Error adding:", p.name, error);
+                    logDiv.innerHTML += `<div class="error">❌ Failed: ${p.name} - ${error.message}</div>`;
+                }
+            }
+
+            logDiv.innerHTML += `<div style="margin-top:10px; font-weight:bold; color:#fff;">🎉 Done! Added ${successCount} out of ${products.length} products.</div>`;
+            seedBtn.textContent = "Seed 31 Products";
+            seedBtn.disabled = false;
+            deleteBtn.disabled = false;
+        });
+
+        // 🗑️ Delete All Products Function
+        deleteBtn.addEventListener("click", async () => {
+            if (!confirm("Are you sure you want to delete ALL products? This cannot be undone!")) return;
+            
+            deleteBtn.disabled = true;
+            seedBtn.disabled = true;
+            deleteBtn.textContent = "Deleting...";
+            logDiv.style.display = "block";
+            logDiv.innerHTML = "";
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "products"));
+                const totalDocs = querySnapshot.size;
+                
+                if (totalDocs === 0) {
+                    logDiv.innerHTML += `<div class="error">⚠️ No products found to delete.</div>`;
+                    return;
+                }
+
+                logDiv.innerHTML += `<div style="color:#fff;">Found ${totalDocs} products. Starting deletion...</div>`;
+
+                let deletedCount = 0;
+                
+                // Delete one by one
+                for (const docSnap of querySnapshot.docs) {
+                    try {
+                        await deleteDoc(doc(db, "products", docSnap.id));
+                        deletedCount++;
+                        logDiv.innerHTML += `<div class="success">🗑️ Deleted: ${docSnap.data().name || docSnap.id}</div>`;
+                    } catch (error) {
+                        logDiv.innerHTML += `<div class="error">❌ Failed to delete ${docSnap.id}: ${error.message}</div>`;
+                    }
+                }
+
+                logDiv.innerHTML += `<div style="margin-top:10px; font-weight:bold; color:#fff;">🎉 Done! Deleted ${deletedCount} out of ${totalDocs} products.</div>`;
+                
+            } catch (error) {
+                console.error("Delete error:", error);
+                logDiv.innerHTML += `<div class="error">❌ Error: ${error.message}</div>`;
+            } finally {
+                deleteBtn.textContent = "🗑️ Delete All Products";
+                deleteBtn.disabled = false;
+                seedBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

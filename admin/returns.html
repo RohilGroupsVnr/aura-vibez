@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Returns — AURA Admin</title>
+  <link rel="icon" href="../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+  <style>
+    .admin-table td { vertical-align: top; }
+    .ret-id { font-weight: 600; color: var(--rose-dark); white-space: nowrap; }
+    .reason-box { background: var(--ivory); padding: 8px 12px; border-radius: 6px; font-size: 13px; color: var(--ink); max-width: 300px; line-height: 1.5; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-approved { background: #e7f6ec; color: #287443; }
+    .status-rejected { background: #fdeef4; color: #c0334f; }
+    .action-btns { display: flex; gap: 8px; }
+    .btn-sm { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 500; }
+    .btn-approve { background: #287443; color: #fff; }
+    .btn-reject { background: #c0334f; color: #fff; }
+    .btn-sm:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    html[data-theme="dark"] .ret-id { color: #F4D3DC; }
+    html[data-theme="dark"] .reason-box { background: #2A1B22; color: var(--ink); }
+    html[data-theme="dark"] .status-pending { background: #4A3A12; color: #FFE08A; }
+    html[data-theme="dark"] .status-approved { background: #12301F; color: #6FD29A; }
+    html[data-theme="dark"] .status-rejected { background: #3A1520; color: #FF8FA3; }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-side" id="adminSide"></aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><h1>Return Requests</h1><p>Manage customer return requests</p></div>
+      <div class="admin-user"><b id="adminEmail"></b></div>
+    </div>
+
+    <div class="admin-card scroll-x">
+      <div id="returnsWrap"><p style="color:var(--muted)">Loading returns...</p></div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+  import { db, collection, getDocs, query, orderBy, doc, updateDoc, serverTimestamp } from "./js/firebase.js";
+  import { adminReady } from "./js/admin-shell.js";
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmtDate = ts => ts?.toDate?.().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) || "—";
+
+  /* new: "AURA#01"  |  old: "AURA68739954" -> "#AURA68739954" */
+  const oid = id => {
+    id = String(id || "").trim();
+    if (!id) return "—";
+    return id.includes("#") ? id : "#" + id;
+  };
+
+  let allReturns = [];
+
+  async function loadReturns() {
+    try {
+      const snap = await getDocs(query(collection(db, "returns"), orderBy("createdAt", "desc")));
+      allReturns = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.warn("Returns query failed:", e);
+      try { allReturns = (await getDocs(collection(db, "returns"))).docs.map(d => ({ id: d.id, ...d.data() })); }
+      catch (e2) { console.error(e2); allReturns = []; }
+    }
+    render();
+  }
+
+  function render() {
+    if (!allReturns.length) {
+      $("returnsWrap").innerHTML = `<p style="color:var(--muted)">No return requests yet.</p>`;
+      return;
+    }
+
+    $("returnsWrap").innerHTML = `<table class="admin-table">
+      <thead>
+        <tr><th>Date</th><th>Order ID</th><th>Product</th><th>Reason</th><th>Status</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        ${allReturns.map(r => {
+          let statusCls = "status-pending";
+          if (r.status === "approved") statusCls = "status-approved";
+          if (r.status === "rejected") statusCls = "status-rejected";
+          const isPending = (r.status || "pending") === "pending";
+
+          return `<tr data-id="${r.id}">
+            <td>${fmtDate(r.createdAt)}</td>
+            <td class="ret-id">${esc(oid(r.orderId))}</td>
+            <td>${esc(r.productName)}</td>
+            <td><div class="reason-box">${esc(r.reason)}</div></td>
+            <td><span class="status-badge ${statusCls}">${esc(r.status || "pending")}</span></td>
+            <td>
+              <div class="action-btns">
+                ${isPending ? `
+                  <button class="btn-sm btn-approve" data-act="approve">Approve</button>
+                  <button class="btn-sm btn-reject" data-act="reject">Reject</button>
+                ` : `<span style="font-size:12px;color:var(--muted)">No action needed</span>`}
+              </div>
+            </td>
+          </tr>`;
+        }).join("")}
+      </tbody>
+    </table>`;
+  }
+
+  $("returnsWrap").addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-act]");
+    if (!btn) return;
+
+    const tr = btn.closest("tr");
+    const id = tr.dataset.id;
+    const newStatus = btn.dataset.act === "approve" ? "approved" : "rejected";
+
+    btn.disabled = true;
+    try {
+      await updateDoc(doc(db, "returns", id), { status: newStatus, updatedAt: serverTimestamp() });
+      alert(`Return request ${newStatus} successfully.`);
+      await loadReturns();
+    } catch (err) {
+      console.error("Status update failed:", err);
+      alert("Failed to update. Check Firestore rules.");
+      btn.disabled = false;
+    }
+  });
+
+  adminReady.then(loadReturns);
+</script>
+</body>
+</html>

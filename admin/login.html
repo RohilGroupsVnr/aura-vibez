@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Sign In — AURA</title>
+  <meta name="theme-color" content="#FFF8F1">
+  <link rel="icon" href="../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="ready admin-login">
+
+<div class="auth">
+  <aside class="auth-art">
+    <div class="aurora"><span></span><span></span><span></span></div>
+    <canvas id="petals"></canvas>
+    <a href="../user/index.html"><img src="../assets/logo.png" alt="AURA"></a>
+    <div>
+      <h2>Welcome back, <em>Admin.</em></h2>
+      <p>Sign in to manage orders, stock and customers from your AURA dashboard.</p>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>Manage orders &amp; shipping</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>Track stock &amp; inventory</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>View subscribers &amp; offers</li>
+      </ul>
+    </div>
+    <small style="opacity:.7">© AURA — Admin Panel</small>
+  </aside>
+
+  <section class="auth-side">
+    <div class="auth-card">
+      <a class="admin-back" href="../user/index.html">← Back to store</a>
+      <h1>Admin Sign In</h1>
+      <p class="sub">Restricted access — AURA team only.</p>
+
+      <form id="adminForm" class="admin-form" novalidate>
+        <div class="note">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Use the admin email &amp; password created for your store.</span>
+        </div>
+
+        <label>Admin Email
+          <input type="email" id="adminEmail" placeholder="admin@aura.com" autocomplete="username" required>
+        </label>
+
+        <label>Password
+          <div class="pw">
+            <input type="password" id="adminPass" placeholder="Your admin password" autocomplete="current-password" required>
+            <button type="button" class="toggle-pw" aria-label="Show password">👁</button>
+          </div>
+        </label>
+
+        <p class="msg" id="adminMsg" role="status" aria-live="polite"></p>
+
+        <button class="btn btn-primary block" type="submit" id="adminSubmit"><span>Enter Admin Panel</span></button>
+      </form>
+    </div>
+  </section>
+</div>
+
+<div id="toasts"></div>
+
+<script type="module">
+  import {
+    auth, signInWithEmailAndPassword, signOut, onAuthStateChanged,
+    setPersistence, browserLocalPersistence, isAdminEmail
+  } from "./js/firebase.js";
+
+  const $ = id => document.getElementById(id);
+  let manual = false;
+
+  function say(text, kind = "") {
+    $("adminMsg").textContent = text || "";
+    $("adminMsg").className = "msg" + (kind ? " " + kind : "");
+    $("adminMsg").style.color = kind === "ok" ? "#17805A" : kind === "err" ? "#C0334F" : "";
+  }
+
+  function friendly(err) {
+    switch (err?.code) {
+      case "auth/invalid-credential":
+      case "auth/wrong-password":
+      case "auth/user-not-found": return "Email or password is incorrect.";
+      case "auth/invalid-email": return "Please enter a valid email address.";
+      case "auth/too-many-requests": return "Too many attempts. Try again later.";
+      case "auth/network-request-failed": return "Network error. Check your connection.";
+      case "auth/unauthorized-domain": return "Domain not authorised in Firebase.";
+      default: return "Something went wrong. Please try again.";
+    }
+  }
+
+  document.querySelector(".toggle-pw")?.addEventListener("click", () => {
+    $("adminPass").type = $("adminPass").type === "password" ? "text" : "password";
+  });
+
+  $("adminForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const email = $("adminEmail").value.trim().toLowerCase(), pass = $("adminPass").value;
+    if (!email) { say("Please enter your email.", "err"); return; }
+    if (pass.length < 6) { say("Password must be at least 6 characters.", "err"); return; }
+
+    manual = true; $("adminSubmit").disabled = true; say("Signing in…");
+    try {
+      await setPersistence(auth, browserLocalPersistence);   /* keep session across pages & reloads */
+      const { user } = await signInWithEmailAndPassword(auth, email, pass);
+      if (!isAdminEmail(user.email)) {
+        await signOut(auth);
+        say("This account is not an admin.", "err");
+        $("adminSubmit").disabled = false; manual = false;
+        return;
+      }
+      say("Welcome back!", "ok");
+      setTimeout(() => location.replace("dashboard.html"), 400);
+    } catch (err) {
+      console.error("Login error:", err);
+      say(friendly(err), "err");
+      $("adminSubmit").disabled = false; manual = false;
+    }
+  });
+
+  /* already signed in as admin -> straight to dashboard (a normal customer session is left untouched) */
+  onAuthStateChanged(auth, user => {
+    if (manual || !user) return;
+    if (isAdminEmail(user.email)) location.replace("dashboard.html");
+  });
+</script>
+<script src="../user/js/theme.js"></script>
+</body>
+</html>

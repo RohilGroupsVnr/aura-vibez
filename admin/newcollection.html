@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Collection — AURA Admin</title>
+  <link rel="icon" href="../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-side" id="adminSide"></aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><h1>New Collection</h1><p>Switch on the products you want on the shop's New Collections page.</p></div>
+      <div class="topbar-actions">
+        <a class="btn-admin ghost" href="products.html"><i class="fa-solid fa-plus"></i> Add new product</a>
+        <a class="btn-admin primary" href="../user/newcollections.html" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> View page</a>
+      </div>
+    </div>
+
+    <div class="prod-stats" style="grid-template-columns:repeat(3,1fr)">
+      <div class="prod-stat"><span>All products</span><b id="sAll">0</b></div>
+      <div class="prod-stat green"><span>In collection</span><b id="sIn">0</b></div>
+      <div class="prod-stat amber"><span>Not added</span><b id="sOut">0</b></div>
+    </div>
+
+    <div class="admin-card">
+      <div class="prod-filters" style="justify-content:space-between;align-items:center">
+        <div class="nc-tabs" id="tabs">
+          <button class="nc-tab on" data-tab="all" type="button">All</button>
+          <button class="nc-tab" data-tab="in" type="button">In collection</button>
+          <button class="nc-tab" data-tab="out" type="button">Not added</button>
+        </div>
+        <div class="prod-search" style="flex:0 1 300px">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="search" id="fSearch" placeholder="Search products…" aria-label="Search products">
+        </div>
+      </div>
+
+      <div class="nc-grid" id="grid"><p class="admin-empty" style="grid-column:1/-1">Loading products…</p></div>
+      <div class="prod-empty" id="empty" hidden>
+        <i class="fa-solid fa-box-open"></i>
+        <p>No products match. Add products first from the Products page.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="a-toast" id="toast" role="status"></div>
+
+<script type="module">
+  import { db, collection, getDocs, updateDoc, doc, serverTimestamp } from "./js/firebase.js"
+  import { adminReady } from "./js/admin-shell.js";
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const BADGES = ["New Arrival", "Trending", "Bestseller"];
+  let products = [], tab = "all", tT;
+
+  function toast(msg, kind = "ok") {
+    const t = $("toast");
+    t.className = "a-toast show " + kind;
+    t.innerHTML = `<i class="fa-solid ${kind === "ok" ? "fa-circle-check" : "fa-circle-exclamation"}"></i> ${esc(msg)}`;
+    clearTimeout(tT); tT = setTimeout(() => t.classList.remove("show"), 2400);
+  }
+
+  async function load() {
+    try {
+      products = (await getDocs(collection(db, "products"))).docs.map(d => ({ id: d.id, ...d.data() }));
+      products.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    } catch (err) { console.error(err); toast("Could not load products", "err"); }
+    render();
+  }
+
+  const img = p => p.image || p.image1 || p.images?.[0] || "";
+
+  function render() {
+    const q = $("fSearch").value.trim().toLowerCase();
+    const inCount = products.filter(p => p.isNew).length;
+    $("sAll").textContent = products.length; $("sIn").textContent = inCount; $("sOut").textContent = products.length - inCount;
+
+    const list = products.filter(p => (tab === "all" || (tab === "in" ? p.isNew : !p.isNew)) && (!q || (p.name || "").toLowerCase().includes(q)));
+    $("empty").hidden = list.length > 0; $("grid").hidden = list.length === 0;
+    $("grid").innerHTML = list.map(p => `
+      <article class="nc-card ${p.isNew ? "in" : ""}" data-id="${p.id}">
+        <div class="nc-media">
+          <img src="${esc(img(p))}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.opacity=.2">
+          ${p.isNew ? `<span class="nc-flag">${esc(p.badge || "New Arrival")}</span>` : ""}
+        </div>
+        <div class="nc-body">
+          <h3 class="nc-name">${esc(p.name || "Untitled")}</h3>
+          <div class="nc-sub"><span>${esc((p.category || "").replace(/-/g, " "))}</span><b>₹${Number(p.price ?? 0).toLocaleString("en-IN")}</b></div>
+          <select data-badge aria-label="Badge for ${esc(p.name)}" ${p.isNew ? "" : "disabled"}>
+            ${BADGES.map(b => `<option ${((p.badge || "New Arrival") === b) ? "selected" : ""}>${b}</option>`).join("")}
+          </select>
+          <div class="nc-row">
+            <span>${p.isNew ? "In collection" : "Not added"}</span>
+            <label class="switch" aria-label="Add ${esc(p.name)} to new collection"><input type="checkbox" data-toggle ${p.isNew ? "checked" : ""}><span></span></label>
+          </div>
+        </div>
+      </article>`).join("");
+  }
+
+  async function save(id, patch, okMsg) {
+    const p = products.find(x => x.id === id), before = { ...p };
+    Object.assign(p, patch); render();
+    try {
+      await updateDoc(doc(db, "products", id), { ...patch, updatedAt: serverTimestamp() });
+      toast(okMsg);
+    } catch (err) {
+      console.error(err); Object.assign(p, before); render(); toast("Couldn't save. Try again.", "err");
+    }
+  }
+
+  $("grid").addEventListener("change", e => {
+    const card = e.target.closest(".nc-card"); if (!card) return;
+    const id = card.dataset.id, p = products.find(x => x.id === id);
+    if (e.target.matches("[data-toggle]")) {
+      const on = e.target.checked;
+      save(id, { isNew: on, badge: on ? (p.badge || "New Arrival") : (p.badge || "") }, on ? "Added to new collection" : "Removed from new collection");
+    }
+    if (e.target.matches("[data-badge]")) save(id, { badge: e.target.value }, "Badge updated");
+  });
+
+  $("tabs").addEventListener("click", e => {
+    const b = e.target.closest("[data-tab]"); if (!b) return;
+    tab = b.dataset.tab;
+    document.querySelectorAll(".nc-tab").forEach(t => t.classList.toggle("on", t === b));
+    render();
+  });
+  $("fSearch").addEventListener("input", render);
+
+  adminReady.then(load);
+</script>
+</body>
+</html>

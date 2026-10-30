@@ -1,0 +1,218 @@
+/* =========================================================
+   AURA — Phone OTP login popup (desktop + mobile)
+   Link this file in EVERY page that has #auraLoginOverlay,
+   AFTER style.css / theme.css.
+   ========================================================= */
+
+body .aura-login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;               /* above navbar, mobile menu, cart drawer */
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(20, 8, 14, .58);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  overflow-y: auto;            /* keyboard open aana scroll aagum */
+  overscroll-behavior: contain;
+  transition: opacity .35s ease, visibility .35s;
+}
+body .aura-login-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+body .aura-login-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(780px, 100%);
+  min-height: 440px;
+  overflow: hidden;
+  background: #FFF9F0;
+  color: #2B1B21;
+  border-radius: 18px;
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .55);
+  transform: translateY(24px) scale(.97);
+  transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+  font-family: "Jost", sans-serif;
+}
+body .aura-login-overlay.show .aura-login-card { transform: none; }
+
+body .aura-login-x {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #2B1B21;
+  border: 0;
+  cursor: pointer;
+  font-size: 1.15rem;
+  box-shadow: 0 4px 14px -6px rgba(0, 0, 0, .4);
+  transition: transform .3s, background .3s, color .3s;
+}
+body .aura-login-x:hover { transform: rotate(90deg); background: #A3194A; color: #fff; }
+
+body .aura-login-img {
+  position: relative;
+  background: linear-gradient(160deg, #D3567E, #6E0E33);
+  min-height: 240px;
+}
+body .aura-login-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+body .aura-login-body {
+  padding: 44px 40px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+body .aura-login-eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  font-size: .68rem;
+  font-weight: 500;
+  letter-spacing: .3em;
+  color: #8B8378;
+  text-transform: uppercase;
+}
+body .aura-login-body h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+  font-weight: 600;
+  line-height: 1.08;
+  margin: 0 0 6px;
+  color: #2B1B21;
+}
+body .aura-login-body h2 em { color: #A3194A; font-style: italic; }
+body .aura-login-sub { font-size: .9rem; color: #7B6A6F; margin: 0 0 22px; line-height: 1.5; }
+body .aura-login-body form { display: grid; gap: 14px; }
+body .aura-login-field { display: grid; gap: 6px; }
+body .aura-login-field > span { font-size: .78rem; font-weight: 500; color: #2B1B21; letter-spacing: .02em; }
+body .aura-login-field input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1.5px solid #E8E1D3;
+  border-radius: 10px;
+  background: #fff;
+  font-family: inherit;
+  font-size: .94rem;
+  color: #2B1B21;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+body .aura-login-field input::placeholder { color: #B8AEA0; }
+body .aura-login-field input:focus { border-color: #A3194A; box-shadow: 0 0 0 4px rgba(163, 25, 74, .1); }
+
+body .aura-login-submit {
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 999px;
+  border: 0;
+  background: linear-gradient(135deg, #A3194A, #6E0E33);
+  color: #fff;
+  font-family: inherit;
+  font-size: .86rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 12px 26px -12px rgba(163, 25, 74, .8);
+  transition: transform .25s, box-shadow .25s;
+  margin-top: 4px;
+}
+body .aura-login-submit:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -12px rgba(163, 25, 74, .9); }
+body .aura-login-submit:disabled { opacity: .6; cursor: wait; transform: none; }
+
+body .aura-login-msg { min-height: 1.3em; font-size: .85rem; text-align: center; margin: 4px 0 0; color: #C0334F; }
+body .aura-login-msg.ok { color: #17805A; }
+body .aura-login-switch { margin: 18px 0 0; text-align: center; font-size: .86rem; color: #7B6A6F; }
+body .aura-login-switch a { color: #A3194A; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+body #auraOtpSection[hidden] { display: none; }
+body #auraOtpSection { display: grid; gap: 12px; margin-top: 4px; }
+body #auraOtp { letter-spacing: .25em; text-align: center; font-weight: 600; }
+
+/* reCAPTCHA (invisible illa normal na) — clip aagama irukka */
+body #recaptcha-container { display: flex; justify-content: center; max-width: 100%; }
+body #recaptcha-container:empty { display: none; }
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+@media (max-width: 700px) {
+  body .aura-login-overlay {
+    place-items: start center;          /* keyboard varumpothu top-la irukkum */
+    padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  }
+
+  body .aura-login-card {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    margin: auto 0;                      /* chinna content na center, perusu na scroll */
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  body .aura-login-img { min-height: 0; height: 120px; }
+  body .aura-login-body { padding: 22px 18px 20px; justify-content: flex-start; }
+  body .aura-login-body h2 { font-size: 1.7rem; }
+  body .aura-login-sub { margin-bottom: 16px; font-size: .86rem; }
+
+  /* iOS zoom-in aagama irukka 16px minimum */
+  body .aura-login-field input { font-size: 16px; padding: 14px 14px; }
+  body #auraOtp { font-size: 18px; }
+
+  body .aura-login-submit { padding: 15px 16px; font-size: .8rem; }
+  body .aura-login-x { top: 10px; right: 10px; width: 36px; height: 36px; }
+
+  /* 304px reCAPTCHA chinna screen-la fit aaga */
+  body #recaptcha-container { overflow: hidden; }
+  body #recaptcha-container > div {
+    transform: scale(.88);
+    transform-origin: center top;
+  }
+}
+
+@media (max-width: 360px) {
+  body #recaptcha-container > div { transform: scale(.76); }
+  body .aura-login-body { padding: 20px 14px 18px; }
+}
+
+/* Mobile menu Login button */
+.mmenu .m-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 8px 0 4px;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #A3194A, #6E0E33);
+  color: #fff;
+  font: 600 .85rem "Jost", sans-serif;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.is-user .mmenu .m-login-btn { display: none; }   /* login aanavangaluku hide */

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders — AURA Admin</title>
+  <link rel="icon" href="../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+  <style>
+    .ord-sel { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--cream); color: var(--ink); font: inherit; }
+    .ord-sel.sm { padding: 4px 6px; border-radius: 6px; font-size: 12px; }
+    .ord-pm { font-size: 12px; margin-bottom: 4px; color: var(--muted); }
+    .ord-id { font-weight: 600; color: var(--rose-dark); white-space: nowrap; }
+    html[data-theme="dark"] .ord-id { color: #F4D3DC; }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-side" id="adminSide"></aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><h1>Orders</h1><p>Manage customer orders</p></div>
+      <div class="admin-user"><b id="adminEmail"></b></div>
+    </div>
+
+    <div class="admin-card scroll-x">
+      <div class="admin-filters">
+        <input type="search" id="orderSearch" placeholder="Search by order ID, customer, phone or email…">
+        <select id="statusFilter">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="return_requested">Return requested</option>
+        </select>
+      </div>
+      <div id="ordersWrap"><p style="color:var(--muted)">Loading…</p></div>
+    </div>
+  </main>
+</div>
+
+<script type="module">
+  import { db, collection, getDocs, query, orderBy, doc, updateDoc, serverTimestamp } from "./js/firebase.js";
+  import { adminReady } from "./js/admin-shell.js";
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN");
+  const nice = s => { s = String(s || "").replace(/_/g, " "); return s.charAt(0).toUpperCase() + s.slice(1); };
+
+  const STATUS = ["pending", "shipped", "delivered", "cancelled", "return_requested"];
+  const PAY_STATUS = ["pending", "paid", "failed", "refunded"];
+  let all = [];
+
+  async function load() {
+    try {
+      const snap = await getDocs(query(collection(db, "orders"), orderBy("createdAt", "desc")));
+      all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.warn("ordered query failed, retrying plain:", e.code || e);
+      try { all = (await getDocs(collection(db, "orders"))).docs.map(d => ({ id: d.id, ...d.data() })); }
+      catch (e2) { console.error(e2); all = []; }
+    }
+    render();
+  }
+
+  /* new orders: "AURA#01"  |  old orders: "AURA68739954" -> "#AURA68739954" */
+  const label = o => {
+    const id = String(o.orderId || "").trim();
+    if (!id) return "#" + o.id.slice(0, 8).toUpperCase();
+    return id.includes("#") ? id : "#" + id;
+  };
+  const dateOf = o => o.createdAt?.toDate?.().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) || "—";
+
+  function render() {
+    const q = $("orderSearch").value.trim().toLowerCase(), s = $("statusFilter").value;
+    const list = all.filter(o =>
+      (!s || (o.status || "pending") === s) &&
+      (!q || [label(o), o.orderId, o.customerName, o.email, o.customerEmail, o.phone].some(v => String(v || "").toLowerCase().includes(q))));
+
+    if (!list.length) {
+      $("ordersWrap").innerHTML = `<p style="color:var(--muted)">${all.length ? "No matching orders." : "No orders yet."}</p>`;
+      return;
+    }
+
+    $("ordersWrap").innerHTML = `<table class="admin-table">
+      <thead><tr><th>Order</th><th>Customer</th><th>Contact</th><th>Items</th><th>Payment</th><th>Total</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>${list.map(o => {
+        const st = o.status || "pending";
+        const pst = o.paymentStatus || "pending";
+        const n = (o.items || []).reduce((a, i) => a + (Number(i.qty) || 1), 0);
+
+        return `<tr data-id="${o.id}">
+          <td class="ord-id">${esc(label(o))}</td>
+          <td>${esc(o.customerName || "—")}</td>
+          <td>${esc(o.phone || o.email || o.customerEmail || "—")}</td>
+          <td>${n || "—"}</td>
+          <td>
+            <div class="ord-pm">${esc((o.paymentMethod || "—").toUpperCase())}</div>
+            <select class="ord-sel sm" data-paystatus aria-label="Payment status">
+              ${PAY_STATUS.map(x => `<option value="${x}" ${x === pst ? "selected" : ""}>${x.toUpperCase()}</option>`).join("")}
+            </select>
+          </td>
+          <td class="price">${inr(o.total)}</td>
+          <td>${esc(dateOf(o))}</td>
+          <td>
+            <select class="ord-sel" data-status aria-label="Order status">
+              ${STATUS.map(x => `<option value="${x}" ${x === st ? "selected" : ""}>${nice(x)}</option>`).join("")}
+            </select>
+          </td>
+        </tr>`;
+      }).join("")}</tbody></table>`;
+  }
+
+  /* update order status / payment status */
+  $("ordersWrap").addEventListener("change", async e => {
+    const sel = e.target.closest("select");
+    if (!sel) return;
+
+    const row = sel.closest("tr");
+    const id = row.dataset.id;
+    const o = all.find(x => x.id === id);
+    const isPayment = sel.hasAttribute("data-paystatus");
+    const field = isPayment ? "paymentStatus" : "status";
+    const prev = o[field] || "pending";
+
+    sel.disabled = true;
+    try {
+// 🔥 Ithu dhaan pudhu code 🔥
+if (sel.value === "delivered" && !isPayment) {
+    // Order Delivered-ah maarumbothu deliveredAt save aaganum
+    await updateDoc(doc(db, "orders", id), { 
+        status: "delivered", 
+        deliveredAt: serverTimestamp(), // 🔥 7 days timer start aagum
+        updatedAt: serverTimestamp() 
+    });
+} else {
+    // Vera status-ku normal update
+    await updateDoc(doc(db, "orders", id), { 
+        [field]: sel.value, 
+        updatedAt: serverTimestamp() 
+    });
+}      o[field] = sel.value;
+    } catch (err) {
+      console.error(field + " update error:", err);
+      sel.value = prev;
+      alert(`Couldn't update ${isPayment ? "payment" : "order"} status. Check Firestore rules.`);
+    }
+    sel.disabled = false;
+  });
+
+  $("orderSearch").addEventListener("input", render);
+  $("statusFilter").addEventListener("change", render);
+  adminReady.then(load);
+</script>
+</body>
+</html>

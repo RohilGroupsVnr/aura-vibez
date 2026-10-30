@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management — AURA Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Jost:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --p: #a3194a; --pd: #6e0e33; --bg: #fdf9f4; --bd: #ead9d9; --tx: #2b1a20; --dim: #8a7a7e; }
+        body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--ink); margin: 0; display: flex; min-height: 100vh; }
+        .aw { display: flex; min-height: 100vh; width: 100%; }
+        .admin-main { flex: 1; padding: 20px 26px; min-width: 0; }
+        button, input, select { font-family: inherit; }
+        button { cursor: pointer; }
+        h1 { font-size: 1.4rem; color: var(--p); }
+
+        /* SUMMARY */
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .sum-card { background: #fff; border: 1px solid var(--bd); border-radius: 10px; padding: 18px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); }
+        .sum-icon { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; flex-shrink: 0; }
+        .sum-icon.total { background: #3498db; } .sum-icon.low { background: #f39c12; } .sum-icon.out { background: #e74c3c; } .sum-icon.good { background: #2ecc71; }
+        .sum-icon.rev { background: linear-gradient(135deg, #a3194a, #6e0e33); } .sum-icon.bill { background: #8e44ad; } .sum-icon.item { background: #16a085; } .sum-icon.avg { background: #c9a35f; }
+        .sum-info b { display: block; font-size: 24px; color: var(--tx); line-height: 1; }
+        .sum-info span { font-size: 13px; color: var(--dim); margin-top: 4px; display: block; }
+
+        /* ALERT */
+        .alert-banner { background: linear-gradient(135deg, #fdecea, #fadbd8); border: 1.5px solid #e74c3c; border-radius: 10px; padding: 14px 20px; margin-bottom: 20px; display: none; align-items: center; gap: 15px; animation: slideDown 0.4s ease; }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .alert-banner.show { display: flex; }
+        .alert-banner .alert-icon { background: #e74c3c; color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.6); } 50% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); } }
+        .alert-banner .alert-text { flex: 1; font-size: 14px; color: #c0392b; }
+        .alert-banner .alert-text b { font-size: 15px; }
+        .alert-banner .alert-list { font-size: 12px; color: #7f2a1f; margin-top: 4px; }
+
+        /* CARD / TABLE */
+        .card { background: #fff; border: 1px solid var(--bd); border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+        .search { width: 100%; padding: 11px 14px; border: 1.5px solid var(--bd); border-radius: 8px; font-size: 0.95rem; margin-bottom: 12px; }
+        .search:focus, .in:focus { outline: none; border-color: var(--p); }
+        .tw { max-height: calc(100vh - 320px); overflow: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { background: #fbe9ef; color: var(--pd); text-align: left; padding: 10px 8px; position: sticky; top: 0; z-index: 5; font-size: 12px; text-transform: uppercase; }
+        td { padding: 8px; border-bottom: 1px solid var(--bd); vertical-align: middle; }
+        .in { padding: 6px 8px; border: 1.5px solid var(--bd); border-radius: 6px; font-size: 0.85rem; width: 100%; text-align: center; font-weight: 600; }
+        .sm { width: 72px; }
+        .tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 99px; font-weight: 700; white-space: nowrap; }
+        .g { background: #e6f7ec; color: #1e8449; } .r { background: #fdecea; color: #c0392b; } .y { background: #fff4d6; color: #9a6b00; } .pk { background: #fbe9ef; color: #a3194a; }
+        .btn2 { background: #fff; color: var(--p); border: 1.5px solid var(--p); padding: 7px 12px; border-radius: 7px; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+        .btn2:hover { background: var(--p); color: #fff; }
+        .btn2.fill { background: var(--p); color: #fff; }
+        .btn2.fill:hover { background: var(--pd); }
+        .toast { position: fixed; bottom: 22px; right: 22px; background: var(--tx); color: #fff; padding: 12px 20px; border-radius: 8px; z-index: 200; display: none; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
+        .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; padding-right: 60px !important; position: relative; z-index: 10; }
+        .top .pill { margin-right: 15px; }
+
+        /* COLOR-WISE SIZE STOCK */
+        .szs { display: flex; flex-wrap: wrap; gap: 6px; min-width: 220px; }
+        .szs label { display: flex; flex-direction: column; align-items: center; font-size: 10px; color: var(--dim); font-weight: 700; }
+        .szs .in { width: 54px; }
+        .cdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .2); margin-right: 6px; }
+
+        /* SALES ANALYTICS */
+        .an-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+        .an-head h2 { font-size: 1.1rem; color: var(--pd); }
+        .an-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .an-tools select, .an-tools input[type=date] { padding: 8px 10px; border: 1.5px solid var(--bd); border-radius: 7px; font-size: 0.82rem; font-weight: 600; background: #fff; }
+        .an-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 15px; margin-bottom: 18px; }
+        .box { border: 1px solid var(--bd); border-radius: 10px; padding: 14px; background: #fffdfb; }
+        .box h3 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: .08em; color: var(--p); margin-bottom: 12px; }
+        .trend { display: flex; align-items: flex-end; gap: 6px; height: 150px; padding-top: 10px; }
+        .tcol { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; min-width: 0; }
+        .tbar { width: 100%; max-width: 34px; background: linear-gradient(180deg, #a3194a, #6e0e33); border-radius: 5px 5px 0 0; min-height: 2px; transition: height .3s; }
+        .tlab { font-size: 9.5px; color: var(--dim); margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .tval { font-size: 9.5px; font-weight: 700; color: var(--pd); margin-bottom: 3px; }
+        .paylist .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--bd); font-size: 0.88rem; }
+        .paylist .row b { color: var(--tx); }
+        .slow { margin-top: 12px; font-size: 0.8rem; color: #7a6a70; line-height: 1.6; }
+        .rank { width: 30px; height: 30px; border-radius: 50%; background: #fbe9ef; color: var(--p); font-weight: 800; display: grid; place-items: center; font-size: 0.8rem; }
+        .rank.r1 { background: linear-gradient(135deg, #e7c777, #c9a35f); color: #fff; }
+        .rank.r2 { background: #c9ccd1; color: #fff; } .rank.r3 { background: #cd9b6a; color: #fff; }
+        .pbar { height: 7px; background: #f3e6ea; border-radius: 99px; overflow: hidden; min-width: 90px; }
+        .pbar i { display: block; height: 100%; background: linear-gradient(90deg, #a3194a, #c9a35f); border-radius: 99px; }
+        .empty { text-align: center; padding: 26px; color: var(--dim); font-size: 0.9rem; }
+        @media (max-width: 900px) { .an-grid { grid-template-columns: 1fr; } }
+
+        /* PRINT REPORT */
+        #print-section { display: none; }
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            html, body { background: #fff !important; }
+            body * { visibility: hidden; }
+            #print-section, #print-section * { visibility: visible; }
+            #print-section { position: absolute; left: 0; top: 0; width: 210mm; padding: 0; margin: 0; display: block; background: #fff; }
+            @page { size: A4; margin: 0; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="aw">
+        <aside class="admin-side" id="adminSide"></aside>
+
+        <main class="admin-main">
+            <div class="top">
+                <h1><i class="fas fa-warehouse"></i> Stock Management</h1>
+                <span class="pill" id="ssum" style="background:#fff; border:1px solid #ead9d9; padding:6px 14px; border-radius:99px; font-size:0.8rem;"></span>
+            </div>
+
+            <!-- STOCK SUMMARY -->
+            <div class="summary-grid">
+                <div class="sum-card"><div class="sum-icon total"><i class="fa-solid fa-boxes-stacked"></i></div><div class="sum-info"><b id="sumTotal">0</b><span>Total Products</span></div></div>
+                <div class="sum-card"><div class="sum-icon good"><i class="fa-solid fa-circle-check"></i></div><div class="sum-info"><b id="sumGood">0</b><span>In Stock</span></div></div>
+                <div class="sum-card"><div class="sum-icon low"><i class="fa-solid fa-triangle-exclamation"></i></div><div class="sum-info"><b id="sumLow">0</b><span>Low Stock (≤5)</span></div></div>
+                <div class="sum-card"><div class="sum-icon out"><i class="fa-solid fa-circle-xmark"></i></div><div class="sum-info"><b id="sumOut">0</b><span>Out of Stock</span></div></div>
+            </div>
+
+            <!-- ALERT (only when 2 or more products are low / out) -->
+            <div class="alert-banner" id="alertBanner">
+                <div class="alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="alert-text">
+                    <b>Low Stock Alert!</b> Please restock these products soon.
+                    <div class="alert-list" id="alertList"></div>
+                </div>
+            </div>
+
+            <!-- SALES & REVENUE -->
+            <section class="card" id="salesCard">
+                <div class="an-head">
+                    <h2><i class="fa-solid fa-chart-line"></i> Sales &amp; Revenue <small id="rangeLabel" style="color:var(--dim);font-weight:500"></small></h2>
+                    <div class="an-tools">
+                        <select id="range">
+                            <option value="today">Today</option>
+                            <option value="7d">Last 7 days</option>
+                            <option value="30d">Last 30 days</option>
+                            <option value="month" selected>This month</option>
+                            <option value="year">This year</option>
+                            <option value="all">All time</option>
+                            <option value="custom">Custom range…</option>
+                        </select>
+                        <span id="customBox" style="display:none;gap:6px;align-items:center">
+                            <input type="date" id="dFrom"> <span>to</span> <input type="date" id="dTo">
+                        </span>
+                        <button class="btn2 fill" id="btnReport"><i class="fa-solid fa-file-pdf"></i> Download Report (PDF)</button>
+                        <button class="btn2" id="btnCsv"><i class="fa-solid fa-file-csv"></i> Excel / CSV</button>
+                    </div>
+                </div>
+
+                <div class="summary-grid" style="margin-bottom:16px">
+                    <div class="sum-card"><div class="sum-icon rev"><i class="fa-solid fa-indian-rupee-sign"></i></div><div class="sum-info"><b id="kRev">₹0</b><span>Revenue</span></div></div>
+                    <div class="sum-card"><div class="sum-icon bill"><i class="fa-solid fa-receipt"></i></div><div class="sum-info"><b id="kBills">0</b><span>Bills</span></div></div>
+                    <div class="sum-card"><div class="sum-icon item"><i class="fa-solid fa-bag-shopping"></i></div><div class="sum-info"><b id="kItems">0</b><span>Items Sold</span></div></div>
+                    <div class="sum-card"><div class="sum-icon avg"><i class="fa-solid fa-scale-balanced"></i></div><div class="sum-info"><b id="kAvg">₹0</b><span>Avg. Bill Value</span></div></div>
+                </div>
+
+                <div class="an-grid">
+                    <div class="box"><h3>Revenue Trend</h3><div class="trend" id="trend"></div></div>
+                    <div class="box">
+                        <h3>Payment Split</h3>
+                        <div class="paylist" id="payList"></div>
+                        <div class="slow" id="slowBox"></div>
+                    </div>
+                </div>
+
+                <h3 style="font-size:.9rem;color:var(--pd);margin-bottom:10px"><i class="fa-solid fa-fire" style="color:#e67e22"></i> Top Selling Products</h3>
+                <div class="tw" style="max-height:420px">
+                    <table>
+                        <thead>
+                            <tr><th style="width:44px">#</th><th>Product</th><th>Qty Sold</th><th>Revenue</th><th style="width:140px">Share</th><th>Stock Left</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="topBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- STOCK TABLE -->
+            <div class="card">
+                <input class="search" id="sq" placeholder="🔍 Search product by name...">
+                <div class="tw">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th><th>Color</th><th>Price ₹</th><th>MRP ₹</th>
+                                <th>Size-wise stock</th>
+                                <th>Total</th><th>Sold</th><th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sb"></tbody>
+                    </table>
+                </div>
+                <p style="font-size:0.78rem; color:var(--dim); margin-top:10px;">
+                    💡 <b>Tip:</b> When a bill is created (Billing → Save &amp; Print), stock is automatically reduced. Selecting a period in the "Sold" column shows how many units were sold during that time.
+                    If you fill in the size-wise stock for each color, the total will be calculated automatically.
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div id="print-section"></div>
+
+    <script type="module">
+        import * as FB from "./js/firebase.js";
+        import { adminReady } from "./js/admin-shell.js";
+
+        const { db, collection, doc, onSnapshot, updateDoc, serverTimestamp } = FB;
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN", { maximumFractionDigits: 0 });
+        const inr2 = n => "₹ " + Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        const toast = (m) => {
+            const t = $("toast");
+            t.textContent = m;
+            t.style.display = "block";
+            setTimeout(() => t.style.display = "none", 2600);
+        };
+
+        const SZ = ["S", "M", "L", "XL", "Free"];
+        const DAY = 864e5;
+        const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        // stock helpers (color variant -> size-wise stock)
+        const vStock = v => (v && v.sizeStock) ? (v.sizes || []).reduce((a, s) => a + (Number(v.sizeStock[s]) || 0), 0) : null;
+        const pStock = p => {
+            const vs = Object.values(p.variants || {}).filter(v => v.sizeStock);
+            return vs.length ? vs.reduce((a, v) => a + vStock(v), 0) : (p.stock || 0);
+        };
+
+        (async () => {
+            await adminReady;
+            let P = [], BILLS = [], S = null;
+
+            /* ---------- LIVE LISTENERS ---------- */
+            onSnapshot(collection(db, "products"), (s) => {
+                P = s.docs.map(d => { const x = { id: d.id, ...d.data() }; x.stock = pStock(x); return x; })
+                    .sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0) || String(a.name).localeCompare(b.name));
+                refreshAll();
+            });
+            onSnapshot(collection(db, "bills"), (s) => {
+                BILLS = s.docs.map(d => ({ id: d.id, ...d.data() })).filter(b => b.date && b.date.toDate);
+                refreshAll();
+            });
+
+            function refreshAll() { updateDashboard(); computeSales(); renderSales(); drawStock(); }
+
+            /* ---------- STOCK DASHBOARD + ALERT ---------- */
+            function updateDashboard() {
+                const total = P.length;
+                const out = P.filter(p => (p.stock || 0) <= 0).length;
+                const low = P.filter(p => (p.stock || 0) > 0 && (p.stock || 0) <= 5).length;
+                $("sumTotal").textContent = total;
+                $("sumGood").textContent = total - out - low;
+                $("sumLow").textContent = low;
+                $("sumOut").textContent = out;
+
+                const lowProducts = P.filter(p => (p.stock || 0) > 0 && (p.stock || 0) <= 5);
+                const outProducts = P.filter(p => (p.stock || 0) <= 0);
+
+                // Banner only when 2 or more products are low / out of stock
+                if (lowProducts.length + outProducts.length >= 2) {
+                    $("alertBanner").classList.add("show");
+                    const items = [];
+                    if (outProducts.length) items.push(`<b>❌ Out of Stock (${outProducts.length}):</b> ${outProducts.slice(0, 3).map(p => esc(p.name)).join(", ")}${outProducts.length > 3 ? "..." : ""}`);
+                    if (lowProducts.length) items.push(`<b>⚠️ Low Stock (${lowProducts.length}):</b> ${lowProducts.slice(0, 3).map(p => `${esc(p.name)} (${p.stock} left)`).join(", ")}${lowProducts.length > 3 ? "..." : ""}`);
+                    $("alertList").innerHTML = items.join("<br>");
+                } else {
+                    $("alertBanner").classList.remove("show");
+                }
+            }
+
+            /* ---------- DATE RANGE ---------- */
+            const sod = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            function getRange() {
+                const v = $("range").value, now = new Date(), today = sod(now), tomorrow = new Date(today.getTime() + DAY);
+                if (v === "today") return [today, tomorrow, "Today"];
+                if (v === "7d") return [new Date(today.getTime() - 6 * DAY), tomorrow, "Last 7 days"];
+                if (v === "30d") return [new Date(today.getTime() - 29 * DAY), tomorrow, "Last 30 days"];
+                if (v === "month") return [new Date(now.getFullYear(), now.getMonth(), 1), tomorrow, MON[now.getMonth()] + " " + now.getFullYear()];
+                if (v === "year") return [new Date(now.getFullYear(), 0, 1), tomorrow, "Year " + now.getFullYear()];
+                if (v === "custom") {
+                    const f = $("dFrom").value ? new Date($("dFrom").value + "T00:00:00") : today;
+                    const t = $("dTo").value ? new Date(new Date($("dTo").value + "T00:00:00").getTime() + DAY) : tomorrow;
+                    return [f, t, `${f.toLocaleDateString("en-GB")} – ${new Date(t.getTime() - DAY).toLocaleDateString("en-GB")}`];
+                }
+                // all time
+                let min = today;
+                BILLS.forEach(b => { const d = b.date.toDate(); if (d < min) min = d; });
+                return [sod(min), tomorrow, "All time"];
+            }
+
+            /* ---------- SALES COMPUTATION ---------- */
+            function computeSales() {
+                const [a, b, label] = getRange();
+                const list = BILLS.filter(x => { const d = x.date.toDate(); return d >= a && d < b; });
+                const byProd = new Map(), pay = {};
+                let revenue = 0, items = 0;
+
+                list.forEach(bl => {
+                    revenue += Number(bl.totalAmount) || 0;
+                    const pm = bl.paymentMode || "Cash";
+                    pay[pm] = (pay[pm] || 0) + (Number(bl.totalAmount) || 0);
+                    (bl.items || []).forEach(it => {
+                        const key = it.manual ? "m:" + it.name : it.id;
+                        const row = byProd.get(key) || { id: it.manual ? null : it.id, name: it.name, qty: 0, rev: 0, manual: !!it.manual };
+                        row.qty += Number(it.qty) || 0;
+                        row.rev += Number(it.total) || 0;
+                        byProd.set(key, row);
+                        items += Number(it.qty) || 0;
+                    });
+                });
+
+                const top = [...byProd.values()].sort((x, y) => y.qty - x.qty || y.rev - x.rev);
+                const byId = {};
+                top.forEach(r => { if (r.id) byId[r.id] = r; });
+
+                // trend buckets
+                const span = Math.round((b - a) / DAY);
+                const daily = span <= 31, buckets = new Map();
+                if (daily) { for (let i = 0; i < span; i++) { const d = new Date(a.getTime() + i * DAY); buckets.set(d.getTime(), { l: d.getDate() + " " + MON[d.getMonth()], v: 0 }); } }
+                else { let d = new Date(a.getFullYear(), a.getMonth(), 1); while (d < b) { buckets.set(d.getTime(), { l: MON[d.getMonth()] + " " + String(d.getFullYear()).slice(2), v: 0 }); d = new Date(d.getFullYear(), d.getMonth() + 1, 1); } }
+                list.forEach(bl => {
+                    const d = bl.date.toDate();
+                    const k = daily ? sod(d).getTime() : new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+                    if (buckets.has(k)) buckets.get(k).v += Number(bl.totalAmount) || 0;
+                });
+
+                const soldIds = new Set(top.map(r => r.id).filter(Boolean));
+                const noSales = P.filter(p => !soldIds.has(p.id) && (p.stock || 0) > 0);
+
+                S = { label, list, revenue, items, bills: list.length, avg: list.length ? revenue / list.length : 0, pay, top, byId, buckets: [...buckets.values()], noSales };
+            }
+
+            /* ---------- RENDER SALES ---------- */
+            function renderSales() {
+                if (!S) return;
+                $("rangeLabel").textContent = "· " + S.label;
+                $("kRev").textContent = inr(S.revenue);
+                $("kBills").textContent = S.bills;
+                $("kItems").textContent = S.items;
+                $("kAvg").textContent = inr(S.avg);
+
+                // trend
+                const max = Math.max(1, ...S.buckets.map(x => x.v));
+                const step = S.buckets.length > 15 ? Math.ceil(S.buckets.length / 10) : 1;
+                $("trend").innerHTML = S.buckets.length ? S.buckets.map((x, i) => `
+                    <div class="tcol" title="${esc(x.l)} — ${inr(x.v)}">
+                        <div class="tval">${x.v && S.buckets.length <= 12 ? inr(x.v) : ""}</div>
+                        <div class="tbar" style="height:${(x.v / max) * 100}%"></div>
+                        <div class="tlab">${i % step === 0 ? esc(x.l) : "&nbsp;"}</div>
+                    </div>`).join("") : `<div class="empty" style="width:100%">No data</div>`;
+
+                // payment split
+                const pays = Object.entries(S.pay);
+                $("payList").innerHTML = pays.length
+                    ? pays.sort((x, y) => y[1] - x[1]).map(([k, v]) => `<div class="row"><span>${esc(k)}</span><b>${inr(v)}</b></div>`).join("")
+                    : `<div class="empty">No bills in this period</div>`;
+
+                // slow movers
+                $("slowBox").innerHTML = S.noSales.length
+                    ? `<b style="color:#a3194a">🐌 No sales in this period (${S.noSales.length}):</b><br>${S.noSales.slice(0, 5).map(p => esc(p.name)).join(", ")}${S.noSales.length > 5 ? "…" : ""}`
+                    : "";
+
+                // top selling table
+                const topMax = Math.max(1, ...S.top.map(r => r.qty));
+                const totalQty = Math.max(1, S.items);
+                $("topBody").innerHTML = S.top.length ? S.top.map((r, i) => {
+                    const p = r.id ? P.find(x => x.id === r.id) : null;
+                    const stock = p ? (p.stock || 0) : null;
+                    let st = r.manual ? `<span class="tag pk">Manual</span>` : stock === null ? "" : stock <= 0 ? `<span class="tag r">Out of Stock</span>` : stock <= 5 ? `<span class="tag y">Restock soon</span>` : `<span class="tag g">In Stock</span>`;
+                    const rk = i < 3 ? " r" + (i + 1) : "";
+                    return `<tr>
+                        <td><div class="rank${rk}">${i + 1}</div></td>
+                        <td><b>${esc(r.name)}</b> ${i < 3 ? '<span class="tag pk">🔥 Best seller</span>' : ""}</td>
+                        <td><b>${r.qty}</b> pcs</td>
+                        <td><b>${inr(r.rev)}</b></td>
+                        <td><div class="pbar"><i style="width:${(r.qty / topMax) * 100}%"></i></div><small style="color:var(--dim)">${((r.qty / totalQty) * 100).toFixed(1)}%</small></td>
+                        <td>${stock === null ? "—" : stock}</td>
+                        <td>${st}</td>
+                    </tr>`;
+                }).join("") : `<tr><td colspan="7" class="empty">No bills in this period. Bills created in Billing will appear here.</td></tr>`;
+            }
+
+            $("range").onchange = () => {
+                $("customBox").style.display = $("range").value === "custom" ? "flex" : "none";
+                computeSales(); renderSales(); drawStock();
+            };
+            ["dFrom", "dTo"].forEach(id => $(id).onchange = () => { computeSales(); renderSales(); drawStock(); });
+
+            /* ---------- STOCK TABLE (one row per color) ---------- */
+            function drawStock() {
+                const q = $("sq").value.toLowerCase();
+                const L = P.filter(p => (p.name || "").toLowerCase().includes(q));
+                $("ssum").textContent = `${L.length} products · ${L.reduce((a, p) => a + (p.stock || 0), 0)} pcs`;
+
+                // keep what the admin is typing if a live update arrives
+                let html = "";
+                L.forEach(p => {
+                    const vs = p.variants || {};
+                    const colors = Object.keys(vs).length ? Object.keys(vs) : [""];
+                    const sold = (S && S.byId[p.id]) ? S.byId[p.id].qty : 0;
+
+                    colors.forEach((c, i) => {
+                        const v = c ? vs[c] : null;
+                        const sizes = v ? (v.sizes || []) : SZ;
+                        const ss = v ? (v.sizeStock || {}) : (p.sizeStock || {});
+                        const stock = v ? (vStock(v) ?? 0) : (p.stock || 0);
+                        const price = v ? (v.price || p.price || 0) : (p.price || 0);
+                        const mrp = v ? (v.mrp || p.mrp || 0) : (p.mrp || 0);
+                        const hex = (p.colorHex || {})[c] || "#ccc";
+                        const tag = stock <= 0 ? '<span class="tag r">Out of Stock</span>' : stock <= 5 ? '<span class="tag y">Low Stock</span>' : '<span class="tag g">In Stock</span>';
+
+                        html += `<tr data-id="${esc(p.id)}" data-color="${esc(c)}">
+              ${i === 0 ? `<td rowspan="${colors.length}"><b>${esc(p.name)}</b><br><small style="color:var(--dim)">Total: ${p.stock || 0} pcs</small></td>` : ""}
+              <td>${c ? `<span class="cdot" style="background:${esc(hex)}"></span><b>${esc(c)}</b>` : "—"}<br>${tag}</td>
+              <td><input class="in sm" data-f="price" type="number" min="0" value="${price}"></td>
+              <td><input class="in sm" data-f="mrp" type="number" min="0" value="${mrp}"></td>
+              <td><div class="szs">${sizes.map(s => `<label>${esc(s)}<input class="in" data-s="${esc(s)}" type="number" min="0" value="${ss[s] ?? ""}"></label>`).join("")}</div></td>
+              <td><input class="in" style="width:62px" data-total type="number" value="${stock}" readonly></td>
+              ${i === 0 ? `<td rowspan="${colors.length}">${sold ? `<span class="tag pk">${sold} sold</span>` : `<span style="color:var(--dim)">—</span>`}</td>` : ""}
+              <td><button class="btn2" data-save="${esc(p.id)}">Save</button></td>
+            </tr>`;
+                    });
+                });
+                $("sb").innerHTML = html;
+            }
+
+            $("sq").oninput = drawStock;
+
+            $("sb").oninput = (e) => {
+                if (e.target.dataset.s === undefined) return;
+                const tr = e.target.closest("tr");
+                tr.querySelector("[data-total]").value = [...tr.querySelectorAll("[data-s]")].reduce((a, i) => a + (+i.value || 0), 0);
+            };
+
+            $("sb").onclick = async (e) => {
+                const b = e.target.closest("[data-save]");
+                if (!b) return;
+                const tr = b.closest("tr");
+                const prod = P.find(x => x.id === b.dataset.save);
+                if (!prod) return;
+
+                const color = tr.dataset.color || "";
+                const price = +tr.querySelector('[data-f="price"]').value || 0;
+                const mrp = +tr.querySelector('[data-f="mrp"]').value || 0;
+                const s = {};
+                tr.querySelectorAll("[data-s]").forEach(i => { s[i.dataset.s] = Math.max(0, +i.value || 0); });
+                const total = Object.values(s).reduce((a, n) => a + n, 0);
+                const u = { updatedAt: serverTimestamp() };
+
+                if (color) {
+                    const variants = JSON.parse(JSON.stringify(prod.variants || {}));
+                    const v = variants[color];
+                    if (!v) { toast("❌ Color not found"); return; }
+                    if (price) v.price = price;
+                    if (mrp) v.mrp = mrp;
+                    v.sizeStock = s;
+                    v.stock = total;
+                    v.soldSizes = (v.sizes || []).filter(k => (s[k] || 0) <= 0);
+                    u.variants = variants;
+                    u.colorSold = { ...(prod.colorSold || {}), [color]: v.soldSizes };
+                    u.stock = Object.values(variants).reduce((a, x) => a + (vStock(x) || 0), 0);
+                } else {
+                    // old products (no colors)
+                    u.price = price; u.mrp = mrp; u.sizeStock = s; u.stock = total;
+                    u.sizes = Object.keys(s); u.soldSizes = Object.keys(s).filter(k => s[k] <= 0);
+                }
+
+                try {
+                    await updateDoc(doc(db, "products", prod.id), u);
+                    toast("✅ Stock updated!");
+                } catch (er) {
+                    toast("❌ " + er.message);
+                }
+            };
+
+            /* ---------- DOWNLOAD: PDF REPORT ---------- */
+            function reportHTML() {
+                const now = new Date();
+                const gen = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) + ", " + now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+                const top = S.top.slice(0, 20);
+                const lowList = P.filter(p => (p.stock || 0) <= 5).sort((a, b) => (a.stock || 0) - (b.stock || 0)).slice(0, 15);
+                const topRows = top.map((r, i) => {
+                    const p = r.id ? P.find(x => x.id === r.id) : null;
+                    return `<tr class="${i % 2 ? "alt" : ""}"><td class="c">${String(i + 1).padStart(2, "0")}</td><td><b>${esc(r.name)}</b></td><td class="c">${r.qty}</td><td class="r">${inr2(r.rev)}</td><td class="c">${p ? (p.stock || 0) : "—"}</td></tr>`;
+                }).join("") || `<tr><td colspan="5" class="c" style="padding:8mm">No sales in this period</td></tr>`;
+                const payRows = Object.entries(S.pay).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="pr"><span>${esc(k)}</span><b>${inr2(v)}</b></div>`).join("") || `<div class="pr"><span>—</span><b>—</b></div>`;
+                const lowRows = lowList.map(p => `<div class="pr"><span>${esc(p.name)}</span><b style="color:${(p.stock || 0) <= 0 ? "#c0392b" : "#9a6b00"}">${(p.stock || 0) <= 0 ? "OUT" : p.stock + " left"}</b></div>`).join("") || `<div class="pr"><span>All products have enough stock</span><b>✓</b></div>`;
+
+                return `
+<style>
+ .rp { font-family:'Jost',Arial,sans-serif; color:#2b1b21; width:210mm; min-height:296mm; display:flex; flex-direction:column; font-size:12px; background:#fff; }
+ .rp * { box-sizing:border-box; }
+ .rp .band { height:7mm; background:linear-gradient(90deg,#6e0e33,#a3194a 55%,#c9a35f); }
+ .rp .band.thin { height:3mm; }
+ .rp .body { flex:1; padding:11mm 14mm 8mm; display:flex; flex-direction:column; }
+ .rp .head { display:flex; justify-content:space-between; align-items:flex-start; }
+ .rp .head img { height:18mm; }
+ .rp .head .t { font-family:'Cormorant Garamond',Georgia,serif; font-size:30px; font-weight:700; color:#6e0e33; text-transform:uppercase; letter-spacing:.05em; text-align:right; line-height:1; }
+ .rp .head .s { text-align:right; font-size:11px; font-weight:700; color:#5a4a51; margin-top:2mm; letter-spacing:.08em; text-transform:uppercase; }
+ .rp .head .g { text-align:right; font-size:10px; color:#7a6a70; margin-top:1mm; }
+ .rp .gold { height:1px; margin:6mm 0; background:linear-gradient(90deg,#c9a35f,#e8d3a6 50%,#c9a35f); }
+ .rp .kp { display:grid; grid-template-columns:repeat(4,1fr); gap:3.5mm; margin-bottom:6mm; }
+ .rp .k { background:#fbf6f1; border-left:2mm solid #a3194a; padding:3.5mm 4mm; border-radius:0 2mm 2mm 0; }
+ .rp .k small { display:block; font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#a3194a; }
+ .rp .k b { display:block; font-size:18px; margin-top:1.5mm; font-weight:800; }
+ .rp h4 { font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:#a3194a; margin:5mm 0 2.5mm; }
+ .rp table { width:100%; border-collapse:collapse; }
+ .rp th { background:linear-gradient(90deg,#6e0e33,#a3194a); color:#fff; font-size:10.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; padding:3mm; text-align:left; }
+ .rp td { padding:2.8mm 3mm; border-bottom:1px solid #f0e4e8; font-size:12px; }
+ .rp tr.alt td { background:#fcf8f4; }
+ .rp .c { text-align:center; } .rp .r { text-align:right; font-weight:700; }
+ .rp .two { display:grid; grid-template-columns:1fr 1fr; gap:8mm; }
+ .rp .pr { display:flex; justify-content:space-between; padding:2mm 0; border-bottom:1px dashed #ead9df; font-size:12px; font-weight:600; }
+ .rp .sp { flex:1; }
+ .rp .fine { text-align:center; font-size:9px; color:#7a6a70; margin-top:6mm; border-top:1px solid #ead9df; padding-top:3mm; }
+</style>
+<div class="rp">
+ <div class="band"></div>
+ <div class="body">
+  <div class="head">
+    <img src="../assets/logo.png" alt="AURA">
+    <div><div class="t">Sales Report</div><div class="s">${esc(S.label)}</div><div class="g">Generated ${gen}</div></div>
+  </div>
+  <div class="gold"></div>
+  <div class="kp">
+    <div class="k"><small>Revenue</small><b>${inr2(S.revenue)}</b></div>
+    <div class="k"><small>Bills</small><b>${S.bills}</b></div>
+    <div class="k"><small>Items Sold</small><b>${S.items}</b></div>
+    <div class="k"><small>Avg. Bill</small><b>${inr2(S.avg)}</b></div>
+  </div>
+  <h4>Top Selling Products</h4>
+  <table><thead><tr><th class="c" style="width:12mm">No.</th><th>Product</th><th class="c" style="width:22mm">Qty Sold</th><th style="width:38mm;text-align:right">Revenue</th><th class="c" style="width:22mm">Stock Left</th></tr></thead><tbody>${topRows}</tbody></table>
+  <div class="two">
+    <div><h4>Payment Split</h4>${payRows}</div>
+    <div><h4>Low / Out of Stock</h4>${lowRows}</div>
+  </div>
+  <div class="sp"></div>
+  <div class="fine">AURA Clothing · Product revenue is before discount &amp; GST; total revenue is the final billed amount. Computer-generated report.</div>
+ </div>
+ <div class="band thin"></div>
+</div>`;
+            }
+
+            $("btnReport").onclick = () => {
+                if (!S) return;
+                $("print-section").innerHTML = reportHTML();
+                const imgs = [...$("print-section").querySelectorAll("img")];
+                const ready = Promise.all(imgs.map(i => i.complete ? Promise.resolve() : new Promise(r => { i.onload = i.onerror = r; })));
+                Promise.all([ready, document.fonts ? document.fonts.ready : Promise.resolve()]).then(() => setTimeout(() => window.print(), 150));
+            };
+
+            /* ---------- DOWNLOAD: EXCEL / CSV ---------- */
+            $("btnCsv").onclick = () => {
+                if (!S) return;
+                const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+                const L = [];
+                L.push(["AURA Sales Report", S.label].map(q).join(","));
+                L.push(["Revenue", S.revenue.toFixed(2)].map(q).join(","));
+                L.push(["Bills", S.bills].map(q).join(","));
+                L.push(["Items Sold", S.items].map(q).join(","));
+                L.push(["Average Bill", S.avg.toFixed(2)].map(q).join(","));
+                L.push("");
+                L.push(["Rank", "Product", "Qty Sold", "Revenue (before discount/GST)", "Stock Left"].map(q).join(","));
+                S.top.forEach((r, i) => { const p = r.id ? P.find(x => x.id === r.id) : null; L.push([i + 1, r.name, r.qty, r.rev.toFixed(2), p ? (p.stock || 0) : ""].map(q).join(",")); });
+                L.push("");
+                L.push(["Bill No", "Date", "Customer", "Phone", "Payment", "Items", "Total"].map(q).join(","));
+                [...S.list].sort((a, b) => a.date.toDate() - b.date.toDate()).forEach(b => {
+                    L.push([b.billNo || "", b.date.toDate().toLocaleString("en-GB"), b.customerName || "", b.customerPhone || "", b.paymentMode || "", (b.items || []).reduce((s, i) => s + (i.qty || 0), 0), Number(b.totalAmount || 0).toFixed(2)].map(q).join(","));
+                });
+                const blob = new Blob(["\ufeff" + L.join("\r\n")], { type: "text/csv;charset=utf-8;" });
+                const a = document.createElement("a");
+                a.href = URL.createObjectURL(blob);
+                a.download = `AURA-sales-${new Date().toISOString().slice(0, 10)}.csv`;
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+                toast("✅ CSV downloaded");
+            };
+        })();
+    </script>
+</body>
+
+</html>

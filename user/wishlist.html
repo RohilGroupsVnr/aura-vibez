@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist — AURA</title>
+    <link rel="icon" href="../assets/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <script>
+    try { if (localStorage.getItem('aura_auth_hint') === '1') document.documentElement.classList.add('is-user'); } catch (e) { }
+  </script>
+
+    <!-- ===== WISHLIST PAGE CSS ===== -->
+    <style>
+    .wishlist-hero {
+      text-align: center;
+      padding: 60px 20px 30px;
+      background-color: #FFF9F0;
+    }
+
+    .wishlist-hero .eyebrow {
+      display: block;
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #8B8378;
+      margin-bottom: 10px;
+    }
+
+    .wishlist-hero .title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 600;
+      color: #2B1B21;
+      margin: 0;
+    }
+
+    .wishlist-hero .title em {
+      color: #A3194A;
+      font-style: italic;
+    }
+
+    .wishlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 30px;
+      padding: 20px 0 60px;
+    }
+
+    .wishlist-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .wishlist-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .wishlist-card .card-img {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+    }
+
+    .wishlist-card .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .wishlist-card:hover .card-img img {
+      transform: scale(1.05);
+    }
+
+    .wishlist-card .card-info {
+      padding: 15px 18px;
+      text-align: left;
+    }
+
+    .wishlist-card .card-info h3 {
+      font-family: 'Jost', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+      margin: 0 0 5px;
+    }
+
+    .wishlist-card .card-info p {
+      font-family: 'Jost', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #8b1e3f;
+      margin: 0;
+    }
+
+    .wishlist-card .remove-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #e74c3c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 2;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .wishlist-card .remove-btn:hover {
+      background: #fff;
+      transform: scale(1.1);
+    }
+
+    .empty-wishlist {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .empty-wishlist h3 {
+      font-family: 'Jost', sans-serif;
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .empty-wishlist p {
+      color: #777;
+      margin-bottom: 20px;
+    }
+
+    .empty-wishlist .btn-shop {
+      display: inline-block;
+      padding: 12px 30px;
+      background: #8b1e3f;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-family: 'Jost', sans-serif;
+      transition: background 0.3s;
+    }
+
+    .empty-wishlist .btn-shop:hover {
+      background: #6e0e33;
+    }
+
+    #toasts {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: #333;
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: 8px;
+      font-family: 'Jost', sans-serif;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.3s ease forwards;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* ===== AURA ACCOUNT MENU ===== */
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .acct {
+      position: relative;
+      align-items: center;
+    }
+
+    .is-user .acct {
+      display: flex !important;
+    }
+
+    .is-user .hm-login {
+      display: none !important;
+    }
+
+    .acct .avatar {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid #ead8dd;
+      border-radius: 50%;
+      background: #fff9f0;
+      color: #8b1e3f;
+      font-size: 17px;
+      cursor: pointer;
+    }
+
+    .acct .menu {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      width: 230px;
+      padding: 12px;
+      border: 1px solid #eee0e3;
+      border-radius: 12px;
+      background: #fffaf5;
+      box-shadow: 0 12px 35px rgba(43, 27, 33, .16);
+      z-index: 500;
+      display: none;
+    }
+
+    .acct.open .menu {
+      display: block;
+    }
+
+    .acct .who {
+      display: grid;
+      gap: 5px;
+      padding: 10px 9px 14px;
+      margin-bottom: 5px;
+      border-bottom: 1px solid #eee0e3;
+      overflow-wrap: anywhere;
+    }
+
+    .acct .who b {
+      color: #2b1b21;
+      font-size: 14px;
+    }
+
+    .acct .who small {
+      color: #827078;
+      font-size: 12px;
+    }
+
+    .acct .menu a,
+    .acct .menu>button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 10px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #35232b;
+      font: inherit;
+      font-size: 14px;
+      text-decoration: none;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .acct .menu a:hover,
+    .acct .menu>button:hover {
+      background: #f8e9ee;
+      color: #8b1e3f;
+    }
+
+    .acct .menu>button {
+      margin-top: 5px;
+      border: 1px solid #ead8dd;
+      justify-content: center;
+    }
+
+    #auraOtpSection[hidden] {
+      display: none;
+    }
+
+    #auraOtpSection {
+      display: grid;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    #auraOtp {
+      letter-spacing: .25em;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    #recaptcha-container {
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .aura-login-switch {
+      line-height: 1.7;
+    }
+
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 700px) {
+      .nav-actions {
+        gap: 7px;
+      }
+
+      .nav-actions .hm-login {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .acct .avatar {
+        width: 38px;
+        height: 38px;
+      }
+
+      .acct .menu {
+        position: fixed;
+        top: 76px;
+        right: 12px;
+        width: min(270px, calc(100vw - 24px));
+      }
+
+      .aura-login-overlay {
+        padding: 12px;
+        overflow-y: auto;
+      }
+
+      .aura-login-card {
+        width: 100%;
+        max-width: 430px;
+        margin: auto;
+        grid-template-columns: 1fr;
+        max-height: calc(100dvh - 24px);
+        overflow-y: auto;
+      }
+
+      .aura-login-img {
+        height: 130px;
+        min-height: 130px;
+      }
+
+      .aura-login-body {
+        padding: 24px 20px;
+      }
+
+      .aura-login-body h2 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+
+    <!-- ===== LOGIN POPUP CSS ===== -->
+    <style>
+    .aura-login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 121;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(20, 8, 14, .58);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .35s ease, visibility .35s;
+    }
+
+    .aura-login-overlay.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .aura-login-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: min(780px, 100%);
+      min-height: 440px;
+      overflow: hidden;
+      background: #FFF9F0;
+      color: #2B1B21;
+      border-radius: 18px;
+      box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .55);
+      transform: translateY(24px) scale(.97);
+      transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .aura-login-overlay.show .aura-login-card {
+      transform: none;
+    }
+
+    .aura-login-x {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 3;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #2B1B21;
+      border: 0;
+      cursor: pointer;
+      font-size: 1.15rem;
+      box-shadow: 0 4px 14px -6px rgba(0, 0, 0, .4);
+      transition: transform .3s, background .3s, color .3s;
+    }
+
+    .aura-login-x:hover {
+      transform: rotate(90deg);
+      background: #A3194A;
+      color: #fff;
+    }
+
+    .aura-login-img {
+      position: relative;
+      background: linear-gradient(160deg, #D3567E, #6E0E33);
+      min-height: 240px;
+    }
+
+    .aura-login-img img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .aura-login-body {
+      padding: 44px 40px 36px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .aura-login-eyebrow {
+      display: block;
+      margin-bottom: 10px;
+      font-size: .68rem;
+      font-weight: 500;
+      letter-spacing: .3em;
+      color: #8B8378;
+      text-transform: uppercase;
+    }
+
+    .aura-login-body h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1.08;
+      margin: 0 0 6px;
+      color: #2B1B21;
+    }
+
+    .aura-login-body h2 em {
+      color: #A3194A;
+      font-style: italic;
+    }
+
+    .aura-login-sub {
+      font-size: .9rem;
+      color: #7B6A6F;
+      margin: 0 0 22px;
+      line-height: 1.5;
+    }
+
+    .aura-login-body form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .aura-login-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .aura-login-field>span {
+      font-size: .78rem;
+      font-weight: 500;
+      color: #2B1B21;
+      letter-spacing: .02em;
+    }
+
+    .aura-login-field input {
+      width: 100%;
+      padding: 13px 15px;
+      border: 1.5px solid #E8E1D3;
+      border-radius: 10px;
+      background: #fff;
+      font-family: inherit;
+      font-size: .94rem;
+      color: #2B1B21;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .aura-login-field input::placeholder {
+      color: #B8AEA0;
+    }
+
+    .aura-login-field input:focus {
+      border-color: #A3194A;
+      box-shadow: 0 0 0 4px rgba(163, 25, 74, .1);
+    }
+
+    .aura-login-pw {
+      position: relative;
+    }
+
+    .aura-login-pw input {
+      padding-right: 46px;
+    }
+
+    .aura-login-eye {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 0;
+      background: transparent;
+      color: #7B6A6F;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: color .25s, background .25s;
+    }
+
+    .aura-login-eye:hover {
+      color: #A3194A;
+      background: rgba(163, 25, 74, .06);
+    }
+
+    .aura-login-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: .82rem;
+      flex-wrap: wrap;
+    }
+
+    .aura-login-remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #7B6A6F;
+      cursor: pointer;
+    }
+
+    .aura-login-remember input {
+      width: 16px;
+      height: 16px;
+      accent-color: #A3194A;
+      flex: none;
+    }
+
+    .aura-login-forgot {
+      background: none;
+      border: 0;
+      color: #A3194A;
+      font-size: .82rem;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      padding: 0;
+    }
+
+    .aura-login-forgot:hover {
+      color: #6E0E33;
+    }
+
+    .aura-login-submit {
+      width: 100%;
+      padding: 15px 20px;
+      border-radius: 999px;
+      border: 0;
+      background: linear-gradient(135deg, #A3194A, #6E0E33);
+      color: #fff;
+      font-family: inherit;
+      font-size: .86rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 12px 26px -12px rgba(163, 25, 74, .8);
+      transition: transform .25s, box-shadow .25s;
+      margin-top: 4px;
+    }
+
+    .aura-login-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px -12px rgba(163, 25, 74, .9);
+    }
+
+    .aura-login-submit:disabled {
+      opacity: .6;
+      cursor: wait;
+      transform: none;
+    }
+
+    .aura-login-msg {
+      min-height: 1.3em;
+      font-size: .85rem;
+      text-align: center;
+      margin: 4px 0 0;
+      color: #C0334F;
+    }
+
+    .aura-login-msg.ok {
+      color: #17805A;
+    }
+
+    .aura-login-switch {
+      margin: 18px 0 0;
+      text-align: center;
+      font-size: .86rem;
+      color: #7B6A6F;
+    }
+
+    .aura-login-switch a {
+      color: #A3194A;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    @media (max-width: 700px) {
+      .aura-login-card {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+
+      .aura-login-img {
+        min-height: 0;
+        height: 160px;
+      }
+
+      .aura-login-body {
+        padding: 28px 22px 24px;
+      }
+    }
+  </style>
+  
+  <!-- 🔥 HEART ICON ACTIVE STATE (MOBILE ONLY) 🔥 -->
+  <style>
+    @media (max-width: 768px) {
+      #wishBtn {
+        color: #a3194a !important;
+        background-color: #fce7e9 !important;
+        border-radius: 50%;
+      }
+      .m-icon-link[href="wishlist.html"] {
+        background: #fce7e9 !important;
+        border-color: #a3194a !important;
+        color: #a3194a !important;
+      }
+      .m-icon-link[href="wishlist.html"] i {
+        color: #a3194a !important;
+      }
+      .m-icon-link[href="wishlist.html"] .badge {
+        background: #a3194a !important;
+        color: #fff !important;
+      }
+    }
+  </style>
+  </head>
+
+  <body class="home">
+
+    <!-- icon sprite -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-heart" viewBox="0 0 24 24">
+          <path
+            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+        </symbol>
+        <symbol id="i-bag" viewBox="0 0 24 24">
+          <path d="M6 7h12l1 13H5L6 7Z" />
+          <path d="M9 7a3 3 0 0 1 6 0" />
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </symbol>
+        <symbol id="i-user" viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+        </symbol>
+        <symbol id="i-x" viewBox="0 0 24 24">
+          <path d="M18 6 6 18M6 6l12 12" />
+        </symbol>
+        <symbol id="i-chev" viewBox="0 0 24 24">
+          <path d="m6 9 6 6 6-6" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <div class="cursor-glow" aria-hidden="true"></div>
+
+    <!-- Announcement Bar -->
+    <div class="hm-ann">
+      <span>Discover Your New Favourite Look</span>
+      <span class="pill">New Arrivals</span>
+      <span>Style Delivered to Your Doorstep</span>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="index.html" class="brand">
+        <img src="../assets/logo.png" alt="AURA">
+      </a>
+      <div class="links">
+        <a href="index.html">Home</a>
+        <a href="newcollections.html">New Collection</a>
+
+        <div class="nav-dd" id="shopDD">
+          <a href="shop.html" class="nav-dd-trigger" aria-haspopup="true"
+            aria-expanded="false">
+            Shop
+            <svg class="dd-caret" width="12" height="12" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor"
+              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true">
+              <use href="#i-chev" />
+            </svg>
+          </a>
+
+          <div class="dd-menu" role="menu" aria-label="Shop categories">
+            <a href="shop.html?cat=kurta-sets" role="menuitem">Kurta Sets</a>                <!-- 🔥 NEW: Tops Added Here 🔥 -->
+            <a href="shop.html?cat=tops" role="menuitem">Tops</a>
+            <a href="shop.html?cat=anarkali" role="menuitem">Anarkali</a>
+            <a href="shop.html?cat=sarees" role="menuitem">Sarees</a>
+
+            <!-- 🔥 NEWLY ADDED: College & Office Wear 🔥 -->
+            <a href="shop.html?cat=college-wear" role="menuitem">College
+              Wear</a>
+            <a href="shop.html?cat=office-wear" role="menuitem">Office Wear</a>
+           
+            <div class="dd-sub">
+              <button type="button" class="dd-sub-toggle" aria-expanded="false">
+                <span>Dresses</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  aria-hidden="true">
+                  <use href="#i-chev" />
+                </svg>
+              </button>
+              <div class="dd-sub-list">
+                <a href="shop.html?cat=dresses&type=party-wear"
+                  role="menuitem">Party Wear</a>
+                <a href="shop.html?cat=dresses&type=maxi-dresses"
+                  role="menuitem">Maxi Dresses</a>
+                <a href="shop.html?cat=dresses&type=casual-dresses"
+                  role="menuitem">Casual Dresses</a>
+                <a href="shop.html?cat=dresses&type=floral-dresses"
+                  role="menuitem">Floral Dresses</a>
+              </div>
+            </div>
+            <a href="shop.html?cat=night-suits" role="menuitem">Night Suits</a>
+            <div class="dd-sub">
+              <button type="button" class="dd-sub-toggle" aria-expanded="false">
+                <span>Bottomwear</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"
+                  aria-hidden="true">
+                  <use href="#i-chev" />
+                </svg>
+              </button>
+              <div class="dd-sub-list">
+                <a href="shop.html?cat=leggings" role="menuitem">Leggings</a>
+                <a href="shop.html?cat=palazzo" role="menuitem">Palazzo</a>
+              </div>
+            </div>
+            <a href="shop.html?cat=shawls" role="menuitem">Shawls</a>
+            <a href="shop.html?cat=t-shirt" role="menuitem">T-shirt</a>
+            <a href="shop.html" role="menuitem" class="dd-all">View all
+              products</a>
+          </div>
+        </div>
+
+        <a href="./trackorder.html">Track Order</a>
+      </div>
+
+      <form class="hm-search" id="hmSearch" role="search">
+        <svg width="16" height="16" fill="none" stroke="currentColor"
+          stroke-width="1.8" stroke-linecap="round"
+          aria-hidden="true">
+          <use href="#i-search" />
+        </svg>
+        <input class="hm-in" type="search" name="q"
+          placeholder="Search fashion, beauty, jewellery…"
+          aria-label="Search products" autocomplete="off">
+      </form>
+
+      <div class="nav-actions">
+        <button type="button" class="hm-login" id="hmLogin"
+          aria-haspopup="dialog" aria-controls="auraLoginOverlay">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <use href="#i-user" />
+          </svg>
+          <span>Login</span>
+        </button>
+
+        <button class="icon-btn" id="wishBtn" aria-label="Wishlist"
+          onclick="location.href='wishlist.html'">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <use href="#i-heart" />
+          </svg>
+          <span class="badge" id="wishBadge">0</span>
+        </button>
+
+        <button class="icon-btn" id="cartBtn" aria-label="Shopping Cart"
+          onclick="location.href='cart.html'">
+
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.7"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="19" cy="21" r="1"></circle>
+            <path
+              d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+
+          </svg>
+
+          <span class="badge" id="cartBadge">0</span>
+        </button>
+
+        <div class="acct" id="acct" style="display:none">
+          <button class="avatar" id="avatarBtn" type="button"
+            aria-label="Account menu" aria-haspopup="true"
+            aria-expanded="false">
+            <i class="fa-regular fa-user"></i>
+          </button>
+
+          <div class="menu" id="acctMenu">
+            <div class="who">
+              <b id="userName">AURA Customer</b>
+              <small id="userEmail">Signed in</small>
+            </div>
+
+            <a href="order-history.html">
+              <i class="fa-solid fa-box"></i> Order History
+            </a>
+
+            <a href="wishlist.html">
+              <i class="fa-regular fa-heart"></i> Wishlist
+            </a>
+
+            <button type="button" id="logoutBtn">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+            </button>
+          </div>
+        </div>
+
+        <button class="icon-btn burger" id="burger" aria-label="Open menu"
+          aria-expanded="false" aria-controls="mmenu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="mmenu" id="mmenu" role="dialog" aria-modal="true"
+      aria-label="Menu">
+      <button class="icon-btn mclose" id="mclose" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Logo -->
+      <a href="index.html" class="mmenu-logo">
+        <img src="../assets/logo.png" alt="AURA">
+      </a>
+
+      <!-- 🔥 Icons Section (Premium) -->
+      <div class="mmenu-icons">
+        <a href="wishlist.html" class="m-icon-link">
+          <i class="fa-regular fa-heart"></i>
+          <span>Wishlist</span>
+          <span class="badge" id="mWishBadge">0</span>
+        </a>
+        <a href="cart.html" class="m-icon-link">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span>Cart</span>
+          <span class="badge" id="mCartBadge">0</span>
+        </a>
+
+      </div>
+
+      <!-- Links -->
+      <a href="index.html" class="act">Home</a>
+      <a href="newcollections.html">New Collections</a>
+
+      <!-- Shop Dropdown -->
+      <div class="m-dropdown">
+        <button type="button" class="m-dropdown-toggle">
+          <span>Shop</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="m-dropdown-menu">
+          <a href="shop.html?cat=kurta-sets">Kurta Sets</a>
+          <a href="shop.html?cat=anarkali">Anarkali</a>
+          <a href="shop.html?cat=sarees">Sarees</a>
+          <!-- 🔥 MOBILE: NEWLY ADDED 🔥 -->
+          <a href="shop.html?cat=college-wear">College Wear</a>
+          <a href="shop.html?cat=office-wear">Office Wear</a>
+          
+          <a href="shop.html?cat=night-suits">Night Suits</a>
+          <a href="shop.html?cat=shawls">Shawls</a>
+          <a href="shop.html?cat=t-shirt">T-shirt</a>
+          <a href="shop.html">View All Products</a>
+        </div>
+      </div>
+
+      <!-- Bottomwear Dropdown -->
+      <div class="m-dropdown">
+        <button type="button" class="m-dropdown-toggle">
+          <span>Bottomwear</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+        <div class="m-dropdown-menu">
+          <a href="shop.html?cat=leggings">Leggings</a>
+          <a href="shop.html?cat=palazzo">Palazzo</a>
+        </div>
+      </div>
+
+      <a href="trackorder.html">Track Order</a>
+    </div>
+
+    <!-- ===== WISHLIST HERO ===== -->
+    <section class="wishlist-hero">
+      <span class="eyebrow">Saved Items</span>
+      <h1 class="title">My <em>Wishlist</em></h1>
+    </section>
+
+    <!-- ===== WISHLIST GRID ===== -->
+    <section class="section"
+      style="padding-top:30px; background-color: #FFF9F0;">
+      <div class="container">
+        <div class="wishlist-grid" id="wishGrid"></div>
+      </div>
+    </section>
+
+    <!-- Toast Messages -->
+    <div id="toasts"></div>
+
+    <!-- ===== AURA PREMIUM FOOTER ===== -->
+    <footer class="footer aura-footer" id="footer">
+      <svg class="fwave" viewBox="0 0 1440 80" preserveAspectRatio="none"
+        aria-hidden="true">
+        <path
+          d="M0,40 C240,0 480,110 720,60 C960,10 1200,100 1440,40 L1440,0 L0,0 Z" />
+      </svg>
+      <div class="fmark" aria-hidden="true">AURA</div>
+      <div class="aura-footer-intro"><span class="aura-footer-kicker">DRESSED IN
+          YOUR OWN WAY</span>
+        <h2>Every outfit tells <em>your story.</em></h2>
+        <p>Discover styles that celebrate your individuality, from everyday
+          essentials to the moments worth dressing up
+          for.</p><a href="shop.html" class="aura-footer-cta">Discover Your
+          Style <span>↗</span></a>
+      </div>
+      <div class="fgrid aura-footer-grid">
+        <div class="fbrand aura-footer-brand"><a href="index.html"
+            aria-label="AURA Home"><img src="../assets/logo.png"
+              alt="AURA"></a>
+          <p>AURA brings together timeless elegance and modern fashion, with
+            thoughtfully selected styles for every mood,
+            moment and occasion.</p>
+          <div class="aura-footer-note"><span>Made for your
+              moments.</span><span>Designed for your AURA.</span></div>
+          <div class="social aura-social">
+            <a href="#" data-site-link="instagram" aria-label="Instagram"
+              title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" data-site-link="facebook" aria-label="Facebook"
+              title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" data-site-link="pinterest" aria-label="Pinterest"
+              title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+            <a href="#" data-site-link="youtube" aria-label="YouTube"
+              title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="aura-footer-links">
+          <h5>Explore</h5><a href="shop.html">All Collections</a><a
+            href="shop.html?cat=new-arrivals">New Arrivals</a><a
+            href="shop.html?cat=trending-dresses">Trending Dresses</a><a
+            href="shop.html?cat=western-wear">Western
+            Wear</a><a href="shop.html?cat=ethnic-wear">Ethnic Wear</a><a
+            href="shop.html?cat=party-wear">Party Wear</a><a
+            href="shop.html?cat=casual-wear">Casual Wear</a>
+        </div>
+        <div class="aura-footer-links">
+          <h5>Our Styles</h5><a href="shop.html?cat=tops-with-pants">Tops &amp;
+            Pants</a><a
+            href="shop.html?cat=jeans">Jeans &amp; Denim</a><a
+            href="shop.html?cat=kurta-sets">Kurta Sets</a><a
+            href="shop.html?cat=sarees">Sarees</a><a
+            href="shop.html?cat=palazzo">Palazzo Sets</a><a
+            href="shop.html?cat=leggings">Leggings</a><a
+            href="shop.html?cat=skirts">Skirts &amp; Tops</a>
+        </div>
+        <div class="aura-footer-links">
+          <h5>Customer Care</h5><a href="contact.html">Contact Us</a><a
+            href="trackorder.html">Track Your Order</a><a
+            href="shipping.html">Shipping Information</a><a
+            href="returns.html">Returns &amp; Exchanges</a><a
+            href="faq.html">Frequently Asked Questions</a><a
+            href="size-guide.html">Size Guide</a><a
+            href="privacy-policy.html">Privacy Policy</a><a
+            href="terms.html">Terms &amp; Conditions</a>
+        </div>
+      </div>
+      <!-- ===== AURA STYLE CONCIERGE (Social Media Version) ===== -->
+      <div class="aura-footer-newsletter"
+        style="background: linear-gradient(135deg, #2B1B21, #1A0A11); border-radius: 16px; padding: 50px; margin: 60px auto; max-width: 1200px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between; align-items: center; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+
+        <!-- Background Glow Effect -->
+        <div
+          style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(163,25,74,0.4) 0%, transparent 60%); border-radius: 50%; pointer-events: none;"></div>
+
+        <!-- Left Content: Text -->
+        <div style="flex: 1; min-width: 300px; position: relative; z-index: 2;">
+          <span
+            style="display: inline-block; color: #E8A5BB; font-size: 11px; letter-spacing: 0.3em; font-weight: 600; text-transform: uppercase; margin-bottom: 12px;">The
+            AURA Style Concierge</span>
+          <h3
+            style="font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 3vw, 3rem); color: #FFF8F1; margin: 0 0 16px; font-weight: 500; line-height: 1.1;">
+            Not sure what to wear?<br><em
+              style="color: #E8A5BB; font-style: italic;">We've got you.</em>
+          </h3>
+          <p
+            style="color: rgba(255, 248, 241, 0.7); font-size: 1rem; line-height: 1.6; max-width: 450px; margin: 0;">
+            Get personalised outfit recommendations, sizing help, and styling
+            advice from our expert curators. Connect with us on social media.
+          </p>
+        </div>
+
+        <!-- Right Content: Social Links -->
+        <div
+          style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 2; min-width: 280px;">
+
+          <!-- Instagram Action -->
+          <a href="https://instagram.com/auraclothing.vnr" target="_blank"
+            style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
+            onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+            <div
+              style="width: 44px; height: 44px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 20px;">
+              <i class="fa-brands fa-instagram"></i>
+            </div>
+            <div>
+              <b
+                style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Follow
+                on Instagram</b>
+              <small
+                style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">@auraclothing.vnr</small>
+            </div>
+          </a>
+
+          <!-- Facebook Action -->
+          <a href="https://facebook.com/auraclothing.vnr" target="_blank"
+            style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
+            onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+            <div
+              style="width: 44px; height: 44px; background: #1877F2; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 20px;">
+              <i class="fa-brands fa-facebook-f"></i>
+            </div>
+            <div>
+              <b
+                style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Connect
+                on Facebook</b>
+              <small
+                style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">AURA
+                Clothing</small>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Mobile Responsive Fix -->
+      <style>
+      @media (max-width: 768px) {
+        .aura-footer-newsletter {
+          padding: 30px 20px !important;
+          text-align: center;
+        }
+        .aura-footer-newsletter > div {
+          justify-content: center;
+          width: 100%;
+        }
+        .aura-footer-newsletter a {
+          justify-content: flex-start; /* Mobile-layum left align-a irukkum */
+          text-align: left;
+        }
+      }
+    </style>
+      <div class="fbottom aura-footer-bottom"><span>© 2026 AURA. All rights
+          reserved.</span><span class="aura-footer-made">Developed by <span
+            style="color: #E8A5BB; font-weight: 500;">Rohil
+            Technologies</span></span>
+        <div class="aura-footer-bottom-links"><a
+            href="privacy-policy.html">Privacy</a><a
+            href="terms.html">Terms</a><a
+            href="contact.html">Support</a></div>
+      </div>
+    </footer>
+
+    <!-- Back To Top -->
+    <button id="backToTop" class="back-to-top" type="button"
+      aria-label="Back to top" title="Back to top">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 19V5"></path>
+        <path d="M5 12l7-7 7 7"></path>
+      </svg>
+    </button>
+
+    <!-- ===== AURA PHONE OTP LOGIN POPUP ===== -->
+    <div class="aura-login-overlay" id="auraLoginOverlay" role="dialog"
+      aria-modal="true" aria-labelledby="auraLoginTitle"
+      aria-hidden="true">
+      <div class="aura-login-card">
+        <button class="aura-login-x" type="button" aria-label="Close login">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="aura-login-img">
+          <img src="../images/partywear.webp" alt="AURA"
+            onerror="this.remove()">
+        </div>
+        <div class="aura-login-body">
+          <span class="aura-login-eyebrow">AURA ACCOUNT</span>
+          <h2 id="auraLoginTitle">Welcome <em>back.</em></h2>
+          <p class="aura-login-sub">Sign in with your mobile number to save
+            favourites and track your orders.</p>
+
+          <form id="auraPhoneForm" novalidate>
+            <label class="aura-login-field">
+              <span>Mobile number (10 digits)</span> <input type="tel"
+                id="auraPhone" placeholder="+919876543210"
+                autocomplete="tel" inputmode="tel" required>
+            </label>
+
+            <div id="recaptcha-container"></div>
+
+            <button type="submit" class="aura-login-submit"
+              id="auraSendOtp">Send OTP</button>
+
+            <div id="auraOtpSection" hidden>
+              <label class="aura-login-field">
+                <span>Enter 6-digit OTP</span>
+                <input type="text" id="auraOtp" placeholder="Enter OTP"
+                  inputmode="numeric" autocomplete="one-time-code"
+                  maxlength="6">
+              </label>
+              <button type="button" class="aura-login-submit"
+                id="auraVerifyOtp">Verify OTP</button>
+            </div>
+
+            <p class="aura-login-msg" id="auraPhoneMsg" role="status"
+              aria-live="polite"></p>
+          </form>
+
+          <p class="aura-login-switch">
+            By continuing, you agree to our <a href="terms.html">Terms</a> and
+            <a href="privacy-policy.html">Privacy Policy</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ WISHLIST LOGIC ============ -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('wishGrid');
+      const badge = document.getElementById('wishBadge');
+      if (!grid) return;
+
+      let wishlist = JSON.parse(localStorage.getItem('aura_wishlist')) || [];
+      if (badge) badge.textContent = wishlist.length;
+
+      if (wishlist.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-wishlist">
+            <h3>Your Wishlist is Empty</h3>
+            <p>Start adding your favourite items!</p>
+            <a href="shop.html" class="btn-shop">Go to Shop</a>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = wishlist.map(item => `
+        <div class="wishlist-card">
+          <div class="card-img">
+            <a href="product.html?id=${item.id}">
+              <img src="${item.image}" alt="${item.name}" onerror="this.src='../images/partywear.webp'">
+            </a>
+            <button class="remove-btn" onclick="removeFromWishlist('${item.id}')" aria-label="Remove from wishlist">
+              <i class="fa-solid fa-heart"></i>
+            </button>
+          </div>
+          <div class="card-info">
+            <h3>${item.name}</h3>
+            <p>${item.price}</p>
+          </div>
+        </div>
+      `).join('');
+    });
+
+    function removeFromWishlist(id) {
+      let wishlist = JSON.parse(localStorage.getItem('aura_wishlist')) || [];
+      wishlist = wishlist.filter(item => item.id !== id);
+      localStorage.setItem('aura_wishlist', JSON.stringify(wishlist));
+      location.reload();
+    }
+  </script>
+
+    <!-- ============ NAV DROPDOWN + BACK TO TOP + MOBILE MENU ============ -->
+    <script>
+    (function () {
+      'use strict';
+      function init() {
+        var dd = document.getElementById('shopDD');
+        if (!dd) return;
+        var trigger = dd.querySelector('.nav-dd-trigger');
+        if (!trigger) return;
+        var timer = null;
+        function openMenu() { clearTimeout(timer); dd.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+        function closeSubs() {
+          dd.querySelectorAll('.dd-sub.open').forEach(function (sub) {
+            sub.classList.remove('open');
+            var t = sub.querySelector('.dd-sub-toggle');
+            if (t) t.setAttribute('aria-expanded', 'false');
+          });
+        }
+        function closeMenu() { dd.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); closeSubs(); }
+        dd.addEventListener('mouseenter', openMenu);
+        dd.addEventListener('mouseleave', function () { timer = setTimeout(closeMenu, 160); });
+        dd.addEventListener('focusin', openMenu);
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') { closeMenu(); trigger.blur(); }
+        });
+        trigger.addEventListener('click', function (e) {
+          if (matchMedia('(hover: none)').matches && !dd.classList.contains('open')) { e.preventDefault(); openMenu(); }
+        });
+        dd.querySelectorAll('.dd-sub-toggle').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var sub = btn.parentElement;
+            var willOpen = !sub.classList.contains('open');
+            closeSubs();
+            if (willOpen) { sub.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+          });
+        });
+        document.addEventListener('click', function (e) { if (!dd.contains(e.target)) closeMenu(); });
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+    })();
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var btn = document.getElementById("backToTop");
+      if (!btn) return;
+      function toggle() {
+        if (window.scrollY > 300) btn.classList.add("show");
+        else btn.classList.remove("show");
+      }
+      window.addEventListener("scroll", toggle, { passive: true });
+      btn.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
+      toggle();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var burger = document.getElementById('burger'), mclose = document.getElementById('mclose');
+      if (burger) burger.addEventListener('click', function () { document.body.classList.add('mmenu-open'); });
+      if (mclose) mclose.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); });
+      var s = document.getElementById('hmSearch');
+      if (s) s.addEventListener('submit', function (e) { e.preventDefault(); var q = s.q.value.trim(); if (q) location.href = 'shop.html?q=' + encodeURIComponent(q); });
+    });
+
+    // Mobile Dropdown Toggle Logic
+    document.addEventListener('DOMContentLoaded', function () {
+      var dropdownToggles = document.querySelectorAll('.m-dropdown-toggle');
+
+      dropdownToggles.forEach(function (toggle) {
+        toggle.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          var parent = this.parentElement;
+          var isOpen = parent.classList.contains('open');
+
+          if (isOpen) {
+            parent.classList.remove('open');
+          } else {
+            parent.classList.add('open');
+          }
+        });
+      });
+    });
+  </script>
+
+    <!-- ============ BADGES UPDATE (Wishlist + Cart + Mobile) ============ -->
+    <script>
+    function updateAllBadges() {
+      try {
+        // 1. Wishlist Update
+        const wishlist = JSON.parse(localStorage.getItem('aura_wishlist')) || [];
+        const wishCount = wishlist.length;
+
+        const wishBadges = document.querySelectorAll('#wishBadge, #mWishBadge');
+        wishBadges.forEach(b => {
+          if (b) {
+            b.textContent = wishCount;
+            b.style.display = wishCount > 0 ? 'grid' : 'none';
+          }
+        });
+
+        // 2. Cart Update
+        let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+        const cartCount = cart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+
+        const cartBadges = document.querySelectorAll('#cartBadge, #mCartBadge');
+        cartBadges.forEach(b => {
+          if (b) {
+            b.textContent = cartCount;
+            b.style.display = cartCount > 0 ? 'grid' : 'none';
+          }
+        });
+
+      } catch (e) {
+        console.warn('Badge update failed:', e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', updateAllBadges);
+
+    window.addEventListener('storage', function (e) {
+      if (e.key === 'aura_wishlist' || e.key === 'aura_cart') {
+        updateAllBadges();
+      }
+    });
+  </script>
+
+    <!-- 🔥 Wishlist Active State Fix (Mobile Only) 🔥 -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Account Dropdown la irukra Wishlist link ah highlight panna
+        var acctLinks = document.querySelectorAll(".acct .menu a");
+        acctLinks.forEach(function(link) {
+          if (link.getAttribute("href") === "wishlist.html") {
+            link.style.color = "#a3194a";
+            link.style.background = "#f8e9ee";
+            link.style.fontWeight = "600";
+          }
+        });
+      });
+    </script>
+
+    <script src="js/cart-drawer.js"></script>
+    <script src="js/theme.js"></script>
+    <script type="module" src="js/site-settings.js"></script>
+    <!-- ============ LOGIN + ACCOUNT MENU + LOGOUT (only place this logic lives) ============ -->
+    <script type="module" src="js/session.js"></script>
+  </body>
+
+</html>

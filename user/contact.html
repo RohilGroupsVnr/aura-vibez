@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — AURA</title>
+  <meta name="description" content="Contact AURA customer support by email, phone, WhatsApp or the contact form.">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/login-popup.css">
+  <link rel="stylesheet" href="css/info-pages.css">
+  <script>
+    try { if (localStorage.getItem('aura_auth_hint') === '1') document.documentElement.classList.add('is-user'); } catch (e) { }
+  </script>
+</head>
+
+<body class="ip-page">
+
+  <!-- icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></symbol>
+      <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" /></symbol>
+    </defs>
+  </svg>
+
+  <div class="cursor-glow" aria-hidden="true"></div>
+
+  <!-- Announcement Bar -->
+<div class="hm-ann">
+    <span>Explore the Latest Trends</span>
+    <span class="pill">Shop Your Favorites</span>
+    <span>Find Your Perfect Outfit</span>
+</div>
+
+  <!-- Navbar -->
+  <nav class="nav" id="nav" aria-label="Main">
+    <a href="index.html" class="brand"><img src="../assets/logo.png" alt="AURA"></a>
+    <div class="links">
+      <a href="index.html">Home</a>
+      <a href="newcollections.html">New Collection</a>
+      <div class="nav-dd" id="shopDD">
+        <a href="shop.html" class="nav-dd-trigger" aria-haspopup="true" aria-expanded="false">Shop <svg class="dd-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chev" /></svg></a>
+        <div class="dd-menu" role="menu" aria-label="Shop categories">
+          <a href="shop.html?cat=kurta-sets" role="menuitem">Kurta Sets</a><a href="shop.html?cat=anarkali" role="menuitem">Anarkali</a><a href="shop.html?cat=sarees" role="menuitem">Sarees</a>
+          <div class="dd-sub"><button type="button" class="dd-sub-toggle" aria-expanded="false"><span>Dresses</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chev" /></svg></button><div class="dd-sub-list"><a href="shop.html?cat=dresses&type=party-wear" role="menuitem">Party Wear</a><a href="shop.html?cat=dresses&type=maxi-dresses" role="menuitem">Maxi Dresses</a><a href="shop.html?cat=dresses&type=casual-dresses" role="menuitem">Casual Dresses</a><a href="shop.html?cat=dresses&type=floral-dresses" role="menuitem">Floral Dresses</a></div></div>
+          <a href="shop.html?cat=night-suits" role="menuitem">Night Suits</a>
+          <div class="dd-sub"><button type="button" class="dd-sub-toggle" aria-expanded="false"><span>Bottomwear</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-chev" /></svg></button><div class="dd-sub-list"><a href="shop.html?cat=leggings" role="menuitem">Leggings</a><a href="shop.html?cat=palazzo" role="menuitem">Palazzo</a></div></div>
+          <a href="shop.html?cat=shawls" role="menuitem">Shawls</a><a href="shop.html?cat=t-shirt" role="menuitem">T-shirt</a><a href="shop.html" role="menuitem" class="dd-all">View all products</a>
+        </div>
+      </div>
+      <a href="./trackorder.html">Track Order</a>
+    </div>
+
+    <form class="hm-search" id="hmSearch" role="search">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><use href="#i-search" /></svg>
+      <input class="hm-in" type="search" name="q" placeholder="Search fashion, beauty, jewellery…" aria-label="Search products" autocomplete="off">
+    </form>
+
+    <div class="nav-actions">
+      <button type="button" class="hm-login" id="hmLogin" aria-haspopup="dialog" aria-controls="auraLoginOverlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-user" /></svg><span>Login</span></button>
+      <button class="icon-btn" id="wishBtn" aria-label="Wishlist" onclick="location.href='wishlist.html'"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-heart" /></svg><span class="badge" id="wishBadge">0</span></button>
+      <button class="icon-btn" id="cartBtn" aria-label="Shopping Cart" onclick="location.href='cart.html'"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span class="badge" id="cartBadge">0</span></button>
+      <div class="acct" id="acct" style="display:none">
+        <button class="avatar" id="avatarBtn" type="button" aria-label="Account menu" aria-haspopup="true" aria-expanded="false"><i class="fa-regular fa-user"></i></button>
+        <div class="menu" id="acctMenu"><div class="who"><b id="userName">AURA Customer</b><small id="userEmail">Signed in</small></div><a href="order-history.html"><i class="fa-solid fa-box"></i> Order History</a><a href="wishlist.html"><i class="fa-regular fa-heart"></i> Wishlist</a><button type="button" id="logoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button></div>
+      </div>
+      <button class="icon-btn burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mmenu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu">
+    <button class="icon-btn mclose" id="mclose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    <a href="index.html" class="mmenu-logo"><img src="../assets/logo.png" alt="AURA"></a>
+    <div class="mmenu-icons"><a href="wishlist.html" class="m-icon-link"><i class="fa-regular fa-heart"></i><span>Wishlist</span><span class="badge" id="mWishBadge">0</span></a><a href="cart.html" class="m-icon-link"><i class="fa-solid fa-bag-shopping"></i><span>Cart</span><span class="badge" id="mCartBadge">0</span></a></div>
+    <a href="index.html">Home</a><a href="newcollections.html">New Collections</a>
+    <div class="m-dropdown"><button type="button" class="m-dropdown-toggle"><span>Shop</span><i class="fa-solid fa-chevron-down"></i></button><div class="m-dropdown-menu"><a href="shop.html?cat=kurta-sets">Kurta Sets</a><a href="shop.html?cat=anarkali">Anarkali</a><a href="shop.html?cat=sarees">Sarees</a><a href="shop.html?cat=night-suits">Night Suits</a><a href="shop.html?cat=shawls">Shawls</a><a href="shop.html?cat=t-shirt">T-shirt</a><a href="shop.html">View All Products</a></div></div>
+    <div class="m-dropdown"><button type="button" class="m-dropdown-toggle"><span>Bottomwear</span><i class="fa-solid fa-chevron-down"></i></button><div class="m-dropdown-menu"><a href="shop.html?cat=leggings">Leggings</a><a href="shop.html?cat=palazzo">Palazzo</a></div></div>
+    <a href="trackorder.html">Track Order</a>
+  </div>
+
+  <!-- ===== PAGE CONTENT ===== -->
+  <header class="ip-hero">
+    <div class="ip-crumb"><a href="index.html">Home</a><span>/</span>Contact Us</div>
+    <span class="ip-eyebrow">WE'RE HERE TO HELP</span>
+    <h1>Get in <em>touch</em></h1>
+    <p>Questions about an order, sizing or styling? Write to us and we will get back to you.</p>
+  </header>
+
+  <main class="ip-wrap">
+    <div class="ct-grid">
+      <div class="ct-list">
+        <a class="ct-card" href="mailto:auraclothing.vnr@gmail.com" data-site-link="supportEmail"><i class="fa-solid fa-envelope"></i><div><small>Email us</small><b data-site-text="supportEmail">auraclothing.vnr@gmail.com</b></div></a>
+        <a class="ct-card" href="#" data-site-link="supportPhone" style="display:none"><i class="fa-solid fa-phone"></i><div><small>Call us</small><b data-site-text="supportPhone"></b></div></a>
+        <a class="ct-card" href="#" data-site-link="whatsappNumber" style="display:none"><i class="fa-brands fa-whatsapp"></i><div><small>WhatsApp</small><b data-site-text="whatsappNumber"></b></div></a>
+        <div class="ct-card" data-site-item style="display:none"><i class="fa-solid fa-location-dot"></i><div><small>Visit us</small><b data-site-text="storeAddress"></b></div></div>
+        <!-- 🔥 NEW: Fast Response Card 🔥 -->
+        <div class="ct-card">
+          <i class="fa-solid fa-bolt" style="color: #F3D56B;"></i>
+          <div>
+            <small>Fast Response</small>
+            <b>We usually reply within 2-4 hours</b>
+          </div>
+        </div>
+
+        <!-- 🔥 NEW: 100% Satisfaction Card 🔥 -->
+        <div class="ct-card">
+          <i class="fa-solid fa-heart" style="color: #E8A5BB;"></i>
+          <div>
+            <small>Customer Love</small>
+            <b>Trusted by 2000+ happy customers</b>
+          </div>
+        </div>
+
+                <!-- 🔥 NEW: Secure Payments Card 🔥 -->
+        <div class="ct-card">
+          <i class="fa-solid fa-shield-halved" style="color: #2F9E63;"></i>
+          <div>
+            <small>Secure Payments</small>
+            <b>100% safe & encrypted checkout</b>
+          </div>
+        </div>
+
+        <!-- 🔥 NEW: Easy Returns Card 🔥 -->
+        <div class="ct-card">
+          <i class="fa-solid fa-rotate-left" style="color: #A3194A;"></i>
+          <div>
+            <small>Hassle-Free Returns</small>
+            <b>7-day easy return policy</b>
+          </div>
+        </div>
+
+        <!-- 🔥 NEW: Premium Quality Card 🔥 -->
+        <div class="ct-card">
+          <i class="fa-solid fa-gem" style="color: #C8A36A;"></i>
+          <div>
+            <small>Premium Quality</small>
+            <b>Crafted with care, checked twice</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="ip-card" style="margin:0">
+        <h2>Send us a message</h2>
+        <p>We usually reply within one working day.</p>
+        <form class="ct-form" id="contactForm" novalidate>
+          <div class="ct-two">
+            <label class="ct-field"><span>Your name *</span><input type="text" id="ctName" maxlength="80" placeholder="Your name" required></label>
+            <label class="ct-field"><span>Mobile number</span><input type="tel" id="ctPhone" maxlength="15" placeholder="+91 98765 43210" inputmode="tel"></label>
+          </div>
+          <label class="ct-field"><span>Email *</span><input type="email" id="ctEmail" maxlength="120" placeholder="you@example.com" required></label>
+          <label class="ct-field"><span>Order ID (optional)</span><input type="text" id="ctOrder" maxlength="40" placeholder="If your question is about an order"></label>
+          <label class="ct-field"><span>Message *</span><textarea id="ctMsg" maxlength="1500" placeholder="How can we help you?" required></textarea></label>
+          <button type="submit" class="ip-btn" id="ctSend">Send Message</button>
+          <p class="ct-msg" id="ctStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- 🔥 REPLACED FAQ WITH PREMIUM SOCIAL ICONS 🔥 -->
+    <div style="margin-top: 70px; text-align: center;">
+      <span style="display: inline-block; color: #a3194a; font-size: 11px; letter-spacing: 0.3em; font-weight: 600; text-transform: uppercase; margin-bottom: 12px;">STAY CONNECTED</span>
+      <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; color: #2b1b21; margin: 0 0 16px; font-weight: 500;">Connect with <em style="font-style: italic; color: #a3194a;">us.</em></h3>
+      <p style="font-size: 15px; color: #7a6a70; margin-bottom: 36px; max-width: 500px; margin-left: auto; margin-right: auto;">Follow us for the latest drops, styling tips, and behind-the-scenes moments.</p>
+      
+      <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;">
+        
+        <!-- Instagram -->
+        <a href="#" data-site-link="instagram" target="_blank" rel="noopener" style="width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: #fff; font-size: 28px; text-decoration: none; box-shadow: 0 12px 24px -10px rgba(220,39,67,0.7); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          <i class="fa-brands fa-instagram"></i>
+        </a>
+
+        <!-- Facebook -->
+        <a href="#" data-site-link="facebook" target="_blank" rel="noopener" style="width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; background: #1877F2; color: #fff; font-size: 28px; text-decoration: none; box-shadow: 0 12px 24px -10px rgba(24,119,242,0.7); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+
+        <!-- YouTube -->
+        <a href="#" data-site-link="youtube" target="_blank" rel="noopener" style="width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; background: #FF0000; color: #fff; font-size: 28px; text-decoration: none; box-shadow: 0 12px 24px -10px rgba(255,0,0,0.7); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          <i class="fa-brands fa-youtube"></i>
+        </a>
+
+        <!-- Pinterest -->
+        <a href="#" data-site-link="pinterest" target="_blank" rel="noopener" style="width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; background: #E60023; color: #fff; font-size: 28px; text-decoration: none; box-shadow: 0 12px 24px -10px rgba(230,0,35,0.7); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+          <i class="fa-brands fa-pinterest-p"></i>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- Style for Hover effect -->
+    <style>
+      .ip-wrap a[data-site-link]:hover {
+        transform: translateY(-6px) scale(1.06);
+        box-shadow: 0 16px 30px -10px rgba(0,0,0,0.3);
+      }
+    </style>
+
+  </main>
+
+  <!-- ===== AURA PREMIUM FOOTER ===== -->
+  <footer class="footer aura-footer" id="footer">
+    <svg class="fwave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0,40 C240,0 480,110 720,60 C960,10 1200,100 1440,40 L1440,0 L0,0 Z" /></svg>
+    <div class="fmark" data-site-text="storeName" aria-hidden="true">AURA</div>
+    <div class="aura-footer-intro"><span class="aura-footer-kicker">DRESSED IN YOUR OWN WAY</span>
+      <h2>Every outfit tells <em>your story.</em></h2>
+      <p>Discover styles that celebrate your individuality, from everyday essentials to the moments worth dressing up for.</p><a href="shop.html" class="aura-footer-cta">Discover Your Style <span>↗</span></a>
+    </div>
+    <div class="fgrid aura-footer-grid">
+      <div class="fbrand aura-footer-brand"><a href="index.html" aria-label="AURA Home"><img src="../assets/logo.png" alt="AURA"></a>
+        <p data-site-text="storeDesc">AURA brings together timeless elegance and modern fashion, with thoughtfully selected styles for every mood, moment and occasion.</p>
+        <div class="aura-footer-note"><span>Made for your moments.</span><span>Designed for your AURA.</span></div>
+        
+        <!-- 🔥 SOCIAL LINKS (Data-Site-Link Added) 🔥 -->
+        <div class="social aura-social">
+          <a href="#" data-site-link="instagram" aria-label="Instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" data-site-link="facebook" aria-label="Facebook" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" data-site-link="pinterest" aria-label="Pinterest" title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+          <a href="#" data-site-link="youtube" aria-label="YouTube" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+
+        <div class="aura-footer-contact">
+          <a href="#" data-site-link="supportEmail" style="display:none"><i class="fa-solid fa-envelope"></i> <span data-site-text="supportEmail"></span></a>
+          <a href="#" data-site-link="supportPhone" style="display:none"><i class="fa-solid fa-phone"></i> <span data-site-text="supportPhone"></span></a>
+          <a href="#" data-site-link="whatsappNumber" style="display:none"><i class="fa-brands fa-whatsapp"></i> <span data-site-text="whatsappNumber"></span></a>
+          <p data-site-item style="display:none"><i class="fa-solid fa-location-dot"></i> <span data-site-text="storeAddress"></span></p>
+        </div>
+        <style>
+          .aura-footer-contact { display: grid; gap: 10px; margin-top: 16px; font-size: 14px; }
+          .aura-footer-contact a, .aura-footer-contact p { display: flex; align-items: center; gap: 10px; margin: 0; color: inherit; text-decoration: none; opacity: .85; transition: opacity .2s; }
+          .aura-footer-contact a:hover { opacity: 1; }
+          .aura-footer-contact i { width: 16px; text-align: center; }
+        </style>
+      </div>
+      <div class="aura-footer-links">
+        <h5>Explore</h5><a href="shop.html">All Collections</a><a href="shop.html?cat=new-arrivals">New Arrivals</a><a href="shop.html?cat=trending-dresses">Trending Dresses</a><a href="shop.html?cat=western-wear">Western Wear</a><a href="shop.html?cat=ethnic-wear">Ethnic Wear</a><a href="shop.html?cat=party-wear">Party Wear</a><a href="shop.html?cat=casual-wear">Casual Wear</a>
+      </div>
+      <div class="aura-footer-links">
+        <h5>Our Styles</h5><a href="shop.html?cat=tops-with-pants">Tops &amp; Pants</a><a href="shop.html?cat=jeans">Jeans &amp; Denim</a><a href="shop.html?cat=kurta-sets">Kurta Sets</a><a href="shop.html?cat=sarees">Sarees</a><a href="shop.html?cat=palazzo">Palazzo Sets</a><a href="shop.html?cat=leggings">Leggings</a><a href="shop.html?cat=skirts">Skirts &amp; Tops</a>
+      </div>
+      <div class="aura-footer-links">
+        <h5>Customer Care</h5><a href="contact.html">Contact Us</a><a href="trackorder.html">Track Your Order</a><a href="shipping.html">Shipping Information</a><a href="returns.html">Returns &amp; Exchanges</a><a href="faq.html">Frequently Asked Questions</a><a href="size-guide.html">Size Guide</a><a href="privacy-policy.html">Privacy Policy</a><a href="terms.html">Terms &amp; Conditions</a>
+      </div>
+    </div>
+    <div class="fbottom aura-footer-bottom"><span>© 2026 AURA. All rights reserved.</span><span class="aura-footer-made">Developed by <span style="color: #E8A5BB; font-weight: 500;">Rohil Technologies</span></span>
+      <div class="aura-footer-bottom-links"><a href="privacy-policy.html">Privacy</a><a href="terms.html">Terms</a><a href="contact.html">Support</a></div>
+    </div>
+  </footer>
+
+  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"></path><path d="M5 12l7-7 7 7"></path></svg></button>
+
+  <!-- ===== AURA PHONE OTP LOGIN POPUP ===== -->
+  <div class="aura-login-overlay" id="auraLoginOverlay" role="dialog" aria-modal="true" aria-labelledby="auraLoginTitle" aria-hidden="true">
+    <div class="aura-login-card">
+      <button class="aura-login-x" type="button" aria-label="Close login"><i class="fa-solid fa-xmark"></i></button>
+      <div class="aura-login-img"><img src="../images/partywear.webp" alt="AURA" onerror="this.remove()"></div>
+      <div class="aura-login-body">
+        <span class="aura-login-eyebrow">AURA ACCOUNT</span>
+        <h2 id="auraLoginTitle">Welcome <em>back.</em></h2>
+        <p class="aura-login-sub">Sign in with your mobile number to save favourites and track your orders.</p>
+        <form id="auraPhoneForm" novalidate>
+          <label class="aura-login-field"><span>Mobile number (10 digits)</span><input type="tel" id="auraPhone" placeholder="+919876543210" autocomplete="tel" inputmode="tel" required></label>
+          <div id="recaptcha-container"></div>
+          <button type="submit" class="aura-login-submit" id="auraSendOtp">Send OTP</button>
+          <div id="auraOtpSection" hidden>
+            <label class="aura-login-field"><span>Enter 6-digit OTP</span><input type="text" id="auraOtp" placeholder="Enter OTP" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>
+            <button type="button" class="aura-login-submit" id="auraVerifyOtp">Verify OTP</button>
+          </div>
+          <p class="aura-login-msg" id="auraPhoneMsg" role="status" aria-live="polite"></p>
+        </form>
+        <p class="aura-login-switch">By continuing, you agree to our <a href="terms.html">Terms</a> and <a href="privacy-policy.html">Privacy Policy</a>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SCRIPTS ============ -->
+  <script src="js/theme.js"></script>
+  <script src="js/cart-drawer.js"></script>
+  
+  <!-- 🔥 Site Settings Script (Ithu thaan social links-a update pannum) 🔥 -->
+  <script type="module" src="js/site-settings.js"></script>
+
+  <script>
+    (function () {
+      // NAV DROPDOWN
+      var dd = document.getElementById('shopDD');
+      if (dd) {
+        var trigger = dd.querySelector('.nav-dd-trigger'); var timer = null;
+        function openMenu() { clearTimeout(timer); dd.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+        function closeSubs() { dd.querySelectorAll('.dd-sub.open').forEach(function (sub) { sub.classList.remove('open'); var t = sub.querySelector('.dd-sub-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); }); }
+        function closeMenu() { dd.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); closeSubs(); }
+        dd.addEventListener('mouseenter', openMenu); dd.addEventListener('mouseleave', function () { timer = setTimeout(closeMenu, 160); }); dd.addEventListener('focusin', openMenu);
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeMenu(); trigger.blur(); } });
+        trigger.addEventListener('click', function (e) { if (matchMedia('(hover: none)').matches && !dd.classList.contains('open')) { e.preventDefault(); openMenu(); } });
+        dd.querySelectorAll('.dd-sub-toggle').forEach(function (btn) { btn.addEventListener('click', function (e) { e.stopPropagation(); var sub = btn.parentElement; var willOpen = !sub.classList.contains('open'); closeSubs(); if (willOpen) { sub.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); } }); });
+        document.addEventListener('click', function (e) { if (!dd.contains(e.target)) closeMenu(); });
+      }
+
+      // MOBILE MENU
+      var burger = document.getElementById('burger'), mclose = document.getElementById('mclose');
+      if (burger) burger.addEventListener('click', function () { document.body.classList.add('mmenu-open'); burger.setAttribute('aria-expanded', 'true'); });
+      if (mclose) mclose.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); if (burger) burger.setAttribute('aria-expanded', 'false'); });
+      document.querySelectorAll('#mmenu a').forEach(function (a) { a.addEventListener('click', function () { document.body.classList.remove('mmenu-open'); }); });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        // mobile dropdowns
+        document.querySelectorAll('.m-dropdown-toggle').forEach(function (t) {
+          t.addEventListener('click', function (e) { e.preventDefault(); e.stopPropagation(); this.parentElement.classList.toggle('open'); });
+        });
+        // search
+        var s = document.getElementById('hmSearch');
+        if (s) s.addEventListener('submit', function (e) { e.preventDefault(); var q = s.q.value.trim(); if (q) location.href = 'shop.html?q=' + encodeURIComponent(q); });
+        // back to top
+        var btn = document.getElementById('backToTop');
+        if (btn) { window.addEventListener('scroll', function () { btn.classList.toggle('show', window.scrollY > 300); }, { passive: true }); btn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }); }
+        // badges
+        function updateAllBadges() {
+          try {
+            var w = (JSON.parse(localStorage.getItem('aura_wishlist')) || []).length;
+            document.querySelectorAll('#wishBadge, #mWishBadge').forEach(function (b) { b.textContent = w; b.style.display = w > 0 ? 'grid' : 'none'; });
+            var c = (JSON.parse(localStorage.getItem('aura_cart')) || []).reduce(function (a, x) { return a + (Number(x.qty) || 1); }, 0);
+            document.querySelectorAll('#cartBadge, #mCartBadge').forEach(function (b) { b.textContent = c; b.style.display = c > 0 ? 'grid' : 'none'; });
+          } catch (e) { }
+        }
+        updateAllBadges();
+        window.addEventListener('storage', function (e) { if (e.key === 'aura_wishlist' || e.key === 'aura_cart') updateAllBadges(); });
+      });
+    })();
+  </script>
+
+  <script type="module">
+    import { db, collection, addDoc, serverTimestamp } from "./js/firebase.js";
+
+    const $ = id => document.getElementById(id);
+    const form = $("contactForm"), status = $("ctStatus"), btn = $("ctSend");
+    function say(t, ok) { status.textContent = t; status.className = "ct-msg" + (ok ? " ok" : ""); }
+
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      const name = $("ctName").value.trim(), email = $("ctEmail").value.trim(),
+            phone = $("ctPhone").value.trim(), order = $("ctOrder").value.trim(), message = $("ctMsg").value.trim();
+      if (!name) return say("Please enter your name.");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return say("Please enter a valid email.");
+      if (message.length < 5) return say("Please write your message.");
+
+      btn.disabled = true; say("Sending…");
+      try {
+        await addDoc(collection(db, "contactMessages"), {
+          name, email, phone, orderId: order, message, status: "new", createdAt: serverTimestamp()
+        });
+        form.reset();
+        say("Thank you! Your message has been sent. We will reply soon.", true);
+      } catch (err) {
+        console.error("Contact send failed:", err);
+        say("Could not send right now. Please email us directly.");
+      } finally { btn.disabled = false; }
+    });
+  </script>
+
+  <script type="module" src="js/session.js"></script>
+</body>
+
+</html>
