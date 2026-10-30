@@ -1,292 +1,771 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Billing History — AURA Admin</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/admin.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Billing History — AURA Admin</title>
+  <link rel="icon" href="../assets/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
 
-<style>
-/* ===== Billing History — scoped styles (admin.css-oda conflict aagaadhu) ===== */
-.bh{--p:#a3194a;--pd:#6e0e33;--bg:#fdf9f4;--bd:#ead9df;--tx:#2b1a20;--dim:#8a7a7e;--soft:#fbeef2;
-    font-family:'Jost',sans-serif;color:var(--tx)}
-body{font-family:'Jost',sans-serif;background:var(--ivory);margin:0}
-.aw{display:flex;min-height:100vh}
-.admin-main{flex:1;min-width:0;padding:34px 40px}
-.bh *{box-sizing:border-box}
-.bh button,.bh input{font-family:inherit}
-.bh button{cursor:pointer}
+  <style>
+    /* ===== Billing History — scoped styles (admin.css-oda conflict aagaadhu) ===== */
+    .bh {
+      --p: #a3194a;
+      --pd: #6e0e33;
+      --bg: #fdf9f4;
+      --bd: #ead9df;
+      --tx: #2b1a20;
+      --dim: #8a7a7e;
+      --soft: #fbeef2;
+      font-family: 'Jost', sans-serif;
+      color: var(--tx)
+    }
 
-/* header */
-.bh-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;
-  padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid var(--bd)}
-.bh-head h1{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:2.4rem;line-height:1.05;margin:0;color:var(--tx)}
-.bh-head p{margin:6px 0 0;color:var(--dim);font-size:.95rem}
-.bh-pill{display:inline-flex;align-items:center;gap:8px;background:var(--cream);border:1px solid var(--bd);
-  padding:8px 16px;border-radius:999px;font-size:.85rem;color:var(--pd);font-weight:500}
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--ivory);
+      margin: 0
+    }
 
-/* stat cards */
-.bh-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:22px}
-.bh-stat{display:flex;align-items:center;gap:16px;background:var(--cream);border:1px solid var(--bd);
-  border-radius:14px;padding:18px 20px}
-.bh-stat i{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:1.15rem;
-  background:var(--soft);color:var(--p);flex:none}
-.bh-stat.g i{background:#e7f6ec;color:#1e8449}
-.bh-stat.a i{background:#fff4d6;color:#9a6b00}
-.bh-stat span{display:block;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-.bh-stat b{display:block;font-size:1.55rem;font-weight:600;color:var(--tx);line-height:1.25;margin-top:2px}
+    .aw {
+      display: flex;
+      min-height: 100vh
+    }
 
-/* card + search */
-.bh-card{background:var(--cream);border:1px solid var(--bd);border-radius:16px;padding:20px;
-  box-shadow:0 10px 30px -22px rgba(110,14,51,.35)}
-.bh-search{position:relative;margin-bottom:16px}
-.bh-search i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:.95rem}
-.bh-search input{width:100%;padding:13px 16px 13px 44px;border:1.5px solid var(--bd);border-radius:10px;
-  background:var(--ivory);font-size:.95rem;color:var(--tx);transition:border-color .2s,box-shadow .2s}
-.bh-search input:focus{outline:none;border-color:var(--p);box-shadow:0 0 0 4px rgba(163,25,74,.1);background:var(--cream)}
+    .admin-main {
+      flex: 1;
+      min-width: 0;
+      padding: 34px 40px
+    }
 
-/* table */
-.bh-tw{overflow:auto;max-height:calc(100vh - 340px);min-height:160px;border-radius:10px;border:1px solid var(--bd)}
-.bh table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:820px}
-.bh thead th{position:sticky;top:0;z-index:1;background:var(--blush);color:var(--pd);text-align:left;
-  padding:13px 14px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
-  border-bottom:1px solid var(--bd);white-space:nowrap}
-.bh tbody td{padding:14px;border-bottom:1px solid var(--line);vertical-align:middle}
-.bh tbody tr{transition:background .15s}
-.bh tbody tr:hover{background:var(--ivory)}
-.bh tbody tr:last-child td{border-bottom:0}
-.bh .num{text-align:right;white-space:nowrap}
-.bh th.num{text-align:right}
+    .bh * {
+      box-sizing: border-box
+    }
 
-.bh-bill{display:inline-block;padding:4px 10px;border-radius:8px;background:var(--soft);color:var(--p);
-  font-weight:600;font-size:.82rem;letter-spacing:.02em;white-space:nowrap}
-.bh-date b{display:block;font-weight:500;color:var(--tx);white-space:nowrap}
-.bh-date small{color:var(--dim);font-size:.78rem}
-.bh-cust{display:flex;align-items:center;gap:10px}
-.bh-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;
-  background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;font-size:.8rem;font-weight:600}
-.bh-cust b{display:block;font-weight:500}
-.bh-cust small{color:var(--dim);font-size:.78rem}
-.bh-items{display:flex;flex-wrap:wrap;gap:6px;max-width:300px}
-.bh-chip{background:var(--ivory);border:1px solid var(--bd);color:var(--tx);padding:3px 9px;border-radius:999px;font-size:.76rem;white-space:nowrap}
-.bh-chip em{font-style:normal;color:var(--p);font-weight:600}
-.bh-chip.more{background:var(--soft);border-color:transparent;color:var(--p);font-weight:600}
-.bh-total{font-size:1.02rem;font-weight:600;color:var(--tx)}
+    .bh button,
+    .bh input {
+      font-family: inherit
+    }
 
-/* payment tags */
-.bh-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;
-  font-size:.74rem;font-weight:600;text-transform:capitalize;white-space:nowrap}
-.bh-tag.cash{background:#e7f6ec;color:#1e8449}
-.bh-tag.upi{background:#e6f1fb;color:#1e63a8}
-.bh-tag.card{background:#f1e9fb;color:#6b3aa5}
-.bh-tag.other{background:#f3eeee;color:#6b5a60}
+    .bh button {
+      cursor: pointer
+    }
 
-/* print button */
-.bh-print{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--p);background:var(--cream);color:var(--p);
-  display:inline-grid;place-items:center;font-size:.9rem;transition:.2s}
-.bh-print:hover{background:var(--p);color:#fff;transform:translateY(-1px)}
+    /* header */
+    .bh-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--bd)
+    }
 
-/* empty */
-.bh-empty{text-align:center;padding:56px 16px;color:var(--dim)}
-.bh-empty i{font-size:2.4rem;color:#e5cdd6;display:block;margin-bottom:12px}
-.bh-empty b{display:block;color:var(--tx);font-size:1.05rem;margin-bottom:4px;font-weight:500}
+    .bh-head h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: 2.4rem;
+      line-height: 1.05;
+      margin: 0;
+      color: var(--tx)
+    }
 
-/* error + toast */
-#err{background:#fdecea;color:#c0392b;padding:14px;border-radius:10px;margin-bottom:16px;display:none;font-size:.85rem}
-#err code{display:block;background:#fff;padding:8px;margin-top:6px;user-select:all}
-.toast{position:fixed;bottom:22px;right:22px;background:#2b1a20;color:#fff;padding:12px 20px;border-radius:10px;z-index:200;display:none}
+    .bh-head p {
+      margin: 6px 0 0;
+      color: var(--dim);
+      font-size: .95rem
+    }
 
-/* receipt (print) */
-#rc{display:none}
-@media print{
-  body>*:not(#rc){display:none!important}
-  #rc{display:block;width:72mm;font:12px monospace;color:#000}
-  #rc .c{text-align:center}
-  #rc hr{border:0;border-top:1px dashed #000;margin:5px 0}
-  #rc .l{display:flex;justify-content:space-between}
-}
+    .bh-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cream);
+      border: 1px solid var(--bd);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: .85rem;
+      color: var(--pd);
+      font-weight: 500
+    }
 
-/* responsive */
-@media(max-width:1100px){.admin-main{padding:26px 22px}}
-@media(max-width:800px){
-  .aw{flex-direction:column}
-  .admin-side{width:100%;height:auto;position:relative}
-  .admin-main{padding:20px 14px}
-  .bh-head h1{font-size:1.9rem}
-  .bh-stats{grid-template-columns:1fr}
-  .bh-card{padding:14px}
-  .bh-tw{max-height:none}
-}
+    /* stat cards */
+    .bh-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 22px
+    }
 
-/* Dark Mode adjustments */
-html[data-theme="dark"] .bh-head h1 { color: var(--ink) !important; }
-html[data-theme="dark"] .bh-stat { background: var(--cream); border-color: var(--line); }
-html[data-theme="dark"] .bh-card { background: var(--cream); border-color: var(--line); }
-html[data-theme="dark"] .bh-search input { background: #2A1B22; color: var(--ink); border-color: rgba(255,255,255,.16); }
-html[data-theme="dark"] .bh-search input:focus { background: var(--cream); border-color: var(--p); }
-html[data-theme="dark"] .bh-tw { border-color: var(--line); }
-html[data-theme="dark"] .bh thead th { background: #21171C; color: #F4D3DC; border-bottom-color: var(--line); }
-html[data-theme="dark"] .bh tbody td { border-bottom-color: rgba(255,255,255,.08); }
-html[data-theme="dark"] .bh tbody tr:hover { background: rgba(255,255,255,.04); }
-html[data-theme="dark"] .bh-chip { background: var(--cream); border-color: rgba(255,255,255,.1); color: var(--ink); }
-html[data-theme="dark"] .bh-pill { background: #2A1B22; border-color: rgba(255,255,255,.15); color: #F4D3DC; }
-html[data-theme="dark"] .bh-print { background: #2A1B22; border-color: var(--p); }
-</style>
+    .bh-stat {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--cream);
+      border: 1px solid var(--bd);
+      border-radius: 14px;
+      padding: 18px 20px
+    }
+
+    .bh-stat i {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 1.15rem;
+      background: var(--soft);
+      color: var(--p);
+      flex: none
+    }
+
+    .bh-stat.g i {
+      background: #e7f6ec;
+      color: #1e8449
+    }
+
+    .bh-stat.a i {
+      background: #fff4d6;
+      color: #9a6b00
+    }
+
+    .bh-stat span {
+      display: block;
+      font-size: .72rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--dim)
+    }
+
+    .bh-stat b {
+      display: block;
+      font-size: 1.55rem;
+      font-weight: 600;
+      color: var(--tx);
+      line-height: 1.25;
+      margin-top: 2px
+    }
+
+    /* card + search */
+    .bh-card {
+      background: var(--cream);
+      border: 1px solid var(--bd);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px -22px rgba(110, 14, 51, .35)
+    }
+
+    .bh-search {
+      position: relative;
+      margin-bottom: 16px
+    }
+
+    .bh-search i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--dim);
+      font-size: .95rem
+    }
+
+    .bh-search input {
+      width: 100%;
+      padding: 13px 16px 13px 44px;
+      border: 1.5px solid var(--bd);
+      border-radius: 10px;
+      background: var(--ivory);
+      font-size: .95rem;
+      color: var(--tx);
+      transition: border-color .2s, box-shadow .2s
+    }
+
+    .bh-search input:focus {
+      outline: none;
+      border-color: var(--p);
+      box-shadow: 0 0 0 4px rgba(163, 25, 74, .1);
+      background: var(--cream)
+    }
+
+    /* table */
+    .bh-tw {
+      overflow: auto;
+      max-height: calc(100vh - 340px);
+      min-height: 160px;
+      border-radius: 10px;
+      border: 1px solid var(--bd)
+    }
+
+    .bh table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+      min-width: 820px
+    }
+
+    .bh thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: var(--blush);
+      color: var(--pd);
+      text-align: left;
+      padding: 13px 14px;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      border-bottom: 1px solid var(--bd);
+      white-space: nowrap
+    }
+
+    .bh tbody td {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle
+    }
+
+    .bh tbody tr {
+      transition: background .15s
+    }
+
+    .bh tbody tr:hover {
+      background: var(--ivory)
+    }
+
+    .bh tbody tr:last-child td {
+      border-bottom: 0
+    }
+
+    .bh .num {
+      text-align: right;
+      white-space: nowrap
+    }
+
+    .bh th.num {
+      text-align: right
+    }
+
+    .bh-bill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: var(--soft);
+      color: var(--p);
+      font-weight: 600;
+      font-size: .82rem;
+      letter-spacing: .02em;
+      white-space: nowrap
+    }
+
+    .bh-date b {
+      display: block;
+      font-weight: 500;
+      color: var(--tx);
+      white-space: nowrap
+    }
+
+    .bh-date small {
+      color: var(--dim);
+      font-size: .78rem
+    }
+
+    .bh-cust {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .bh-av {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: none;
+      background: linear-gradient(135deg, var(--p), var(--pd));
+      color: #fff;
+      font-size: .8rem;
+      font-weight: 600
+    }
+
+    .bh-cust b {
+      display: block;
+      font-weight: 500
+    }
+
+    .bh-cust small {
+      color: var(--dim);
+      font-size: .78rem
+    }
+
+    .bh-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-width: 300px
+    }
+
+    .bh-chip {
+      background: var(--ivory);
+      border: 1px solid var(--bd);
+      color: var(--tx);
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: .76rem;
+      white-space: nowrap
+    }
+
+    .bh-chip em {
+      font-style: normal;
+      color: var(--p);
+      font-weight: 600
+    }
+
+    .bh-chip.more {
+      background: var(--soft);
+      border-color: transparent;
+      color: var(--p);
+      font-weight: 600
+    }
+
+    .bh-total {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--tx)
+    }
+
+    /* payment tags */
+    .bh-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: .74rem;
+      font-weight: 600;
+      text-transform: capitalize;
+      white-space: nowrap
+    }
+
+    .bh-tag.cash {
+      background: #e7f6ec;
+      color: #1e8449
+    }
+
+    .bh-tag.upi {
+      background: #e6f1fb;
+      color: #1e63a8
+    }
+
+    .bh-tag.card {
+      background: #f1e9fb;
+      color: #6b3aa5
+    }
+
+    .bh-tag.other {
+      background: #f3eeee;
+      color: #6b5a60
+    }
+
+    /* print button */
+    .bh-print {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1.5px solid var(--p);
+      background: var(--cream);
+      color: var(--p);
+      display: inline-grid;
+      place-items: center;
+      font-size: .9rem;
+      transition: .2s
+    }
+
+    .bh-print:hover {
+      background: var(--p);
+      color: #fff;
+      transform: translateY(-1px)
+    }
+
+    /* empty */
+    .bh-empty {
+      text-align: center;
+      padding: 56px 16px;
+      color: var(--dim)
+    }
+
+    .bh-empty i {
+      font-size: 2.4rem;
+      color: #e5cdd6;
+      display: block;
+      margin-bottom: 12px
+    }
+
+    .bh-empty b {
+      display: block;
+      color: var(--tx);
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+      font-weight: 500
+    }
+
+    /* error + toast */
+    #err {
+      background: #fdecea;
+      color: #c0392b;
+      padding: 14px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      display: none;
+      font-size: .85rem
+    }
+
+    #err code {
+      display: block;
+      background: #fff;
+      padding: 8px;
+      margin-top: 6px;
+      user-select: all
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      background: #2b1a20;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      z-index: 200;
+      display: none
+    }
+
+    /* receipt (print) */
+    #rc {
+      display: none
+    }
+
+    @media print {
+      body>*:not(#rc) {
+        display: none !important
+      }
+
+      #rc {
+        display: block;
+        width: 72mm;
+        font: 12px monospace;
+        color: #000
+      }
+
+      #rc .c {
+        text-align: center
+      }
+
+      #rc hr {
+        border: 0;
+        border-top: 1px dashed #000;
+        margin: 5px 0
+      }
+
+      #rc .l {
+        display: flex;
+        justify-content: space-between
+      }
+    }
+
+    /* responsive */
+    @media(max-width:1100px) {
+      .admin-main {
+        padding: 26px 22px
+      }
+    }
+
+    @media(max-width:800px) {
+      .aw {
+        flex-direction: column
+      }
+
+      .admin-side {
+        width: 100%;
+        height: auto;
+        position: relative
+      }
+
+      .admin-main {
+        padding: 20px 14px
+      }
+
+      .bh-head h1 {
+        font-size: 1.9rem
+      }
+
+      .bh-stats {
+        grid-template-columns: 1fr
+      }
+
+      .bh-card {
+        padding: 14px
+      }
+
+      .bh-tw {
+        max-height: none
+      }
+    }
+
+    /* Dark Mode adjustments */
+    html[data-theme="dark"] .bh-head h1 {
+      color: var(--ink) !important;
+    }
+
+    html[data-theme="dark"] .bh-stat {
+      background: var(--cream);
+      border-color: var(--line);
+    }
+
+    html[data-theme="dark"] .bh-card {
+      background: var(--cream);
+      border-color: var(--line);
+    }
+
+    html[data-theme="dark"] .bh-search input {
+      background: #2A1B22;
+      color: var(--ink);
+      border-color: rgba(255, 255, 255, .16);
+    }
+
+    html[data-theme="dark"] .bh-search input:focus {
+      background: var(--cream);
+      border-color: var(--p);
+    }
+
+    html[data-theme="dark"] .bh-tw {
+      border-color: var(--line);
+    }
+
+    html[data-theme="dark"] .bh thead th {
+      background: #21171C;
+      color: #F4D3DC;
+      border-bottom-color: var(--line);
+    }
+
+    html[data-theme="dark"] .bh tbody td {
+      border-bottom-color: rgba(255, 255, 255, .08);
+    }
+
+    html[data-theme="dark"] .bh tbody tr:hover {
+      background: rgba(255, 255, 255, .04);
+    }
+
+    html[data-theme="dark"] .bh-chip {
+      background: var(--cream);
+      border-color: rgba(255, 255, 255, .1);
+      color: var(--ink);
+    }
+
+    html[data-theme="dark"] .bh-pill {
+      background: #2A1B22;
+      border-color: rgba(255, 255, 255, .15);
+      color: #F4D3DC;
+    }
+
+    html[data-theme="dark"] .bh-print {
+      background: #2A1B22;
+      border-color: var(--p);
+    }
+  </style>
 </head>
+
 <body>
-<div class="aw">
-  <aside class="admin-side" id="adminSide"></aside>
+  <div class="aw">
+    <aside class="admin-side" id="adminSide"></aside>
 
-  <main class="admin-main bh">
-    <div id="err"></div>
+    <main class="admin-main bh">
+      <div id="err"></div>
 
-    <div class="bh-head">
-      <div>
-        <h1>Billing History</h1>
-        <p>All bills generated from the billing counter. Search and reprint any bill.</p>
-      </div>
-      <span class="bh-pill" id="hsum"><i class="fa-solid fa-file-invoice"></i> 0 bills</span>
-    </div>
-
-    <div class="bh-stats">
-      <div class="bh-stat">
-        <i class="fa-solid fa-receipt"></i>
-        <div><span>Total bills</span><b id="stBills">0</b></div>
-      </div>
-      <div class="bh-stat g">
-        <i class="fa-solid fa-indian-rupee-sign"></i>
-        <div><span>Total sales</span><b id="stSales">₹0</b></div>
-      </div>
-      <div class="bh-stat a">
-        <i class="fa-solid fa-calendar-day"></i>
-        <div><span>Today's sales</span><b id="stToday">₹0</b></div>
-      </div>
-    </div>
-
-    <div class="bh-card">
-      <div class="bh-search">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input id="hq" type="search" placeholder="Search by bill no, customer or phone…" autocomplete="off">
+      <div class="bh-head">
+        <div>
+          <h1>Billing History</h1>
+          <p>All bills generated from the billing counter. Search and reprint
+            any bill.</p>
+        </div>
+        <span class="bh-pill" id="hsum"><i class="fa-solid fa-file-invoice"></i> 0 bills</span>
       </div>
 
-      <div class="bh-tw">
-        <table>
-          <thead>
-            <tr>
-              <th>Bill</th><th>Date</th><th>Customer</th><th>Items</th><th>Payment</th>
-              <th class="num">Total</th><th></th>
-            </tr>
-          </thead>
-          <tbody id="hb"></tbody>
-        </table>
+      <div class="bh-stats">
+        <div class="bh-stat">
+          <i class="fa-solid fa-receipt"></i>
+          <div><span>Total bills</span><b id="stBills">0</b></div>
+        </div>
+        <div class="bh-stat g">
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+          <div><span>Total sales</span><b id="stSales">₹0</b></div>
+        </div>
+        <div class="bh-stat a">
+          <i class="fa-solid fa-calendar-day"></i>
+          <div><span>Today's sales</span><b id="stToday">₹0</b></div>
+        </div>
       </div>
-    </div>
-  </main>
-</div>
 
-<div id="rc"></div>
-<div class="toast" id="toast"></div>
+      <div class="bh-card">
+        <div class="bh-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input id="hq" type="search" placeholder="Search by bill no, customer or phone…" autocomplete="off">
+        </div>
 
-<script type="module">
-import * as FB from "./js/firebase.js";
-import {adminReady} from "./js/admin-shell.js";
-const {db,collection,doc,onSnapshot,query,orderBy,limit,runTransaction,updateDoc,serverTimestamp}=FB;
-const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const inr=n=>"₹"+(Math.round(n*100)/100).toLocaleString("en-IN"),toast=m=>{const t=$("toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2600)};
-const need=["db","collection","onSnapshot","query","orderBy","limit"].filter(k=>!FB[k]);
-if(need.length){const e=$("err");e.style.display="block";e.innerHTML="<b>admin/js/firebase.js-la intha exports illa:</b> "+need.join(", ")+"<br>Antha file-oda keezha, athula already irukkura firestore import URL-ae use panni add pannunga:<code>export { onSnapshot, query, orderBy, limit, runTransaction, updateDoc } from \"&lt;same firebase-firestore.js URL&gt;\";</code>";throw 0}
+        <div class="bh-tw">
+          <table>
+            <thead>
+              <tr>
+                <th>Bill</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Payment</th>
+                <th class="num">Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="hb"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
 
-(async()=>{await adminReady;
-let B=[];
-onSnapshot(query(collection(db,"bills"),orderBy("createdAt","desc"),limit(300)),s=>{B=s.docs.map(d=>({id:d.id,...d.data()}));drawHist()});
+  <div id="rc"></div>
+  <div class="toast" id="toast"></div>
 
-/* ---------- receipt print ---------- */
-function print(b){
-    let bDate = new Date();
-    if (b.date?.toDate) bDate = b.date.toDate();
-    else if (b.createdAt?.toDate) bDate = b.createdAt.toDate();
-    else if (b.date) bDate = new Date(b.date);
-    
-    // Customer Name - Walk-in fix
-    const cName = b.customerName || b.customerPhone || "";
+  <script type="module">
+    import * as FB from "./js/firebase.js";
+    import { adminReady } from "./js/admin-shell.js";
+    const { db, collection, doc, onSnapshot, query, orderBy, limit, runTransaction, updateDoc, serverTimestamp } = FB;
+    const $ = id => document.getElementById(id), esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const inr = n => "₹" + (Math.round(n * 100) / 100).toLocaleString("en-IN"), toast = m => { const t = $("toast"); t.textContent = m; t.style.display = "block"; setTimeout(() => t.style.display = "none", 2600) };
+    const need = ["db", "collection", "onSnapshot", "query", "orderBy", "limit"].filter(k => !FB[k]);
+    if (need.length) { const e = $("err"); e.style.display = "block"; e.innerHTML = "<b>admin/js/firebase.js-la intha exports illa:</b> " + need.join(", ") + "<br>Antha file-oda keezha, athula already irukkura firestore import URL-ae use panni add pannunga:<code>export { onSnapshot, query, orderBy, limit, runTransaction, updateDoc } from \"&lt;same firebase-firestore.js URL&gt;\";</code>"; throw 0 }
 
-    $("rc").innerHTML=`
+    (async () => {
+      await adminReady;
+      let B = [];
+      onSnapshot(query(collection(db, "bills"), limit(300)), s => {
+        B = s.docs.map(d => {
+          const x = { id: d.id, ...d.data() };
+          // normalize so both online (orders page) and counter bills work
+          x.total = x.total ?? x.totalAmount ?? 0;
+          x.createdAt = x.createdAt || x.date;                 // used for sorting
+          x.payment = x.payment || x.paymentMode || "Cash";
+          x.items = (x.items || []).map(it => ({
+            name: it.name || "Product",
+            size: it.size || "-",
+            qty: Number(it.qty) || 1,
+            price: Number(it.price ?? it.rate) || 0,
+            disc: Number(it.disc) || 0,
+            amount: Number(it.amount ?? it.total) || (Number(it.price ?? it.rate) || 0) * (Number(it.qty) || 1)
+          }));
+          return x;
+        })
+          // sort newest first (client-side, so missing fields don't drop docs)
+          .sort((a, b) => {
+            const t = x => x.createdAt?.toDate ? x.createdAt.toDate() :
+              x.createdAt ? new Date(x.createdAt) : 0;
+            return t(b) - t(a);
+          });
+        drawHist();
+      });
+      /* ---------- receipt print ---------- */
+      function print(b) {
+        let bDate = new Date();
+        if (b.date?.toDate) bDate = b.date.toDate();
+        else if (b.createdAt?.toDate) bDate = b.createdAt.toDate();
+        else if (b.date) bDate = new Date(b.date);
+
+        // Customer Name - Walk-in fix
+        const cName = b.customerName || b.customerPhone || "";
+
+        $("rc").innerHTML = `
     <div class="c"><b style="font-size:18px;letter-spacing:4px">AURA</b><br>Premium Ethnic Wear</div>
     <hr>
-    <div class="l"><span>Bill: ${esc(b.billNo)}</span><span>${bDate.toLocaleDateString("en-IN")} ${bDate.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}</span></div>
+    <div class="l"><span>Bill: ${esc(b.billNo)}</span><span>${bDate.toLocaleDateString("en-IN")} ${bDate.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span></div>
     ${cName ? `<div>Cust: ${esc(cName)}</div>` : ""}
     <hr>
-    ${b.items.map(l=>`<div>${esc(l.name)}${l.size!=="-"?" ("+esc(l.size)+")":""}</div><div class="l"><span>${l.qty} x ${l.price}${l.disc?" -"+l.disc:""}</span><span>${l.amount.toFixed(2)}</span></div>`).join("")}
+    ${b.items.map(l => `<div>${esc(l.name)}${l.size !== "-" ? " (" + esc(l.size) + ")" : ""}</div><div class="l"><span>${l.qty} x ${l.price}${l.disc ? " -" + l.disc : ""}</span><span>${l.amount.toFixed(2)}</span></div>`).join("")}
     <hr>
     <div class="l"><span>Subtotal</span><span>${b.subtotal.toFixed(2)}</span></div>
-    ${b.billDiscount?`<div class="l"><span>Discount</span><span>-${b.billDiscount.toFixed(2)}</span></div>`:""}
+    ${b.billDiscount ? `<div class="l"><span>Discount</span><span>-${b.billDiscount.toFixed(2)}</span></div>` : ""}
     <div class="l"><b>TOTAL</b><b>${b.total.toFixed(2)}</b></div>
     <div>Paid by: ${esc(b.payment)}</div>
     <hr><div class="c">Thank you! Visit again</div>`;
-    
-    setTimeout(()=>window.print(),150);
-}
 
-/* ---------- UI render ---------- */
-const payClass=p=>{p=String(p||"").toLowerCase();return p.includes("cash")?"cash":p.includes("upi")||p.includes("gpay")||p.includes("phonepe")?"upi":p.includes("card")?"card":"other"};
-const payIcon=c=>({cash:"fa-money-bill-wave",upi:"fa-mobile-screen",card:"fa-credit-card",other:"fa-wallet"})[c];
+        setTimeout(() => window.print(), 150);
+      }
 
-function drawHist(){
-  const q=$("hq").value.toLowerCase().trim();
-  const L=B.filter(b=>{
-      const name = b.customerName || b.customerPhone || "";
-      return (b.billNo + name).toLowerCase().includes(q);
-  });
+      /* ---------- UI render ---------- */
+      const payClass = p => { p = String(p || "").toLowerCase(); return p.includes("cash") ? "cash" : p.includes("upi") || p.includes("gpay") || p.includes("phonepe") ? "upi" : p.includes("card") ? "card" : "other" };
+      const payIcon = c => ({ cash: "fa-money-bill-wave", upi: "fa-mobile-screen", card: "fa-credit-card", other: "fa-wallet" })[c];
 
-  /* header pill + stat cards */
-  const sum=L.reduce((a,b)=>a+(b.total||0),0);
-  $("hsum").innerHTML=`<i class="fa-solid fa-file-invoice"></i> ${L.length} bills · ${inr(sum)}`;
-  
-  // Date fix for Today's Sales
-  const today=new Date().toDateString();
-  const isToday = (b) => {
-      let d = new Date();
-      if(b.date?.toDate) d = b.date.toDate();
-      else if(b.createdAt?.toDate) d = b.createdAt.toDate();
-      else if(b.date) d = new Date(b.date);
-      return d.toDateString() === today;
-  };
+      function drawHist() {
+        const q = $("hq").value.toLowerCase().trim();
+        const L = B.filter(b => {
+          const name = b.customerName || b.customerPhone || "";
+          return (b.billNo + name).toLowerCase().includes(q);
+        });
 
-  $("stBills").textContent=B.length;
-  $("stSales").textContent=inr(B.reduce((a,b)=>a+(b.total||0),0));
-  $("stToday").textContent=inr(B.filter(isToday).reduce((a,b)=>a+(b.total||0),0));
+        /* header pill + stat cards */
+        const sum = L.reduce((a, b) => a + (b.total || 0), 0);
+        $("hsum").innerHTML = `<i class="fa-solid fa-file-invoice"></i> ${L.length} bills · ${inr(sum)}`;
 
-  /* rows */
-  $("hb").innerHTML=L.map(b=>{
-    let dt = new Date();
-    if (b.date?.toDate) dt = b.date.toDate();
-    else if (b.createdAt?.toDate) dt = b.createdAt.toDate();
-    else if (b.date) dt = new Date(b.date);
-    
-    const pc=payClass(b.payment || b.paymentMode);
-    const name = b.customerName || b.customerPhone || "—"; // Walk-in removed
-    const ini = name.trim().charAt(0).toUpperCase() || "W";
-    const items = b.items || [];
-    const chips = items.slice(0,2).map(l=>`<span class="bh-chip">${esc(l.name)}${l.size&&l.size!=="-"?" · "+esc(l.size):""} <em>×${l.qty}</em></span>`).join("");
-    const more = items.length>2?`<span class="bh-chip more">+${items.length-2} more</span>`:"";
-    
-    return `<tr>
+        // Date fix for Today's Sales
+        const today = new Date().toDateString();
+        const isToday = (b) => {
+          let d = new Date();
+          if (b.date?.toDate) d = b.date.toDate();
+          else if (b.createdAt?.toDate) d = b.createdAt.toDate();
+          else if (b.date) d = new Date(b.date);
+          return d.toDateString() === today;
+        };
+
+        $("stBills").textContent = B.length;
+        $("stSales").textContent = inr(B.reduce((a, b) => a + (b.total || 0), 0));
+        $("stToday").textContent = inr(B.filter(isToday).reduce((a, b) => a + (b.total || 0), 0));
+
+        /* rows */
+        $("hb").innerHTML = L.map(b => {
+          let dt = new Date();
+          if (b.date?.toDate) dt = b.date.toDate();
+          else if (b.createdAt?.toDate) dt = b.createdAt.toDate();
+          else if (b.date) dt = new Date(b.date);
+
+          const pc = payClass(b.payment || b.paymentMode);
+          const name = b.customerName || b.customerPhone || "—"; // Walk-in removed
+          const ini = name.trim().charAt(0).toUpperCase() || "W";
+          const items = b.items || [];
+          const chips = items.slice(0, 2).map(l => `<span class="bh-chip">${esc(l.name)}${l.size && l.size !== "-" ? " · " + esc(l.size) : ""} <em>×${l.qty}</em></span>`).join("");
+          const more = items.length > 2 ? `<span class="bh-chip more">+${items.length - 2} more</span>` : "";
+
+          return `<tr>
       <td><span class="bh-bill">${esc(b.billNo || "#" + b.id.slice(-6).toUpperCase())}</span></td>
-      <td class="bh-date"><b>${dt.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})}</b><small>${dt.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"})}</small></td>
+      <td class="bh-date"><b>${dt.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</b><small>${dt.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</small></td>
       <td><div class="bh-cust"><span class="bh-av">${esc(ini)}</span><div><b>${esc(name)}</b>${b.customerPhone ? `<small>${esc(b.customerPhone)}</small>` : ""}</div></div></td>
       <td><div class="bh-items">${chips}${more}</div></td>
       <td><span class="bh-tag ${pc}"><i class="fa-solid ${payIcon(pc)}"></i>${esc(b.payment || b.paymentMode || "Cash")}</span></td>
-      <td class="num"><span class="bh-total">${inr(b.total||0)}</span></td>
+      <td class="num"><span class="bh-total">${inr(b.total || 0)}</span></td>
       <td class="num"><button class="bh-print" data-b="${b.id}" title="Print bill" aria-label="Print bill"><i class="fa-solid fa-print"></i></button></td>
     </tr>`;
-  }).join("")||`<tr><td colspan="7"><div class="bh-empty"><i class="fa-solid fa-file-circle-xmark"></i><b>No bills found</b>${q?"Try a different bill no, name or phone.":"Bills will appear here once you generate them from Billing."}</div></td></tr>`;
-}
+        }).join("") || `<tr><td colspan="7"><div class="bh-empty"><i class="fa-solid fa-file-circle-xmark"></i><b>No bills found</b>${q ? "Try a different bill no, name or phone." : "Bills will appear here once you generate them from Billing."}</div></td></tr>`;
+      }
 
-$("hq").oninput=drawHist;
-$("hb").onclick=e=>{const b=e.target.closest("[data-b]");if(b)print(B.find(x=>x.id===b.dataset.b))};
-})();
-</script>
+      $("hq").oninput = drawHist;
+      $("hb").onclick = e => { const b = e.target.closest("[data-b]"); if (b) print(B.find(x => x.id === b.dataset.b)) };
+    })();
+  </script>
 </body>
+
 </html>

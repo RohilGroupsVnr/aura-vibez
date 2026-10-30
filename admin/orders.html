@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,187 +8,538 @@
   <link rel="icon" href="../assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/admin.css">
   <style>
-    .ord-sel { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--cream); color: var(--ink); font: inherit; }
-    .ord-sel.sm { padding: 4px 6px; border-radius: 6px; font-size: 12px; }
-    .ord-pm { font-size: 12px; margin-bottom: 4px; color: var(--muted); }
-    .ord-id { font-weight: 600; color: var(--rose-dark); white-space: nowrap; }
-    html[data-theme="dark"] .ord-id { color: #F4D3DC; }
+    .ord-sel {
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--cream);
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .ord-sel.sm {
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .ord-pm {
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+
+    .ord-id {
+      font-weight: 600;
+      color: var(--rose-dark);
+      white-space: nowrap;
+    }
+
+    html[data-theme="dark"] .ord-id {
+      color: #F4D3DC;
+    }
 
     /* UPI verification */
-    .verify-banner { display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; padding: 12px 14px; border-radius: 10px; background: #FFF4D6; border: 1px solid #F0D98A; color: #6b4e00; font-size: 14px; }
-    .verify-banner.show { display: flex; }
-    .verify-banner button { padding: 6px 12px; border-radius: 8px; border: 1px solid #b88a00; background: #fff; color: #6b4e00; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
-    tr.needs-verify { background: #FFFAEB; }
-    html[data-theme="dark"] tr.needs-verify { background: rgba(240, 217, 138, .08); }
+    .verify-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #FFF4D6;
+      border: 1px solid #F0D98A;
+      color: #6b4e00;
+      font-size: 14px;
+    }
 
-    .utr-box { margin-top: 6px; padding: 6px 8px; border-radius: 8px; background: #FFF4D6; border: 1px dashed #D9B84A; font-size: 12px; color: #6b4e00; line-height: 1.5; }
-    .utr-box b { letter-spacing: .04em; font-size: 13px; }
-    .utr-box .amt { display: block; }
-    .utr-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-    .utr-actions button { padding: 4px 10px; border-radius: 6px; border: 1px solid transparent; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
-    .btn-paid { background: #11a95e; color: #fff; }
-    .btn-paid:hover { background: #0b8a4f; }
-    .btn-reject { background: #fff; color: #d93025; border-color: #d93025 !important; }
-    .btn-reject:hover { background: #d93025; color: #fff; }
-    .btn-copy { background: #fff; color: #6b4e00; border-color: #D9B84A !important; }
-    .utr-actions button:disabled { opacity: .5; cursor: wait; }
+    .verify-banner.show {
+      display: flex;
+    }
+
+    .verify-banner button {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid #b88a00;
+      background: #fff;
+      color: #6b4e00;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    tr.needs-verify {
+      background: #FFFAEB;
+    }
+
+    html[data-theme="dark"] tr.needs-verify {
+      background: rgba(240, 217, 138, .08);
+    }
+
+    .utr-box {
+      margin-top: 6px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: #FFF4D6;
+      border: 1px dashed #D9B84A;
+      font-size: 12px;
+      color: #6b4e00;
+      line-height: 1.5;
+    }
+
+    .utr-box b {
+      letter-spacing: .04em;
+      font-size: 13px;
+    }
+
+    .utr-box .amt {
+      display: block;
+    }
+
+    .utr-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .utr-actions button {
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-paid {
+      background: #11a95e;
+      color: #fff;
+    }
+
+    .btn-paid:hover {
+      background: #0b8a4f;
+    }
+
+    .btn-reject {
+      background: #fff;
+      color: #d93025;
+      border-color: #d93025 !important;
+    }
+
+    .btn-reject:hover {
+      background: #d93025;
+      color: #fff;
+    }
+
+    .btn-copy {
+      background: #fff;
+      color: #6b4e00;
+      border-color: #D9B84A !important;
+    }
+
+    .utr-actions button:disabled {
+      opacity: .5;
+      cursor: wait;
+    }
+
+    /* invoice printing (same as Billing page) */
+    #print-section {
+      display: none;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html,
+      body {
+        background: #fff !important;
+      }
+
+      body * {
+        visibility: hidden;
+      }
+
+      #print-section,
+      #print-section * {
+        visibility: visible;
+      }
+
+      #print-section {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 210mm;
+        padding: 0;
+        margin: 0;
+        display: block;
+        background: #fff;
+        color: #000;
+      }
+
+      @page {
+        size: A4;
+        margin: 0;
+      }
+    }
 
     /* items in the table + details popup */
-    .it-line { margin-bottom: 6px; font-size: 13px; line-height: 1.35; }
-    .it-line b { display: block; font-weight: 500; }
-    .it-line span { font-size: 12px; color: var(--muted); }
-    .btn-view { margin-top: 4px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--rose-dark, #a3194a); background: transparent; color: var(--rose-dark, #a3194a); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
-    .btn-view:hover { background: var(--rose-dark, #a3194a); color: #fff; }
+    .it-line {
+      margin-bottom: 6px;
+      font-size: 13px;
+      line-height: 1.35;
+    }
 
-    .om { position: fixed; inset: 0; z-index: 900; display: none; align-items: center; justify-content: center; padding: 16px; background: rgba(20, 8, 14, .55); }
-    .om.show { display: flex; }
-    .om-box { position: relative; width: min(720px, 100%); max-height: 92vh; overflow-y: auto; padding: 24px; border-radius: 14px; background: var(--cream, #fff); color: var(--ink, #2b1a20); box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .5); }
-    .om-x { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line, #ead9df); background: transparent; color: inherit; font-size: 18px; cursor: pointer; }
-    .om h2 { margin: 0 0 2px; font-size: 20px; }
-    .om-sub { margin: 0 0 16px; font-size: 13px; color: var(--muted, #7a6a70); }
-    .om h4 { margin: 18px 0 8px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted, #7a6a70); }
-    .om-item { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line, #ead9df); }
-    .om-item img { width: 64px; height: 82px; object-fit: cover; border-radius: 8px; background: #f3e6ea; }
-    .om-item b { display: block; font-weight: 500; margin-bottom: 4px; }
-    .om-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-    .om-tags span { padding: 2px 10px; border-radius: 999px; background: #f3e6ea; color: #6e0e33; font-size: 12px; font-weight: 600; }
-    .om-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .om-card { padding: 12px 14px; border: 1px solid var(--line, #ead9df); border-radius: 10px; font-size: 14px; line-height: 1.6; }
-    .om-card a { color: inherit; }
-    .om-rows div { display: flex; justify-content: space-between; padding: 3px 0; font-size: 14px; }
-    .om-rows .t { margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--line, #ead9df); font-weight: 600; font-size: 15px; }
-    .om-copy { margin-top: 8px; padding: 5px 12px; border-radius: 8px; border: 1px solid var(--line, #ead9df); background: transparent; color: inherit; font: inherit; font-size: 12px; cursor: pointer; }
-    @media (max-width: 600px) { .om-grid { grid-template-columns: 1fr; } }
+    .it-line b {
+      display: block;
+      font-weight: 500;
+    }
 
-    .pay-chip { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
-    .pay-chip.verification { background: #FFF4D6; color: #8a6400; }
-    .pay-chip.paid { background: #e3f6ec; color: #0b7a45; }
-    .pay-chip.failed { background: #fde8e6; color: #d93025; }
-    .pay-chip.refunded { background: #e8eefc; color: #2b4cb3; }
-    .pay-chip.pending { background: #f0ebe6; color: #6c5b61; }
+    .it-line span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .btn-view {
+      margin-top: 4px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--rose-dark, #a3194a);
+      background: transparent;
+      color: var(--rose-dark, #a3194a);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-view:hover {
+      background: var(--rose-dark, #a3194a);
+      color: #fff;
+    }
+
+    .om {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(20, 8, 14, .55);
+    }
+
+    .om.show {
+      display: flex;
+    }
+
+    .om-box {
+      position: relative;
+      width: min(720px, 100%);
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 24px;
+      border-radius: 14px;
+      background: var(--cream, #fff);
+      color: var(--ink, #2b1a20);
+      box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .5);
+    }
+
+    .om-x {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--line, #ead9df);
+      background: transparent;
+      color: inherit;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .om h2 {
+      margin: 0 0 2px;
+      font-size: 20px;
+    }
+
+    .om-sub {
+      margin: 0 0 16px;
+      font-size: 13px;
+      color: var(--muted, #7a6a70);
+    }
+
+    .om h4 {
+      margin: 18px 0 8px;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted, #7a6a70);
+    }
+
+    .om-item {
+      display: grid;
+      grid-template-columns: 64px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line, #ead9df);
+    }
+
+    .om-item img {
+      width: 64px;
+      height: 82px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #f3e6ea;
+    }
+
+    .om-item b {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .om-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .om-tags span {
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: #f3e6ea;
+      color: #6e0e33;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .om-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .om-card {
+      padding: 12px 14px;
+      border: 1px solid var(--line, #ead9df);
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .om-card a {
+      color: inherit;
+    }
+
+    .om-rows div {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      font-size: 14px;
+    }
+
+    .om-rows .t {
+      margin-top: 6px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--line, #ead9df);
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .om-copy {
+      margin-top: 8px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line, #ead9df);
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .om-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pay-chip {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .pay-chip.verification {
+      background: #FFF4D6;
+      color: #8a6400;
+    }
+
+    .pay-chip.paid {
+      background: #e3f6ec;
+      color: #0b7a45;
+    }
+
+    .pay-chip.failed {
+      background: #fde8e6;
+      color: #d93025;
+    }
+
+    .pay-chip.refunded {
+      background: #e8eefc;
+      color: #2b4cb3;
+    }
+
+    .pay-chip.pending {
+      background: #f0ebe6;
+      color: #6c5b61;
+    }
   </style>
 </head>
+
 <body>
-<div class="admin-layout">
-  <aside class="admin-side" id="adminSide"></aside>
+  <div class="admin-layout">
+    <aside class="admin-side" id="adminSide"></aside>
 
-  <main class="admin-main">
-    <div class="admin-topbar">
-      <div><h1>Orders</h1><p>Manage customer orders</p></div>
-      <div class="admin-user"><b id="adminEmail"></b></div>
-    </div>
-
-    <div class="verify-banner" id="verifyBanner">
-      <span id="verifyTxt"></span>
-      <button type="button" id="verifyShow">Show these orders</button>
-    </div>
-
-    <div class="admin-card scroll-x">
-      <div class="admin-filters">
-        <input type="search" id="orderSearch" placeholder="Search by order ID, customer, phone, email or UTR…">
-        <select id="statusFilter">
-          <option value="">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="shipped">Shipped</option>
-          <option value="delivered">Delivered</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="return_requested">Return requested</option>
-        </select>
-        <select id="payFilter">
-          <option value="">All Payments</option>
-          <option value="verification">Needs verification</option>
-          <option value="paid">Paid</option>
-          <option value="pending">Payment pending</option>
-          <option value="failed">Failed</option>
-          <option value="refunded">Refunded</option>
-        </select>
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <h1>Orders</h1>
+          <p>Manage customer orders</p>
+        </div>
+        <div class="admin-user"><b id="adminEmail"></b></div>
       </div>
-      <div id="ordersWrap"><p style="color:var(--muted)">Loading…</p></div>
-    </div>
-  </main>
-</div>
 
-<!-- ORDER DETAILS POPUP -->
-<div class="om" id="ordModal" role="dialog" aria-modal="true" aria-labelledby="omTitle">
-  <div class="om-box">
-    <button type="button" class="om-x" id="omClose" aria-label="Close">&times;</button>
-    <div id="omBody"></div>
+      <div class="verify-banner" id="verifyBanner">
+        <span id="verifyTxt"></span>
+        <button type="button" id="verifyShow">Show these orders</button>
+      </div>
+
+      <div class="admin-card scroll-x">
+        <div class="admin-filters">
+          <input type="search" id="orderSearch" placeholder="Search by order ID, customer, phone, email or UTR…">
+          <select id="statusFilter">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="return_requested">Return requested</option>
+          </select>
+          <select id="payFilter">
+            <option value="">All Payments</option>
+            <option value="verification">Needs verification</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Payment pending</option>
+            <option value="failed">Failed</option>
+            <option value="refunded">Refunded</option>
+          </select>
+        </div>
+        <div id="ordersWrap">
+          <p style="color:var(--muted)">Loading…</p>
+        </div>
+      </div>
+    </main>
   </div>
-</div>
 
-<script type="module">
-  import { db, collection, getDocs, query, orderBy, doc, updateDoc, serverTimestamp } from "./js/firebase.js";
-  import { adminReady } from "./js/admin-shell.js";
+  <div id="print-section"></div>
 
-  const $ = id => document.getElementById(id);
-  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN");
-  const nice = s => { s = String(s || "").replace(/_/g, " "); return s.charAt(0).toUpperCase() + s.slice(1); };
+  <!-- ORDER DETAILS POPUP -->
+  <div class="om" id="ordModal" role="dialog" aria-modal="true" aria-labelledby="omTitle">
+    <div class="om-box">
+      <button type="button" class="om-x" id="omClose" aria-label="Close">&times;</button>
+      <div id="omBody"></div>
+    </div>
+  </div>
 
-  const STATUS = ["pending", "shipped", "delivered", "cancelled", "return_requested"];
-  const PAY_STATUS = ["pending", "verification", "paid", "failed", "refunded"];
-  const PAY_LABEL = { verification: "VERIFYING" };
-  const payLabel = x => PAY_LABEL[x] || x.toUpperCase();
-  let all = [], loadError = null;
+  <script type="module">
+    import { db, collection, getDocs, query, orderBy, where, addDoc, doc, updateDoc, serverTimestamp } from "./js/firebase.js";
+    import { adminReady } from "./js/admin-shell.js";
 
-  async function load() {
-    loadError = null;
-    try {
-      const snap = await getDocs(query(collection(db, "orders"), orderBy("createdAt", "desc")));
-      all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch (e) {
-      console.warn("ordered query failed, retrying plain:", e.code || e);
-      try { all = (await getDocs(collection(db, "orders"))).docs.map(d => ({ id: d.id, ...d.data() })); }
-      catch (e2) { console.error("Orders load failed:", e2); all = []; loadError = e2; }
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN");
+    const nice = s => { s = String(s || "").replace(/_/g, " "); return s.charAt(0).toUpperCase() + s.slice(1); };
+
+    const STATUS = ["pending", "shipped", "delivered", "cancelled", "return_requested"];
+    const PAY_STATUS = ["pending", "verification", "paid", "failed", "refunded"];
+    const PAY_LABEL = { verification: "VERIFYING" };
+    const payLabel = x => PAY_LABEL[x] || x.toUpperCase();
+    let all = [], loadError = null;
+
+    async function load() {
+      loadError = null;
+      try {
+        const snap = await getDocs(query(collection(db, "orders"), orderBy("createdAt", "desc")));
+        all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (e) {
+        console.warn("ordered query failed, retrying plain:", e.code || e);
+        try { all = (await getDocs(collection(db, "orders"))).docs.map(d => ({ id: d.id, ...d.data() })); }
+        catch (e2) { console.error("Orders load failed:", e2); all = []; loadError = e2; }
+      }
+      render();
     }
-    render();
-  }
 
-  /* show the REAL reason when orders can't be loaded (instead of a plain "No orders yet") */
-  function errorBox(e) {
-    const code = e.code || "error";
-    const hint = code === "permission-denied"
-      ? "Firestore rules are blocking this admin account from reading the <b>orders</b> collection. Update the rules (allow read/update on <code>orders</code> for admins) and publish them."
-      : code === "unavailable" || code === "failed-precondition"
-        ? "Firestore is unreachable or needs an index. Check your internet / the console link in the browser console."
-        : "Open the browser console (F12) to see the full error.";
-    return `<div style="padding:16px 18px;border-radius:10px;background:#fde8e6;border:1px solid #f3b8b3;color:#8a1c14;line-height:1.6">
+    /* show the REAL reason when orders can't be loaded (instead of a plain "No orders yet") */
+    function errorBox(e) {
+      const code = e.code || "error";
+      const hint = code === "permission-denied"
+        ? "Firestore rules are blocking this admin account from reading the <b>orders</b> collection. Update the rules (allow read/update on <code>orders</code> for admins) and publish them."
+        : code === "unavailable" || code === "failed-precondition"
+          ? "Firestore is unreachable or needs an index. Check your internet / the console link in the browser console."
+          : "Open the browser console (F12) to see the full error.";
+      return `<div style="padding:16px 18px;border-radius:10px;background:#fde8e6;border:1px solid #f3b8b3;color:#8a1c14;line-height:1.6">
       <b>Couldn't load orders</b> (<code>${esc(code)}</code>)<br>${hint}<br>
       <small>${esc(e.message || "")}</small><br>
       <button type="button" id="reloadOrders" style="margin-top:10px;padding:6px 14px;border-radius:8px;border:1px solid #8a1c14;background:#fff;color:#8a1c14;font:inherit;font-weight:600;cursor:pointer">↻ Reload</button>
     </div>`;
-  }
+    }
 
-  /* new orders: "AURA#01"  |  old orders: "AURA68739954" -> "#AURA68739954" */
-  const label = o => {
-    const id = String(o.orderId || "").trim();
-    if (!id) return "#" + o.id.slice(0, 8).toUpperCase();
-    return id.includes("#") ? id : "#" + id;
-  };
-  const dateOf = o => o.createdAt?.toDate?.().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) || "—";
-  const needsVerify = o => (o.paymentStatus || "pending") === "verification";
+    /* new orders: "AURA#01"  |  old orders: "AURA68739954" -> "#AURA68739954" */
+    const label = o => {
+      const id = String(o.orderId || "").trim();
+      if (!id) return "#" + o.id.slice(0, 8).toUpperCase();
+      return id.includes("#") ? id : "#" + id;
+    };
+    const dateOf = o => o.createdAt?.toDate?.().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) || "—";
+    const needsVerify = o => (o.paymentStatus || "pending") === "verification";
 
-  /* product / size / color / qty lines shown inside the table */
-  const itemLines = o => (o.items || []).map(i =>
-    `<div class="it-line"><b>${esc(i.name || "Product")}</b><span>${[i.size && "Size " + esc(i.size), i.color && esc(i.color), "Qty " + (Number(i.qty) || 1)].filter(Boolean).join(" · ")}</span></div>`
-  ).join("") || "—";
+    /* product / size / color / qty lines shown inside the table */
+    const itemLines = o => (o.items || []).map(i =>
+      `<div class="it-line"><b>${esc(i.name || "Product")}</b><span>${[i.size && "Size " + esc(i.size), i.color && esc(i.color), "Qty " + (Number(i.qty) || 1)].filter(Boolean).join(" · ")}</span></div>`
+    ).join("") || "—";
 
-  /* full address as plain text (for the courier / copy button) */
-  const addrText = o => {
-    const a = o.address || {};
-    return [a.name || o.customerName, [a.flat, a.area].filter(Boolean).join(", "), a.landmark && "Landmark: " + a.landmark,
+    /* full address as plain text (for the courier / copy button) */
+    const addrText = o => {
+      const a = o.address || {};
+      return [a.name || o.customerName, [a.flat, a.area].filter(Boolean).join(", "), a.landmark && "Landmark: " + a.landmark,
       [a.city, a.state].filter(Boolean).join(", ") + (a.pin ? " - " + a.pin : ""), "Phone: " + (o.phone || a.phone || "—")].filter(Boolean).join("\n");
-  };
+    };
 
-  /* details popup */
-  function detailsHTML(o) {
-    const a = o.address || {};
-    const phone = o.phone || a.phone || "";
-    const email = o.email || o.customerEmail || a.email || "";
-    const items = (o.items || []).map(i => `
+    /* details popup */
+    function detailsHTML(o) {
+      const a = o.address || {};
+      const phone = o.phone || a.phone || "";
+      const email = o.email || o.customerEmail || a.email || "";
+      const items = (o.items || []).map(i => `
       <div class="om-item">
         <img src="${esc(i.image || "")}" alt="" onerror="this.style.visibility='hidden'">
         <div>
@@ -201,8 +553,8 @@
         <div>${inr((Number(i.price) || 0) * (Number(i.qty) || 1))}</div>
       </div>`).join("") || "<p>No items saved with this order.</p>";
 
-    const row = (l, v, cls = "") => v ? `<div class="${cls}"><span>${l}</span><span>${v}</span></div>` : "";
-    return `
+      const row = (l, v, cls = "") => v ? `<div class="${cls}"><span>${l}</span><span>${v}</span></div>` : "";
+      return `
       <h2 id="omTitle">${esc(label(o))}</h2>
       <p class="om-sub">${esc(dateOf(o))} · Status: <b>${esc(nice(o.status || "pending"))}</b></p>
 
@@ -219,6 +571,7 @@
             ${phone ? `📞 <a href="tel:${esc(phone)}">${esc(phone)}</a><br>` : ""}
             ${email ? `✉️ <a href="mailto:${esc(email)}">${esc(email)}</a>` : ""}
             <br><button type="button" class="om-copy" data-copyaddr="${esc(o.id)}">Copy address</button>
+            <button type="button" class="om-copy" data-invoice-pop="${esc(o.id)}">🧾 ${o.billNo ? "Print " + esc(o.billNo) : "Invoice / Print"}</button>
           </div>
         </div>
         <div>
@@ -238,36 +591,308 @@
           </div>
         </div>
       </div>`;
-  }
-  const openDetails = id => {
-    const o = all.find(x => x.id === id); if (!o) return;
-    $("omBody").innerHTML = detailsHTML(o);
-    $("ordModal").classList.add("show");
-  };
-  const closeDetails = () => $("ordModal").classList.remove("show");
+    }
+    const openDetails = id => {
+      const o = all.find(x => x.id === id); if (!o) return;
+      $("omBody").innerHTML = detailsHTML(o);
+      $("ordModal").classList.add("show");
+    };
+    const closeDetails = () => $("ordModal").classList.remove("show");
 
-  function render() {
-    const q = $("orderSearch").value.trim().toLowerCase(), s = $("statusFilter").value, ps = $("payFilter").value;
+    /* ================================================================
+       INVOICE — same A4 design as the Billing (POS) page.
+       First click saves the order into the "bills" collection (so it shows up in Billing
+       history too) and gives it the next bill number AURA#<year><no>. Next clicks just reprint.
+       ================================================================ */
+    const last10 = p => String(p || "").replace(/\D/g, "").slice(-10);
+    const money = n => Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    /* banner: how many UPI payments are waiting for you */
-    const waiting = all.filter(needsVerify).length;
-    $("verifyBanner").classList.toggle("show", waiting > 0);
-    $("verifyTxt").textContent = `${waiting} UPI payment${waiting > 1 ? "s" : ""} waiting for verification. Match the UTR with your GPay / bank history, then mark as paid.`;
-
-    const list = all.filter(o =>
-      (!s || (o.status || "pending") === s) &&
-      (!ps || (o.paymentStatus || "pending") === ps) &&
-      (!q || [label(o), o.orderId, o.customerName, o.email, o.customerEmail, o.phone, o.paymentId].some(v => String(v || "").toLowerCase().includes(q))));
-
-    if (loadError) { $("ordersWrap").innerHTML = errorBox(loadError); return; }
-
-    if (!list.length) {
-      $("ordersWrap").innerHTML = `<p style="color:var(--muted)">${all.length ? "No matching orders." : "No orders in the database yet. If a customer just ordered, check that the order really saved (see console)."}</p>
-        <button type="button" id="reloadOrders" style="margin-top:8px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--cream);color:var(--ink);font:inherit;cursor:pointer">↻ Reload</button>`;
-      return;
+    function inrWords(num) {
+      let n = Math.round(num);
+      if (!n) return "Zero Rupees Only";
+      const a = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+      const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+      const two = x => x < 20 ? a[x] : b[Math.floor(x / 10)] + (x % 10 ? " " + a[x % 10] : "");
+      const three = x => (x >= 100 ? a[Math.floor(x / 100)] + " Hundred" + (x % 100 ? " " : "") : "") + (x % 100 ? two(x % 100) : "");
+      const parts = [];
+      const cr = Math.floor(n / 1e7); n %= 1e7;
+      const lk = Math.floor(n / 1e5); n %= 1e5;
+      const th = Math.floor(n / 1e3); n %= 1e3;
+      if (cr) parts.push(three(cr) + " Crore");
+      if (lk) parts.push(two(lk) + " Lakh");
+      if (th) parts.push(two(th) + " Thousand");
+      if (n) parts.push(three(n));
+      return parts.join(" ") + " Rupees Only";
     }
 
-    $("ordersWrap").innerHTML = `<table class="admin-table">
+    async function nextBillNo() {
+      const year = new Date().getFullYear();
+      let max = 0;
+      const snap = await getDocs(query(collection(db, "bills"), where("billYear", "==", year)));
+      snap.forEach(d => { const n = Number(d.data().billSeq) || 0; if (n > max) max = n; });
+      const seq = max + 1;
+      return { billNo: `AURA#${year}${String(seq).padStart(2, "0")}`, billYear: year, billSeq: seq };
+    }
+
+    function invoiceHTML(o, billNo) {
+      const a = o.address || {};
+      const d = o.createdAt?.toDate?.() || new Date();
+      const dateStr = d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+      const timeStr = d.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+      const items = o.items || [];
+      const qtyTotal = items.reduce((s, i) => s + (Number(i.qty) || 1), 0);
+      const sub = Number(o.subtotal) || items.reduce((s, i) => s + (Number(i.price) || 0) * (Number(i.qty) || 1), 0);
+      const ship = Number(o.shipping) || 0, coupon = Number(o.discount) || 0, pre = Number(o.prepaidDiscount) || 0, cod = Number(o.codFee) || 0;
+      const grand = Number(o.total) || (sub + ship - coupon - pre + cod);
+      const saved = coupon + pre;
+      const method = (o.paymentMethod || "—").toUpperCase();
+      const pstat = o.paymentStatus || "pending";
+      const phone = o.phone || a.phone || "";
+      const cust = a.name || o.customerName || "Customer";
+
+      const rows = items.map((i, k) => {
+        const q = Number(i.qty) || 1, r = Number(i.price) || 0;
+        const spec = [i.size && "Size " + i.size, i.color].filter(Boolean).join(" · ");
+        return `
+      <tr class="${k % 2 ? "alt" : ""}">
+        <td class="c">${String(k + 1).padStart(2, "0")}</td>
+        <td><div class="nm">${esc(i.name || "Product")}</div><div class="hs">${esc(spec) || "&nbsp;"}</div></td>
+        <td class="c">${q}</td>
+        <td class="r">₹ ${money(r)}</td>
+        <td class="r b">₹ ${money(r * q)}</td>
+      </tr>`;
+      }).join("");
+
+      return `
+<style>
+  .inv { font-family: 'Jost', Arial, sans-serif; color: #2b1b21; background: #fff; width: 210mm; min-height: 296mm; display: flex; flex-direction: column; box-sizing: border-box; font-size: 12px; }
+  .inv * { box-sizing: border-box; }
+  .inv .band { height: 7mm; background: linear-gradient(90deg, #6e0e33, #a3194a 55%, #c9a35f); }
+  .inv .band.thin { height: 3mm; }
+  .inv .body { flex: 1; display: flex; flex-direction: column; padding: 11mm 14mm 8mm; }
+  .inv .head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10mm; }
+  .inv .logo img { height: 20mm; width: auto; object-fit: contain; display: block; }
+  .inv .logo .sub { margin-top: 2mm; font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: #5a4a51; font-weight: 700; }
+  .inv .doc { text-align: right; }
+  .inv .doc .t { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 34px; font-weight: 600; letter-spacing: .06em; color: #6e0e33; line-height: 1; text-transform: uppercase; }
+  .inv .doc .s { margin-top: 2mm; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #5a4a51; font-weight: 700; }
+  .inv .meta { margin-top: 4mm; margin-left: auto; border-collapse: collapse; }
+  .inv .meta td { padding: 1mm 0 1mm 5mm; font-size: 12px; }
+  .inv .meta td:first-child { color: #5a4a51; text-transform: uppercase; letter-spacing: .1em; font-size: 10px; font-weight: 700; }
+  .inv .meta td:last-child { font-weight: 800; text-align: right; color: #2b1b21; }
+  .inv .gold { height: 1px; margin: 7mm 0 6mm; background: linear-gradient(90deg, #c9a35f, #e8d3a6 50%, #c9a35f); }
+  .inv .cards { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 4mm; margin-bottom: 7mm; }
+  .inv .card { background: #fbf6f1; border-left: 2.2mm solid #a3194a; padding: 4mm 4.5mm; border-radius: 0 2mm 2mm 0; }
+  .inv .card .k { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #a3194a; font-weight: 800; margin-bottom: 2mm; }
+  .inv .card .v { font-size: 14px; font-weight: 700; }
+  .inv .card .m { margin-top: 1mm; font-size: 11px; color: #4a3a41; font-weight: 500; line-height: 1.5; }
+  table.items { width: 100%; border-collapse: collapse; }
+  table.items thead { display: table-header-group; }
+  table.items th { background: linear-gradient(90deg, #6e0e33, #a3194a); color: #fff; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; padding: 3.4mm 3mm; text-align: left; font-weight: 800; }
+  table.items th.c, table.items td.c { text-align: center; }
+  table.items th.r, table.items td.r { text-align: right; }
+  table.items td { padding: 3.2mm 3mm; border-bottom: 1px solid #f0e4e8; vertical-align: middle; }
+  table.items tr { page-break-inside: avoid; }
+  table.items tr.alt td { background: #fcf8f4; }
+  table.items .nm { font-size: 13px; font-weight: 700; }
+  table.items .hs { font-size: 10px; color: #7a6a70; font-weight: 600; letter-spacing: .05em; margin-top: .6mm; }
+  table.items .b { font-weight: 800; }
+  .inv .sumwrap { display: flex; justify-content: space-between; gap: 10mm; margin-top: 6mm; page-break-inside: avoid; }
+  .inv .words { flex: 1; padding-top: 1mm; }
+  .inv .words .k { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #a3194a; font-weight: 800; margin-bottom: 1.5mm; }
+  .inv .words .v { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 15px; color: #4a3a41; line-height: 1.35; }
+  .inv .save { display: inline-block; margin-top: 4mm; padding: 1.6mm 3.6mm; border: 1px dashed #c9a35f; border-radius: 10mm; font-size: 10px; color: #8a6a2f; letter-spacing: .05em; }
+  .inv .totals { width: 78mm; }
+  .inv .totals .row { display: flex; justify-content: space-between; padding: 1.8mm 0; font-size: 12.5px; font-weight: 700; border-bottom: 1px solid #f0e4e8; }
+  .inv .totals .row span:first-child { color: #4a3a41; font-weight: 600; }
+  .inv .totals .grand { margin-top: 3mm; padding: 4mm 4.5mm; background: linear-gradient(135deg, #6e0e33, #a3194a); color: #fff; border-radius: 2mm; display: flex; justify-content: space-between; align-items: center; }
+  .inv .totals .grand .l { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 800; }
+  .inv .totals .grand .a { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 27px; font-weight: 700; }
+  .inv .totals .pay { margin-top: 2.5mm; font-size: 11px; font-weight: 700; color: #4a3a41; display: flex; justify-content: space-between; }
+  .inv .spacer { flex: 1; min-height: 8mm; }
+  .inv .thanks { text-align: center; margin-bottom: 7mm; }
+  .inv .thanks .h { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 24px; color: #a3194a; }
+  .inv .thanks .p { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #5a4a51; font-weight: 700; margin-top: 1mm; }
+  .inv .foot { display: grid; grid-template-columns: 1.6fr 1fr; gap: 10mm; align-items: end; border-top: 1px solid #ead9df; padding-top: 5mm; }
+  .inv .terms .k { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #a3194a; font-weight: 800; margin-bottom: 1.5mm; }
+  .inv .terms ul { margin: 0; padding-left: 4mm; font-size: 10px; font-weight: 500; color: #4a3a41; line-height: 1.65; }
+  .inv .sign { text-align: center; }
+  .inv .sign .ln { border-top: 1px solid #2b1b21; margin: 14mm 4mm 1.5mm; }
+  .inv .sign .t { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #2b1b21; font-weight: 700; }
+  .inv .fine { text-align: center; font-size: 9px; font-weight: 500; color: #7a6a70; margin-top: 5mm; letter-spacing: .04em; }
+</style>
+
+<div class="inv">
+  <div class="band"></div>
+  <div class="body">
+
+    <div class="head">
+      <div class="logo">
+        <img src="../assets/logo.png" alt="AURA">
+        <div class="sub">Clothing · Tamil Nadu</div>
+      </div>
+      <div class="doc">
+        <div class="t">Invoice</div>
+        <div class="s">Online Order · Invoice-cum-Bill of Supply</div>
+        <table class="meta">
+          <tr><td>Invoice No.</td><td>${esc(billNo)}</td></tr>
+          <tr><td>Order No.</td><td>${esc(label(o))}</td></tr>
+          <tr><td>Date</td><td>${dateStr}</td></tr>
+          <tr><td>Time</td><td>${timeStr}</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="gold"></div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="k">Billed To</div>
+        <div class="v">${esc(cust)}</div>
+        <div class="m">${phone ? "Mobile: " + esc(phone) : ""}${(o.email || a.email) ? "<br>" + esc(o.email || a.email) : ""}</div>
+      </div>
+      <div class="card">
+        <div class="k">Payment</div>
+        <div class="v">${esc(method)}</div>
+        <div class="m">${esc(payLabel(pstat))}${o.paymentId ? "<br>Ref: " + esc(o.paymentId) : ""}</div>
+      </div>
+      <div class="card">
+        <div class="k">Ship To</div>
+        <div class="m" style="margin-top:0">
+          ${esc([a.flat, a.area].filter(Boolean).join(", ")) || "—"}<br>
+          ${a.landmark ? "Landmark: " + esc(a.landmark) + "<br>" : ""}
+          ${esc([a.city, a.state].filter(Boolean).join(", "))}${a.pin ? " - " + esc(a.pin) : ""}
+        </div>
+      </div>
+    </div>
+
+    <table class="items">
+      <thead>
+        <tr>
+          <th class="c" style="width:12mm">No.</th>
+          <th>Description</th>
+          <th class="c" style="width:18mm">Qty</th>
+          <th class="r" style="width:30mm">Rate</th>
+          <th class="r" style="width:34mm">Amount</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+
+    <div class="sumwrap">
+      <div class="words">
+        <div class="k">Amount in words</div>
+        <div class="v">${inrWords(grand)}</div>
+        ${saved > 0 ? `<div class="save">You saved ₹ ${money(saved)} on this order</div>` : ""}
+      </div>
+      <div class="totals">
+        <div class="row"><span>Subtotal (${qtyTotal} item${qtyTotal === 1 ? "" : "s"})</span><span>₹ ${money(sub)}</span></div>
+        <div class="row"><span>Shipping</span><span>${ship ? "₹ " + money(ship) : "Free"}</span></div>
+        ${coupon > 0 ? `<div class="row"><span>Coupon${o.coupon ? " (" + esc(o.coupon) + ")" : ""}</span><span>- ₹ ${money(coupon)}</span></div>` : ""}
+        ${pre > 0 ? `<div class="row"><span>Prepaid discount</span><span>- ₹ ${money(pre)}</span></div>` : ""}
+        ${cod > 0 ? `<div class="row"><span>COD fee</span><span>+ ₹ ${money(cod)}</span></div>` : ""}
+        <div class="grand"><span class="l">Grand Total</span><span class="a">₹ ${money(grand)}</span></div>
+        <div class="pay"><span>${pstat === "paid" ? "PAID" : o.paymentMethod === "cod" ? "Pay on delivery" : "Payment " + esc(payLabel(pstat))}</span><span>${esc(method)}</span></div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="thanks">
+      <div class="h">Thank you for choosing AURA</div>
+      <div class="p">Dressed in your own way</div>
+    </div>
+
+    <div class="foot">
+      <div class="terms">
+        <div class="k">Terms &amp; Notes</div>
+        <ul>
+          <li>Easy 7-day exchange on unworn items with original tags intact.</li>
+          <li>Custom-stitched or altered items are non-returnable.</li>
+          <li>Support: auraclothing.vnr@gmail.com · Mon–Sat, 10 AM – 7 PM</li>
+        </ul>
+      </div>
+      <div class="sign">
+        <div class="ln"></div>
+        <div class="t">Authorised Signatory</div>
+      </div>
+    </div>
+
+    <div class="fine">This is a computer-generated invoice and does not require a physical signature.</div>
+  </div>
+  <div class="band thin"></div>
+</div>`;
+    }
+
+    function printBill(html) {
+      $("print-section").innerHTML = html;
+      const imgs = [...$("print-section").querySelectorAll("img")];
+      const ready = Promise.all(imgs.map(i => i.complete ? Promise.resolve() : new Promise(r => { i.onload = i.onerror = r; })));
+      const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      Promise.all([ready, fonts]).then(() => setTimeout(() => window.print(), 150));
+    }
+
+    async function makeInvoice(id, btn) {
+      const o = all.find(x => x.id === id); if (!o) return;
+      const pst = o.paymentStatus || "pending";
+      if ((o.status || "pending") === "cancelled" || pst === "failed") return alert("Cancelled / failed orders can't be billed.");
+      if (pst === "verification" && !confirm("This payment is still waiting for verification. Create the invoice anyway?")) return;
+
+      if (btn) btn.disabled = true;
+      try {
+        let billNo = o.billNo;
+        if (!billNo) {
+          const bn = await nextBillNo();
+          billNo = bn.billNo;
+          const a = o.address || {};
+          const items = (o.items || []).map(i => {
+            const q = Number(i.qty) || 1, r = Number(i.price) || 0;
+            const spec = [i.size, i.color].filter(Boolean).join(", ");
+            return { id: i.id || "", name: (i.name || "Product") + (spec ? " (" + spec + ")" : ""), qty: q, rate: r, total: r * q };
+          });
+          const sub = Number(o.subtotal) || items.reduce((s, i) => s + i.total, 0);
+          const m = (o.paymentMethod || "").toLowerCase();
+          await addDoc(collection(db, "bills"), {
+            billNo, billYear: bn.billYear, billSeq: bn.billSeq, items,
+            subtotal: sub, discount: (Number(o.discount) || 0) + (Number(o.prepaidDiscount) || 0), gst: 0,
+            shipping: Number(o.shipping) || 0, codFee: Number(o.codFee) || 0, totalAmount: Number(o.total) || sub,
+            customerName: a.name || o.customerName || "Customer", customerPhone: last10(o.phone || a.phone),
+            paymentMode: m === "cod" ? "COD" : m === "upi" ? "UPI" : (m ? m.charAt(0).toUpperCase() + m.slice(1) : "Online"),
+            date: serverTimestamp(), source: "online", orderId: label(o), orderDocId: o.id
+          });
+          await patch(o.id, { billNo, billed: true });
+          render();
+        }
+        printBill(invoiceHTML(o, billNo));
+      } catch (err) {
+        console.error("Invoice failed:", err);
+        alert("Couldn't create the invoice. Check Firestore rules for the 'bills' collection.");
+      }
+      if (btn) btn.disabled = false;
+    }
+
+    function render() {
+      const q = $("orderSearch").value.trim().toLowerCase(), s = $("statusFilter").value, ps = $("payFilter").value;
+
+      /* banner: how many UPI payments are waiting for you */
+      const waiting = all.filter(needsVerify).length;
+      $("verifyBanner").classList.toggle("show", waiting > 0);
+      $("verifyTxt").textContent = `${waiting} UPI payment${waiting > 1 ? "s" : ""} waiting for verification. Match the UTR with your GPay / bank history, then mark as paid.`;
+
+      const list = all.filter(o =>
+        (!s || (o.status || "pending") === s) &&
+        (!ps || (o.paymentStatus || "pending") === ps) &&
+        (!q || [label(o), o.orderId, o.customerName, o.email, o.customerEmail, o.phone, o.paymentId].some(v => String(v || "").toLowerCase().includes(q))));
+
+      if (loadError) { $("ordersWrap").innerHTML = errorBox(loadError); return; }
+
+      if (!list.length) {
+        $("ordersWrap").innerHTML = `<p style="color:var(--muted)">${all.length ? "No matching orders." : "No orders in the database yet. If a customer just ordered, check that the order really saved (see console)."}</p>
+        <button type="button" id="reloadOrders" style="margin-top:8px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--cream);color:var(--ink);font:inherit;cursor:pointer">↻ Reload</button>`;
+        return;
+      }
+
+      $("ordersWrap").innerHTML = `<table class="admin-table">
       <thead><tr><th>Order</th><th>Customer</th><th>Contact</th><th>Items</th><th>Payment</th><th>Total</th><th>Date</th><th>Status</th></tr></thead>
       <tbody>${list.map(o => {
         const st = o.status || "pending";
@@ -292,7 +917,7 @@
           <td class="ord-id">${esc(label(o))}</td>
           <td>${esc(o.customerName || "—")}</td>
           <td>${esc(o.phone || o.email || o.customerEmail || "—")}</td>
-          <td>${itemLines(o)}<button type="button" class="btn-view" data-view>View details</button></td>
+          <td>${itemLines(o)}<button type="button" class="btn-view" data-view>View details</button> <button type="button" class="btn-view" data-invoice>🧾 ${o.billNo ? esc(o.billNo) : "Invoice"}</button></td>
           <td>
             <div class="ord-pm">${esc((o.paymentMethod || "—").toUpperCase())}</div>
             <select class="ord-sel sm" data-paystatus aria-label="Payment status">
@@ -309,91 +934,95 @@
           </td>
         </tr>`;
       }).join("")}</tbody></table>`;
-  }
-
-  /* save fields to Firestore + keep the local copy in sync */
-  async function patch(id, fields) {
-    await updateDoc(doc(db, "orders", id), { ...fields, updatedAt: serverTimestamp() });
-    const o = all.find(x => x.id === id);
-    Object.assign(o, fields);
-  }
-
-  /* update order status / payment status from the dropdowns */
-  $("ordersWrap").addEventListener("change", async e => {
-    const sel = e.target.closest("select");
-    if (!sel) return;
-
-    const row = sel.closest("tr");
-    const id = row.dataset.id;
-    const o = all.find(x => x.id === id);
-    const isPayment = sel.hasAttribute("data-paystatus");
-    const field = isPayment ? "paymentStatus" : "status";
-    const prev = o[field] || "pending";
-
-    sel.disabled = true;
-    try {
-      const fields = { [field]: sel.value };
-      if (!isPayment && sel.value === "delivered") fields.deliveredAt = serverTimestamp();           // 7-day return timer starts
-      if (isPayment && sel.value === "paid") fields.paymentVerifiedAt = serverTimestamp();
-      await patch(id, fields);
-      render();
-    } catch (err) {
-      console.error(field + " update error:", err);
-      sel.value = prev;
-      alert(`Couldn't update ${isPayment ? "payment" : "order"} status. Check Firestore rules.`);
-      sel.disabled = false;
-    }
-  });
-
-  /* Mark paid / Reject / Copy UTR buttons */
-  $("ordersWrap").addEventListener("click", async e => {
-    if (e.target.closest("[data-view]")) { openDetails(e.target.closest("tr").dataset.id); return; }
-    if (e.target.closest("#reloadOrders")) { $("ordersWrap").innerHTML = "<p style='color:var(--muted)'>Loading…</p>"; load(); return; }
-    const btn = e.target.closest("[data-act]");
-    if (!btn) return;
-    const id = btn.closest("tr").dataset.id;
-    const o = all.find(x => x.id === id);
-    const act = btn.dataset.act;
-
-    if (act === "copy") {
-      try { await navigator.clipboard.writeText(btn.dataset.utr); btn.textContent = "Copied ✓"; setTimeout(() => (btn.textContent = "Copy UTR"), 1500); }
-      catch (err) { alert("UTR: " + btn.dataset.utr); }
-      return;
     }
 
-    if (act === "paid") {
-      if (!confirm(`Confirm that ${inr(o.total)} with UTR ${o.paymentId} is received in your account?`)) return;
-      btn.disabled = true;
-      try { await patch(id, { paymentStatus: "paid", paymentVerifiedAt: serverTimestamp() }); render(); }
-      catch (err) { console.error(err); alert("Couldn't mark as paid. Check Firestore rules."); btn.disabled = false; }
+    /* save fields to Firestore + keep the local copy in sync */
+    async function patch(id, fields) {
+      await updateDoc(doc(db, "orders", id), { ...fields, updatedAt: serverTimestamp() });
+      const o = all.find(x => x.id === id);
+      Object.assign(o, fields);
     }
 
-    if (act === "reject") {
-      if (!confirm(`Reject this payment (UTR ${o.paymentId})?\nThe order will be cancelled and payment marked FAILED.`)) return;
-      btn.disabled = true;
-      try { await patch(id, { paymentStatus: "failed", status: "cancelled" }); render(); }
-      catch (err) { console.error(err); alert("Couldn't reject. Check Firestore rules."); btn.disabled = false; }
-    }
-  });
+    /* update order status / payment status from the dropdowns */
+    $("ordersWrap").addEventListener("change", async e => {
+      const sel = e.target.closest("select");
+      if (!sel) return;
 
-  /* details popup: close + copy address */
-  $("omClose").addEventListener("click", closeDetails);
-  $("ordModal").addEventListener("click", async e => {
-    if (e.target === $("ordModal")) return closeDetails();
-    const c = e.target.closest("[data-copyaddr]");
-    if (c) {
-      const o = all.find(x => x.id === c.dataset.copyaddr);
-      try { await navigator.clipboard.writeText(addrText(o)); c.textContent = "Copied ✓"; setTimeout(() => (c.textContent = "Copy address"), 1500); }
-      catch (err) { alert(addrText(o)); }
-    }
-  });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetails(); });
+      const row = sel.closest("tr");
+      const id = row.dataset.id;
+      const o = all.find(x => x.id === id);
+      const isPayment = sel.hasAttribute("data-paystatus");
+      const field = isPayment ? "paymentStatus" : "status";
+      const prev = o[field] || "pending";
 
-  $("verifyShow").addEventListener("click", () => { $("payFilter").value = "verification"; $("statusFilter").value = ""; render(); });
-  $("orderSearch").addEventListener("input", render);
-  $("statusFilter").addEventListener("change", render);
-  $("payFilter").addEventListener("change", render);
-  adminReady.then(load);
-</script>
+      sel.disabled = true;
+      try {
+        const fields = { [field]: sel.value };
+        if (!isPayment && sel.value === "delivered") fields.deliveredAt = serverTimestamp();           // 7-day return timer starts
+        if (isPayment && sel.value === "paid") fields.paymentVerifiedAt = serverTimestamp();
+        await patch(id, fields);
+        render();
+      } catch (err) {
+        console.error(field + " update error:", err);
+        sel.value = prev;
+        alert(`Couldn't update ${isPayment ? "payment" : "order"} status. Check Firestore rules.`);
+        sel.disabled = false;
+      }
+    });
+
+    /* Mark paid / Reject / Copy UTR buttons */
+    $("ordersWrap").addEventListener("click", async e => {
+      if (e.target.closest("[data-invoice]")) { const b = e.target.closest("[data-invoice]"); makeInvoice(b.closest("tr").dataset.id, b); return; }
+      if (e.target.closest("[data-view]")) { openDetails(e.target.closest("tr").dataset.id); return; }
+      if (e.target.closest("#reloadOrders")) { $("ordersWrap").innerHTML = "<p style='color:var(--muted)'>Loading…</p>"; load(); return; }
+      const btn = e.target.closest("[data-act]");
+      if (!btn) return;
+      const id = btn.closest("tr").dataset.id;
+      const o = all.find(x => x.id === id);
+      const act = btn.dataset.act;
+
+      if (act === "copy") {
+        try { await navigator.clipboard.writeText(btn.dataset.utr); btn.textContent = "Copied ✓"; setTimeout(() => (btn.textContent = "Copy UTR"), 1500); }
+        catch (err) { alert("UTR: " + btn.dataset.utr); }
+        return;
+      }
+
+      if (act === "paid") {
+        if (!confirm(`Confirm that ${inr(o.total)} with UTR ${o.paymentId} is received in your account?`)) return;
+        btn.disabled = true;
+        try { await patch(id, { paymentStatus: "paid", paymentVerifiedAt: serverTimestamp() }); render(); }
+        catch (err) { console.error(err); alert("Couldn't mark as paid. Check Firestore rules."); btn.disabled = false; }
+      }
+
+      if (act === "reject") {
+        if (!confirm(`Reject this payment (UTR ${o.paymentId})?\nThe order will be cancelled and payment marked FAILED.`)) return;
+        btn.disabled = true;
+        try { await patch(id, { paymentStatus: "failed", status: "cancelled" }); render(); }
+        catch (err) { console.error(err); alert("Couldn't reject. Check Firestore rules."); btn.disabled = false; }
+      }
+    });
+
+    /* details popup: close + copy address */
+    $("omClose").addEventListener("click", closeDetails);
+    $("ordModal").addEventListener("click", async e => {
+      if (e.target === $("ordModal")) return closeDetails();
+      const inv = e.target.closest("[data-invoice-pop]");
+      if (inv) { await makeInvoice(inv.dataset.invoicePop, inv); return; }
+      const c = e.target.closest("[data-copyaddr]");
+      if (c) {
+        const o = all.find(x => x.id === c.dataset.copyaddr);
+        try { await navigator.clipboard.writeText(addrText(o)); c.textContent = "Copied ✓"; setTimeout(() => (c.textContent = "Copy address"), 1500); }
+        catch (err) { alert(addrText(o)); }
+      }
+    });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeDetails(); });
+
+    $("verifyShow").addEventListener("click", () => { $("payFilter").value = "verification"; $("statusFilter").value = ""; render(); });
+    $("orderSearch").addEventListener("input", render);
+    $("statusFilter").addEventListener("change", render);
+    $("payFilter").addEventListener("change", render);
+    adminReady.then(load);
+  </script>
 </body>
+
 </html>

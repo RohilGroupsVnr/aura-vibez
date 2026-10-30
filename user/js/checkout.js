@@ -9,6 +9,7 @@ import * as FB from "./firebase.js";
   const CFG = Object.assign({
     cartKey: "aura_cart",          // localStorage key your cart uses
     ordersCollection: "orders",    // Firestore collection the admin orders page reads
+    productsCollection: "products",
     logo: "../assets/logo.png",
     freeShipOver: 999,
     shipFee: 60,
@@ -170,7 +171,7 @@ import * as FB from "./firebase.js";
   }
   function toast(msg, err) {
     const t = $("ckToast"); t.textContent = msg; t.className = "ck-toast show" + (err ? " err" : "");
-    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 3600);
   }
   function flash(msg) {
     $("ckFlashTxt").textContent = msg; $("ckFlash").classList.add("on");
@@ -186,7 +187,7 @@ import * as FB from "./firebase.js";
       <button type="button" class="ck-sum ${S.itemsOpen ? "open" : ""}" data-a="items" aria-expanded="${S.itemsOpen}"><small>${n} item${n > 1 ? "s" : ""}</small><b>${inr(sub)}</b>${I.down}</button>`;
     const box = $("ckItems");
     box.hidden = !S.itemsOpen;
-    box.innerHTML = S.itemsOpen ? S.items.map(i => `<div class="ck-it"><img src="${esc(i.image)}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(i.name)}</b><small>${i.size ? "Size " + esc(i.size) + " · " : ""}Qty ${i.qty}</small></div><span>${inr(i.price * i.qty)}</span></div>`).join("") : "";
+    box.innerHTML = S.itemsOpen ? S.items.map(i => `<div class="ck-it"><img src="${esc(i.image)}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(i.name)}</b><small>${i.size ? "Size " + esc(i.size) + " · " : ""}${i.color ? esc(i.color) + " · " : ""}Qty ${i.qty}</small></div><span>${inr(i.price * i.qty)}</span></div>`).join("") : "";
 
     /* the address sheet slides up over the page behind it (like HAY) */
     const base = S.step === "address" ? (S.addr ? "summary" : "login") : S.step;
@@ -232,7 +233,7 @@ import * as FB from "./firebase.js";
           <div class="ck-2">${F("ckCity", "City *", a.city || "", { ac: "address-level2" })}${F("ckState", "State *", a.state || "", { ac: "address-level1" })}</div>
           ${F("ckFlat", "Flat, House no. *", a.flat || "", { ac: "address-line1" })}
           ${F("ckArea", "Apartment, Area, Sector, Village *", a.area || "", { ac: "address-line2" })}
-          ${F("ckLandmark", "Landmark (Optional)", a.landmark || "", { ac: "off" })} <!-- 🔥 LANDMARK INPUT -->
+          ${F("ckLandmark", "Landmark (Optional)", a.landmark || "", { ac: "off" })}
           <p class="ck-title" style="margin-top:14px">Customer Information</p>
           ${F("ckName", "Full Name *", a.name || u.displayName || "", { ac: "name" })}
           ${F("ckMail", "Email Address *", a.email || u.email || "", { type: "email", ac: "email" })}
@@ -257,7 +258,7 @@ import * as FB from "./firebase.js";
       <div class="ck-card"><div class="ck-del">
         ${I.pin}
         <div><b>Deliver To ${esc(a.name)}</b><p class="ad">${esc(a.flat)}, ${esc(a.area)}</p>
-        ${a.landmark ? `<p class="ad" style="font-size:12px; color:#666;">Landmark: ${esc(a.landmark)}</p>` : ""} <!-- 🔥 LANDMARK DISPLAY -->
+        ${a.landmark ? `<p class="ad" style="font-size:12px; color:#666;">Landmark: ${esc(a.landmark)}</p>` : ""}
         <p>${esc(titleCase(a.state))}, ${esc(a.pin)}</p><p class="ph">${p ? esc(pCompact(p)) + " &nbsp;|&nbsp; " : ""}${esc(a.email)}</p></div></div>
 
       <p class="ck-sec">Price details</p>
@@ -392,6 +393,39 @@ import * as FB from "./firebase.js";
     if (first) $(first).focus();
     return !first;
   }
+
+  /* ================= STOCK ================= */
+  const stockErr = m => Object.assign(new Error(m), { stock: true });
+  const itemLabel = it => `${it.name}${it.color || it.size ? " (" + [it.color, it.size].filter(Boolean).join(" / ") + ")" : ""}`;
+
+  /* quick check BEFORE payment (so the customer never pays for sold-out items). Returns "" if all OK, else a message */
+  async function checkStock() {
+    try {
+      const { db, doc, getDoc } = FB;
+      const ids = [...new Set(S.items.map(i => i.id))];
+      const snaps = await Promise.all(ids.map(id => getDoc(doc(db, CFG.productsCollection, id))));
+      const map = {};
+      snaps.forEach(s => { if (s.exists()) map[s.id] = s.data(); });
+
+      // same product+color+size can appear in 2 cart lines; add them up
+      const need = {};
+      S.items.forEach(it => { const k = it.id + "|" + it.color + "|" + it.size; need[k] = (need[k] || 0) + it.qty; });
+
+      for (const it of S.items) {
+        const p = map[it.id];
+        if (!p || String(p.status || "active").toLowerCase() === "draft") return `${it.name} is no longer available`;
+        const v = (p.variants || {})[it.color];
+        const have = (v && v.sizeStock) ? (Number(v.sizeStock[it.size]) || 0) : (Number(p.stock) || 0);
+        const want = need[it.id + "|" + it.color + "|" + it.size];
+        if (have < want) return have <= 0 ? `${itemLabel(it)} is sold out` : `${itemLabel(it)} – only ${have} left`;
+      }
+      return "";
+    } catch (e) {
+      console.warn("Stock check skipped:", e);
+      return "";   // network problem: the transaction in placeOrder is still the final safety net
+    }
+  }
+
   /* ---------- order ---------- */
   /* manual = true  -> customer paid by scanning the QR, admin must verify the UTR (paymentStatus "verification") */
   async function placeOrder(method, paymentId, manual) {
@@ -404,27 +438,83 @@ import * as FB from "./firebase.js";
       paymentMethod: method, paymentId: paymentId || "",
       paymentStatus: method === "cod" ? "pending" : (manual ? "verification" : "paid"),
       upiId: manual ? CFG.upiId : "",
-      status: "pending"
+      status: "pending",
+      stockReduced: true     // admin uses this to give the stock back if the order is cancelled / payment rejected
     };
     S.busy = true; render();
     try {
       const { db, doc, collection, runTransaction, serverTimestamp } = FB;
       if (!db || !doc || !collection || !runTransaction)
-        throw new Error("firebase.js must export db, doc, collection, runTransaction (and addDoc, serverTimestamp)");
+        throw new Error("firebase.js must export db, doc, collection, runTransaction (and serverTimestamp)");
 
       const counterRef = doc(db, "counters", "orders");
       const orderRef = doc(collection(db, CFG.ordersCollection));   // auto document id
 
       await runTransaction(db, async tx => {
-        const snap = await tx.get(counterRef);
-        const next = (snap.exists() ? Number(snap.data().last) || 0 : 0) + 1;
+        /* ---- 1) ALL READS FIRST ---- */
+        const counterSnap = await tx.get(counterRef);
+        const ids = [...new Set(S.items.map(i => i.id))];
+        const pSnaps = await Promise.all(ids.map(id => tx.get(doc(db, CFG.productsCollection, id))));
+
+        /* ---- 2) CHECK STOCK + CALCULATE NEW VALUES ---- */
+        const writes = [];
+        pSnaps.forEach((snap, k) => {
+          const list = S.items.filter(i => i.id === ids[k]);
+          if (!snap.exists()) throw stockErr(`${list[0].name} is no longer available`);
+          const p = snap.data();
+          if (String(p.status || "active").toLowerCase() === "draft") throw stockErr(`${list[0].name} is no longer available`);
+
+          const variants = JSON.parse(JSON.stringify(p.variants || {}));
+          let stock = Number(p.stock) || 0;
+
+          list.forEach(it => {
+            const v = variants[it.color];
+            if (v && v.sizeStock) {
+              const have = Number(v.sizeStock[it.size]) || 0;
+              if (have < it.qty) throw stockErr(have <= 0 ? `${itemLabel(it)} is sold out` : `${itemLabel(it)} – only ${have} left`);
+              v.sizeStock[it.size] = have - it.qty;
+            } else {
+              if (stock < it.qty) throw stockErr(`${it.name} is out of stock`);
+              stock -= it.qty;
+            }
+          });
+
+          const upd = {};
+          if (Object.keys(variants).length) {
+            const colorSold = {}, colorStock = {};
+            let total = 0;
+            Object.entries(variants).forEach(([c, v]) => {
+              const ss = v.sizeStock || {};
+              v.stock = (v.sizes || []).reduce((acc, s) => acc + (Number(ss[s]) || 0), 0);
+              v.soldSizes = (v.sizes || []).filter(s => (Number(ss[s]) || 0) <= 0);
+              colorSold[c] = v.soldSizes;
+              colorStock[c] = v.stock;
+              total += v.stock;
+            });
+            Object.assign(upd, { variants, colorSold, colorStock, stock: total });
+          } else {
+            upd.stock = stock;
+          }
+          upd.updatedAt = serverTimestamp ? serverTimestamp() : new Date();
+          writes.push([doc(db, CFG.productsCollection, ids[k]), upd]);
+        });
+
+        /* ---- 3) ALL WRITES (order number + stock + order) ---- */
+        const next = (counterSnap.exists() ? Number(counterSnap.data().last) || 0 : 0) + 1;
         order.orderId = "AURA#" + String(next).padStart(2, "0");     // 1 -> AURA#01 ... 100 -> AURA#100
         tx.set(counterRef, { last: next });
+        writes.forEach(([ref, upd]) => tx.update(ref, upd));
         tx.set(orderRef, { ...order, createdAt: serverTimestamp ? serverTimestamp() : new Date() });
       });
     } catch (err) {
       console.error("Order save failed:", err);
-      S.busy = false; render(); toast("Couldn't place your order. Please try again.", true);
+      S.busy = false; render();
+      if (err && err.stock) {
+        toast(err.message + (method !== "cod" && manual ? ". If you already paid, contact support with your UTR." : ""), true);
+        S.step = "summary"; render();
+      } else {
+        toast("Couldn't place your order. Please try again.", true);
+      }
       return;
     }
     S.busy = false; S.order = order; S.step = "done"; S.utr = "";
@@ -485,8 +575,8 @@ import * as FB from "./firebase.js";
       const mob = $("ckMob") ? digits($("ckMob").value) : "";
       saveAddr({
         pin: $("ckPin").value.trim(), city: $("ckCity").value.trim(), state: $("ckState").value.trim(),
-        flat: $("ckFlat").value.trim(), area: $("ckArea").value.trim(), 
-        landmark: $("ckLandmark").value.trim(), // 🔥 LANDMARK SAVED
+        flat: $("ckFlat").value.trim(), area: $("ckArea").value.trim(),
+        landmark: $("ckLandmark").value.trim(),
         name: $("ckName").value.trim(), email: $("ckMail").value.trim(),
         phone: mob ? "+91" + mob : (S.user && S.user.phoneNumber) || "",
         label: (document.querySelector('input[name="ckLbl"]:checked') || {}).value || "home"
@@ -494,11 +584,20 @@ import * as FB from "./firebase.js";
       S.step = "summary"; render(); flash("Your new address has been updated successfully.");
     }
     else if (a === "editAddr") { S.step = "address"; S.reveal = true; render(); }
-    /* Coupon & Gift Card events hidden */
     else if (a === "method") { S.method = S.method === b.dataset.m ? null : b.dataset.m; S.tip = false; render(); }
-    else if (a === "cod") { if (!S.busy && CFG.codEnabled) placeOrder("cod"); }
-    else if (a === "pay") payOnline();
-    else if (a === "upi") { S.method = "upi"; S.step = "upi"; render(); }
+    else if (a === "cod") {
+      if (S.busy || !CFG.codEnabled) return;
+      const m = await checkStock(); if (m) return toast(m, true);
+      placeOrder("cod");
+    }
+    else if (a === "pay") {
+      const m = await checkStock(); if (m) return toast(m, true);
+      payOnline();
+    }
+    else if (a === "upi") {
+      const m = await checkStock(); if (m) return toast(m, true);
+      S.method = "upi"; S.step = "upi"; render();
+    }
     else if (a === "copyUpi") {
       try { await navigator.clipboard.writeText(CFG.upiId); toast("UPI ID copied"); }
       catch (err) { toast("Copy failed. UPI ID: " + CFG.upiId, true); }
@@ -528,7 +627,7 @@ import * as FB from "./firebase.js";
     }
     if (e.target.closest(".ck-f")) setErr(id, "");
   });
-  
+
   root.addEventListener("keydown", e => {
     if (e.key !== "Enter") return;
     if (e.target.id === "ckPhone" && !e.target.readOnly) root.querySelector('[data-a="login"]')?.click();
