@@ -14,8 +14,8 @@ import * as FB from "./firebase.js";
     freeShipOver: 999,
     shipFee: 60,
     prepaidOff: 40,
-    codFee: 50,
-    codEnabled: false,             // set true to show Cash on Delivery again
+    codFee: 0,
+    codEnabled: true,             // set true to show Cash on Delivery again
     razorpayKey: "",               // paste your Razorpay key_id to enable AUTOMATIC online payment (then QR step is skipped)
     /* ---- manual UPI QR (used while razorpayKey is empty) ---- */
     upiId: "sofiajohnsonece-2@oksbi",
@@ -289,7 +289,7 @@ import * as FB from "./firebase.js";
     return `<div class="ck-pay ${open ? "open" : ""}">
       <button type="button" class="ck-pay-h" data-a="method" data-m="${m.id}" aria-expanded="${open}">
         <span class="ico">${m.ico}</span>
-        <span class="nm"><b>${m.name}</b>${prepaid ? `<em class="ok">Get ${inr(CFG.prepaidOff)} off</em>` : `<em class="bad">${inr(CFG.codFee)} COD fee added</em>`}</span>
+        <span class="nm"><b>${m.name}</b>${prepaid ? `<em class="ok">Get ${inr(CFG.prepaidOff)} off</em>` : (CFG.codFee ? `<em class="bad">${inr(CFG.codFee)} COD fee added</em>` : "")}</span>
         <span class="amt">${prepaid ? `<s>${money2(t.base)}</s>` : ""}<b>${money2(t.total)}</b></span>
         ${open ? I.down : I.right}
       </button>
@@ -398,6 +398,16 @@ import * as FB from "./firebase.js";
   const stockErr = m => Object.assign(new Error(m), { stock: true });
   const itemLabel = it => `${it.name}${it.color || it.size ? " (" + [it.color, it.size].filter(Boolean).join(" / ") + ")" : ""}`;
 
+  /* find the variant of a cart item.
+     If the cart line has no color (old cart), use the first color that has this size. */
+  function pickVariant(variants, it) {
+    if (it.color && variants[it.color]) return variants[it.color];
+    if (!it.color) {
+      return Object.values(variants).find(x => x && x.sizeStock && x.sizeStock[it.size] !== undefined) || null;
+    }
+    return null;
+  }
+
   /* quick check BEFORE payment (so the customer never pays for sold-out items). Returns "" if all OK, else a message */
   async function checkStock() {
     try {
@@ -414,7 +424,7 @@ import * as FB from "./firebase.js";
       for (const it of S.items) {
         const p = map[it.id];
         if (!p || String(p.status || "active").toLowerCase() === "draft") return `${it.name} is no longer available`;
-        const v = (p.variants || {})[it.color];
+        const v = pickVariant(p.variants || {}, it);
         const have = (v && v.sizeStock) ? (Number(v.sizeStock[it.size]) || 0) : (Number(p.stock) || 0);
         const want = need[it.id + "|" + it.color + "|" + it.size];
         if (have < want) return have <= 0 ? `${itemLabel(it)} is sold out` : `${itemLabel(it)} – only ${have} left`;
@@ -468,7 +478,7 @@ import * as FB from "./firebase.js";
           let stock = Number(p.stock) || 0;
 
           list.forEach(it => {
-            const v = variants[it.color];
+            const v = pickVariant(variants, it);   // works even if the cart line has no color
             if (v && v.sizeStock) {
               const have = Number(v.sizeStock[it.size]) || 0;
               if (have < it.qty) throw stockErr(have <= 0 ? `${itemLabel(it)} is sold out` : `${itemLabel(it)} – only ${have} left`);

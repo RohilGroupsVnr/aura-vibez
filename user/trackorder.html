@@ -327,7 +327,6 @@
         }
     </style>
 
-    <!-- ===== TRACK ORDER PAGE CSS ===== -->
     <style>
         .track-hero {
             padding: 60px 20px 30px;
@@ -378,6 +377,7 @@
             box-shadow: 0 20px 50px -25px rgba(43, 27, 33, .25);
             padding: 36px 30px;
             border: 1px solid #F1E7EA;
+            scroll-margin-top: 90px;
         }
 
         .track-card h2 {
@@ -394,6 +394,7 @@
             margin: 0 0 22px;
         }
 
+        /* ---- Form ---- */
         .track-form {
             display: grid;
             gap: 14px;
@@ -452,6 +453,12 @@
             box-shadow: 0 16px 32px -12px rgba(163, 25, 74, .9);
         }
 
+        .track-submit:disabled {
+            opacity: .6;
+            cursor: wait;
+            transform: none;
+        }
+
         .track-msg {
             min-height: 1.3em;
             font-size: .86rem;
@@ -464,288 +471,335 @@
             color: #17805A;
         }
 
+        /* ---- Result ---- */
+        .track-result[hidden],
+        .tr-cancelled[hidden],
+        .track-cancel-btn[hidden] {
+            display: none !important;
+        }
+
         .track-result {
-            margin-top: 28px;
-            padding-top: 24px;
-            border-top: 1px dashed #E8E1D3;
-            display: none;
+            animation: trFade .45s ease both;
         }
 
-        .track-result.show {
-            display: block;
+        @keyframes trFade {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
         }
 
-        .track-result h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.3rem;
-            color: #2B1B21;
-            margin: 0 0 4px;
+        .tr-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            flex-wrap: wrap;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #E8E1D3;
         }
 
-        .track-result .order-meta {
-            font-size: .82rem;
-            color: #7B6A6F;
-            margin-bottom: 18px;
-        }
-
-        .track-steps {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            position: relative;
-        }
-
-        .track-steps::before {
-            content: "";
-            position: absolute;
-            left: 13px;
-            top: 10px;
-            bottom: 10px;
-            width: 2px;
-            background: #F1E7EA;
-        }
-
-        .track-steps li {
-            position: relative;
-            padding: 0 0 22px 44px;
-            font-size: .92rem;
-            color: #7B6A6F;
-        }
-
-        .track-steps li::before {
-            content: "";
-            position: absolute;
-            left: 6px;
-            top: 4px;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #fff;
-            border: 2px solid #E8E1D3;
-        }
-
-        .track-steps li.done::before {
-            background: #A3194A;
-            border-color: #A3194A;
-        }
-
-        .track-steps li.done {
-            color: #2B1B21;
+        .tr-label {
+            font-size: .68rem;
+            letter-spacing: .28em;
+            text-transform: uppercase;
+            color: #8B8378;
             font-weight: 500;
         }
 
-        .track-steps li b {
-            display: block;
+        .tr-head h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.9rem;
+            font-weight: 600;
             color: #2B1B21;
+            margin: 2px 0 2px;
+            word-break: break-all;
         }
 
-        .track-steps li small {
-            display: block;
+        .tr-date {
+            margin: 0;
+            font-size: .82rem;
+            color: #7B6A6F;
+        }
+
+        .tr-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 999px;
             font-size: .78rem;
-            color: #A79A9F;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            background: #FFF1D6;
+            color: #9A6200;
+        }
+
+        .tr-badge i {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .tr-badge.shipped {
+            background: #E3EEFF;
+            color: #1F5FBF;
+        }
+
+        .tr-badge.delivered {
+            background: #DDF5EA;
+            color: #17805A;
+        }
+
+        .tr-badge.cancelled {
+            background: #FDE4E8;
+            color: #C0334F;
+        }
+
+        .tr-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0 6px;
+        }
+
+        .tr-summary>div {
+            background: #FFF9F0;
+            border: 1px solid #F1E7EA;
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+
+        .tr-summary span {
+            display: block;
+            font-size: .72rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: #8B8378;
+            margin-bottom: 4px;
+        }
+
+        .tr-summary b {
+            font-size: 1.02rem;
+            color: #2B1B21;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .tr-cancelled {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            margin: 20px 0 6px;
+            padding: 16px 18px;
+            background: #FDE4E8;
+            border-radius: 12px;
+            color: #C0334F;
+        }
+
+        .tr-cancelled i {
+            font-size: 1.4rem;
             margin-top: 2px;
         }
 
-        /* Cancel Button Style */
-        .track-cancel-btn {
+        .tr-cancelled b {
+            display: block;
+            color: #8A1F35;
+            font-size: .95rem;
+        }
+
+        .tr-cancelled small {
+            color: #A04456;
+            font-size: .8rem;
+        }
+
+        /* ---- Stepper (horizontal on desktop) ---- */
+        .tr-steps {
+            list-style: none;
+            display: flex;
+            padding: 0;
+            margin: 30px 0 8px;
+        }
+
+        .tr-steps.hide {
             display: none;
+        }
+
+        .tr-steps li {
+            flex: 1;
+            position: relative;
+            text-align: center;
+            padding-top: 46px;
+            font-size: .8rem;
+            color: #A79A9F;
+        }
+
+        .tr-steps li b {
+            display: block;
+            font-size: .92rem;
+            color: #7B6A6F;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .tr-steps li small {
+            display: block;
+            font-size: .76rem;
+        }
+
+        .tr-steps li .dot {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #E8E1D3;
+            color: #C9BFC3;
+            display: grid;
+            place-items: center;
+            font-size: .85rem;
+            z-index: 2;
+            transition: all .3s;
+        }
+
+        .tr-steps li::before {
+            content: "";
+            position: absolute;
+            top: 17px;
+            right: 50%;
             width: 100%;
-            padding: 12px;
-            margin-top: 20px;
+            height: 2px;
+            background: #F1E7EA;
+            z-index: 1;
+        }
+
+        .tr-steps li:first-child::before {
+            display: none;
+        }
+
+        .tr-steps li.done::before {
+            background: #A3194A;
+        }
+
+        .tr-steps li.done .dot {
+            background: #A3194A;
+            border-color: #A3194A;
+            color: #fff;
+        }
+
+        .tr-steps li.done b {
+            color: #2B1B21;
+        }
+
+        .tr-steps li.current .dot {
+            box-shadow: 0 0 0 6px rgba(163, 25, 74, .15);
+        }
+
+        /* ---- Actions ---- */
+        .tr-actions {
+            display: grid;
+            gap: 12px;
+            margin-top: 26px;
+            padding-top: 22px;
+            border-top: 1px dashed #E8E1D3;
+        }
+
+        .track-cancel-btn {
+            width: 100%;
+            padding: 13px;
             background: transparent;
             border: 1.5px solid #C0334F;
             color: #C0334F;
             border-radius: 999px;
+            font-family: inherit;
             font-weight: 600;
-            font-size: 0.82rem;
-            letter-spacing: 0.1em;
+            font-size: .8rem;
+            letter-spacing: .12em;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all .3s;
         }
 
         .track-cancel-btn:hover {
             background: #FDE4E8;
         }
 
-        .track-cancel-btn.show {
-            display: block;
+        .track-cancel-btn:disabled {
+            opacity: .6;
+            cursor: wait;
         }
 
-        /* ===== AURA ACCOUNT MENU ===== */
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .acct {
-            position: relative;
-            align-items: center;
-        }
-
-        .is-user .acct {
-            display: flex !important;
-        }
-
-        .is-user .hm-login {
-            display: none !important;
-        }
-
-        .acct .avatar {
-            display: grid;
-            place-items: center;
-            width: 42px;
-            height: 42px;
-            border: 1px solid #ead8dd;
-            border-radius: 50%;
-            background: #fff9f0;
-            color: #8b1e3f;
-            font-size: 17px;
-            cursor: pointer;
-        }
-
-        .acct .menu {
-            position: absolute;
-            top: calc(100% + 12px);
-            right: 0;
-            width: 230px;
-            padding: 12px;
-            border: 1px solid #eee0e3;
-            border-radius: 12px;
-            background: #fffaf5;
-            box-shadow: 0 12px 35px rgba(43, 27, 33, .16);
-            z-index: 500;
-            display: none;
-        }
-
-        .acct.open .menu {
-            display: block;
-        }
-
-        .acct .who {
-            display: grid;
-            gap: 5px;
-            padding: 10px 9px 14px;
-            margin-bottom: 5px;
-            border-bottom: 1px solid #eee0e3;
-            overflow-wrap: anywhere;
-        }
-
-        .acct .who b {
-            color: #2b1b21;
-            font-size: 14px;
-        }
-
-        .acct .who small {
-            color: #827078;
-            font-size: 12px;
-        }
-
-        .acct .menu a,
-        .acct .menu>button {
+        .track-again-btn {
             width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 10px;
-            border: 0;
-            border-radius: 8px;
-            background: transparent;
-            color: #35232b;
-            font: inherit;
-            font-size: 14px;
-            text-decoration: none;
-            text-align: left;
-            cursor: pointer;
-        }
-
-        .acct .menu a:hover,
-        .acct .menu>button:hover {
-            background: #f8e9ee;
-            color: #8b1e3f;
-        }
-
-        .acct .menu>button {
-            margin-top: 5px;
-            border: 1px solid #ead8dd;
-            justify-content: center;
-        }
-
-        #auraOtpSection[hidden] {
-            display: none;
-        }
-
-        #auraOtpSection {
-            display: grid;
-            gap: 12px;
-            margin-top: 4px;
-        }
-
-        #auraOtp {
-            letter-spacing: .25em;
-            text-align: center;
+            padding: 13px;
+            background: #FFF9F0;
+            border: 1.5px solid #E8E1D3;
+            color: #2B1B21;
+            border-radius: 999px;
+            font-family: inherit;
             font-weight: 600;
+            font-size: .8rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all .3s;
         }
 
-        #recaptcha-container {
-            display: flex;
-            justify-content: center;
-            overflow: hidden;
+        .track-again-btn:hover {
+            border-color: #A3194A;
+            color: #A3194A;
         }
 
-        .aura-login-switch {
-            line-height: 1.7;
-        }
-
-        /* ===== MOBILE RESPONSIVE ===== */
-        @media (max-width: 700px) {
-            .nav-actions {
-                gap: 7px;
+        @media (max-width: 600px) {
+            .track-card {
+                padding: 26px 18px;
             }
 
-            .nav-actions .hm-login {
-                padding: 8px 10px;
-                font-size: 12px;
-            }
-
-            .acct .avatar {
-                width: 38px;
-                height: 38px;
-            }
-
-            .acct .menu {
-                position: fixed;
-                top: 76px;
-                right: 12px;
-                width: min(270px, calc(100vw - 24px));
-            }
-
-            .aura-login-overlay {
-                padding: 12px;
-                overflow-y: auto;
-            }
-
-            .aura-login-card {
-                width: 100%;
-                max-width: 430px;
-                margin: auto;
+            .tr-summary {
                 grid-template-columns: 1fr;
-                max-height: calc(100dvh - 24px);
-                overflow-y: auto;
             }
 
-            .aura-login-img {
-                height: 130px;
-                min-height: 130px;
+            .tr-head h3 {
+                font-size: 1.6rem;
             }
 
-            .aura-login-body {
-                padding: 24px 20px;
+            /* vertical stepper on mobile */
+            .tr-steps {
+                flex-direction: column;
+                margin-top: 24px;
             }
 
-            .aura-login-body h2 {
-                font-size: 2rem;
+            .tr-steps li {
+                text-align: left;
+                padding: 0 0 0 54px;
+                min-height: 72px;
+            }
+
+            .tr-steps li:last-child {
+                min-height: 0;
+            }
+
+            .tr-steps li .dot {
+                left: 0;
+                transform: none;
+            }
+
+            .tr-steps li::before {
+                right: auto;
+                left: 17px;
+                top: -36px;
+                width: 2px;
+                height: 72px;
             }
         }
     </style>
@@ -831,150 +885,7 @@
         </defs>
     </svg>
 
-    <!-- Announcement Bar -->
-    <div class="hm-ann">
-        <span>Track Your Order</span>
-        <span class="pill">Live Updates</span>
-        <span>Delivered with Care</span>
-    </div>
-
-
-    <!-- Navbar -->
-    <nav class="nav" id="nav" aria-label="Main">
-        <a href="index.html" class="brand"><img src="../assets/logo.png" alt="AURA"></a>
-        <div class="links">
-            <a href="index.html">Home</a>
-            <a href="newcollections.html">New Collection</a>
-            <div class="nav-dd" id="shopDD">
-                <a href="shop.html" class="nav-dd-trigger" aria-haspopup="true" aria-expanded="false">Shop <svg
-                        class="dd-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <use href="#i-chev" />
-                    </svg></a>
-                <div class="dd-menu" role="menu" aria-label="Shop categories">
-                    <a href="shop.html?cat=kurta-sets" role="menuitem">Kurta Sets</a>
-                    <a href="shop.html?cat=tops" role="menuitem">Tops</a>
-                    <a href="shop.html?cat=anarkali" role="menuitem">Anarkali</a>
-                    <a href="shop.html?cat=sarees" role="menuitem">Sarees</a>
-
-                    <!-- College & Office Wear -->
-                    <a href="shop.html?cat=college-wear" role="menuitem">College Wear</a>
-                    <a href="shop.html?cat=office-wear" role="menuitem">Office Wear</a>
-
-                    <div class="dd-sub"><button type="button" class="dd-sub-toggle"
-                            aria-expanded="false"><span>Dresses</span><svg width="14" height="14" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" aria-hidden="true">
-                                <use href="#i-chev" />
-                            </svg></button>
-                        <div class="dd-sub-list"><a href="shop.html?cat=dresses&type=party-wear" role="menuitem">Party
-                                Wear</a><a href="shop.html?cat=dresses&type=maxi-dresses" role="menuitem">Maxi
-                                Dresses</a><a href="shop.html?cat=dresses&type=casual-dresses" role="menuitem">Casual
-                                Dresses</a><a href="shop.html?cat=dresses&type=floral-dresses" role="menuitem">Floral
-                                Dresses</a></div>
-                    </div>
-                    <a href="shop.html?cat=night-suits" role="menuitem">Night Suits</a>
-                    <div class="dd-sub"><button type="button" class="dd-sub-toggle"
-                            aria-expanded="false"><span>Bottomwear</span><svg width="14" height="14" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" aria-hidden="true">
-                                <use href="#i-chev" />
-                            </svg></button>
-                        <div class="dd-sub-list"><a href="shop.html?cat=leggings" role="menuitem">Leggings</a><a
-                                href="shop.html?cat=palazzo" role="menuitem">Palazzo</a></div>
-                    </div>
-                    <a href="shop.html?cat=shawls" role="menuitem">Shawls</a><a href="shop.html?cat=t-shirt"
-                        role="menuitem">T-shirt</a><a href="shop.html" role="menuitem" class="dd-all">View all
-                        products</a>
-                </div>
-            </div>
-            <a href="./trackorder.html" class="act">Track Order</a>
-        </div>
-
-        <form class="hm-search" id="hmSearch" role="search">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                aria-hidden="true">
-                <use href="#i-search" />
-            </svg>
-            <input class="hm-in" type="search" name="q" placeholder="Search fashion, beauty, jewellery…"
-                aria-label="Search products" autocomplete="off">
-        </form>
-
-        <div class="nav-actions">
-            <button type="button" class="hm-login" id="hmLogin" aria-haspopup="dialog"
-                aria-controls="auraLoginOverlay"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
-                    aria-hidden="true">
-                    <use href="#i-user" />
-                </svg><span>Login</span></button>
-            <button class="icon-btn" id="wishBtn" aria-label="Wishlist" onclick="location.href='wishlist.html'"><svg
-                    width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <use href="#i-heart" />
-                </svg><span class="badge" id="wishBadge">0</span></button>
-            <button class="icon-btn" id="cartBtn" aria-label="Shopping Cart" onclick="location.href='cart.html'"><svg
-                    width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="19" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg><span class="badge" id="cartBadge">0</span></button>
-            <div class="acct" id="acct" style="display:none">
-                <button class="avatar" id="avatarBtn" type="button" aria-label="Account menu" aria-haspopup="true"
-                    aria-expanded="false"><i class="fa-regular fa-user"></i></button>
-                <div class="menu" id="acctMenu">
-                    <div class="who"><b id="userName">AURA Customer</b><small id="userEmail">Signed in</small></div><a
-                        href="order-history.html"><i class="fa-solid fa-box"></i> Order
-                        History</a><a href="wishlist.html"><i class="fa-regular fa-heart"></i> Wishlist</a><button
-                        type="button" id="logoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        Logout</button>
-                </div>
-            </div>
-            <button class="icon-btn burger" id="burger" aria-label="Open menu" aria-expanded="false"
-                aria-controls="mmenu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-                    <path d="M4 6h16M4 12h16M4 18h16" />
-                </svg></button>
-        </div>
-    </nav>
-
-    <!-- Mobile menu -->
-    <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu">
-        <button class="icon-btn mclose" id="mclose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
-        <a href="index.html" class="mmenu-logo"><img src="../assets/logo.png" alt="AURA"></a>
-        <div class="mmenu-icons"><a href="wishlist.html" class="m-icon-link"><i
-                    class="fa-regular fa-heart"></i><span>Wishlist</span><span class="badge"
-                    id="mWishBadge">0</span></a><a href="cart.html" class="m-icon-link"><i
-                    class="fa-solid fa-bag-shopping"></i><span>Cart</span><span class="badge"
-                    id="mCartBadge">0</span></a></div>
-        <a href="index.html">Home</a><a href="newcollections.html">New
-            Collections</a>
-        <div class="m-dropdown"><button type="button" class="m-dropdown-toggle"><span>Shop</span><i
-                    class="fa-solid fa-chevron-down"></i></button>
-            <div class="m-dropdown-menu">
-                <a href="shop.html?cat=kurta-sets">Kurta Sets</a>
-                <a href="shop.html?cat=tops" role="menuitem">Tops</a>
-                <a href="shop.html?cat=anarkali">Anarkali</a>
-                <a href="shop.html?cat=sarees">Sarees</a>
-
-                <!-- Mobile Menu College & Office Wear -->
-                <a href="shop.html?cat=college-wear">College Wear</a>
-                <a href="shop.html?cat=office-wear">Office Wear</a>
-
-                <a href="shop.html?cat=night-suits">Night Suits</a>
-                <a href="shop.html?cat=shawls">Shawls</a>
-                <a href="shop.html?cat=t-shirt">T-shirt</a>
-                <a href="shop.html">View All Products</a>
-            </div>
-        </div>
-        <div class="m-dropdown"><button type="button" class="m-dropdown-toggle"><span>Bottomwear</span><i
-                    class="fa-solid fa-chevron-down"></i></button>
-            <div class="m-dropdown-menu"><a href="shop.html?cat=leggings">Leggings</a><a
-                    href="shop.html?cat=palazzo">Palazzo</a></div>
-        </div>
-        <a href="trackorder.html" class="act">Track Order</a>
-    </div>
-
+    <script src="js/navbar.js" data-active="track"></script>
     <!-- ===== TRACK ORDER PAGE ===== -->
     <section class="track-hero">
         <span class="eyebrow">ORDER TRACKING</span>
@@ -982,42 +893,76 @@
         <p>Enter your Order ID and Phone Number to see live delivery
             updates.</p>
     </section>
-
     <section class="track-wrap">
-        <div class="track-card">
-            <h2>Track your order</h2>
-            <p class="hint">You can find your Order ID in the confirmation
-                message we sent you.</p>
+        <div class="track-card" id="trackCard">
 
-            <form class="track-form" id="trackForm">
-                <label class="track-field">
-                    <span>Order ID (e.g., AURA74073068)</span>
-                    <input type="text" id="trackOrderId" placeholder="AURA..." required>
-                </label>
-                <label class="track-field">
-                    <span>Registered Phone Number</span>
-                    <input type="tel" id="trackPhone" placeholder="9876543210" required>
-                </label>
-                <button type="submit" class="track-submit" id="trackSubmitBtn">Track Order</button>
-                <p class="track-msg" id="trackMsg" role="status" aria-live="polite"></p>
-            </form>
+            <!-- FORM VIEW -->
+            <div id="trackFormView">
+                <h2>Track your order</h2>
+                <p class="hint">You can find your Order ID in the confirmation message we sent you.</p>
 
-            <div class="track-result" id="trackResult">
-                <h3>Order #<span id="resOrderId"></span></h3>
-                <div class="order-meta">Status: <b id="resStatus"
-                        style="text-transform: capitalize; color: #A3194A;"></b>
-                    | Total: <b id="resTotal"></b></div>
-                <ul class="track-steps" id="trackSteps">
-                    <li id="step-pending"><b>Order Confirmed</b><small>We
-                            received your order</small></li>
-                    <li id="step-shipped"><b>Shipped</b><small>Handed over
-                            to courier partner</small></li>
-                    <li id="step-delivered"><b>Delivered</b><small>Enjoy
-                            your AURA picks</small></li>
-                </ul>
-                <!-- Cancel Order Button -->
-                <button type="button" id="cancelOrderBtn" class="track-cancel-btn">Cancel Order</button>
+                <form class="track-form" id="trackForm">
+                    <label class="track-field">
+                        <span>Order ID (e.g., AURA74073068)</span>
+                        <input type="text" id="trackOrderId" placeholder="AURA..." required>
+                    </label>
+                    <label class="track-field">
+                        <span>Registered Phone Number</span>
+                        <input type="tel" id="trackPhone" placeholder="9876543210" required>
+                    </label>
+                    <button type="submit" class="track-submit" id="trackSubmitBtn">Track Order</button>
+                    <p class="track-msg" id="trackMsg" role="status" aria-live="polite"></p>
+                </form>
             </div>
+
+            <!-- RESULT VIEW (same place) -->
+            <div class="track-result" id="trackResult" hidden>
+                <div class="tr-head">
+                    <div>
+                        <span class="tr-label">Order ID</span>
+                        <h3>#<span id="resOrderId"></span></h3>
+                        <p class="tr-date" id="resDate"></p>
+                    </div>
+                    <span class="tr-badge" id="resBadge"><i></i><span id="resStatus"></span></span>
+                </div>
+
+                <div class="tr-summary">
+                    <div><span>Order Total</span><b id="resTotal">—</b></div>
+                    <div><span>Items</span><b id="resItems">—</b></div>
+                    <div><span>Payment</span><b id="resPayment">—</b></div>
+                </div>
+
+                <div class="tr-cancelled" id="resCancelled" hidden>
+                    <i class="fa-solid fa-circle-xmark"></i>
+                    <div>
+                        <b>This order has been cancelled</b>
+                        <small>If you were charged, the amount will be refunded as per our policy.</small>
+                    </div>
+                </div>
+
+                <ul class="tr-steps" id="trackSteps">
+                    <li id="step-pending">
+                        <span class="dot"><i class="fa-solid fa-receipt"></i></span>
+                        <b>Order Confirmed</b><small>We received your order</small>
+                    </li>
+                    <li id="step-shipped">
+                        <span class="dot"><i class="fa-solid fa-truck-fast"></i></span>
+                        <b>Shipped</b><small>Handed over to courier partner</small>
+                    </li>
+                    <li id="step-delivered">
+                        <span class="dot"><i class="fa-solid fa-box-open"></i></span>
+                        <b>Delivered</b><small>Enjoy your AURA picks</small>
+                    </li>
+                </ul>
+
+                <div class="tr-actions">
+                    <button type="button" id="cancelOrderBtn" class="track-cancel-btn" hidden>Cancel Order</button>
+                    <button type="button" id="trackAgainBtn" class="track-again-btn">
+                        <i class="fa-solid fa-arrow-left"></i> Track another order
+                    </button>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -1222,29 +1167,98 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             var form = document.getElementById('trackForm');
+            var formView = document.getElementById('trackFormView');
             var msg = document.getElementById('trackMsg');
             var result = document.getElementById('trackResult');
+            var card = document.getElementById('trackCard');
             var btn = document.getElementById('trackSubmitBtn');
             var cancelBtn = document.getElementById('cancelOrderBtn');
+            var againBtn = document.getElementById('trackAgainBtn');
+            var stepsEl = document.getElementById('trackSteps');
+            var cancelledBox = document.getElementById('resCancelled');
+            var badge = document.getElementById('resBadge');
             var currentOrderDocId = null;
+
+            function showForm() {
+                result.hidden = true;
+                formView.hidden = false;
+                msg.textContent = '';
+                msg.className = 'track-msg';
+                form.reset();
+                currentOrderDocId = null;
+                card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function renderResult(data, fallbackId) {
+                var status = (data.status || 'pending').toLowerCase();
+
+                document.getElementById('resOrderId').textContent = data.orderId || fallbackId;
+                document.getElementById('resStatus').textContent = status;
+                document.getElementById('resTotal').textContent = '₹' + Number(data.total || 0).toLocaleString('en-IN');
+
+                // Date
+                var dateEl = document.getElementById('resDate');
+                var d = data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : null;
+                dateEl.textContent = d
+                    ? 'Placed on ' + d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                    : '';
+
+                // Items count
+                var itemsEl = document.getElementById('resItems');
+                if (Array.isArray(data.items)) {
+                    var n = data.items.reduce(function (s, it) { return s + (Number(it.qty) || 1); }, 0);
+                    itemsEl.textContent = n + (n === 1 ? ' item' : ' items');
+                } else {
+                    itemsEl.textContent = '—';
+                }
+
+                // Payment
+                document.getElementById('resPayment').textContent = data.paymentMethod || data.payment || '—';
+
+                // Badge
+                badge.className = 'tr-badge ' + status;
+
+                // Steps
+                var steps = [
+                    document.getElementById('step-pending'),
+                    document.getElementById('step-shipped'),
+                    document.getElementById('step-delivered')
+                ];
+                steps.forEach(function (el) { el.classList.remove('done', 'current'); });
+
+                var isCancelled = status === 'cancelled';
+                cancelledBox.hidden = !isCancelled;
+                stepsEl.classList.toggle('hide', isCancelled);
+                cancelBtn.hidden = status !== 'pending';
+                cancelBtn.disabled = false;
+                cancelBtn.textContent = 'Cancel Order';
+
+                if (!isCancelled) {
+                    var level = status === 'delivered' ? 3 : status === 'shipped' ? 2 : 1;
+                    for (var i = 0; i < level; i++) steps[i].classList.add('done');
+                    steps[level - 1].classList.add('current');
+                }
+
+                formView.hidden = true;
+                result.hidden = false;
+                card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
 
             if (form) {
                 form.addEventListener('submit', async function (e) {
                     e.preventDefault();
                     var orderId = document.getElementById('trackOrderId').value.trim();
-                    var phone = document.getElementById('trackPhone').value.trim();
+                    var phone = document.getElementById('trackPhone').value.replace(/\D/g, '');
 
-                    if (!orderId || !phone) {
-                        msg.textContent = 'Please enter both Order ID and Phone Number.';
+                    if (!orderId || phone.length < 10) {
+                        msg.textContent = 'Please enter a valid Order ID and 10-digit Phone Number.';
                         msg.className = 'track-msg';
                         return;
                     }
 
                     msg.textContent = 'Looking up your order…';
                     msg.className = 'track-msg';
-                    result.classList.remove('show');
                     btn.disabled = true;
-                    cancelBtn.classList.remove('show');
 
                     try {
                         const q = query(collection(db, "orders"), where("orderId", "==", orderId));
@@ -1252,72 +1266,38 @@
 
                         if (snap.empty) {
                             msg.textContent = 'Order not found. Please check your Order ID.';
-                            msg.className = 'track-msg';
-                            btn.disabled = false;
                             return;
                         }
 
                         const orderDoc = snap.docs[0];
                         const orderData = orderDoc.data();
-                        currentOrderDocId = orderDoc.id;
 
-                        const dbPhone = orderData.phone ? orderData.phone.slice(-10) : "";
-                        if (!dbPhone.includes(phone.slice(-10))) {
+                        const dbPhone = String(orderData.phone || '').replace(/\D/g, '').slice(-10);
+                        if (dbPhone !== phone.slice(-10)) {
                             msg.textContent = 'Phone number does not match this Order ID.';
-                            msg.className = 'track-msg';
-                            btn.disabled = false;
                             return;
                         }
 
-                        document.getElementById('resOrderId').textContent = orderData.orderId || orderId;
-                        document.getElementById('resStatus').textContent = orderData.status || 'pending';
-                        document.getElementById('resTotal').textContent = "₹" + Number(orderData.total || 0).toLocaleString("en-IN");
-
-                        const currentStatus = (orderData.status || 'pending').toLowerCase();
-                        const stepPending = document.getElementById('step-pending');
-                        const stepShipped = document.getElementById('step-shipped');
-                        const stepDelivered = document.getElementById('step-delivered');
-
-                        [stepPending, stepShipped, stepDelivered].forEach(el => el.classList.remove('done'));
-
-                        if (currentStatus === 'pending') {
-                            stepPending.classList.add('done');
-                            cancelBtn.classList.add('show');
-                        } else if (currentStatus === 'shipped') {
-                            stepPending.classList.add('done');
-                            stepShipped.classList.add('done');
-                        } else if (currentStatus === 'delivered') {
-                            stepPending.classList.add('done');
-                            stepShipped.classList.add('done');
-                            stepDelivered.classList.add('done');
-                        } else if (currentStatus === 'cancelled') {
-                            msg.textContent = 'This order has been cancelled.';
-                            msg.className = 'track-msg';
-                            btn.disabled = false;
-                            return;
-                        }
-
-                        result.classList.add('show');
-                        msg.textContent = 'Order found ✓';
-                        msg.className = 'track-msg ok';
+                        currentOrderDocId = orderDoc.id;
+                        renderResult(orderData, orderId);
 
                     } catch (error) {
                         console.error("Track error:", error);
                         msg.textContent = 'Something went wrong. Please try again.';
-                        msg.className = 'track-msg';
                     } finally {
                         btn.disabled = false;
                     }
                 });
             }
 
-            // CANCEL ORDER LOGIC
+            // TRACK ANOTHER
+            if (againBtn) againBtn.addEventListener('click', showForm);
+
+            // CANCEL ORDER
             if (cancelBtn) {
                 cancelBtn.addEventListener('click', async function () {
                     if (!currentOrderDocId) return;
-
-                    var confirmCancel = confirm("Are you sure you want to cancel this order? This cannot be undone.");
-                    if (!confirmCancel) return;
+                    if (!confirm("Are you sure you want to cancel this order? This cannot be undone.")) return;
 
                     cancelBtn.textContent = "Cancelling...";
                     cancelBtn.disabled = true;
@@ -1327,11 +1307,13 @@
                             status: "cancelled",
                             updatedAt: serverTimestamp()
                         });
-                        alert("Your order has been cancelled successfully.");
-                        cancelBtn.classList.remove('show');
-                        msg.textContent = 'Order has been cancelled.';
-                        msg.className = 'track-msg';
-                        result.classList.remove('show');
+                        // same place-la cancelled state-a update pannum
+                        renderResult({
+                            orderId: document.getElementById('resOrderId').textContent,
+                            status: 'cancelled',
+                            total: Number(document.getElementById('resTotal').textContent.replace(/[^\d.]/g, '')),
+                        });
+                        document.getElementById('resItems').textContent = document.getElementById('resItems').textContent;
                     } catch (err) {
                         console.error("Cancel error:", err);
                         alert("Failed to cancel order. Please try again.");
@@ -1440,7 +1422,7 @@
             });
         });
     </script>
-<script src="js/nav-menu.js"></script> 
+    <script src="js/nav-menu.js"></script>
     <script defer src="./js/home.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/cart-drawer.js"></script>

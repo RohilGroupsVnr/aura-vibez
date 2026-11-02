@@ -473,6 +473,7 @@
   <script type="module">
     import { db, collection, getDocs, query, orderBy, where, addDoc, doc, updateDoc, serverTimestamp } from "./js/firebase.js";
     import { adminReady } from "./js/admin-shell.js";
+    import * as FBX from "./js/firebase.js";   // runTransaction is read from here so the page still loads even if it isn't exported
 
     const $ = id => document.getElementById(id);
     const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -943,6 +944,45 @@
       Object.assign(o, fields);
     }
 
+    /* ---------- put the stock back when an order is cancelled / payment rejected (only once) ---------- */
+    const vTotal = v => v.sizeStock ? (v.sizes || []).reduce((a, s) => a + (Number(v.sizeStock[s]) || 0), 0) : (Number(v.stock) || 0);
+    /* same variant lookup as checkout.js, so stock goes back to exactly the variant it was taken from */
+    function pickVariant(variants, it) {
+      if (it.color && variants[it.color]) return variants[it.color];
+      return Object.values(variants).find(x => x && x.sizeStock && x.sizeStock[it.size] !== undefined) || null;
+    }
+    function restorePatch(p, lines) {
+      const variants = p.variants ? JSON.parse(JSON.stringify(p.variants)) : {};
+      const colorStock = Object.assign({}, p.colorStock || {});
+      const colorSold = Object.assign({}, p.colorSold || {});
+      let total = Number(p.stock) || 0, usedVariant = false;
+      lines.forEach(ln => {
+        const qty = Number(ln.qty) || 1, v = pickVariant(variants, ln);
+        if (v && v.sizeStock && ln.size && (ln.size in v.sizeStock)) {
+          v.sizeStock[ln.size] = (Number(v.sizeStock[ln.size]) || 0) + qty;
+          v.soldSizes = (v.sizes || []).filter(s => (Number(v.sizeStock[s]) || 0) <= 0);
+          v.stock = vTotal(v); colorStock[ln.color] = v.stock; colorSold[ln.color] = v.soldSizes; usedVariant = true;
+        } else total += qty;
+      });
+      if (usedVariant) total = Object.keys(variants).reduce((a, c) => a + vTotal(variants[c]), 0);
+      return usedVariant ? { stock: total, variants, colorStock, colorSold } : { stock: total };
+    }
+    async function restoreStock(o) {
+      if (!o || !o.stockReduced || o.stockRestored || !FBX.runTransaction) return;
+      const by = new Map();
+      (o.items || []).forEach(i => { if (i.id) { if (!by.has(i.id)) by.set(i.id, []); by.get(i.id).push(i); } });
+      await FBX.runTransaction(db, async tx => {
+        const orderRef = doc(db, "orders", o.id);
+        const fresh = await tx.get(orderRef);
+        if (!fresh.exists() || fresh.data().stockRestored) return;          // already restored
+        const prods = [];
+        for (const [pid, ls] of by) { const ref = doc(db, "products", pid); const ps = await tx.get(ref); if (ps.exists()) prods.push({ ref, data: ps.data(), ls }); }
+        prods.forEach(x => tx.update(x.ref, Object.assign({}, restorePatch(x.data, x.ls), { updatedAt: serverTimestamp() })));
+        tx.update(orderRef, { stockRestored: true });
+      });
+      o.stockRestored = true;
+    }
+
     /* update order status / payment status from the dropdowns */
     $("ordersWrap").addEventListener("change", async e => {
       const sel = e.target.closest("select");
@@ -961,6 +1001,7 @@
         if (!isPayment && sel.value === "delivered") fields.deliveredAt = serverTimestamp();           // 7-day return timer starts
         if (isPayment && sel.value === "paid") fields.paymentVerifiedAt = serverTimestamp();
         await patch(id, fields);
+        if (!isPayment && sel.value === "cancelled") { try { await restoreStock(o); } catch (er) { console.error("Stock restore failed:", er); alert("Order cancelled, but the stock couldn't be put back automatically. Please update the stock manually."); } }
         render();
       } catch (err) {
         console.error(field + " update error:", err);
@@ -997,7 +1038,11 @@
       if (act === "reject") {
         if (!confirm(`Reject this payment (UTR ${o.paymentId})?\nThe order will be cancelled and payment marked FAILED.`)) return;
         btn.disabled = true;
-        try { await patch(id, { paymentStatus: "failed", status: "cancelled" }); render(); }
+        try {
+          await patch(id, { paymentStatus: "failed", status: "cancelled" });
+          try { await restoreStock(o); } catch (er) { console.error("Stock restore failed:", er); alert("Order rejected, but the stock couldn't be put back automatically. Please update the stock manually."); }
+          render();
+        }
         catch (err) { console.error(err); alert("Couldn't reject. Check Firestore rules."); btn.disabled = false; }
       }
     });

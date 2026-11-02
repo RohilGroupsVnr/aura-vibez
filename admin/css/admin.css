@@ -1938,3 +1938,204 @@ html[data-theme="dark"] #fStock[readonly] {
     color: #2B1B21 !important;
     font-weight: 600;
 }
+
+/* =====================================================================
+   FINAL FIX: STOCK GRID (4 CARDS PER ROW) + DARK THEME
+   ===================================================================== */
+
+/* 1. Force Grid to 4 Columns (overrides all other grid rules) */
+.product-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important; 
+    gap: 20px !important;
+    margin-bottom: 20px;
+}
+
+/* Responsive (Mobile-la 2 ila 1 column-ah maarum) */
+@media (max-width: 1200px) {
+    .product-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+@media (max-width: 900px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 600px) {
+    .product-grid { grid-template-columns: 1fr !important; }
+}
+
+/* 2. Product Card Base (Dark Theme) */
+.p-card {
+    background: #1A1216 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    color: #fff;
+}
+
+/* 3. Image Container & Image */
+.p-img-wrap {
+    width: 100%;
+    height: 180px !important;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2A1B22 !important;
+}
+
+.p-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.p-img-wrap .placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: #555 !important;
+    font-size: 28px;
+}
+
+/* 4. Inputs (Price, MRP, Size) */
+.p-form-row input,
+.szs .in,
+.p-total-row .total-input {
+    background: #2A1B22 !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+    color: #F3E9ED !important;
+}
+
+/* 5. Product Name & Labels */
+.p-name {
+    color: #F3E9ED !important;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.p-color-row,
+.p-form-row label,
+.szs label {
+    color: #B5A3AA !important;
+}
+
+/* 6. Total Row */
+.p-total-row {
+    border-top: 1px dashed rgba(255, 255, 255, 0.1) !important;
+}/* Fix for Search Bar in Dark Mode */
+html[data-theme="dark"] #sq {
+    background: #2A1B22 !important;
+    color: #F3E9ED !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+html[data-theme="dark"] #sq::placeholder {
+    color: #7F6E75 !important;
+}
+
+/* ===== STOCK GRID (theme-aware, scoped to #sb) ===== */
+#sb.product-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 20px !important;
+  max-height: none !important;   /* billing page rule override */
+  overflow: visible !important;
+  padding-right: 0 !important;
+  margin-top: 0 !important;
+}
+@media (max-width: 1200px) { #sb.product-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+@media (max-width: 900px)  { #sb.product-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+@media (max-width: 600px)  { #sb.product-grid { grid-template-columns: 1fr !important; } }
+
+/* Card - LIGHT */
+#sb .p-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--ink);
+  cursor: default;
+  box-shadow: 0 4px 12px -8px rgba(110, 14, 51, .25);
+}
+#sb .p-card:hover { transform: none; border-color: var(--rose-soft); }
+
+/* Image */
+#sb .p-img-wrap {
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--blush);
+}
+#sb .p-img-wrap img,
+#sb .p-img-wrap img.grid-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  border: 0;
+  display: block;
+}
+#sb .p-img-wrap .placeholder {
+  width: 100%; height: 100%;
+  display: grid; place-items: center;
+  color: var(--muted); font-size: 28px;
+}
+
+/* Text + inputs - LIGHT */
+#sb .p-name { color: var(--ink); font-size: 1rem; font-weight: 700; }
+#sb .p-color-row,
+#sb .p-form-row label,
+#sb .szs label { color: var(--muted); }
+#sb .p-form-row input,
+#sb .szs .in {
+  background: var(--ivory);
+  border: 1.5px solid var(--line);
+  color: var(--ink);
+}
+#sb .p-form-row input:focus,
+#sb .szs .in:focus { border-color: var(--rose); background: #fff; outline: none; }
+#sb .p-total-row { border-top: 1px dashed var(--line); }
+#sb .p-total-row .total-input { background: var(--blush); color: var(--rose); }
+
+/* ===== DARK ===== */
+html[data-theme="dark"] #sb .p-card {
+  background: var(--cream);
+  border-color: rgba(255, 255, 255, .1);
+  box-shadow: none;
+}
+html[data-theme="dark"] #sb .p-img-wrap { background: #2A1B22; }
+html[data-theme="dark"] #sb .p-form-row input,
+html[data-theme="dark"] #sb .szs .in {
+  background: #2A1B22;
+  border-color: rgba(255, 255, 255, .15);
+  color: #F3E9ED;
+}
+html[data-theme="dark"] #sb .p-form-row input:focus,
+html[data-theme="dark"] #sb .szs .in:focus { background: var(--cream); border-color: var(--rose); }
+html[data-theme="dark"] #sb .p-total-row { border-top-color: rgba(255, 255, 255, .1); }
+html[data-theme="dark"] #sb .p-total-row .total-input { background: #3A1F2A; color: #FF7FAE; }
+
+/* Search bar */
+html[data-theme="dark"] #sq {
+  background: #2A1B22 !important;
+  color: #F3E9ED !important;
+  border: 1px solid rgba(255, 255, 255, .15) !important;
+}
+html[data-theme="dark"] #sq::placeholder { color: #7F6E75 !important; }
+
+html:not([data-theme="dark"]) #sb .p-card { background: #fff !important; border-color: var(--line) !important; color: var(--ink) !important; }
+html:not([data-theme="dark"]) #sb .p-name { color: var(--ink) !important; }
+html:not([data-theme="dark"]) #sb .p-form-row input,
+html:not([data-theme="dark"]) #sb .szs .in { background: var(--ivory) !important; color: var(--ink) !important; border-color: var(--line) !important; }
+html:not([data-theme="dark"]) #sb .p-img-wrap { background: var(--blush) !important; }
+html:not([data-theme="dark"]) #sb .p-total-row .total-input { background: var(--blush) !important; color: var(--rose) !important; }
+html:not([data-theme="dark"]) #sb .p-color-row,
+html:not([data-theme="dark"]) #sb .p-form-row label,
+html:not([data-theme="dark"]) #sb .szs label { color: var(--muted) !important; }

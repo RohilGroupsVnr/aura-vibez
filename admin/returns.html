@@ -17,6 +17,7 @@
     .status-pending { background: #fff3cd; color: #856404; }
     .status-approved { background: #e7f6ec; color: #287443; }
     .status-rejected { background: #fdeef4; color: #c0334f; }
+    .restock-chip { display: inline-block; margin-top: 4px; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; background: #e8eefc; color: #2b4cb3; }
     .action-btns { display: flex; gap: 8px; }
     .btn-sm { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 500; }
     .btn-approve { background: #287443; color: #fff; }
@@ -28,6 +29,7 @@
     html[data-theme="dark"] .status-pending { background: #4A3A12; color: #FFE08A; }
     html[data-theme="dark"] .status-approved { background: #12301F; color: #6FD29A; }
     html[data-theme="dark"] .status-rejected { background: #3A1520; color: #FF8FA3; }
+    html[data-theme="dark"] .restock-chip { background: #1b2744; color: #9db8ff; }
   </style>
 </head>
 <body>
@@ -47,7 +49,8 @@
 </div>
 
 <script type="module">
-  import { db, collection, getDocs, query, orderBy, doc, updateDoc, serverTimestamp } from "./js/firebase.js";
+  import { db, collection, getDocs, query, orderBy, where, doc, updateDoc, serverTimestamp } from "./js/firebase.js";
+  import * as FBX from "./js/firebase.js";   // runTransaction is read from here
   import { adminReady } from "./js/admin-shell.js";
 
   const $ = id => document.getElementById(id);
@@ -97,7 +100,7 @@
             <td class="ret-id">${esc(oid(r.orderId))}</td>
             <td>${esc(r.productName)}</td>
             <td><div class="reason-box">${esc(r.reason)}</div></td>
-            <td><span class="status-badge ${statusCls}">${esc(r.status || "pending")}</span></td>
+            <td><span class="status-badge ${statusCls}">${esc(r.status || "pending")}</span>${r.stockRestored ? `<br><span class="restock-chip">Restocked</span>` : ""}</td>
             <td>
               <div class="action-btns">
                 ${isPending ? `
@@ -112,23 +115,134 @@
     </table>`;
   }
 
+  /* ================================================================
+     RESTOCK — same logic orders.html uses when an order is cancelled
+     ================================================================ */
+  const vTotal = v => v.sizeStock ? (v.sizes || []).reduce((a, s) => a + (Number(v.sizeStock[s]) || 0), 0) : (Number(v.stock) || 0);
+
+  function pickVariant(variants, it) {
+    if (it.color && variants[it.color]) return variants[it.color];
+    return Object.values(variants).find(x => x && x.sizeStock && x.sizeStock[it.size] !== undefined) || null;
+  }
+
+  function restorePatch(p, lines) {
+    const variants = p.variants ? JSON.parse(JSON.stringify(p.variants)) : {};
+    const colorStock = Object.assign({}, p.colorStock || {});
+    const colorSold = Object.assign({}, p.colorSold || {});
+    let total = Number(p.stock) || 0, usedVariant = false;
+    lines.forEach(ln => {
+      const qty = Number(ln.qty) || 1, v = pickVariant(variants, ln);
+      if (v && v.sizeStock && ln.size && (ln.size in v.sizeStock)) {
+        v.sizeStock[ln.size] = (Number(v.sizeStock[ln.size]) || 0) + qty;
+        v.soldSizes = (v.sizes || []).filter(s => (Number(v.sizeStock[s]) || 0) <= 0);
+        v.stock = vTotal(v); colorStock[ln.color] = v.stock; colorSold[ln.color] = v.soldSizes; usedVariant = true;
+      } else total += qty;
+    });
+    if (usedVariant) total = Object.keys(variants).reduce((a, c) => a + vTotal(variants[c]), 0);
+    return usedVariant ? { stock: total, variants, colorStock, colorSold } : { stock: total };
+  }
+
+  /* find the order document this return belongs to */
+  async function findOrder(r) {
+    const col = collection(db, "orders");
+    const want = String(r.orderId || "").replace("#", "").trim().toLowerCase();
+    let docs = [];
+    if (r.orderId) docs = (await getDocs(query(col, where("orderId", "==", r.orderId)))).docs;
+    if (!docs.length) {
+      docs = (await getDocs(col)).docs.filter(d => {
+        const x = d.data();
+        return d.id === r.orderDocId || d.id === r.orderId ||
+          String(x.orderId || "").replace("#", "").trim().toLowerCase() === want;
+      });
+    }
+    return docs.length ? { id: docs[0].id, ...docs[0].data() } : null;
+  }
+
+  /* which item(s) of the order came back */
+  function returnedLines(r, o) {
+    const items = o.items || [];
+    let m = [];
+    if (r.productId) m = items.filter(i => i.id === r.productId);
+    else m = items.filter(i => String(i.name || "").trim() === String(r.productName || "").trim());
+    if (r.size) m = m.filter(i => i.size === r.size);
+    if (r.color) m = m.filter(i => i.color === r.color);
+
+    if (!m.length) throw new Error("Couldn't find this product in the order. Please update the stock manually.");
+    if (m.length > 1 && !r.size) throw new Error("This order has the same product in more than one size, so I can't tell which one came back. Please update the stock manually.");
+
+    const it = m[0];
+    return [{ id: it.id, size: it.size, color: it.color, qty: Number(r.qty) || Number(it.qty) || 1 }];
+  }
+
+  /* approve + put the item back into stock, in ONE transaction (so it can never restock twice) */
+  async function approveAndRestock(r) {
+    if (!FBX.runTransaction) throw new Error("runTransaction is not exported from firebase.js");
+    const o = await findOrder(r);
+    if (!o) throw new Error("Order not found for this return. Please update the stock manually.");
+    if (!o.stockReduced) throw new Error("This order never reduced stock, so there is nothing to put back.");
+    if (o.stockRestored) throw new Error("This order's stock was already restored (cancelled).");
+
+    const lines = returnedLines(r, o);
+    const by = new Map();
+    lines.forEach(l => { if (l.id) { if (!by.has(l.id)) by.set(l.id, []); by.get(l.id).push(l); } });
+    if (!by.size) throw new Error("Product id missing in the order item. Please update the stock manually.");
+
+    let did = false;
+    await FBX.runTransaction(db, async tx => {
+      const rRef = doc(db, "returns", r.id);
+      const fresh = await tx.get(rRef);
+      if (!fresh.exists()) throw new Error("Return not found");
+      if (fresh.data().stockRestored) return;                     // already restocked
+
+      const prods = [];
+      for (const [pid, ls] of by) {
+        const ref = doc(db, "products", pid);
+        const ps = await tx.get(ref);
+        if (ps.exists()) prods.push({ ref, data: ps.data(), ls });
+      }
+      if (!prods.length) throw new Error("Product no longer exists in the Products list.");
+
+      prods.forEach(x => tx.update(x.ref, Object.assign({}, restorePatch(x.data, x.ls), { updatedAt: serverTimestamp() })));
+      tx.update(rRef, { status: "approved", stockRestored: true, restockedAt: serverTimestamp(), updatedAt: serverTimestamp() });
+      did = true;
+    });
+    return did;
+  }
+
+  /* ---------- buttons ---------- */
   $("returnsWrap").addEventListener("click", async (e) => {
     const btn = e.target.closest("button[data-act]");
     if (!btn) return;
 
     const tr = btn.closest("tr");
     const id = tr.dataset.id;
-    const newStatus = btn.dataset.act === "approve" ? "approved" : "rejected";
+    const r = allReturns.find(x => x.id === id);
+    const isApprove = btn.dataset.act === "approve";
 
-    btn.disabled = true;
+    if (!confirm(isApprove ? "Approve this return?" : "Reject this return?")) return;
+    const restock = isApprove && confirm("Put the returned item back into stock?\n\nOK = Yes, restock\nCancel = No (e.g. damaged item)");
+
+    tr.querySelectorAll("button").forEach(b => b.disabled = true);
     try {
-      await updateDoc(doc(db, "returns", id), { status: newStatus, updatedAt: serverTimestamp() });
-      alert(`Return request ${newStatus} successfully.`);
+      if (restock) {
+        try {
+          await approveAndRestock(r);
+          alert("Return approved and the item is back in stock.");
+        } catch (err) {
+          console.error("Restock failed:", err);
+          // approve anyway, but tell the admin the stock was not touched
+          await updateDoc(doc(db, "returns", id), { status: "approved", updatedAt: serverTimestamp() });
+          alert("Return approved, but stock was NOT updated:\n" + err.message);
+        }
+      } else {
+        await updateDoc(doc(db, "returns", id), { status: isApprove ? "approved" : "rejected", updatedAt: serverTimestamp() });
+        alert(`Return request ${isApprove ? "approved" : "rejected"} successfully.`);
+      }
       await loadReturns();
     } catch (err) {
       console.error("Status update failed:", err);
       alert("Failed to update. Check Firestore rules.");
-      btn.disabled = false;
+      tr.querySelectorAll("button").forEach(b => b.disabled = false);
     }
   });
 

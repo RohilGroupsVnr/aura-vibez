@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products — AURA Admin</title>
-  <link rel="icon" href="../assets/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="css/admin.css">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products — AURA Admin</title>
+    <link rel="icon" href="../assets/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
 
-  <style>
+    <style>
     .upload-btn {
       display: inline-block;
       width: 100%;
@@ -466,278 +467,322 @@
       }
     }
   </style>
-</head>
+  </head>
 
-<body>
-  <div class="admin-layout">
+  <body>
+    <div class="admin-layout">
 
-    <aside class="admin-side" id="adminSide"></aside>
+      <aside class="admin-side" id="adminSide"></aside>
 
-    <main class="admin-main">
-      <div class="admin-topbar">
-        <div>
-          <h1>Products</h1>
-          <p>Add, edit and remove the products shown in your shop.</p>
-        </div>
-        <div class="topbar-actions">
-          <a class="btn-admin" href="import-products.html"><i class="fa-solid fa-file-import"></i> Import Excel</a>
-          <button class="btn-admin primary" id="addBtn" type="button">
-            <i class="fa-solid fa-plus"></i> Add product
-          </button>
-        </div>
-      </div>
-
-      <div class="prod-stats">
-        <div class="prod-stat"><span>Total</span><b id="sTotal">0</b></div>
-        <div class="prod-stat green"><span>In stock</span><b id="sIn">0</b></div>
-        <div class="prod-stat amber"><span>Low stock</span><b id="sLow">0</b></div>
-        <div class="prod-stat red"><span>Out of stock</span><b id="sOut">0</b></div>
-      </div>
-
-      <div class="admin-card">
-        <div class="prod-filters">
-          <div class="prod-search">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="search" id="fSearch" placeholder="Search by product name…" aria-label="Search products">
+      <main class="admin-main">
+        <div class="admin-topbar">
+          <div>
+            <h1>Products</h1>
+            <p>Add, edit and remove the products shown in your shop.</p>
           </div>
-          <select id="fCat" aria-label="Filter by category">
-            <option value="">All categories</option>
-          </select>
-          <select id="fStatus" aria-label="Filter by status">
-            <option value="">All status</option>
-            <option value="active">Active</option>
-            <option value="draft">Draft</option>
-          </select>
-        </div>
-
-        <div class="prod-table-wrap">
-          <table class="admin-table prod-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Product</th>
-                <th>Categories</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Sizes</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="tbody">
-              <tr>
-                <td colspan="8" class="admin-empty">Loading products…</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="prod-empty" id="empty" hidden>
-          <i class="fa-solid fa-box-open"></i>
-          <p>No products found. Click <b>Add product</b> to create one.</p>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- ADD / EDIT MODAL -->
-  <div class="a-modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
-    <form class="a-modal-box" id="pForm" novalidate>
-      <div class="a-modal-head">
-        <h2 id="mTitle">Add product</h2>
-        <button type="button" class="icon-action" id="mClose" aria-label="Close"><i
-            class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="prod-grid">
-        <label class="prod-field full">Product name
-          <input type="text" id="fName" placeholder="e.g. Kurti and Pajma with Duppatta" required>
-        </label>
-
-        <!-- MULTIPLE CATEGORIES -->
-        <div class="prod-field full">
-          <label>Categories (select one or more — product will show in every selected category)</label>
-          <div class="cat-box">
-            <div class="chips-wrap" id="catChips"></div>
-            <small>Example: a Kurta Set can be shown in Kurta Sets + Party Wear + Office Wear.</small>
+          <div class="topbar-actions">
+            <a class="btn-admin" href="import-products.html"><i
+                class="fa-solid fa-file-import"></i> Import Excel</a>
+            <button class="btn-admin primary" id="addBtn" type="button">
+              <i class="fa-solid fa-plus"></i> Add product
+            </button>
           </div>
         </div>
 
-        <label class="prod-field full">Status
-          <select id="fState">
-            <option value="active">Active (visible in shop)</option>
-            <option value="draft">Draft (hidden)</option>
-          </select>
-        </label>
-
-        <label class="prod-field">Default selling price (₹)
-          <input type="number" id="fPrice" min="0" step="1" placeholder="397" required>
-        </label>
-        <label class="prod-field">Default MRP (₹)
-          <input type="number" id="fMrp" min="0" step="1" placeholder="417">
-        </label>
-
-        <label class="prod-field">Total stock (auto)
-          <input type="number" id="fStock" min="0" step="1" placeholder="Auto" readonly>
-        </label>
-        <label class="prod-field">Badge
-          <select id="fBadge">
-            <option value="">None</option>
-            <option>New Arrival</option>
-            <option>Trending</option>
-            <option>Bestseller</option>
-          </select>
-        </label>
-
-        <!-- STEP 1: PICK COLORS -->
-        <div class="prod-field full">
-          <label>Step 1 · Colors (pick every color this dress is available in)</label>
-          <div class="chips-wrap" id="colorChips" style="margin-bottom: 5px;"></div>
-          <div class="color-add-box">
-            <input type="text" id="newColorName" placeholder="Color name (e.g. Peach)">
-            <input type="color" id="newColorHex" value="#FFC0CB" title="Pick Color">
-            <button type="button" id="addColorBtn" title="Add Color"><i class="fa-solid fa-plus"></i></button>
-          </div>
+        <div class="prod-stats">
+          <div class="prod-stat"><span>Total</span><b id="sTotal">0</b></div>
+          <div class="prod-stat green"><span>In stock</span><b
+              id="sIn">0</b></div>
+          <div class="prod-stat amber"><span>Low stock</span><b
+              id="sLow">0</b></div>
+          <div class="prod-stat red"><span>Out of stock</span><b
+              id="sOut">0</b></div>
         </div>
 
-        <!-- STEP 2: PER-COLOR DETAILS (like Meesho) -->
-        <div class="prod-field full var-panel">
-          <label class="var-title">Step 2 · Color-wise details (price, sizes, stock, images — each color is its own
-            variant)</label>
-
-          <div class="var-bar">
-            <label>Select Color:</label>
-            <select id="imgColorSelect">
-              <option value="">-- Pick colors above first --</option>
+        <div class="admin-card">
+          <div class="prod-filters">
+            <div class="prod-search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="search" id="fSearch"
+                placeholder="Search by product name…"
+                aria-label="Search products">
+            </div>
+            <select id="fCat" aria-label="Filter by category">
+              <option value>All categories</option>
             </select>
-            <span id="colorImgStatus">Nothing added yet</span>
+            <select id="fStatus" aria-label="Filter by status">
+              <option value>All status</option>
+              <option value="active">Active</option>
+              <option value="draft">Draft</option>
+            </select>
           </div>
 
-          <div id="varBody">
-            <div class="var-row">
-              <label>Selling price (₹) for this color
-                <input type="number" id="vPrice" min="0" step="1" placeholder="Default">
-              </label>
-              <label>MRP (₹) for this color
-                <input type="number" id="vMrp" min="0" step="1" placeholder="Default">
-              </label>
-              <div class="var-copy">
-                <label style="flex:1">Copy details from
-                  <select id="vCopyFrom"></select>
-                </label>
-                <button type="button" id="vCopyBtn">Copy</button>
-              </div>
-            </div>
+          <div class="prod-table-wrap">
+            <table class="admin-table prod-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Product</th>
+                  <th>Categories</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Sizes</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                <tr>
+                  <td colspan="8" class="admin-empty">Loading products…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="prod-empty" id="empty" hidden>
+            <i class="fa-solid fa-box-open"></i>
+            <p>No products found. Click <b>Add product</b> to create one.</p>
+          </div>
+        </div>
+      </main>
+    </div>
 
-            <span class="var-sub">Sizes available in this color</span>
-            <div class="chips-wrap" id="sizeChips"></div>
+    <!-- ADD / EDIT MODAL -->
+    <div class="a-modal" id="modal" role="dialog" aria-modal="true"
+      aria-labelledby="mTitle">
+      <form class="a-modal-box" id="pForm" novalidate>
+        <div class="a-modal-head">
+          <h2 id="mTitle">Add product</h2>
+          <button type="button" class="icon-action" id="mClose"
+            aria-label="Close"><i
+              class="fa-solid fa-xmark"></i></button>
+        </div>
 
-            <span class="var-sub">Size-wise price (optional — blank = this color's price)</span>
-            <div class="size-price-grid" id="sizePriceGrid"></div>
+        <div class="prod-grid">
+          <label class="prod-field full">Product name
+            <input type="text" id="fName"
+              placeholder="e.g. Kurti and Pajma with Duppatta" required>
+          </label>
 
-            <div class="sold-box" id="soldBox">
-              <label>Stock for each size in this color</label>
-              <div class="size-price-grid" id="sizeStockGrid"></div>
-              <small>0 = sold out (customer-ku faded &amp; crossed-out). This color total: <b
-                  id="colorStockTotal">0</b></small>
-            </div>
-
-            <div class="img-4-grid" id="colorImgBoxes">
-              <div class="img-4-box">
-                <label class="box-title">1. Front Image</label>
-                <input type="text" id="imgFrontUrl" placeholder="Paste URL...">
-                <label class="upload-btn" style="font-size: 12px; padding: 6px;">
-                  <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
-                  <input type="file" id="imgFrontFile" accept="image/*">
-                </label>
-                <div id="prevFront" class="preview-wrap"></div>
-              </div>
-              <div class="img-4-box">
-                <label class="box-title">2. Back Image</label>
-                <input type="text" id="imgBackUrl" placeholder="Paste URL...">
-                <label class="upload-btn" style="font-size: 12px; padding: 6px;">
-                  <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
-                  <input type="file" id="imgBackFile" accept="image/*">
-                </label>
-                <div id="prevBack" class="preview-wrap"></div>
-              </div>
-              <div class="img-4-box">
-                <label class="box-title">3. Side Image</label>
-                <input type="text" id="imgSideUrl" placeholder="Paste URL...">
-                <label class="upload-btn" style="font-size: 12px; padding: 6px;">
-                  <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
-                  <input type="file" id="imgSideFile" accept="image/*">
-                </label>
-                <div id="prevSide" class="preview-wrap"></div>
-              </div>
-              <div class="img-4-box">
-                <label class="box-title">4. Quality Image (Close-up)</label>
-                <input type="text" id="imgQualityUrl" placeholder="Paste URL...">
-                <label class="upload-btn" style="font-size: 12px; padding: 6px;">
-                  <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
-                  <input type="file" id="imgQualityFile" accept="image/*">
-                </label>
-                <div id="prevQuality" class="preview-wrap"></div>
-              </div>
+          <!-- MULTIPLE CATEGORIES -->
+          <div class="prod-field full">
+            <label>Categories (select one or more — product will show in every
+              selected category)</label>
+            <div class="cat-box">
+              <div class="chips-wrap" id="catChips"></div>
+              <small>Example: a Kurta Set can be shown in Kurta Sets + Party
+                Wear + Office Wear.</small>
             </div>
           </div>
-        </div>
 
-        <div class="prod-field full">
-          <label>Product Video URL (Optional)</label>
-          <input type="text" id="fVideo" placeholder="https://youtube.com/... or .mp4 link"
-            style="width:100%; padding:8px; border:1px solid #e8e1d3; border-radius:6px;">
-        </div>
+          <label class="prod-field full">Status
+            <select id="fState">
+              <option value="active">Active (visible in shop)</option>
+              <option value="draft">Draft (hidden)</option>
+            </select>
+          </label>
 
-        <div class="prod-field full">
-          <label>Key Highlights (Dress Details)</label>
-          <div class="highlights-grid">
-            <div><label>Fit</label><input type="text" id="hlFit" placeholder="e.g. Regular / Straight"></div>
-            <div><label>Top Fabric</label><input type="text" id="hlFabric" placeholder="e.g. Cotton / Silk"></div>
-            <div><label>Neck</label><input type="text" id="hlNeck" placeholder="e.g. Round Neck / V-Neck"></div>
-            <div><label>Sleeve Styling</label><input type="text" id="hlSleeve" placeholder="e.g. Short / 3/4th"></div>
-            <div><label>Sleeve Length</label><input type="text" id="hlSleeveLen" placeholder="e.g. 8 Inches"></div>
-            <div><label>Top Technique</label><input type="text" id="hlTech" placeholder="e.g. Printed / Solid"></div>
+          <label class="prod-field">Default selling price (₹)
+            <input type="number" id="fPrice" min="0" step="1" placeholder="397"
+              required>
+          </label>
+          <label class="prod-field">Default MRP (₹)
+            <input type="number" id="fMrp" min="0" step="1" placeholder="417">
+          </label>
+
+          <label class="prod-field">Total stock (auto)
+            <input type="number" id="fStock" min="0" step="1" placeholder="Auto"
+              readonly>
+          </label>
+          <label class="prod-field">Badge
+            <select id="fBadge">
+              <option value>None</option>
+              <option>New Arrival</option>
+              <option>Trending</option>
+              <option>Bestseller</option>
+            </select>
+          </label>
+
+          <!-- STEP 1: PICK COLORS -->
+          <div class="prod-field full">
+            <label>Step 1 · Colors (Optional — leave blank for a combo without
+              color)</label>
+            <div class="chips-wrap" id="colorChips"
+              style="margin-bottom: 5px;"></div>
+            <div class="color-add-box">
+              <input type="text" id="newColorName"
+                placeholder="Color name (e.g. Peach)">
+              <input type="color" id="newColorHex" value="#FFC0CB"
+                title="Pick Color">
+              <button type="button" id="addColorBtn" title="Add Color"><i
+                  class="fa-solid fa-plus"></i></button>
+            </div>
           </div>
-        </div>
 
-        <label class="prod-field full">Description
-          <textarea id="fDesc" rows="3" placeholder="Fabric, fit, wash care…"></textarea>
-        </label>
+          <!-- STEP 2: PER-COLOR DETAILS (like Meesho) -->
+          <div class="prod-field full var-panel">
+            <label class="var-title">Step 2 · Color-wise details (price, sizes,
+              stock, images — each color is its own
+              variant)</label>
 
-        <div class="prod-field full">
-          <label>SEO Details (For Google Search)</label>
-          <div class="seo-section">
-            <label>SEO Title</label>
-            <input type="text" id="seoTitle" placeholder="e.g. Kurti and Pajma Set | AURA">
-            <label>Meta Description</label>
-            <textarea id="seoDesc" rows="2" placeholder="Short description for search results..."></textarea>
-            <label>Keywords (comma separated)</label>
-            <input type="text" id="seoKeywords" placeholder="kurta set, silk kurta, mustard kurta">
+            <div class="var-bar">
+              <label>Select Color:</label>
+              <select id="imgColorSelect">
+                <option value>-- Pick colors above first --</option>
+              </select>
+              <span id="colorImgStatus">Nothing added yet</span>
+            </div>
+
+            <div id="varBody">
+              <div class="var-row">
+                <label>Selling price (₹) for this color
+                  <input type="number" id="vPrice" min="0" step="1"
+                    placeholder="Default">
+                </label>
+                <label>MRP (₹) for this color
+                  <input type="number" id="vMrp" min="0" step="1"
+                    placeholder="Default">
+                </label>
+                <div class="var-copy">
+                  <label style="flex:1">Copy details from
+                    <select id="vCopyFrom"></select>
+                  </label>
+                  <button type="button" id="vCopyBtn">Copy</button>
+                </div>
+              </div>
+
+              <span class="var-sub">Sizes available in this color</span>
+              <div class="chips-wrap" id="sizeChips"></div>
+
+              <span class="var-sub">Size-wise price (optional — blank = this
+                color's price)</span>
+              <div class="size-price-grid" id="sizePriceGrid"></div>
+
+              <div class="sold-box" id="soldBox">
+                <label>Stock for each size in this color</label>
+                <div class="size-price-grid" id="sizeStockGrid"></div>
+                <small>0 = sold out (customer-ku faded &amp; crossed-out). This
+                  color total: <b
+                    id="colorStockTotal">0</b></small>
+              </div>
+
+              <div class="img-4-grid" id="colorImgBoxes">
+                <div class="img-4-box">
+                  <label class="box-title">1. Front Image</label>
+                  <input type="text" id="imgFrontUrl"
+                    placeholder="Paste URL...">
+                  <label class="upload-btn"
+                    style="font-size: 12px; padding: 6px;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
+                    <input type="file" id="imgFrontFile" accept="image/*">
+                  </label>
+                  <div id="prevFront" class="preview-wrap"></div>
+                </div>
+                <div class="img-4-box">
+                  <label class="box-title">2. Back Image</label>
+                  <input type="text" id="imgBackUrl" placeholder="Paste URL...">
+                  <label class="upload-btn"
+                    style="font-size: 12px; padding: 6px;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
+                    <input type="file" id="imgBackFile" accept="image/*">
+                  </label>
+                  <div id="prevBack" class="preview-wrap"></div>
+                </div>
+                <div class="img-4-box">
+                  <label class="box-title">3. Side Image</label>
+                  <input type="text" id="imgSideUrl" placeholder="Paste URL...">
+                  <label class="upload-btn"
+                    style="font-size: 12px; padding: 6px;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
+                    <input type="file" id="imgSideFile" accept="image/*">
+                  </label>
+                  <div id="prevSide" class="preview-wrap"></div>
+                </div>
+                <div class="img-4-box">
+                  <label class="box-title">4. Quality Image (Close-up)</label>
+                  <input type="text" id="imgQualityUrl"
+                    placeholder="Paste URL...">
+                  <label class="upload-btn"
+                    style="font-size: 12px; padding: 6px;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Choose File
+                    <input type="file" id="imgQualityFile" accept="image/*">
+                  </label>
+                  <div id="prevQuality" class="preview-wrap"></div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="prod-field full">
-          <label>Related Products (You May Also Like)</label>
-          <div class="related-products-box">
-            <h4>Select products to show as "You May Also Like":</h4>
-            <div class="related-grid" id="relatedGrid"></div>
+          <div class="prod-field full">
+            <label>Product Video URL (Optional)</label>
+            <input type="text" id="fVideo"
+              placeholder="https://youtube.com/... or .mp4 link"
+              style="width:100%; padding:8px; border:1px solid #e8e1d3; border-radius:6px;">
           </div>
+
+          <div class="prod-field full">
+            <label>Key Highlights (Dress Details)</label>
+            <div class="highlights-grid">
+              <div><label>Fit</label><input type="text" id="hlFit"
+                  placeholder="e.g. Regular / Straight"></div>
+              <div><label>Top Fabric</label><input type="text" id="hlFabric"
+                  placeholder="e.g. Cotton / Silk"></div>
+              <div><label>Neck</label><input type="text" id="hlNeck"
+                  placeholder="e.g. Round Neck / V-Neck"></div>
+              <div><label>Sleeve Styling</label><input type="text" id="hlSleeve"
+                  placeholder="e.g. Short / 3/4th"></div>
+              <div><label>Sleeve Length</label><input type="text"
+                  id="hlSleeveLen" placeholder="e.g. 8 Inches"></div>
+              <div><label>Top Technique</label><input type="text" id="hlTech"
+                  placeholder="e.g. Printed / Solid"></div>
+            </div>
+          </div>
+
+          <label class="prod-field full">Description
+            <textarea id="fDesc" rows="3"
+              placeholder="Fabric, fit, wash care…"></textarea>
+          </label>
+
+          <div class="prod-field full">
+            <label>SEO Details (For Google Search)</label>
+            <div class="seo-section">
+              <label>SEO Title</label>
+              <input type="text" id="seoTitle"
+                placeholder="e.g. Kurti and Pajma Set | AURA">
+              <label>Meta Description</label>
+              <textarea id="seoDesc" rows="2"
+                placeholder="Short description for search results..."></textarea>
+              <label>Keywords (comma separated)</label>
+              <input type="text" id="seoKeywords"
+                placeholder="kurta set, silk kurta, mustard kurta">
+            </div>
+          </div>
+
+          <div class="prod-field full">
+            <label>Related Products (You May Also Like)</label>
+            <div class="related-products-box">
+              <h4>Select products to show as "You May Also Like":</h4>
+              <div class="related-grid" id="relatedGrid"></div>
+            </div>
+          </div>
+
+          <label class="a-check full"><input type="checkbox" id="fNew"> Show in
+            New Collection</label>
         </div>
 
-        <label class="a-check full"><input type="checkbox" id="fNew"> Show in New Collection</label>
-      </div>
+        <p class="prod-msg" id="mMsg" aria-live="polite"
+          style="margin-top:14px"></p>
+        <div class="a-modal-foot">
+          <button type="button" class="btn-admin ghost"
+            id="mCancel">Cancel</button>
+          <button type="submit" class="btn-admin primary" id="mSave">Save
+            product</button>
+        </div>
+      </form>
+    </div>
 
-      <p class="prod-msg" id="mMsg" aria-live="polite" style="margin-top:14px"></p>
-      <div class="a-modal-foot">
-        <button type="button" class="btn-admin ghost" id="mCancel">Cancel</button>
-        <button type="submit" class="btn-admin primary" id="mSave">Save product</button>
-      </div>
-    </form>
-  </div>
+    <div class="a-toast" id="toast" role="status"></div>
 
-  <div class="a-toast" id="toast" role="status"></div>
-
-  <script type="module">
+    <script type="module">
     import { adminReady } from "./js/admin-shell.js";
     import { db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "./js/firebase.js";
     import { ref, uploadBytes, getDownloadURL, getStorage } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
@@ -909,6 +954,8 @@
     function syncColorSelect() {
       const select = $("imgColorSelect");
       const colorsArr = Array.from(pickedColors);
+      
+      // CHANGED: Default color irundha adhu dropdown la show aagum
       if (!colorsArr.length) {
         select.innerHTML = `<option value="">-- Pick colors above first --</option>`;
         currentSelectedColor = "";
@@ -997,9 +1044,15 @@
     /* ---------- COLOR CHIPS ---------- */
     function drawColorChips() {
       $("colorChips").innerHTML = Object.entries(COLORS).map(([n, hex]) => `<button type="button" class="chip-opt color ${pickedColors.has(n) ? "on" : ""}" style="--sw:${esc(hex)}" data-color="${esc(n)}">${esc(n)}</button>`).join("");
+      
+      // CHANGED: Color edhuvum select pannalana, Default color-a auto ah select pannum
+      if (pickedColors.size === 0) {
+          pickedColors.add("Default");
+          COLORS.Default = "#cccccc";
+      }
+      
       syncColorSelect();
     }
-
     $("colorChips").addEventListener("click", e => {
       const b = e.target.closest("[data-color]"); if (!b) return;
       pickedColors.has(b.dataset.color) ? pickedColors.delete(b.dataset.color) : pickedColors.add(b.dataset.color);
@@ -1217,8 +1270,11 @@
       if (!categories.length) return err("Choose at least one category.");
       if (!(price > 0)) return err("Enter a default selling price above 0.");
       if (mrp < price) return err("Default MRP can't be lower than the selling price.");
-      if (!pickedColors.size) return err("Pick at least one color.");
-
+// Color select pannalana, auto ah "Default" color ah edukkum
+if (!pickedColors.size) {
+  pickedColors.add("Default");
+  COLORS.Default = "#cccccc";
+}
       // build variants (one per color)
       const variants = {}, colorImages = {}, colorHex = {}, colorSold = {};
       const unionSizes = new Set();
@@ -1316,6 +1372,6 @@
 
     adminReady.then(() => load()).then(restoreDraft);
   </script>
-</body>
+  </body>
 
 </html>
