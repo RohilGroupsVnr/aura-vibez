@@ -82,9 +82,7 @@ export {
 
 export const ADMIN_EMAILS = [
   "auraclothing.vnr@gmail.com",
-  "auraclothingvnr@gmail.com",
-  "admin@aura.com"
-];
+"auravibezclothing@gmail.com" ];
 
 export function isAdminEmail(email) {
   if (!email) return false;

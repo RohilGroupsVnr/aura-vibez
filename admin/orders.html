@@ -603,7 +603,7 @@
     /* ================================================================
        INVOICE — same A4 design as the Billing (POS) page.
        First click saves the order into the "bills" collection (so it shows up in Billing
-       history too) and gives it the next bill number AURA#<year><no>. Next clicks just reprint.
+       history too) and gives it a bill number that follows the order number (order AURA#07 -> AURA#202607). Next clicks just reprint.
        ================================================================ */
     const last10 = p => String(p || "").replace(/\D/g, "").slice(-10);
     const money = n => Number(n || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -626,6 +626,7 @@
       return parts.join(" ") + " Rupees Only";
     }
 
+    /* running series (used only for old orders that have no AURA#NN number, or if the number is already taken) */
     async function nextBillNo() {
       const year = new Date().getFullYear();
       let max = 0;
@@ -633,6 +634,21 @@
       snap.forEach(d => { const n = Number(d.data().billSeq) || 0; if (n > max) max = n; });
       const seq = max + 1;
       return { billNo: `AURA#${year}${String(seq).padStart(2, "0")}`, billYear: year, billSeq: seq };
+    }
+
+    /* invoice number FOLLOWS the order number:  order AURA#07  ->  invoice AURA#202607
+       (year of the order + the same order number). Old orders / clashes fall back to the running series. */
+    async function billNoFor(o) {
+      const m = /^AURA#(\d+)$/i.exec(String(o.orderId || "").trim());
+      if (m) {
+        const seq = Number(m[1]);
+        const year = (o.createdAt?.toDate?.() || new Date()).getFullYear();
+        const billNo = `AURA#${year}${String(seq).padStart(2, "0")}`;
+        const taken = await getDocs(query(collection(db, "bills"), where("billNo", "==", billNo)));
+        if (taken.empty) return { billNo, billYear: year, billSeq: seq };
+        console.warn(billNo + " already used by another bill, using next free number");
+      }
+      return nextBillNo();
     }
 
     function invoiceHTML(o, billNo) {
@@ -843,7 +859,7 @@
       try {
         let billNo = o.billNo;
         if (!billNo) {
-          const bn = await nextBillNo();
+          const bn = await billNoFor(o);
           billNo = bn.billNo;
           const a = o.address || {};
           const items = (o.items || []).map(i => {

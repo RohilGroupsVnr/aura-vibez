@@ -1999,9 +1999,21 @@
 
       function discOf(p) { return p.mrp > p.price ? 1 - p.price / p.mrp : 0; }
       function ms(p) { return (p.createdAt && p.createdAt.toMillis && p.createdAt.toMillis()) || 0; }
+
+            /* ===== DEFAULT ORDER: kurta sets first, leggings & shawls last ===== */
+      var CATEGORY_FIRST = ["kurta-sets"].map(key);
+      var CATEGORY_LAST = ["leggings", "shawls"].map(key);
+      function categoryRank(p) {
+        var c = key(p.category);
+        var f = CATEGORY_FIRST.indexOf(c);
+        if (f > -1) return f;
+        var l = CATEGORY_LAST.indexOf(c);
+        if (l > -1) return 1000 + l;
+        return 500;
+      }
+
       var SORTS = {
-        featured: function (a, b) { return ms(b) - ms(a); },
-        "new": function (a, b) { return ms(b) - ms(a); },
+        featured: function (a, b) { return categoryRank(a) - categoryRank(b) || ms(b) - ms(a); },        "new": function (a, b) { return ms(b) - ms(a); },
         old: function (a, b) { return ms(a) - ms(b); },
         low: function (a, b) { return (a.price || 0) - (b.price || 0); },
         high: function (a, b) { return (b.price || 0) - (a.price || 0); },
@@ -2401,6 +2413,8 @@
     } else if (p.stock <= 0) {
       stockRibbon = '<div class="hy-stock-ribbon out">OUT OF STOCK</div>';
     }
+
+    
   </script>
   <script src="js/nav-menu.js"></script>
   <script src="js/cart-drawer.js"></script>
