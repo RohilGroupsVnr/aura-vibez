@@ -1842,6 +1842,23 @@
       cursor: pointer;
       color: #999;
     }
+    /* ===== SKIN TONE MATCH ===== */
+.pd-skin { margin: 0 0 18px; padding: 16px; border: 1px solid var(--pd-line); border-radius: 12px; background: #fffcf8; }
+.pd-skin-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.pd-skin-head .pd-sect-title { margin: 0; }
+.pd-skin-head small { font-size: 12px; color: var(--pd-muted); }
+.pd-tone-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.pd-tone { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1px solid var(--pd-line); border-radius: 999px; background: #fff; cursor: pointer; font: 400 13px "Jost", sans-serif; color: var(--pd-ink); transition: .2s; }
+.pd-tone i { width: 24px; height: 24px; border-radius: 50%; background: var(--tone); border: 1px solid rgba(0, 0, 0, .12); flex: none; }
+.pd-tone:hover { border-color: var(--pd-ink); }
+.pd-tone.on { border-color: var(--pd-accent); background: var(--pd-soft); color: var(--pd-accent); font-weight: 600; }
+.pd-skin-result { margin: 12px 0 0; font-size: 14px; line-height: 1.5; color: var(--pd-ink); }
+.pd-skin-result b { color: var(--pd-accent); }
+.pd-skin-result small { display: block; margin-top: 4px; font-size: 12px; color: var(--pd-muted); }
+
+.pd-color-card { position: relative; }
+.pcc-match { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); z-index: 2; background: #17805a; color: #fff; font: 600 9px "Jost", sans-serif; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 10px; white-space: nowrap; box-shadow: 0 2px 6px rgba(0, 0, 0, .25); pointer-events: none; }
+.pcc-match.good { background: #c98a1b; }
   </style>
 </head>
 
@@ -1933,6 +1950,16 @@
             id="pdColorName"></b></h3>
         <div class="pd-colors-row" id="pdColors"></div>
       </div>
+
+      <!-- SKIN TONE MATCH -->
+<div class="pd-skin" id="pdSkin">
+  <div class="pd-skin-head">
+    <h3 class="pd-sect-title">Find your colour match</h3>
+    <small>Pick your skin tone</small>
+  </div>
+  <div class="pd-tone-row" id="pdTones"></div>
+  <p class="pd-skin-result" id="pdSkinResult" hidden></p>
+</div>
 
       <!-- Sizes -->
       <div class="pd-sizes-block">
@@ -2458,6 +2485,125 @@
         }).join("");
       }
 
+      /* ---------- SKIN TONE MATCH ---------- */
+var TONES = [
+  { id: "fair", label: "Fair", sw: "#F6D9C6" },
+  { id: "wheatish", label: "Wheatish", sw: "#E0B48F" },
+  { id: "medium", label: "Medium / Dusky", sw: "#B98259" },
+  { id: "deep", label: "Deep", sw: "#7A4A2E" }
+];
+
+// [color name regex, fair, wheatish, medium, deep]  →  2 = best match, 1 = good, 0 = not ideal
+// Order mukkiyam: specific shades munnaadi, generic kadaisila
+var COLOR_RULES = [
+  [/sky|baby ?blue|powder|ice ?blue|pastel blue/, 2, 1, 1, 0],
+  [/navy|royal|cobalt|indigo|midnight/, 2, 2, 2, 2],
+  [/turquoise|aqua|teal|peacock/, 2, 2, 2, 2],
+  [/blue/, 1, 2, 2, 2],
+  [/mint|pista|pistachio|sea ?green|lime/, 2, 1, 1, 1],
+  [/green|emerald|bottle|olive|forest/, 1, 2, 2, 2],
+  [/fuchsia|magenta|rani|hot ?pink/, 1, 2, 2, 2],
+  [/maroon|wine|burgundy|plum|mulberry/, 2, 2, 1, 1],
+  [/pink|rose|blush|salmon/, 2, 1, 1, 1],
+  [/peach/, 2, 1, 0, 0],
+  [/coral/, 1, 2, 2, 2],
+  [/orange|rust|terracotta|brick/, 1, 2, 2, 2],
+  [/mustard|yellow|gold|lemon/, 0, 2, 2, 2],
+  [/red|crimson|scarlet|cherry/, 1, 2, 2, 2],
+  [/lavender|lilac|mauve|orchid/, 2, 1, 2, 2],
+  [/purple|violet/, 1, 2, 2, 2],
+  [/cream|ivory|off ?white/, 0, 1, 2, 2],
+  [/beige|nude|sand|champagne/, 0, 1, 0, 0],
+  [/white/, 1, 2, 2, 2],
+  [/black|charcoal/, 1, 1, 1, 0],
+  [/grey|gray|silver|ash/, 1, 1, 1, 0],
+  [/brown|chocolate|coffee|tan|khaki|camel|mocha/, 1, 1, 0, 0]
+];
+
+/* Product-wise override (optional): Firestore-la  skinMatch: { "Maroon": ["fair","wheatish"], "Printed": ["medium","deep"] } */
+function toneScore(color, toneId) {
+  var ov = product && product.skinMatch && product.skinMatch[color];
+  if (Array.isArray(ov)) return ov.indexOf(toneId) > -1 ? 2 : 0;
+  var idx = TONES.map(function (t) { return t.id; }).indexOf(toneId);
+  var name = String(color || "").toLowerCase();
+  for (var i = 0; i < COLOR_RULES.length; i++) {
+    if (COLOR_RULES[i][0].test(name)) return COLOR_RULES[i][idx + 1];
+  }
+  return null; // theriyaadha color → rating illa
+}
+
+function getTone() { try { return localStorage.getItem("aura_skin_tone") || ""; } catch (e) { return ""; } }
+function setTone(v) { try { if (v) localStorage.setItem("aura_skin_tone", v); else localStorage.removeItem("aura_skin_tone"); } catch (e) { } }
+function toneLabel(id) { var t = TONES.filter(function (x) { return x.id === id; })[0]; return t ? t.label : ""; }
+
+function skinColors(tone, min) {
+  return (product.colors || []).filter(function (c) {
+    return c !== "Default" && colorStock(c) > 0 && toneScore(c, tone) >= min;
+  });
+}
+
+function renderTones() {
+  var cur = getTone();
+  $("pdTones").innerHTML = TONES.map(function (t) {
+    return '<button type="button" class="pd-tone' + (t.id === cur ? ' on' : '') + '" data-tone="' + t.id + '">' +
+      '<i style="--tone:' + t.sw + '"></i>' + esc(t.label) + '</button>';
+  }).join("");
+}
+
+function applySkinBadges() {
+  var tone = getTone();
+  document.querySelectorAll(".pcc-match").forEach(function (b) { b.remove(); });
+  if (!tone) return;
+  document.querySelectorAll(".pd-color-card").forEach(function (card) {
+    var s = toneScore(card.dataset.color, tone);
+    if (s === 2) card.insertAdjacentHTML("afterbegin", '<span class="pcc-match">★ Best match</span>');
+    else if (s === 1) card.insertAdjacentHTML("afterbegin", '<span class="pcc-match good">Good</span>');
+  });
+}
+
+function updateSkinResult() {
+  var el = $("pdSkinResult"), tone = getTone();
+  if (!tone || !product) { el.hidden = true; return; }
+  var label = toneLabel(tone), sel = selectedColor, s = toneScore(sel, tone);
+  var best = skinColors(tone, 2), msg = "";
+
+  if (s === 2) msg = '✓ <b>' + esc(sel) + '</b> is a great match for <b>' + esc(label) + '</b> skin.';
+  else if (s === 1) msg = '<b>' + esc(sel) + '</b> works well on <b>' + esc(label) + '</b> skin.';
+  else msg = 'For <b>' + esc(label) + '</b> skin, <b>' + esc(sel || "this shade") + '</b> is a subtler choice.';
+
+  if (s !== 2 && best.length) msg += ' Best picks: <b>' + best.map(esc).join(", ") + '</b>.';
+  msg += '<small>Styling suggestion only. The final look depends on your undertone and lighting.</small>';
+  el.innerHTML = msg; el.hidden = false;
+}
+
+function renderSkin() {
+  var multi = product.colors.length > 0 && !(product.colors.length === 1 && product.colors[0] === "Default");
+  $("pdSkin").style.display = multi ? "" : "none";
+  if (!multi) return;
+  renderTones(); applySkinBadges(); updateSkinResult();
+}
+
+function initSkin() {
+  $("pdTones").addEventListener("click", function (e) {
+    var b = e.target.closest(".pd-tone"); if (!b || !product) return;
+    var id = b.dataset.tone, was = getTone() === id;
+    setTone(was ? "" : id);
+    renderTones(); applySkinBadges();
+    
+    // 🔥 NEW: Tone maarumbothu gallery image ah update pannu 🔥
+    updateGalleryImages(product, selectedColor); 
+    // 🔥 END 🔥
+
+    if (!was) {
+      var best = skinColors(id, 2);
+      if (best.length && best.indexOf(selectedColor) < 0) {
+        var card = document.querySelector('.pd-color-card[data-color="' + best[0].replace(/"/g, '\\"') + '"]');
+        if (card) card.click();      // best color-a auto select
+      }
+    }
+    updateSkinResult();
+  });
+}
       /* ---------- gallery ---------- */
       /* ---------- gallery (swipe slider) ---------- */
       function slideIndex() {
@@ -2483,6 +2629,18 @@
         var list = colorImageList(p, color);
         if (!list.length) (p.images || []).forEach(function (s, i) { list.push({ src: s, label: IMG_LABELS[i] || ("View " + (i + 1)) }); });
         if (!list.length) list = [{ src: IMG_PLACEHOLDER, label: "Front" }];
+
+        // 🔥 NEW SKIN TONE LOGIC 🔥
+        var activeTone = getTone(); // Current selected tone (fair, wheatish, etc.)
+        
+        // Antha color ku antha tone la image irukka nu check pannu
+        var toneImgData = p.toneImages && p.toneImages[color] && p.toneImages[color][activeTone];
+        
+        // Oru vela tone image (front) irundha, FIRST image ah mattum athuku maathu
+        if (toneImgData && toneImgData.front) {
+            list[0].src = toneImgData.front;
+        }
+        // 🔥 END OF NEW LOGIC 🔥
 
         var s = $("pdSlider");
         s.innerHTML = list.map(function (it, i) {
@@ -2560,6 +2718,8 @@
         $("pdVideoBtn").dataset.url = currentVideoUrl;
         $("pdVideoBtn").style.display = currentVideoUrl ? "flex" : "none";
 
+        renderColors();
+renderSkin();
         renderSizes();
         updatePrice();
 
@@ -2631,8 +2791,9 @@
       }
 
       /* ---------- interactions ---------- */
-      function initInteractions() {
-        $("pdColors").addEventListener("click", function (e) {
+  function initInteractions() {
+  initSkin();
+  $("pdColors").addEventListener("click", function (e) {
           var b = e.target.closest(".pd-color-card");
           if (!b || !product) return;
           document.querySelectorAll(".pd-color-card").forEach(function (x) { x.classList.remove("sel"); });
@@ -2657,6 +2818,9 @@
           b.classList.add("sel");
           selectedSize = b.dataset.size;
           updateCTA();
+                 renderSizes();      // sizes / sold-out / stock differ per color
+          updateCTA();
+          updateSkinResult();   // ← idha add pannunga
         });
 
         $("pdCartBtn").addEventListener("click", function () { addToCart(false); });
@@ -2750,10 +2914,17 @@
 
         var finalPrice = currentPrice();
 
-        var finalImg = (product.images && product.images[0]) || product.image || IMG_PLACEHOLDER;
-        var cl = colorImageList(product, selectedColor);
-        if (cl.length) finalImg = cl[0].src;
+var finalImg = (product.images && product.images[0]) || product.image || IMG_PLACEHOLDER;
+var cl = colorImageList(product, selectedColor);
+if (cl.length) finalImg = cl[0].src;
 
+// 🔥 NEW: Tone select pannirundha, antha front image ah cart ku edu 🔥
+var activeTone = getTone();
+var toneData = product.toneImages && product.toneImages[selectedColor] && product.toneImages[selectedColor][activeTone];
+if (toneData && toneData.front) {
+    finalImg = toneData.front;
+}
+// 🔥 END 🔥
         if (existing > -1) {
           cart[existing].qty = (cart[existing].qty || 1) + 1;
         } else {

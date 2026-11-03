@@ -11,9 +11,9 @@ import * as FB from "./firebase.js";
     ordersCollection: "orders",    // Firestore collection the admin orders page reads
     productsCollection: "products",
     logo: "../assets/logo.png",
-    freeShipOver: 999,
-    shipFee: 60,
-    prepaidOff: 40,
+    freeShipOver: 0,
+    shipFee: 0,
+    prepaidOff: 0,
     codFee: 0,
     codEnabled: true,             // set true to show Cash on Delivery again
     razorpayKey: "",               // paste your Razorpay key_id to enable AUTOMATIC online payment (then QR step is skipped)
