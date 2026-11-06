@@ -2471,13 +2471,13 @@
         if (p.colors.length === 1 && p.colors[0] === "Default") { $("pdColorBlock").style.display = "none"; selectedColor = p.colors[0]; return; }
         $("pdColorBlock").style.display = "block";
         $("pdColorCount").textContent = p.colors.length + " Similar Product" + (p.colors.length === 1 ? "" : "s");
-        selectedColor = p.colors[0];
+        selectedColor = p.colors.filter(function (c) { return colorStock(c) > 0; })[0] || p.colors[0];
         $("pdColorName").textContent = selectedColor;
         $("pdColors").innerHTML = p.colors.map(function (c, idx) {
           var list = colorImageList(p, c);
           var img = (list[0] && list[0].src) || p.image || IMG_PLACEHOLDER;
           var hex = (p.colorHex && p.colorHex[c]) || HEX[c] || "#ccc";
-          return '<button type="button" class="pd-color-card' + (idx === 0 ? ' sel' : '') + '" data-color="' + esc(c) + '" title="' + esc(c) + '">' +
+          return '<button type="button" class="pd-color-card' + (c === selectedColor ? ' sel' : '') + '" data-color="' + esc(c) + '" title="' + esc(c) + '">' +
             '<span class="pcc-img"><img src="' + esc(img) + '" alt="' + esc(c) + '" onerror="this.style.opacity=.3"></span>' +
             '<span class="pcc-name"><i style="background:' + esc(hex) + '"></i>' + esc(c) + (colorStock(c) <= 0 ? ' · Sold out' : '') + '</span></button>';
         }).join("");
@@ -2554,8 +2554,7 @@ function applySkinBadges() {
   if (!tone) return;
   document.querySelectorAll(".pd-color-card").forEach(function (card) {
     var s = toneScore(card.dataset.color, tone);
-    if (s === 2) card.insertAdjacentHTML("afterbegin", '<span class="pcc-match">★ Best match</span>');
-    else if (s === 1) card.insertAdjacentHTML("afterbegin", '<span class="pcc-match good">Good</span>');
+   
   });
 }
 
@@ -2565,11 +2564,12 @@ function updateSkinResult() {
   var label = toneLabel(tone), sel = selectedColor, s = toneScore(sel, tone);
   var best = skinColors(tone, 2), msg = "";
 
-  if (s === 2) msg = '✓ <b>' + esc(sel) + '</b> is a great match for <b>' + esc(label) + '</b> skin.';
+  if (s === null) msg = 'No skin-tone rating for <b>' + esc(sel || "this shade") + '</b>.';
+  else if (s === 2) msg = '✓ <b>' + esc(sel) + '</b> is a great match for <b>' + esc(label) + '</b> skin.';
   else if (s === 1) msg = '<b>' + esc(sel) + '</b> works well on <b>' + esc(label) + '</b> skin.';
   else msg = 'For <b>' + esc(label) + '</b> skin, <b>' + esc(sel || "this shade") + '</b> is a subtler choice.';
 
-  if (s !== 2 && best.length) msg += ' Best picks: <b>' + best.map(esc).join(", ") + '</b>.';
+  if (s !== 2 && best.length && best.indexOf(sel) < 0) msg += ' Best picks: <b>' + best.map(esc).join(", ") + '</b>.';
   msg += '<small>Styling suggestion only. The final look depends on your undertone and lighting.</small>';
   el.innerHTML = msg; el.hidden = false;
 }
@@ -2592,13 +2592,8 @@ function initSkin() {
     updateGalleryImages(product, selectedColor); 
     // 🔥 END 🔥
 
-    if (!was) {
-      var best = skinColors(id, 2);
-      if (best.length && best.indexOf(selectedColor) < 0) {
-        var card = document.querySelector('.pd-color-card[data-color="' + best[0].replace(/"/g, '\\"') + '"]');
-        if (card) card.click();      // best color-a auto select
-      }
-    }
+    /* colour is NOT changed automatically any more - the customer keeps the colour they picked;
+       the text below only suggests the best-match colours */
     updateSkinResult();
   });
 }
@@ -2801,6 +2796,7 @@ renderSkin();
           updateGalleryImages(product, selectedColor);
           renderSizes();      // sizes / sold-out / stock differ per color
           updateCTA();
+          updateSkinResult(); // skin-match text follows the colour that is now selected
         });
 
         $("pdThumbRow").addEventListener("click", function (e) {

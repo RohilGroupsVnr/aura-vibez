@@ -35,6 +35,11 @@ import {
   runTransaction
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
+import {
+  getFunctions,
+  httpsCallable
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-functions.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDv425kiGK02A5r9HggmKK-o6vjxYHhkKM",
   authDomain: "aura-8a9b5.firebaseapp.com",
@@ -48,6 +53,12 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig, "aura-admin");
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+/* ---------- Ekart (Cloud Functions, region = ekart.js-la REGION) ---------- */
+const fns = getFunctions(app, "asia-south1");
+export const ekartCreate = (orderDocId) => httpsCallable(fns, "createEkartShipment")({ orderDocId });
+export const ekartCancel = (orderDocId) => httpsCallable(fns, "cancelEkartShipment")({ orderDocId });
+export const ekartLabel  = (orderDocId) => httpsCallable(fns, "getEkartLabel")({ orderDocId });
 
 setPersistence(auth, browserLocalPersistence).catch((e) => console.warn("Persistence:", e));
 
@@ -82,7 +93,8 @@ export {
 
 export const ADMIN_EMAILS = [
   "auraclothing.vnr@gmail.com",
-"auravibezclothing@gmail.com" ];
+  "auravibezclothing@gmail.com"
+];
 
 export function isAdminEmail(email) {
   if (!email) return false;

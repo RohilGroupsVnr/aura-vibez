@@ -22,7 +22,7 @@ import * as FB from "./firebase.js";
     upiName: "Sofia Johnson",
     qrImage: "",                   // optional: your own QR image, e.g. "../assets/upi-qr.jpg". Empty = QR is generated with the exact amount
     trackUrl: "trackorder.html",
-    coupons: { AURA10: { pct: 10 }, WELCOME100: { flat: 100, min: 999 } }
+    pincodeApi: "https://asia-south1-aura-8a9b5.cloudfunctions.net/ekartPincode", coupons: { AURA10: { pct: 10 }, WELCOME100: { flat: 100, min: 999 } }
   }, window.AURA_CHECKOUT_CONFIG || {});
 
   /* ---------- helpers ---------- */
@@ -71,11 +71,14 @@ import * as FB from "./firebase.js";
   const payList = () => {
     let list = manualMode() ? PAY.filter(m => m.id === "upi" || m.id === "cod") : PAY;
     if (!CFG.codEnabled) list = list.filter(m => m.id !== "cod");   // COD hidden unless codEnabled: true
+    const pi = S.pinInfo && S.addr && S.pinInfo.pin === S.addr.pin ? S.pinInfo : null;
+    if (pi && !pi.cod) list = list.filter(m => m.id !== "cod");      // Ekart COD support illa-na hide
+    if (calc("cod").total > 49999) list = list.filter(m => m.id !== "cod");
     return list;
   };
 
   /* ---------- state ---------- */
-  const S = { open: false, step: "login", items: [], buyNow: false, user: null, addr: null, coupon: null, method: null, busy: false, itemsOpen: false, tip: true, order: null, phoneDraft: "", msgI: 0, reveal: false, utr: "" };
+  const S = { open: false, step: "login", items: [], buyNow: false, user: null, addr: null, coupon: null, method: null, busy: false, itemsOpen: false, tip: true, order: null, phoneDraft: "", msgI: 0, reveal: false, utr: "", pinInfo: null };
   let authResolve, pending = null, ribbonTimer, toastTimer, flashTimer;
   const authReady = new Promise(r => (authResolve = r));
 
@@ -159,8 +162,7 @@ import * as FB from "./firebase.js";
   function route() {
     if (S.step === "done" && S.order) return render();
     if (!S.user) { S.step = "login"; S.addr = null; }
-    else { loadAddr(); S.step = S.addr ? "summary" : "address"; S.reveal = !!S.addr; }
-    render();
+    else { loadAddr(); S.step = S.addr ? "summary" : "address"; S.reveal = !!S.addr; ensurePin(); } render();
   }
 
   /* ---------- ribbon / toast / flash ---------- */
@@ -364,11 +366,27 @@ import * as FB from "./firebase.js";
     } catch (e) { }
     return null;
   }
+  async function ekartCheck(pin) {
+    if (!CFG.pincodeApi) return null;
+    try {
+      const r = await fetch(CFG.pincodeApi + "?pincode=" + pin);
+      const j = await r.json();
+      return j && j.ok ? { ...j, pin } : null;
+    } catch (e) { return null; }
+  }
+  async function ensurePin() {
+    if (!S.addr || (S.pinInfo && S.pinInfo.pin === S.addr.pin)) return;
+    S.pinInfo = await ekartCheck(S.addr.pin);
+    if (S.open && S.step === "summary") render();
+  }
   async function revealFromPin(pin) {
-    const r = await lookupPin(pin);
+    const [r0, k] = await Promise.all([lookupPin(pin), ekartCheck(pin)]);
     if (!$("ckPin") || $("ckPin").value.trim() !== pin) return;
+    S.pinInfo = k;
+    const r = r0 || (k && k.city ? { city: String(k.city).toUpperCase(), state: String(k.state).toUpperCase() } : null);
     if (r) { $("ckCity").value = r.city; $("ckState").value = r.state; lockCityState(true); setErr("ckCity", ""); setErr("ckState", ""); }
     else { lockCityState(false); toast("Couldn't find that pincode. Please enter city and state."); }
+    if (k && !k.serviceable) setErr("ckPin", "Sorry, we can't deliver to this pincode yet");
     S.reveal = true; $("ckSheet").classList.add("rev");
     if (!$("ckFlat").value) $("ckFlat").focus();
   }
@@ -582,6 +600,9 @@ import * as FB from "./firebase.js";
         await revealFromPin(pin); return;
       }
       if (!validateAddr()) return;
+      if (S.pinInfo && S.pinInfo.pin === $("ckPin").value.trim() && !S.pinInfo.serviceable) {
+        setErr("ckPin", "Sorry, we can't deliver to this pincode yet"); $("ckPin").focus(); return;
+      }
       const mob = $("ckMob") ? digits($("ckMob").value) : "";
       saveAddr({
         pin: $("ckPin").value.trim(), city: $("ckCity").value.trim(), state: $("ckState").value.trim(),

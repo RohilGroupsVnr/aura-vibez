@@ -23,70 +23,422 @@
 
   <!-- ===== MOTION SECTION & LOGIN CSS (navbar / mobile menu CSS now lives in js/navbar.js) ===== -->
   <style>
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
 
-    .wishlist-btn { position: absolute; top: 12px; right: 12px; z-index: 5; width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 18px; cursor: pointer; display: grid; place-items: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
-    .wishlist-btn:hover { transform: scale(1.1); background: #fff; }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
 
-    #motion-section .hm-motion { display: flex; gap: 10px; height: clamp(360px, 64vh, 560px); padding-inline: var(--hm-pad); cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
-    #motion-section .hm-motion.dragging { cursor: grabbing; }
-    #motion-section .hm-motion.dragging .hm-pane { transition-duration: .45s; }
-    #motion-section .hm-pane { position: relative; flex: 1; overflow: hidden; border-radius: 4px; color: #fff; transition: flex .9s cubic-bezier(.2, .8, .2, 1), filter .9s cubic-bezier(.2, .8, .2, 1); filter: grayscale(1) brightness(.85); display: block; -webkit-user-drag: none; }
-    #motion-section .hm-pane.on { flex: 7; filter: none; }
-    #motion-section .hm-pane .hm-ph { position: absolute; inset: 0; background: linear-gradient(160deg, var(--g1, #D3567E), var(--g2, #6E0E33)); }
-    #motion-section .hm-pane .hm-ph>img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; -webkit-user-drag: none; }
-    #motion-section .hm-pane::after { content: ""; position: absolute; inset: 0; z-index: 2; background: linear-gradient(0deg, rgba(15, 4, 9, .8), transparent 55%); }
-    #motion-section .hm-pane .lab { position: absolute; z-index: 3; left: 50%; bottom: 18px; writing-mode: vertical-rl; transform: translateX(-50%) rotate(180deg); font-size: .78rem; letter-spacing: .26em; text-transform: uppercase; transition: opacity .4s; }
-    #motion-section .hm-pane.on .lab { opacity: 0; }
-    #motion-section .hm-pane .cap { position: absolute; z-index: 3; left: 24px; bottom: 24px; right: 24px; opacity: 0; transform: translateY(16px); transition: all .7s cubic-bezier(.2, .8, .2, 1) .2s; }
-    #motion-section .hm-pane.on .cap { opacity: 1; transform: none; }
-    #motion-section .hm-pane .cap small { display: block; font-size: .74rem; letter-spacing: .24em; text-transform: uppercase; opacity: .8; }
-    #motion-section .hm-pane .cap b { display: block; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.05; margin: 4px 0 8px; }
-    #motion-section .hm-pane .cap u { font-size: .76rem; letter-spacing: .2em; text-transform: uppercase; text-underline-offset: 4px; }
+    .wishlist-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 5;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      font-size: 18px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .wishlist-btn:hover {
+      transform: scale(1.1);
+      background: #fff;
+    }
+
+    #motion-section .hm-motion {
+      display: flex;
+      gap: 10px;
+      height: clamp(360px, 64vh, 560px);
+      padding-inline: var(--hm-pad);
+      cursor: grab;
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    #motion-section .hm-motion.dragging {
+      cursor: grabbing;
+    }
+
+    #motion-section .hm-motion.dragging .hm-pane {
+      transition-duration: .45s;
+    }
+
+    #motion-section .hm-pane {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      border-radius: 4px;
+      color: #fff;
+      transition: flex .9s cubic-bezier(.2, .8, .2, 1), filter .9s cubic-bezier(.2, .8, .2, 1);
+      filter: grayscale(1) brightness(.85);
+      display: block;
+      -webkit-user-drag: none;
+    }
+
+    #motion-section .hm-pane.on {
+      flex: 7;
+      filter: none;
+    }
+
+    #motion-section .hm-pane .hm-ph {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, var(--g1, #D3567E), var(--g2, #6E0E33));
+    }
+
+    #motion-section .hm-pane .hm-ph>img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      -webkit-user-drag: none;
+    }
+
+    #motion-section .hm-pane::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(0deg, rgba(15, 4, 9, .8), transparent 55%);
+    }
+
+    #motion-section .hm-pane .lab {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      bottom: 18px;
+      writing-mode: vertical-rl;
+      transform: translateX(-50%) rotate(180deg);
+      font-size: .78rem;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      transition: opacity .4s;
+    }
+
+    #motion-section .hm-pane.on .lab {
+      opacity: 0;
+    }
+
+    #motion-section .hm-pane .cap {
+      position: absolute;
+      z-index: 3;
+      left: 24px;
+      bottom: 24px;
+      right: 24px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all .7s cubic-bezier(.2, .8, .2, 1) .2s;
+    }
+
+    #motion-section .hm-pane.on .cap {
+      opacity: 1;
+      transform: none;
+    }
+
+    #motion-section .hm-pane .cap small {
+      display: block;
+      font-size: .74rem;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      opacity: .8;
+    }
+
+    #motion-section .hm-pane .cap b {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      line-height: 1.05;
+      margin: 4px 0 8px;
+    }
+
+    #motion-section .hm-pane .cap u {
+      font-size: .76rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      text-underline-offset: 4px;
+    }
 
     @media (max-width: 1000px) {
-      #motion-section .hm-motion { flex-direction: column; height: auto; }
-      #motion-section .hm-pane { flex: none; height: 70px; transition: height .8s cubic-bezier(.2, .8, .2, 1), filter .8s cubic-bezier(.2, .8, .2, 1); }
-      #motion-section .hm-pane.on { flex: none; height: clamp(280px, 90vw, 380px); }
-      #motion-section .hm-pane .lab { writing-mode: horizontal-tb; transform: none; left: 20px; bottom: 50%; margin-bottom: -.6em; }
+      #motion-section .hm-motion {
+        flex-direction: column;
+        height: auto;
+      }
+
+      #motion-section .hm-pane {
+        flex: none;
+        height: 70px;
+        transition: height .8s cubic-bezier(.2, .8, .2, 1), filter .8s cubic-bezier(.2, .8, .2, 1);
+      }
+
+      #motion-section .hm-pane.on {
+        flex: none;
+        height: clamp(280px, 90vw, 380px);
+      }
+
+      #motion-section .hm-pane .lab {
+        writing-mode: horizontal-tb;
+        transform: none;
+        left: 20px;
+        bottom: 50%;
+        margin-bottom: -.6em;
+      }
     }
 
     /* ===== LOGIN POPUP CSS ===== */
-    .aura-login-overlay { position: fixed; inset: 0; z-index: 121; display: grid; place-items: center; padding: 20px; background: rgba(20, 8, 14, .58); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .35s ease, visibility .35s; }
-    .aura-login-overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
-    .aura-login-card { position: relative; display: grid; grid-template-columns: 1fr 1fr; width: min(780px, 100%); min-height: 440px; overflow: hidden; background: #FFF9F0; color: #2B1B21; border-radius: 18px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .55); transform: translateY(24px) scale(.97); transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
-    .aura-login-overlay.show .aura-login-card { transform: none; }
-    .aura-login-x { position: absolute; top: 14px; right: 14px; z-index: 3; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #2B1B21; border: 0; cursor: pointer; font-size: 1.15rem; box-shadow: 0 4px 14px -6px rgba(0, 0, 0, .4); transition: transform .3s, background .3s, color .3s; }
-    .aura-login-x:hover { transform: rotate(90deg); background: #A3194A; color: #fff; }
-    .aura-login-img { position: relative; background: linear-gradient(160deg, #D3567E, #6E0E33); min-height: 240px; }
-    .aura-login-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-    .aura-login-body { padding: 44px 40px 36px; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
-    .aura-login-eyebrow { display: block; margin-bottom: 10px; font-size: .68rem; font-weight: 500; letter-spacing: .3em; color: #8B8378; text-transform: uppercase; }
-    .aura-login-body h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: clamp(1.9rem, 3vw, 2.4rem); font-weight: 600; line-height: 1.08; margin: 0 0 6px; color: #2B1B21; }
-    .aura-login-body h2 em { color: #A3194A; font-style: italic; }
-    .aura-login-sub { font-size: .9rem; color: #7B6A6F; margin: 0 0 22px; line-height: 1.5; }
-    .aura-login-body form { display: grid; gap: 14px; }
-    .aura-login-field { display: grid; gap: 6px; }
-    .aura-login-field>span { font-size: .78rem; font-weight: 500; color: #2B1B21; letter-spacing: .02em; }
-    .aura-login-field input, .aura-login-field textarea { width: 100%; padding: 13px 15px; border: 1.5px solid #E8E1D3; border-radius: 10px; background: #fff; font-family: inherit; font-size: .94rem; color: #2B1B21; outline: none; transition: border-color .2s, box-shadow .2s; }
-    .aura-login-field input::placeholder, .aura-login-field textarea::placeholder { color: #B8AEA0; }
-    .aura-login-field input:focus, .aura-login-field textarea:focus { border-color: #A3194A; box-shadow: 0 0 0 4px rgba(163, 25, 74, .1); }
-    .aura-login-submit { width: 100%; padding: 15px 20px; border-radius: 999px; border: 0; background: linear-gradient(135deg, #A3194A, #6E0E33); color: #fff; font-family: inherit; font-size: .86rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; box-shadow: 0 12px 26px -12px rgba(163, 25, 74, .8); transition: transform .25s, box-shadow .25s; margin-top: 4px; }
-    .aura-login-submit:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -12px rgba(163, 25, 74, .9); }
-    .aura-login-msg { min-height: 1.3em; font-size: .85rem; text-align: center; margin: 4px 0 0; color: #C0334F; }
+    .aura-login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 121;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(20, 8, 14, .58);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .35s ease, visibility .35s;
+    }
+
+    .aura-login-overlay.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .aura-login-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: min(780px, 100%);
+      min-height: 440px;
+      overflow: hidden;
+      background: #FFF9F0;
+      color: #2B1B21;
+      border-radius: 18px;
+      box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .55);
+      transform: translateY(24px) scale(.97);
+      transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .aura-login-overlay.show .aura-login-card {
+      transform: none;
+    }
+
+    .aura-login-x {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 3;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #2B1B21;
+      border: 0;
+      cursor: pointer;
+      font-size: 1.15rem;
+      box-shadow: 0 4px 14px -6px rgba(0, 0, 0, .4);
+      transition: transform .3s, background .3s, color .3s;
+    }
+
+    .aura-login-x:hover {
+      transform: rotate(90deg);
+      background: #A3194A;
+      color: #fff;
+    }
+
+    .aura-login-img {
+      position: relative;
+      background: linear-gradient(160deg, #D3567E, #6E0E33);
+      min-height: 240px;
+    }
+
+    .aura-login-img img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .aura-login-body {
+      padding: 44px 40px 36px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .aura-login-eyebrow {
+      display: block;
+      margin-bottom: 10px;
+      font-size: .68rem;
+      font-weight: 500;
+      letter-spacing: .3em;
+      color: #8B8378;
+      text-transform: uppercase;
+    }
+
+    .aura-login-body h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1.08;
+      margin: 0 0 6px;
+      color: #2B1B21;
+    }
+
+    .aura-login-body h2 em {
+      color: #A3194A;
+      font-style: italic;
+    }
+
+    .aura-login-sub {
+      font-size: .9rem;
+      color: #7B6A6F;
+      margin: 0 0 22px;
+      line-height: 1.5;
+    }
+
+    .aura-login-body form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .aura-login-field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .aura-login-field>span {
+      font-size: .78rem;
+      font-weight: 500;
+      color: #2B1B21;
+      letter-spacing: .02em;
+    }
+
+    .aura-login-field input,
+    .aura-login-field textarea {
+      width: 100%;
+      padding: 13px 15px;
+      border: 1.5px solid #E8E1D3;
+      border-radius: 10px;
+      background: #fff;
+      font-family: inherit;
+      font-size: .94rem;
+      color: #2B1B21;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .aura-login-field input::placeholder,
+    .aura-login-field textarea::placeholder {
+      color: #B8AEA0;
+    }
+
+    .aura-login-field input:focus,
+    .aura-login-field textarea:focus {
+      border-color: #A3194A;
+      box-shadow: 0 0 0 4px rgba(163, 25, 74, .1);
+    }
+
+    .aura-login-submit {
+      width: 100%;
+      padding: 15px 20px;
+      border-radius: 999px;
+      border: 0;
+      background: linear-gradient(135deg, #A3194A, #6E0E33);
+      color: #fff;
+      font-family: inherit;
+      font-size: .86rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 12px 26px -12px rgba(163, 25, 74, .8);
+      transition: transform .25s, box-shadow .25s;
+      margin-top: 4px;
+    }
+
+    .aura-login-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px -12px rgba(163, 25, 74, .9);
+    }
+
+    .aura-login-msg {
+      min-height: 1.3em;
+      font-size: .85rem;
+      text-align: center;
+      margin: 4px 0 0;
+      color: #C0334F;
+    }
 
     @media (max-width: 700px) {
-      .aura-login-card { grid-template-columns: 1fr; min-height: 0; max-height: 92vh; overflow-y: auto; }
-      .aura-login-img { min-height: 0; height: 160px; }
-      .aura-login-body { padding: 28px 22px 24px; }
-      .acct .menu { position: fixed; top: 76px; right: 12px; width: min(270px, calc(100vw - 24px)); }
+      .aura-login-card {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+
+      .aura-login-img {
+        min-height: 0;
+        height: 160px;
+      }
+
+      .aura-login-body {
+        padding: 28px 22px 24px;
+      }
+
+      .acct .menu {
+        position: fixed;
+        top: 76px;
+        right: 12px;
+        width: min(270px, calc(100vw - 24px));
+      }
     }
 
     /* Explore link: hand cursor, no zoom */
-    .aura-cat-content .go { cursor: pointer; }
-    .aura-cat-content .go:hover { transform: none; scale: none; }
-    .aura-girls-cats .cat:hover .cat-img { transform: none !important; scale: none !important; }
-    .aura-girls-cats .go { cursor: pointer; }
+    .aura-cat-content .go {
+      cursor: pointer;
+    }
+
+    .aura-cat-content .go:hover {
+      transform: none;
+      scale: none;
+    }
+
+    .aura-girls-cats .cat:hover .cat-img {
+      transform: none !important;
+      scale: none !important;
+    }
+
+    .aura-girls-cats .go {
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -196,587 +548,592 @@
 
   <!-- MAIN CONTENT -->
   <main class="hm-main">
-    <!-- Promo Band -->
+
+    <!-- Premium Collection Banner -->
     <section class="section" style="padding-top:0">
       <div class="container">
         <div class="promo reveal">
-          <h2>Festive Sale · <em>Up to 60% OFF</em></h2>
-          <p>Celebrate the season with our curated festive collection.
-            Limited
-            time offer.</p>
-          <div class="count">
-            <div><b id="cd-d">02</b><small>Days</small></div>
-            <div><b id="cd-h">14</b><small>Hours</small></div>
-            <div><b id="cd-m">36</b><small>Mins</small></div>
-            <div><b id="cd-s">22</b><small>Secs</small></div>
-          </div>
-          <a href="shop.html" class="btn btn-light">Shop the Sale →</a>
+
+          <h2>Discover Your <em>Style</em></h2>
+
+          <p>
+            Explore our latest collection of elegant designs
+            and timeless fashion. Find your perfect look for
+            every occasion.
+          </p>
+
+          <a href="shop.html" class="btn btn-light">
+            Explore Collection →
+          </a>
+
         </div>
       </div>
     </section>
 
-    <!-- ===== GIRLS' DRESS COLLECTION (Static Custom Layout) ===== -->
-    <section class="hm-sec" id="moods">
-      <div class="hm-moods-head">
-        <div><span class="hm-eyebrow reveal">The AURA Edit</span>
-          <h2 class="hm-display reveal" style="--d:80ms;font-size:clamp(2.8rem,6.4vw,5rem)">Girls'
-            Dresses.<span class="hm-script">Every look, your style</span></h2>
+  </main>
+
+  <!-- ===== GIRLS' DRESS COLLECTION (Static Custom Layout) ===== -->
+  <section class="hm-sec" id="moods">
+    <div class="hm-moods-head">
+      <div><span class="hm-eyebrow reveal">The AURA Edit</span>
+        <h2 class="hm-display reveal" style="--d:80ms;font-size:clamp(2.8rem,6.4vw,5rem)">Girls'
+          Dresses.<span class="hm-script">Every look, your style</span></h2>
+      </div>
+      <p class="reveal" style="--d:160ms">Explore beautiful dresses for
+        every occasion, from elegant everyday outfits
+        to glamorous party wear and dreamy bridal looks.</p>
+    </div>
+
+    <div class="hm-arches reveal" data-drag>
+      <!-- 1. Kurta Sets -->
+      <a class="hm-arch" href="shop.html?cat=kurta-sets">
+        <span class="hm-ph" style="--g1:#E879A9;--g2:#8A1640">
+          <img src="../realtime-images/green-trends-model-set.PNG" alt="Kurta Sets" loading="lazy" draggable="false"
+            onerror="this.remove()">
+        </span>
+        <span>Kurta Sets</span>
+      </a>
+
+      <!-- 2. Maxi Dresses -->
+      <a class="hm-arch" href="shop.html?cat=dresses&type=maxi-dresses">
+        <span class="hm-ph" style="--g1:#E8CFA0;--g2:#B88A4B">
+          <img src="../realtime-images/Mediterranean Courtyard Dash-Print Dress.png" alt="Maxi Dresses" loading="lazy"
+            draggable="false" onerror="this.remove()">
+        </span>
+        <span>Flared Kurti</span>
+      </a>
+
+      <!-- 3. Office Wear -->
+      <a class="hm-arch" href="shop.html?cat=office-wear">
+        <span class="hm-ph" style="--g1:#B4708B;--g2:#5C1A38">
+          <img src="../realtime-images/black-set.PNG" alt="Office Wear" loading="lazy" draggable="false"
+            onerror="this.remove()">
+        </span>
+        <span>Office Wear</span>
+      </a>
+
+      <!-- 4. College Dresses -->
+      <a class="hm-arch" href="shop.html?cat=college-wear">
+        <span class="hm-ph" style="--g1:#F2BCCB;--g2:#D6657F">
+          <img src="../realtime-images/green-set.PNG" alt="College Dresses" loading="lazy" draggable="false"
+            onerror="this.remove()">
+        </span>
+        <span>College Dresses</span>
+      </a>
+
+      <!-- 5. Jumpsuit (link fixed: was cat=sarees) -->
+      <a class="hm-arch" href="shop.html?cat=jump-suit">
+        <span class="hm-ph" style="--g1:#C93A68;--g2:#4B1230">
+          <img src="../realtime-images/Jump Suite.PNG" alt="Jumpsuit" loading="lazy" draggable="false"
+            onerror="this.remove()">
+        </span>
+        <span>Jumpsuit</span>
+      </a>
+
+      <!-- 6. Night Suits -->
+      <a class="hm-arch" href="shop.html?cat=night-suits">
+        <span class="hm-ph" style="--g1:#B7A0E8;--g2:#513477">
+          <img src="../realtime-images/nightsuite-lightrose.PNG" alt="Night Suits" loading="lazy" draggable="false"
+            onerror="this.remove()">
+        </span>
+        <span>Night Suits</span>
+      </a>
+
+      <!-- 7. Leggings -->
+      <a class="hm-arch" href="shop.html?cat=leggings">
+        <span class="hm-ph" style="--g1:#D8B4C8;--g2:#713B58">
+          <img src="../realtime-images/leggins(black).PNG" alt="Leggings" loading="lazy" draggable="false"
+            onerror="this.remove()">
+        </span>
+        <span>Leggings</span>
+      </a>
+
+      <!-- 8. Palazzo -->
+      <a class="hm-arch" href="shop.html?cat=palazzo">
+        <span class="hm-ph" style="--g1:#D9C6A5;--g2:#80613D">
+          <img src="../realtime-images/palazzo-front(sandal).PNG" alt="Palazzo" loading="lazy" draggable="false"
+            onerror="this.remove()">
+        </span>
+        <span>Palazzo</span>
+      </a>
+
+      <!-- 9. Shawls -->
+      <a class="hm-arch" href="shop.html?cat=shawls">
+        <span class="hm-ph" style="--g1:#E8B8C8;--g2:#8D3455">
+          <img src="../realtime-images/shawl-white.PNG" alt="Shawls" loading="lazy" draggable="false"
+            onerror="this.remove()">
+        </span>
+        <span>Shawls</span>
+      </a>
+
+      <!-- 10. T-Shirt -->
+      <a class="hm-arch" href="shop.html?cat=t-shirt">
+        <span class="hm-ph" style="--g1:#B9CBB0;--g2:#405B3D">
+          <img src="../realtime-images/t-shirt(pink).PNG" alt="T-Shirt" loading="lazy" draggable="false"
+            onerror="this.remove()">
+        </span>
+        <span>T-Shirt</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== GIRLS FASHION CATEGORIES ===== -->
+  <section class="section aura-fashion-categories">
+    <div class="container">
+      <div class="head">
+        <div>
+          <span class="eyebrow reveal">THE AURA EDIT</span>
+          <h2 class="title reveal" style="--d:80ms">Find Your
+            <em>Style</em>
+          </h2>
+          <p class="category-subtitle reveal" style="--d:120ms">From
+            everyday charm to unforgettable moments.</p>
         </div>
-        <p class="reveal" style="--d:160ms">Explore beautiful dresses for
-          every occasion, from elegant everyday outfits
-          to glamorous party wear and dreamy bridal looks.</p>
+        <a href="shop.html?cat=fashion" class="category-view-all">View All
+          Collections <span>↗</span></a>
       </div>
 
-      <div class="hm-arches reveal" data-drag>
-        <!-- 1. Kurta Sets -->
-        <a class="hm-arch" href="shop.html?cat=kurta-sets">
-          <span class="hm-ph" style="--g1:#E879A9;--g2:#8A1640">
-            <img src="../realtime-images/green-trends-model-set.PNG" alt="Kurta Sets" loading="lazy" draggable="false"
-              onerror="this.remove()">
-          </span>
-          <span>Kurta Sets</span>
-        </a>
+      <div class="cats aura-girls-cats" data-stagger>
 
-        <!-- 2. Maxi Dresses -->
-        <a class="hm-arch" href="shop.html?cat=dresses&type=maxi-dresses">
-          <span class="hm-ph" style="--g1:#E8CFA0;--g2:#B88A4B">
-            <img src="../realtime-images/Mediterranean Courtyard Dash-Print Dress.png" alt="Maxi Dresses" loading="lazy"
-              draggable="false" onerror="this.remove()">
-          </span>
-          <span>Flared Kurti</span>
-        </a>
-
-        <!-- 3. Office Wear -->
-        <a class="hm-arch" href="shop.html?cat=office-wear">
-          <span class="hm-ph" style="--g1:#B4708B;--g2:#5C1A38">
-            <img src="../realtime-images/black-set.PNG" alt="Office Wear" loading="lazy" draggable="false"
-              onerror="this.remove()">
-          </span>
-          <span>Office Wear</span>
-        </a>
-
-        <!-- 4. College Dresses -->
-        <a class="hm-arch" href="shop.html?cat=college-wear">
-          <span class="hm-ph" style="--g1:#F2BCCB;--g2:#D6657F">
-            <img src="../realtime-images/green-set.PNG" alt="College Dresses" loading="lazy" draggable="false"
-              onerror="this.remove()">
-          </span>
-          <span>College Dresses</span>
-        </a>
-
-        <!-- 5. Jumpsuit (link fixed: was cat=sarees) -->
-        <a class="hm-arch" href="shop.html?cat=jump-suit">
-          <span class="hm-ph" style="--g1:#C93A68;--g2:#4B1230">
-            <img src="../realtime-images/Jump Suite.PNG" alt="Jumpsuit" loading="lazy" draggable="false"
-              onerror="this.remove()">
-          </span>
-          <span>Jumpsuit</span>
-        </a>
-
-        <!-- 6. Night Suits -->
-        <a class="hm-arch" href="shop.html?cat=night-suits">
-          <span class="hm-ph" style="--g1:#B7A0E8;--g2:#513477">
-            <img src="../realtime-images/nightsuite-lightrose.PNG" alt="Night Suits" loading="lazy" draggable="false"
-              onerror="this.remove()">
-          </span>
-          <span>Night Suits</span>
-        </a>
-
-        <!-- 7. Leggings -->
-        <a class="hm-arch" href="shop.html?cat=leggings">
-          <span class="hm-ph" style="--g1:#D8B4C8;--g2:#713B58">
-            <img src="../realtime-images/leggins(black).PNG" alt="Leggings" loading="lazy" draggable="false"
-              onerror="this.remove()">
-          </span>
-          <span>Leggings</span>
-        </a>
-
-        <!-- 8. Palazzo -->
-        <a class="hm-arch" href="shop.html?cat=palazzo">
-          <span class="hm-ph" style="--g1:#D9C6A5;--g2:#80613D">
-            <img src="../realtime-images/palazzo-front(sandal).PNG" alt="Palazzo" loading="lazy" draggable="false"
-              onerror="this.remove()">
-          </span>
-          <span>Palazzo</span>
-        </a>
-
-        <!-- 9. Shawls -->
-        <a class="hm-arch" href="shop.html?cat=shawls">
-          <span class="hm-ph" style="--g1:#E8B8C8;--g2:#8D3455">
-            <img src="../realtime-images/shawl-white.PNG" alt="Shawls" loading="lazy" draggable="false"
-              onerror="this.remove()">
-          </span>
-          <span>Shawls</span>
-        </a>
-
-        <!-- 10. T-Shirt -->
-        <a class="hm-arch" href="shop.html?cat=t-shirt">
-          <span class="hm-ph" style="--g1:#B9CBB0;--g2:#405B3D">
-            <img src="../realtime-images/t-shirt(pink).PNG" alt="T-Shirt" loading="lazy" draggable="false"
-              onerror="this.remove()">
-          </span>
-          <span>T-Shirt</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- ===== GIRLS FASHION CATEGORIES ===== -->
-    <section class="section aura-fashion-categories">
-      <div class="container">
-        <div class="head">
-          <div>
-            <span class="eyebrow reveal">THE AURA EDIT</span>
-            <h2 class="title reveal" style="--d:80ms">Find Your
-              <em>Style</em>
-            </h2>
-            <p class="category-subtitle reveal" style="--d:120ms">From
-              everyday charm to unforgettable moments.</p>
+        <!-- 01 — LARGE -->
+        <a href="shop.html?cat=jump-suit" class="cat cat-large reveal">
+          <img class="cat-img" src="../realtime-images/Women's Printed Wide-Leg Jumpsuit2.PNG" alt="Jump Suits"
+            loading="lazy">
+          <div class="aura-cat-overlay"></div>
+          <div class="aura-cat-content">
+            <span class="aura-cat-number">01 / COLLECTION</span>
+            <h3>Jump Suits</h3>
+            <p class="cat-desc">One piece, endless ease.</p>
+            <span class="go">Explore Collection ↗</span>
           </div>
-          <a href="shop.html?cat=fashion" class="category-view-all">View All
-            Collections <span>↗</span></a>
-        </div>
+        </a>
 
-        <div class="cats aura-girls-cats" data-stagger>
-
-          <!-- 01 — LARGE -->
-          <a href="shop.html?cat=jump-suit" class="cat cat-large reveal">
-            <img class="cat-img" src="../realtime-images/Women's Printed Wide-Leg Jumpsuit2.PNG" alt="Jump Suits"
+        <!-- 02 & 03 — SMALL STACK -->
+        <div class="cat-col">
+          <a href="shop.html?cat=kurta-sets" class="cat cat-small reveal">
+            <img class="cat-img" src="../realtime-images/Elegant Teal Floral Veranda Portrait.png" alt="Kurtas"
               loading="lazy">
             <div class="aura-cat-overlay"></div>
             <div class="aura-cat-content">
-              <span class="aura-cat-number">01 / COLLECTION</span>
-              <h3>Jump Suits</h3>
-              <p class="cat-desc">One piece, endless ease.</p>
-              <span class="go">Explore Collection ↗</span>
+              <span class="aura-cat-number">02</span>
+              <h3>Kurta</h3>
+              <span class="go">Explore ↗</span>
             </div>
           </a>
 
-          <!-- 02 & 03 — SMALL STACK -->
-          <div class="cat-col">
-            <a href="shop.html?cat=kurta-sets" class="cat cat-small reveal">
-              <img class="cat-img" src="../realtime-images/Elegant Teal Floral Veranda Portrait.png" alt="Kurtas"
-                loading="lazy">
-              <div class="aura-cat-overlay"></div>
-              <div class="aura-cat-content">
-                <span class="aura-cat-number">02</span>
-                <h3>Kurta</h3>
-                <span class="go">Explore ↗</span>
-              </div>
-            </a>
-
-            <a href="shop.html?cat=crop-tops" class="cat cat-small reveal">
-              <img class="cat-img" src="../realtime-images/croptop-purple.PNG" alt="Crop Tops" loading="lazy">
-              <div class="aura-cat-overlay"></div>
-              <div class="aura-cat-content">
-                <span class="aura-cat-number">03</span>
-                <h3>Crop Top</h3>
-                <span class="go">Explore ↗</span>
-              </div>
-            </a>
-          </div>
-
-          <!-- 04 — LARGE -->
-          <a href="shop.html?cat=dresses&type=maxi-dresses" class="cat cat-large reveal">
-            <img class="cat-img" src="../realtime-images/courttype-with-court.png" alt="Maxi Dresses" loading="lazy">
+          <a href="shop.html?cat=crop-tops" class="cat cat-small reveal">
+            <img class="cat-img" src="../realtime-images/croptop-purple.PNG" alt="Crop Tops" loading="lazy">
             <div class="aura-cat-overlay"></div>
             <div class="aura-cat-content">
-              <span class="aura-cat-number">04 / COLLECTION</span>
-              <h3>Maxi Dress</h3>
-              <p class="cat-desc">Flowing, graceful, effortless.</p>
-              <span class="go">Explore Collection ↗</span>
+              <span class="aura-cat-number">03</span>
+              <h3>Crop Top</h3>
+              <span class="go">Explore ↗</span>
             </div>
           </a>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- Featured Products -->
-    <section class="section" id="featured">
-      <div class="container">
-        <div class="head">
-          <div><span class="eyebrow reveal">The AURA Selection</span>
-            <h2 class="title reveal" style="--d:80ms">Most Loved
-              <em>Styles</em>
-            </h2>
-            <p class="reveal" style="--d:120ms">From everyday favourites to
-              statement looks, discover the styles everyone's falling
-              for.</p>
-          </div><a href="shop.html" class="btn btn-ghost btn-sm reveal" style="--d:160ms">Explore All Styles →</a>
         </div>
 
-        <div class="grid" id="featuredGrid">
-          <p style="padding: 20px; color: #827078;">Loading styles...</p>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Campaign 1 -->
-    <section class="section cmp">
-      <div class="container cmp-split">
-        <div class="cmp-media arch-shape reveal-img" data-tone="rose"><img class="wm" src="assets/logo.png" alt><img
-            class="ph" src="../realtime-images/white-with-pink-kurta.png" alt="Model in an AURA rose silk drape"
-            loading="lazy" decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
-        <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">01</span><span class="eyebrow reveal"
-            style="--d:60ms">Discover Your Style</span>
-          <h2 class="title reveal" style="--d:140ms">Dressed in <em>quiet
-              confidence.</em></h2>
-          <p class="reveal" style="--d:220ms">From timeless ethnic elegance
-            to
-            modern everyday styles, discover
-            thoughtfully chosen pieces for every moment that deserves to
-            feel
-            special.</p><a href="shop.html?cat=fashion" class="btn btn-primary reveal" style="--d:300ms">Shop Fashion
-            →</a>
-        </div>
-      </div>
-    </section>
-    <section class="section cmp">
-      <div class="container cmp-split rev">
-        <div class="cmp-media reveal-img" data-tone="blush"><img class="wm" src="assets/logo.png" alt><img class="ph"
-            src="../realtime-images/ramar-green.PNG" alt="AURA beauty products on a blush backdrop" loading="lazy"
-            decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
-        <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">02</span><span class="eyebrow reveal"
-            style="--d:60ms">Beauty in Every Detail</span>
-          <h2 class="title reveal" style="--d:140ms">A glow that <em>feels
-              like you.</em></h2>
-          <p class="reveal" style="--d:220ms">Curated styles, beautiful
-            details, and effortless elegance — discover
-            pieces that celebrate your individuality, every day and every
-            occasion.</p><a href="shop.html?cat=beauty" class="btn btn-primary reveal" style="--d:300ms">Shop Beauty
-            →</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- 3-VIDEO GRID SECTION -->
-    <!-- ========================================== -->
-    <section class="video-grid-section">
-      <div class="vg-header">
-        <span class="vg-kicker">AURA COLLECTIONS</span>
-        <h2 class="vg-title">Style <em>Redefined</em></h2>
-      </div>
-
-      <div class="vg-container">
-        <!-- Video 1 - Office Wear -->
-        <div class="vg-card">
-          <video class="vg-video" autoplay muted loop playsinline preload="metadata"
-            poster="../images/hompage-story/story1.png">
-            <source src="../video/v1.mp4" type="video/mp4">
-          </video>
-          <div class="vg-overlay">
-            <h3>Office Wear</h3>
-            <a href="shop.html?cat=office-wear" class="vg-btn">Explore &rarr;</a>
+        <!-- 04 — LARGE -->
+        <a href="shop.html?cat=dresses&type=maxi-dresses" class="cat cat-large reveal">
+          <img class="cat-img" src="../realtime-images/courttype-with-court.png" alt="Maxi Dresses" loading="lazy">
+          <div class="aura-cat-overlay"></div>
+          <div class="aura-cat-content">
+            <span class="aura-cat-number">04 / COLLECTION</span>
+            <h3>Maxi Dress</h3>
+            <p class="cat-desc">Flowing, graceful, effortless.</p>
+            <span class="go">Explore Collection ↗</span>
           </div>
-        </div>
+        </a>
 
-        <!-- Video 2 - College Wear -->
-        <div class="vg-card">
-          <video class="vg-video" autoplay muted loop playsinline preload="metadata"
-            poster="../images/hompage-story/story2.png">
-            <source src="../video/v2.mp4" type="video/mp4">
-          </video>
-          <div class="vg-overlay">
-            <h3>College Wear</h3>
-            <a href="shop.html?cat=college-wear" class="vg-btn">Explore
-              &rarr;</a>
-          </div>
-        </div>
+      </div>
+    </div>
+  </section>
 
-        <!-- Video 3 - Saree -->
-        <div class="vg-card">
-          <video class="vg-video" autoplay muted loop playsinline preload="metadata"
-            poster="../images/hompage-story/story3.png">
-            <source src="../video/v3.mp4" type="video/mp4">
-          </video>
-          <div class="vg-overlay">
-            <h3>Saree Elegance</h3>
-            <a href="shop.html?cat=saree" class="vg-btn">Explore &rarr;</a>
-          </div>
+  <!-- Featured Products -->
+  <section class="section" id="featured">
+    <div class="container">
+      <div class="head">
+        <div><span class="eyebrow reveal">The AURA Selection</span>
+          <h2 class="title reveal" style="--d:80ms">Most Loved
+            <em>Styles</em>
+          </h2>
+          <p class="reveal" style="--d:120ms">From everyday favourites to
+            statement looks, discover the styles everyone's falling
+            for.</p>
+        </div><a href="shop.html" class="btn btn-ghost btn-sm reveal" style="--d:160ms">Explore All Styles →</a>
+      </div>
+
+      <div class="grid" id="featuredGrid">
+        <p style="padding: 20px; color: #827078;">Loading styles...</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Campaign 1 -->
+  <section class="section cmp">
+    <div class="container cmp-split">
+      <div class="cmp-media arch-shape reveal-img" data-tone="rose"><img class="wm" src="assets/logo.png" alt><img
+          class="ph" src="../realtime-images/white-with-pink-kurta.png" alt="Model in an AURA rose silk drape"
+          loading="lazy" decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
+      <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">01</span><span class="eyebrow reveal"
+          style="--d:60ms">Discover Your Style</span>
+        <h2 class="title reveal" style="--d:140ms">Dressed in <em>quiet
+            confidence.</em></h2>
+        <p class="reveal" style="--d:220ms">From timeless ethnic elegance
+          to
+          modern everyday styles, discover
+          thoughtfully chosen pieces for every moment that deserves to
+          feel
+          special.</p><a href="shop.html?cat=fashion" class="btn btn-primary reveal" style="--d:300ms">Shop Fashion
+          →</a>
+      </div>
+    </div>
+  </section>
+  <section class="section cmp">
+    <div class="container cmp-split rev">
+      <div class="cmp-media reveal-img" data-tone="blush"><img class="wm" src="assets/logo.png" alt><img class="ph"
+          src="../realtime-images/ramar-green.PNG" alt="AURA beauty products on a blush backdrop" loading="lazy"
+          decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
+      <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">02</span><span class="eyebrow reveal"
+          style="--d:60ms">Beauty in Every Detail</span>
+        <h2 class="title reveal" style="--d:140ms">A glow that <em>feels
+            like you.</em></h2>
+        <p class="reveal" style="--d:220ms">Curated styles, beautiful
+          details, and effortless elegance — discover
+          pieces that celebrate your individuality, every day and every
+          occasion.</p><a href="shop.html?cat=beauty" class="btn btn-primary reveal" style="--d:300ms">Shop Beauty
+          →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 3-VIDEO GRID SECTION -->
+  <!-- ========================================== -->
+  <section class="video-grid-section">
+    <div class="vg-header">
+      <span class="vg-kicker">AURA COLLECTIONS</span>
+      <h2 class="vg-title">Style <em>Redefined</em></h2>
+    </div>
+
+    <div class="vg-container">
+      <!-- Video 1 - Office Wear -->
+      <div class="vg-card">
+        <video class="vg-video" autoplay muted loop playsinline preload="metadata"
+          poster="../images/hompage-story/story1.png">
+          <source src="../video/v1.mp4" type="video/mp4">
+        </video>
+        <div class="vg-overlay">
+          <h3>Office Wear</h3>
+          <a href="shop.html?cat=office-wear" class="vg-btn">Explore &rarr;</a>
         </div>
       </div>
-    </section>
 
-    <!-- Video popup player -->
-    <div class="vgm" id="vgModal" role="dialog" aria-modal="true" aria-hidden="true">
-      <button class="vgm-close" id="vgmClose" aria-label="Close">&times;</button>
-      <button class="vgm-nav prev" id="vgmPrev" aria-label="Previous video">&#8249;</button>
-      <div class="vgm-box">
-        <video id="vgModalVideo" playsinline controls autoplay preload="auto"></video>
-        <div class="vgm-bar">
-          <h3 id="vgModalTitle"></h3>
-          <a id="vgModalLink" href="shop.html" class="vgm-shop">Shop Now
+      <!-- Video 2 - College Wear -->
+      <div class="vg-card">
+        <video class="vg-video" autoplay muted loop playsinline preload="metadata"
+          poster="../images/hompage-story/story2.png">
+          <source src="../video/v2.mp4" type="video/mp4">
+        </video>
+        <div class="vg-overlay">
+          <h3>College Wear</h3>
+          <a href="shop.html?cat=college-wear" class="vg-btn">Explore
             &rarr;</a>
         </div>
       </div>
-      <button class="vgm-nav next" id="vgmNext" aria-label="Next video">&#8250;</button>
+
+      <!-- Video 3 - Saree -->
+      <div class="vg-card">
+        <video class="vg-video" autoplay muted loop playsinline preload="metadata"
+          poster="../images/hompage-story/story3.png">
+          <source src="../video/v3.mp4" type="video/mp4">
+        </video>
+        <div class="vg-overlay">
+          <h3>Saree Elegance</h3>
+          <a href="shop.html?cat=saree" class="vg-btn">Explore &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video popup player -->
+  <div class="vgm" id="vgModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="vgm-close" id="vgmClose" aria-label="Close">&times;</button>
+    <button class="vgm-nav prev" id="vgmPrev" aria-label="Previous video">&#8249;</button>
+    <div class="vgm-box">
+      <video id="vgModalVideo" playsinline controls autoplay preload="auto"></video>
+      <div class="vgm-bar">
+        <h3 id="vgModalTitle"></h3>
+        <a id="vgModalLink" href="shop.html" class="vgm-shop">Shop Now
+          &rarr;</a>
+      </div>
+    </div>
+    <button class="vgm-nav next" id="vgmNext" aria-label="Next video">&#8250;</button>
+  </div>
+
+  <section class="section cmp">
+    <div class="container">
+      <div class="cmp-banner reveal-img" data-tone="gold">
+        <img class="wm" src="assets/logo.png" alt>
+        <img class="ph" src="assets/campaign-jewellery.jpg" alt="Premium AURA Collection" loading="lazy"
+          decoding="async" data-parallax="0.1" onerror="this.remove()">
+        <div class="cmp-banner-copy">
+          <span class="eyebrow reveal">The Signature Collection</span>
+          <h2 class="title reveal" style="--d:100ms">Timeless pieces,
+            <em>unforgettable presence.</em>
+          </h2>
+          <p class="reveal" style="--d:180ms">Curated fashion for the
+            modern
+            woman. Discover statement looks and everyday elegance,
+            designed
+            to make you feel extraordinary.</p>
+          <a href="shop.html" class="btn btn-light reveal" style="--d:260ms">Shop The Collection →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MOTION ===== -->
+  <section class="hm-sec" id="motion-section">
+
+    <div class="hm-motion-head">
+      <span class="hm-eyebrow reveal">EXPLORE COLLECTIONS</span>
+
+      <h2 class="hm-h2 reveal" style="--d:80ms">
+        Style that moves <em>with you</em>
+      </h2>
+
+      <p class="hm-motion-sub reveal" style="--d:120ms">
+        From everyday looks to special moments, find your favourite style.
+      </p>
     </div>
 
-    <section class="section cmp">
-      <div class="container">
-        <div class="cmp-banner reveal-img" data-tone="gold">
-          <img class="wm" src="assets/logo.png" alt>
-          <img class="ph" src="assets/campaign-jewellery.jpg" alt="Premium AURA Collection" loading="lazy"
-            decoding="async" data-parallax="0.1" onerror="this.remove()">
-          <div class="cmp-banner-copy">
-            <span class="eyebrow reveal">The Signature Collection</span>
-            <h2 class="title reveal" style="--d:100ms">Timeless pieces,
-              <em>unforgettable presence.</em>
-            </h2>
-            <p class="reveal" style="--d:180ms">Curated fashion for the
-              modern
-              woman. Discover statement looks and everyday elegance,
-              designed
-              to make you feel extraordinary.</p>
-            <a href="shop.html" class="btn btn-light reveal" style="--d:260ms">Shop The Collection →</a>
-          </div>
+    <div class="hm-motion reveal" id="motion">
+
+      <!-- 01 - Girls Wear -->
+      <a class="hm-pane on" href="shop.html?cat=trending-dresses">
+        <span class="hm-ph" style="--g1:#F4C7D5;--g2:#741D3B">
+          <img src="../realtime-images/black-set.PNG" alt="Trending girls dresses" loading="lazy"
+            onerror="this.remove()">
+        </span>
+
+        <span class="lab">Girls Wear</span>
+
+        <span class="cap">
+          <small>01 / COLLECTION</small>
+          <b>Everyday pretty</b>
+          <u>Shop Now ↗</u>
+        </span>
+      </a>
+
+      <!-- 02 - Jeans & Tops -->
+      <a class="hm-pane" href="shop.html?cat=tops-with-pants">
+        <span class="hm-ph" style="--g1:#B8D5E8;--g2:#263F59">
+          <img src="../realtime-images/miblue-top.PNG" alt="Modern jeans and tops" loading="lazy"
+            onerror="this.remove()">
+        </span>
+
+        <span class="lab">Tops</span>
+
+        <span class="cap">
+          <small>02 / COLLECTION</small>
+          <b>Casual. Cool. Always.</b>
+          <u>Shop Now ↗</u>
+        </span>
+      </a>
+
+      <!-- 03 - Jump Suits -->
+      <a class="hm-pane" href="shop.html?cat=jump-suit">
+        <span class="hm-ph" style="--g1:#E9B7C8;--g2:#761F42">
+          <img src="../realtime-images/Jump Suite.PNG" alt="Stylish jumpsuit collection" loading="lazy"
+            onerror="this.remove()">
+        </span>
+
+        <span class="lab">Jump Suits</span>
+
+        <span class="cap">
+          <small>03 / COLLECTION</small>
+          <b>One piece, endless style</b>
+          <u>Shop Now ↗</u>
+        </span>
+      </a>
+
+      <!-- 04 - Crop Tops -->
+      <a class="hm-pane" href="shop.html?cat=crop-tops">
+        <span class="hm-ph" style="--g1:#F3C7D8;--g2:#A43D68">
+          <img src="../realtime-images/croptop-purple.PNG" alt="Modern crop tops" loading="lazy"
+            onerror="this.remove()">
+        </span>
+
+        <span class="lab">Crop Tops</span>
+
+        <span class="cap">
+          <small>04 / COLLECTION</small>
+          <b>Small top. Big style.</b>
+          <u>Shop Now ↗</u>
+        </span>
+      </a>
+
+      <!-- 05 - Night Suits -->
+      <a class="hm-pane" href="shop.html?cat=night-suits">
+        <span class="hm-ph" style="--g1:#D9C5F0;--g2:#50316D">
+          <img src="../realtime-images/nightsuite-blue.PNG" alt="Comfortable night suits collection" loading="lazy"
+            onerror="this.remove()">
+        </span>
+
+        <span class="lab">Night Suits</span>
+
+        <span class="cap">
+          <small>05 / COLLECTION</small>
+          <b>Comfort meets style</b>
+          <u>Shop Now ↗</u>
+        </span>
+      </a>
+
+      <!-- 06 - Skirts & Tops -->
+      <a class="hm-pane" href="shop.html?cat=skirts-with-tops">
+        <span class="hm-ph" style="--g1:#C8D9B5;--g2:#354A2D">
+          <img src="../realtime-images/Indigo Floral Kurta in a Modern Courtyard.png"
+            alt="Skirts paired with stylish tops" loading="lazy" onerror="this.remove()">
+        </span>
+
+        <span class="lab">Skirts &amp; Tops</span>
+
+        <span class="cap">
+          <small>06 / COLLECTION</small>
+          <b>Simple. Stylish. You.</b>
+          <u>Shop Now ↗</u>
+        </span>
+      </a>
+
+      <!-- 07 - Floral Dresses -->
+      <a class="hm-pane" href="shop.html?cat=dresses&type=floral-dresses">
+        <span class="hm-ph" style="--g1:#F0C4CE;--g2:#722B45">
+          <img src="../realtime-images/floral.PNG" alt="Beautiful floral dresses" loading="lazy"
+            onerror="this.remove()">
+        </span>
+
+        <span class="lab">Floral Dresses</span>
+
+        <span class="cap">
+          <small>07 / COLLECTION</small>
+          <b>Bloom in your style</b>
+          <u>Shop Now ↗</u>
+        </span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ===== STORY ===== -->
+  <section class="hm-story" id="story" aria-label="AURA stories">
+    <div class="hm-sc on" data-title="First Light" data-kick="The ceremony story" data-href="shop.html?cat=fashion">
+      <span class="hm-ph" style="--g1:#C9722B;--g2:#2B0F12"><img src="../images/hompage-story/story1.png" alt
+          loading="lazy" onerror="this.remove()"></span>
+    </div>
+    <div class="hm-sc" data-title="Wedding Circle" data-kick="The celebration story"
+      data-href="shop.html?cat=jewellery"><span class="hm-ph" style="--g1:#8A7455;--g2:#1E1410"><img
+          src="../images/hompage-story/story2.png" alt loading="lazy" onerror="this.remove()"></span></div>
+    <div class="hm-sc" data-title="Golden Hour" data-kick="The evening story" data-href="shop.html?cat=beauty"><span
+        class="hm-ph" style="--g1:#B3204D;--g2:#1A0A11"><img src="../images/hompage-story/story3.png" alt loading="lazy"
+          onerror="this.remove()"></span></div>
+    <img class="hm-st-brand" src="../assets/logo.png" alt="AURA">
+    <div class="hm-st-title" id="stTitleBox">
+      <h2 id="stTitle">First Light</h2>
+    </div>
+    <a class="hm-st-shop" id="stShop" href="shop.html?cat=fashion">Shop
+      this
+      story</a>
+    <div class="hm-st-kick" id="stKick">The ceremony story</div>
+    <div class="hm-thumbs" role="tablist" aria-label="Choose a story">
+      <button class="hm-th on" role="tab" aria-label="First Light"><span class="hm-ph"
+          style="--g1:#C9722B;--g2:#2B0F12"><img src="../images/hompage-story/story1.png" alt loading="lazy"
+            onerror="this.remove()"></span></button>
+      <button class="hm-th" role="tab" aria-label="Wedding Circle"><span class="hm-ph"
+          style="--g1:#8A7455;--g2:#1E1410"><img src="../images/hompage-story/story2.png" alt loading="lazy"
+            onerror="this.remove()"></span></button>
+      <button class="hm-th" role="tab" aria-label="Golden Hour"><span class="hm-ph"
+          style="--g1:#B3204D;--g2:#1A0A11"><img src="../images/hompage-story/story3.png" alt loading="lazy"
+            onerror="this.remove()"></span></button>
+    </div>
+    <div class="hm-st-foot">
+      <div class="hm-st-prog"><span id="stNum">01</span><i class="hm-st-bar" id="stBar"></i><span>03</span></div>
+      <span>Tap a story, or use the arrow keys</span>
+    </div>
+  </section>
+
+  <!-- ===== LATEST TRENDS ===== -->
+  <section class="hm-trends" id="trends">
+    <div><span class="hm-pill reveal">Explore collection</span>
+      <h2 class="hm-display reveal" style="--d:80ms">Latest<br>Trends</h2><a href="shop.html"
+        class="btn btn-primary reveal" style="--d:160ms">Discover Now</a>
+      <h4 class="reveal" style="--d:220ms">Stories behind the style</h4>
+      <p class="reveal" style="--d:280ms">Every piece carries a small
+        story,
+        stitched into silk and set in gold. Here
+        is what everyone is reaching for right now.</p>
+    </div>
+    <div class="reveal" style="--d:120ms; width: 100%;">
+      <div class="hm-stack" id="trStack">
+        <div class="hm-tc" data-pos="0"><span class="hm-ph" style="--g1:#D3567E;--g2:#6E0E33"><img
+              src="../images/latest-trends/trend-1.png" alt loading="lazy" onerror="this.remove()"></span></div>
+        <div class="hm-tc" data-pos="1"><span class="hm-ph" style="--g1:#E8CFA0;--g2:#B88A4B"><img
+              src="../images/latest-trends/trend-2.png" alt loading="lazy" onerror="this.remove()"></span></div>
+        <div class="hm-tc" data-pos="2"><span class="hm-ph" style="--g1:#F2BCCB;--g2:#A3194A"><img
+              src="../images/latest-trends/trend-3.png" alt loading="lazy" onerror="this.remove()"></span></div>
+      </div>
+      <div class="hm-pager"><button type="button" id="trPrev" aria-label="Previous">‹</button><span id="trNum">1 /
+          3</span><button type="button" id="trNext" aria-label="Next">›</button></div>
+    </div>
+    <div class="hm-range reveal" style="--d:200ms">
+      <h5>Explore the range</h5><a href="shop.html?cat=trending-dresses">Trending Dresses
+        <span>→</span></a><a href="shop.html?cat=tops-with-pants">Tops &
+        Pants
+        <span>→</span></a><a href="shop.html?cat=kurta-sets">Kurta
+        Sets <span>→</span></a><a href="shop.html?cat=party-wear">Party
+        Wear
+        <span>→</span></a>
+    </div>
+  </section>
+
+  <!-- ============ AURA CUSTOMER REVIEWS (Dynamic Carousel) ============ -->
+  <section class="section aura-reviews-section" id="reviews"
+    style="background: #fff9f0; padding: 60px 0; overflow: hidden;">
+    <div class="container">
+      <div class="head" style="text-align: center; margin-bottom: 40px;">
+        <span class="eyebrow reveal"
+          style="display:block; font-size: 12px; letter-spacing: 0.2em; color: #a3194a; margin-bottom: 8px;">REAL
+          STORIES</span>
+        <h2 class="title reveal"
+          style="font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 46px); color: #2b1b21;">Loved
+          by <em>Thousands</em></h2>
+        <div class="reveal"
+          style="margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; font-family: 'Jost', sans-serif;">
+          <span style="color: #f5a623; font-size: 20px; letter-spacing: 2px;">★★★★★</span>
+          <span style="font-size: 15px; color: #2b1b21; font-weight: 500;">4.90
+            ★ (Reviews)</span>
+        </div>
+        <button type="button" id="openReviewModal" class="btn btn-primary reveal"
+          style="margin-top: 20px; padding: 10px 24px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em;">
+          Write a Review
+        </button>
+      </div>
+
+      <div class="reviews-slider-wrap reveal" style="position: relative; width: 100%;">
+        <button class="rev-nav prev" id="revPrev" aria-label="Previous"
+          style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 10; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ead9df; background: #fff; color: #a3194a; display: grid; place-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"><i
+            class="fa-solid fa-chevron-left"></i></button>
+        <button class="rev-nav next" id="revNext" aria-label="Next"
+          style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 10; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ead9df; background: #fff; color: #a3194a; display: grid; place-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"><i
+            class="fa-solid fa-chevron-right"></i></button>
+
+        <div class="reviews-track" id="reviewsTrack"
+          style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 10px 0 20px;">
+          <p style="padding: 20px; color: #827078;">Loading reviews...</p>
         </div>
       </div>
-    </section>
-
-    <!-- ===== MOTION ===== -->
-    <section class="hm-sec" id="motion-section">
-
-      <div class="hm-motion-head">
-        <span class="hm-eyebrow reveal">EXPLORE COLLECTIONS</span>
-
-        <h2 class="hm-h2 reveal" style="--d:80ms">
-          Style that moves <em>with you</em>
-        </h2>
-
-        <p class="hm-motion-sub reveal" style="--d:120ms">
-          From everyday looks to special moments, find your favourite style.
-        </p>
-      </div>
-
-      <div class="hm-motion reveal" id="motion">
-
-        <!-- 01 - Girls Wear -->
-        <a class="hm-pane on" href="shop.html?cat=trending-dresses">
-          <span class="hm-ph" style="--g1:#F4C7D5;--g2:#741D3B">
-            <img src="../realtime-images/black-set.PNG" alt="Trending girls dresses" loading="lazy"
-              onerror="this.remove()">
-          </span>
-
-          <span class="lab">Girls Wear</span>
-
-          <span class="cap">
-            <small>01 / COLLECTION</small>
-            <b>Everyday pretty</b>
-            <u>Shop Now ↗</u>
-          </span>
-        </a>
-
-        <!-- 02 - Jeans & Tops -->
-        <a class="hm-pane" href="shop.html?cat=tops-with-pants">
-          <span class="hm-ph" style="--g1:#B8D5E8;--g2:#263F59">
-            <img src="../realtime-images/miblue-top.PNG" alt="Modern jeans and tops" loading="lazy"
-              onerror="this.remove()">
-          </span>
-
-          <span class="lab">Tops</span>
-
-          <span class="cap">
-            <small>02 / COLLECTION</small>
-            <b>Casual. Cool. Always.</b>
-            <u>Shop Now ↗</u>
-          </span>
-        </a>
-
-        <!-- 03 - Jump Suits -->
-        <a class="hm-pane" href="shop.html?cat=jump-suit">
-          <span class="hm-ph" style="--g1:#E9B7C8;--g2:#761F42">
-            <img src="../realtime-images/Jump Suite.PNG" alt="Stylish jumpsuit collection" loading="lazy"
-              onerror="this.remove()">
-          </span>
-
-          <span class="lab">Jump Suits</span>
-
-          <span class="cap">
-            <small>03 / COLLECTION</small>
-            <b>One piece, endless style</b>
-            <u>Shop Now ↗</u>
-          </span>
-        </a>
-
-        <!-- 04 - Crop Tops -->
-        <a class="hm-pane" href="shop.html?cat=crop-tops">
-          <span class="hm-ph" style="--g1:#F3C7D8;--g2:#A43D68">
-            <img src="../realtime-images/croptop-purple.PNG" alt="Modern crop tops" loading="lazy"
-              onerror="this.remove()">
-          </span>
-
-          <span class="lab">Crop Tops</span>
-
-          <span class="cap">
-            <small>04 / COLLECTION</small>
-            <b>Small top. Big style.</b>
-            <u>Shop Now ↗</u>
-          </span>
-        </a>
-
-        <!-- 05 - Night Suits -->
-        <a class="hm-pane" href="shop.html?cat=night-suits">
-          <span class="hm-ph" style="--g1:#D9C5F0;--g2:#50316D">
-            <img src="../realtime-images/nightsuite-blue.PNG" alt="Comfortable night suits collection" loading="lazy"
-              onerror="this.remove()">
-          </span>
-
-          <span class="lab">Night Suits</span>
-
-          <span class="cap">
-            <small>05 / COLLECTION</small>
-            <b>Comfort meets style</b>
-            <u>Shop Now ↗</u>
-          </span>
-        </a>
-
-        <!-- 06 - Skirts & Tops -->
-        <a class="hm-pane" href="shop.html?cat=skirts-with-tops">
-          <span class="hm-ph" style="--g1:#C8D9B5;--g2:#354A2D">
-            <img src="../realtime-images/Indigo Floral Kurta in a Modern Courtyard.png"
-              alt="Skirts paired with stylish tops" loading="lazy" onerror="this.remove()">
-          </span>
-
-          <span class="lab">Skirts &amp; Tops</span>
-
-          <span class="cap">
-            <small>06 / COLLECTION</small>
-            <b>Simple. Stylish. You.</b>
-            <u>Shop Now ↗</u>
-          </span>
-        </a>
-
-        <!-- 07 - Floral Dresses -->
-        <a class="hm-pane" href="shop.html?cat=dresses&type=floral-dresses">
-          <span class="hm-ph" style="--g1:#F0C4CE;--g2:#722B45">
-            <img src="../realtime-images/floral.PNG" alt="Beautiful floral dresses" loading="lazy"
-              onerror="this.remove()">
-          </span>
-
-          <span class="lab">Floral Dresses</span>
-
-          <span class="cap">
-            <small>07 / COLLECTION</small>
-            <b>Bloom in your style</b>
-            <u>Shop Now ↗</u>
-          </span>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- ===== STORY ===== -->
-    <section class="hm-story" id="story" aria-label="AURA stories">
-      <div class="hm-sc on" data-title="First Light" data-kick="The ceremony story" data-href="shop.html?cat=fashion">
-        <span class="hm-ph" style="--g1:#C9722B;--g2:#2B0F12"><img src="../images/hompage-story/story1.png" alt
-            loading="lazy" onerror="this.remove()"></span>
-      </div>
-      <div class="hm-sc" data-title="Wedding Circle" data-kick="The celebration story"
-        data-href="shop.html?cat=jewellery"><span class="hm-ph" style="--g1:#8A7455;--g2:#1E1410"><img
-            src="../images/hompage-story/story2.png" alt loading="lazy" onerror="this.remove()"></span></div>
-      <div class="hm-sc" data-title="Golden Hour" data-kick="The evening story" data-href="shop.html?cat=beauty"><span
-          class="hm-ph" style="--g1:#B3204D;--g2:#1A0A11"><img src="../images/hompage-story/story3.png" alt
-            loading="lazy" onerror="this.remove()"></span></div>
-      <img class="hm-st-brand" src="../assets/logo.png" alt="AURA">
-      <div class="hm-st-title" id="stTitleBox">
-        <h2 id="stTitle">First Light</h2>
-      </div>
-      <a class="hm-st-shop" id="stShop" href="shop.html?cat=fashion">Shop
-        this
-        story</a>
-      <div class="hm-st-kick" id="stKick">The ceremony story</div>
-      <div class="hm-thumbs" role="tablist" aria-label="Choose a story">
-        <button class="hm-th on" role="tab" aria-label="First Light"><span class="hm-ph"
-            style="--g1:#C9722B;--g2:#2B0F12"><img src="../images/hompage-story/story1.png" alt loading="lazy"
-              onerror="this.remove()"></span></button>
-        <button class="hm-th" role="tab" aria-label="Wedding Circle"><span class="hm-ph"
-            style="--g1:#8A7455;--g2:#1E1410"><img src="../images/hompage-story/story2.png" alt loading="lazy"
-              onerror="this.remove()"></span></button>
-        <button class="hm-th" role="tab" aria-label="Golden Hour"><span class="hm-ph"
-            style="--g1:#B3204D;--g2:#1A0A11"><img src="../images/hompage-story/story3.png" alt loading="lazy"
-              onerror="this.remove()"></span></button>
-      </div>
-      <div class="hm-st-foot">
-        <div class="hm-st-prog"><span id="stNum">01</span><i class="hm-st-bar" id="stBar"></i><span>03</span></div>
-        <span>Tap a story, or use the arrow keys</span>
-      </div>
-    </section>
-
-    <!-- ===== LATEST TRENDS ===== -->
-    <section class="hm-trends" id="trends">
-      <div><span class="hm-pill reveal">Explore collection</span>
-        <h2 class="hm-display reveal" style="--d:80ms">Latest<br>Trends</h2><a href="shop.html"
-          class="btn btn-primary reveal" style="--d:160ms">Discover Now</a>
-        <h4 class="reveal" style="--d:220ms">Stories behind the style</h4>
-        <p class="reveal" style="--d:280ms">Every piece carries a small
-          story,
-          stitched into silk and set in gold. Here
-          is what everyone is reaching for right now.</p>
-      </div>
-      <div class="reveal" style="--d:120ms; width: 100%;">
-        <div class="hm-stack" id="trStack">
-          <div class="hm-tc" data-pos="0"><span class="hm-ph" style="--g1:#D3567E;--g2:#6E0E33"><img
-                src="../images/latest-trends/trend-1.png" alt loading="lazy" onerror="this.remove()"></span></div>
-          <div class="hm-tc" data-pos="1"><span class="hm-ph" style="--g1:#E8CFA0;--g2:#B88A4B"><img
-                src="../images/latest-trends/trend-2.png" alt loading="lazy" onerror="this.remove()"></span></div>
-          <div class="hm-tc" data-pos="2"><span class="hm-ph" style="--g1:#F2BCCB;--g2:#A3194A"><img
-                src="../images/latest-trends/trend-3.png" alt loading="lazy" onerror="this.remove()"></span></div>
-        </div>
-        <div class="hm-pager"><button type="button" id="trPrev" aria-label="Previous">‹</button><span id="trNum">1 /
-            3</span><button type="button" id="trNext" aria-label="Next">›</button></div>
-      </div>
-      <div class="hm-range reveal" style="--d:200ms">
-        <h5>Explore the range</h5><a href="shop.html?cat=trending-dresses">Trending Dresses
-          <span>→</span></a><a href="shop.html?cat=tops-with-pants">Tops &
-          Pants
-          <span>→</span></a><a href="shop.html?cat=kurta-sets">Kurta
-          Sets <span>→</span></a><a href="shop.html?cat=party-wear">Party
-          Wear
-          <span>→</span></a>
-      </div>
-    </section>
-
-    <!-- ============ AURA CUSTOMER REVIEWS (Dynamic Carousel) ============ -->
-    <section class="section aura-reviews-section" id="reviews"
-      style="background: #fff9f0; padding: 60px 0; overflow: hidden;">
-      <div class="container">
-        <div class="head" style="text-align: center; margin-bottom: 40px;">
-          <span class="eyebrow reveal"
-            style="display:block; font-size: 12px; letter-spacing: 0.2em; color: #a3194a; margin-bottom: 8px;">REAL
-            STORIES</span>
-          <h2 class="title reveal"
-            style="font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 46px); color: #2b1b21;">Loved
-            by <em>Thousands</em></h2>
-          <div class="reveal"
-            style="margin-top: 12px; display: flex; justify-content: center; align-items: center; gap: 10px; font-family: 'Jost', sans-serif;">
-            <span style="color: #f5a623; font-size: 20px; letter-spacing: 2px;">★★★★★</span>
-            <span style="font-size: 15px; color: #2b1b21; font-weight: 500;">4.90
-              ★ (Reviews)</span>
-          </div>
-          <button type="button" id="openReviewModal" class="btn btn-primary reveal"
-            style="margin-top: 20px; padding: 10px 24px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em;">
-            Write a Review
-          </button>
-        </div>
-
-        <div class="reviews-slider-wrap reveal" style="position: relative; width: 100%;">
-          <button class="rev-nav prev" id="revPrev" aria-label="Previous"
-            style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 10; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ead9df; background: #fff; color: #a3194a; display: grid; place-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"><i
-              class="fa-solid fa-chevron-left"></i></button>
-          <button class="rev-nav next" id="revNext" aria-label="Next"
-            style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 10; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ead9df; background: #fff; color: #a3194a; display: grid; place-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"><i
-              class="fa-solid fa-chevron-right"></i></button>
-
-          <div class="reviews-track" id="reviewsTrack"
-            style="display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 10px 0 20px;">
-            <p style="padding: 20px; color: #827078;">Loading reviews...</p>
-          </div>
-        </div>
-      </div>
-    </section>
+    </div>
+  </section>
   </main>
 
   <!-- ============ AURA FAQ ============ -->
@@ -956,10 +1313,33 @@
               data-site-text="storeAddress"></span></p>
         </div>
         <style>
-          .aura-footer-contact { display: grid; gap: 10px; margin-top: 16px; font-size: 14px; }
-          .aura-footer-contact a, .aura-footer-contact p { display: flex; align-items: center; gap: 10px; margin: 0; color: inherit; text-decoration: none; opacity: .85; transition: opacity .2s; }
-          .aura-footer-contact a:hover { opacity: 1; }
-          .aura-footer-contact i { width: 16px; text-align: center; }
+          .aura-footer-contact {
+            display: grid;
+            gap: 10px;
+            margin-top: 16px;
+            font-size: 14px;
+          }
+
+          .aura-footer-contact a,
+          .aura-footer-contact p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+            color: inherit;
+            text-decoration: none;
+            opacity: .85;
+            transition: opacity .2s;
+          }
+
+          .aura-footer-contact a:hover {
+            opacity: 1;
+          }
+
+          .aura-footer-contact i {
+            width: 16px;
+            text-align: center;
+          }
         </style>
       </div>
       <div class="aura-footer-links">
@@ -1046,9 +1426,20 @@
     <!-- Mobile Responsive Fix -->
     <style>
       @media (max-width: 768px) {
-        .aura-footer-newsletter { padding: 30px 20px !important; text-align: center; }
-        .aura-footer-newsletter>div { justify-content: center; width: 100%; }
-        .aura-footer-newsletter a { justify-content: flex-start; text-align: left; }
+        .aura-footer-newsletter {
+          padding: 30px 20px !important;
+          text-align: center;
+        }
+
+        .aura-footer-newsletter>div {
+          justify-content: center;
+          width: 100%;
+        }
+
+        .aura-footer-newsletter a {
+          justify-content: flex-start;
+          text-align: left;
+        }
       }
     </style>
     <div class="fbottom aura-footer-bottom"><span>© 2026 AURA. All rights
@@ -1342,8 +1733,17 @@
 
   <!-- ============ SCROLL REVEAL ANIMATION ============ -->
   <style>
-    .scroll-reveal { opacity: 0; transform: translateY(50px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; will-change: opacity, transform; }
-    .scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      will-change: opacity, transform;
+    }
+
+    .scroll-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
