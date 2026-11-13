@@ -689,17 +689,18 @@
           <p class="category-subtitle reveal" style="--d:120ms">From
             everyday charm to unforgettable moments.</p>
         </div>
-        <a href="shop.html?cat=fashion" class="category-view-all">View All
+      <a href="shop.html?cat=fashion" class="category-view-all">View All
           Collections <span>↗</span></a>
       </div>
-
       <div class="cats aura-girls-cats" data-stagger>
 
-        <!-- 01 — LARGE -->
+        <!-- 01 — JUMP SUITS -->
         <a href="shop.html?cat=jump-suit" class="cat cat-large reveal">
           <img class="cat-img" src="../realtime-images/Women's Printed Wide-Leg Jumpsuit2.PNG" alt="Jump Suits"
             loading="lazy">
+
           <div class="aura-cat-overlay"></div>
+
           <div class="aura-cat-content">
             <span class="aura-cat-number">01 / COLLECTION</span>
             <h3>Jump Suits</h3>
@@ -710,10 +711,14 @@
 
         <!-- 02 & 03 — SMALL STACK -->
         <div class="cat-col">
+
+          <!-- 02 — KURTA -->
           <a href="shop.html?cat=kurta-sets" class="cat cat-small reveal">
             <img class="cat-img" src="../realtime-images/Elegant Teal Floral Veranda Portrait.png" alt="Kurtas"
               loading="lazy">
+
             <div class="aura-cat-overlay"></div>
+
             <div class="aura-cat-content">
               <span class="aura-cat-number">02</span>
               <h3>Kurta</h3>
@@ -721,21 +726,27 @@
             </div>
           </a>
 
+          <!-- 03 — CROP TOP -->
           <a href="shop.html?cat=crop-tops" class="cat cat-small reveal">
             <img class="cat-img" src="../realtime-images/croptop-purple.PNG" alt="Crop Tops" loading="lazy">
+
             <div class="aura-cat-overlay"></div>
+
             <div class="aura-cat-content">
               <span class="aura-cat-number">03</span>
               <h3>Crop Top</h3>
               <span class="go">Explore ↗</span>
             </div>
           </a>
+
         </div>
 
-        <!-- 04 — LARGE -->
-        <a href="shop.html?cat=dresses&type=maxi-dresses" class="cat cat-large reveal">
+        <!-- 04 — MAXI DRESS -->
+        <a href="shop.html?cat=maxi-dresses" class="cat cat-large reveal">
           <img class="cat-img" src="../realtime-images/courttype-with-court.png" alt="Maxi Dresses" loading="lazy">
+
           <div class="aura-cat-overlay"></div>
+
           <div class="aura-cat-content">
             <span class="aura-cat-number">04 / COLLECTION</span>
             <h3>Maxi Dress</h3>
@@ -768,6 +779,185 @@
 
     </div>
   </section>
+
+  <!-- ===== BEST SELLERS ===== -->
+<section class="aura-bs" id="bestsellers" hidden>
+  <div class="aura-bs-wrap">
+    <div class="aura-bs-head">
+      <span class="aura-bs-eyebrow">CUSTOMER FAVOURITES</span>
+      <h2>Top <em>Sellers</em></h2>
+      <p>The styles everyone keeps coming back for.</p>
+    </div>
+    <div class="aura-bs-grid" id="bsGrid"></div>
+  </div>
+</section>
+
+<style>
+  .aura-bs { padding: clamp(50px, 7vw, 90px) 0; background: #FFF9F0; }
+  .aura-bs[hidden] { display: none; }
+  .aura-bs-wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+  .aura-bs-head { text-align: center; margin-bottom: 38px; }
+  .aura-bs-eyebrow { display: block; margin-bottom: 10px; font: 600 12px 'Jost', sans-serif; letter-spacing: .3em; color: #A3194A; }
+  .aura-bs-head h2 { margin: 0 0 8px; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.05; color: #2B1B21; }
+  .aura-bs-head h2 em { color: #A3194A; font-style: italic; }
+  .aura-bs-head p { margin: 0; font-family: 'Jost', sans-serif; color: #7B6A6F; }
+
+  .aura-bs-grid { display: grid; gap: 16px; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); }
+  .aura-bs-grid[data-n="5"] { grid-template-columns: 1.25fr 1fr 1fr; }
+  .aura-bs-grid[data-n="5"] .aura-bs-card:first-child { grid-row: span 2; aspect-ratio: auto; }
+
+  .aura-bs-card { position: relative; display: block; overflow: hidden; aspect-ratio: 3 / 4; border-radius: 18px; color: #fff; text-decoration: none;
+    background: linear-gradient(160deg, #D3567E, #6E0E33); box-shadow: 0 18px 40px -24px rgba(110, 14, 51, .55);
+    transition: transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .45s; }
+  .aura-bs-card:hover { transform: translateY(-6px); box-shadow: 0 28px 50px -24px rgba(110, 14, 51, .7); }
+  .aura-bs-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .aura-bs-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(20, 6, 12, .88) 0%, rgba(20, 6, 12, .35) 38%, transparent 62%); }
+
+  .aura-bs-no { position: absolute; z-index: 2; top: 8px; left: 16px; font-family: 'Cormorant Garamond', serif; font-size: clamp(3.2rem, 6vw, 5rem); line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.4px rgba(255, 255, 255, .9); }
+  .aura-bs-card:first-child .aura-bs-no { font-size: clamp(5rem, 9vw, 8rem); }
+  .aura-bs-tag { position: absolute; z-index: 2; top: 16px; right: 14px; padding: 6px 12px; border-radius: 999px; font: 600 10px 'Jost', sans-serif; letter-spacing: .14em; text-transform: uppercase;
+    color: #3a2506; background: linear-gradient(135deg, #F3DDA6, #C9A35F); }
+
+  .aura-bs-info { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: 18px; }
+  .aura-bs-info h3 { margin: 0 0 8px; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(1.15rem, 2vw, 1.5rem); line-height: 1.15; }
+  .aura-bs-card:first-child .aura-bs-info h3 { font-size: clamp(1.5rem, 2.6vw, 2.2rem); }
+  .aura-bs-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-family: 'Jost', sans-serif; font-size: 14px; }
+  .aura-bs-price b { font-weight: 600; }
+  .aura-bs-price s { margin-left: 6px; font-size: 12px; opacity: .65; }
+  .aura-bs-sold { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; background: rgba(255, 255, 255, .16); backdrop-filter: blur(4px); }
+  .aura-bs-view { display: inline-block; margin-top: 10px; font: 600 11px 'Jost', sans-serif; letter-spacing: .2em; text-transform: uppercase; border-bottom: 1px solid rgba(255, 255, 255, .7); padding-bottom: 2px; }
+
+  @media (max-width: 800px) {
+    .aura-bs-grid, .aura-bs-grid[data-n="5"] { display: flex; overflow-x: auto; gap: 12px; padding: 4px 4px 18px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .aura-bs-grid::-webkit-scrollbar { display: none; }
+    .aura-bs-card, .aura-bs-grid[data-n="5"] .aura-bs-card:first-child { flex: 0 0 74%; aspect-ratio: 3 / 4; scroll-snap-align: center; }
+    .aura-bs-card:first-child .aura-bs-no { font-size: clamp(3.2rem, 6vw, 5rem); }
+    .aura-bs-card:first-child .aura-bs-info h3 { font-size: clamp(1.15rem, 2vw, 1.5rem); }
+  }
+</style>
+
+<script type="module">
+  import { db, doc, getDoc } from "./js/firebase.js";
+
+  const SHOW_SOLD = true;   // "5 sold" chip venaam-na false
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN");
+  const sec = document.getElementById("bestsellers");
+  const grid = document.getElementById("bsGrid");
+
+  function card(r, i) {
+    const p = r.p;
+    const price = Number(p.price) || 0, mrp = Number(p.mrp) || price;
+    const img = (p.images && p.images[0]) || p.image || p.imageUrl || p.image1 || "../images/partywear.webp";
+    const link = "product.html?id=" + encodeURIComponent(r.id);
+    return `<a class="aura-bs-card" href="${link}">
+      <img src="${esc(img)}" alt="${esc(p.name || "AURA")}" loading="lazy" onerror="this.src='../images/partywear.webp'">
+      <span class="aura-bs-no">${String(i + 1).padStart(2, "0")}</span>
+      ${i === 0 ? '<span class="aura-bs-tag">★ No.1 Best Seller</span>' : ""}
+      <div class="aura-bs-info">
+        <h3>${esc(p.name || "Untitled")}</h3>
+        <div class="aura-bs-meta">
+          <span class="aura-bs-price"><b>${inr(price)}</b>${mrp > price ? `<s>${inr(mrp)}</s>` : ""}</span>
+          ${SHOW_SOLD && r.sold ? `<span class="aura-bs-sold">🔥 ${r.sold} sold</span>` : ""}
+        </div>
+        ${i === 0 ? '<span class="aura-bs-view">Shop Now ↗</span>' : ""}
+      </div>
+    </a>`;
+  }
+
+  (async function () {
+    try {
+      const snap = await getDoc(doc(db, "siteStats", "topSelling"));
+      if (!snap.exists()) return;
+      const list = (snap.data().items || []).slice(0, 5);
+      const snaps = await Promise.all(list.map(x => getDoc(doc(db, "products", x.id)).catch(() => null)));
+      const rows = [];
+      snaps.forEach((s, i) => {
+        if (!s || !s.exists()) return;
+        const p = s.data();
+        if (String(p.status || "active").toLowerCase() !== "active") return;   // draft / hidden products skip
+        rows.push({ id: s.id, p, sold: Number(list[i].sold) || 0 });
+      });
+      if (!rows.length) return;
+      grid.dataset.n = rows.length;
+      grid.style.setProperty("--n", rows.length);
+      grid.innerHTML = rows.map(card).join("");
+      sec.hidden = false;
+    } catch (e) { console.warn("Best sellers:", e); }
+  })();
+</script>
+
+  <!-- ===== MOST VIEWED ===== -->
+  <section class="section" id="mostviewed" hidden>
+    <div class="container">
+      <div class="head">
+        <div>
+          <span class="eyebrow">TRENDING NOW</span>
+          <h2 class="title">Most Viewed <em>Styles</em></h2>
+          <p>What everyone is looking at right now.</p>
+        </div>
+        <a href="shop.html" class="btn btn-ghost btn-sm">Explore All Styles →</a>
+      </div>
+      <div class="grid" id="mvGrid"></div>
+    </div>
+  </section>
+
+  <style>
+    #mostviewed[hidden] { display: none; }
+    #mostviewed .mv-views { position: absolute; left: 10px; bottom: 10px; z-index: 2; padding: 5px 11px; border-radius: 999px; font: 500 11px 'Jost', sans-serif; color: #fff; background: rgba(20, 8, 14, .62); backdrop-filter: blur(4px); }
+  </style>
+
+  <script type="module">
+    import { db, collection, getDocs, query, orderBy, limit, doc, getDoc } from "./js/firebase.js";
+
+    const SHOW_VIEWS = true;   // "👁 12 views" chip venaam-na false
+    const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const sec = document.getElementById("mostviewed");
+    const grid = document.getElementById("mvGrid");
+
+    (async function () {
+      try {
+        const snap = await getDocs(query(collection(db, "productViews"), orderBy("views", "desc"), limit(8)));
+        if (snap.empty) return;
+
+        const rows = await Promise.all(snap.docs.map(async d => {
+          try {
+            const p = await getDoc(doc(db, "products", d.id));
+            if (!p.exists()) return null;
+            const data = p.data();
+            if (String(data.status || "active").toLowerCase() !== "active") return null;
+            return { id: d.id, p: data, views: Number(d.data().views) || 0 };
+          } catch (e) { return null; }
+        }));
+
+        const list = rows.filter(Boolean).slice(0, 4);
+        if (!list.length) return;
+
+        grid.innerHTML = list.map(r => {
+          const p = r.p, price = Number(p.price) || 0, mrp = Number(p.mrp) || price;
+          const img = (p.images && p.images[0]) || p.image || p.imageUrl || p.image1 || "../images/partywear.webp";
+          const link = "product.html?id=" + encodeURIComponent(r.id);
+          const off = mrp > price ? Math.round((1 - price / mrp) * 100) : 0;
+          return `
+            <div class="pcard">
+              <div class="pmedia">
+                <a href="${link}"><img src="${esc(img)}" alt="${esc(p.name)}" loading="lazy" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='../images/partywear.webp'"></a>
+                ${off ? `<span class="product-badge">${off}% OFF</span>` : ""}
+                ${SHOW_VIEWS ? `<span class="mv-views">👁 ${r.views} view${r.views === 1 ? "" : "s"}</span>` : ""}
+              </div>
+              <div class="pinfo">
+                <h3><a href="${link}" style="color:inherit; text-decoration:none;">${esc(p.name || "Untitled")}</a></h3>
+                <p>₹${price.toLocaleString("en-IN")} ${mrp > price ? `<s style="color:#999; font-size:12px; margin-left:5px;">₹${mrp.toLocaleString("en-IN")}</s>` : ""}</p>
+                <a href="${link}" class="btn btn-primary" style="display:block; text-align:center; text-decoration:none; line-height:1.2; padding:12px;">View Product</a>
+              </div>
+            </div>`;
+        }).join("");
+
+        sec.hidden = false;
+      } catch (e) { console.warn("Most viewed:", e); }
+    })();
+  </script>
 
   <!-- Campaign 1 -->
   <section class="section cmp">
@@ -1387,21 +1577,26 @@
       <div
         style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 2; min-width: 280px;">
 
-        <a href="https://instagram.com/auraclothing.vnr" data-site-link="instagram" target="_blank" rel="noopener"
-          style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
-          onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
-          onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
-          <div
-            style="width: 44px; height: 44px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 20px;">
-            <i class="fa-brands fa-instagram"></i>
-          </div>
-          <div>
-            <b style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Follow
-              on Instagram</b>
-            <small data-site-handle="instagram"
-              style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">@auraclothing.vnr</small>
-          </div>
-        </a>
+<a href="#" data-site-link="instagram" target="_blank" rel="noopener"
+  style="display:flex; align-items:center; gap:16px; background:rgba(255,255,255,0.05); padding:16px 24px; border-radius:12px; text-decoration:none; border:1px solid rgba(255,255,255,0.1); transition:all 0.3s;"
+  onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
+  onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+
+  <div style="width:44px; height:44px; background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); border-radius:50%; display:grid; place-items:center; color:#fff; font-size:20px;">
+    <i class="fa-brands fa-instagram"></i>
+  </div>
+
+  <div>
+    <b style="display:block; color:#FFF8F1; font-size:15px; font-family:'Jost',sans-serif;">
+      Follow on Instagram
+    </b>
+
+    <small data-site-handle="instagram"
+      style="color:rgba(255,248,241,0.6); font-size:12px; font-family:'Jost',sans-serif;">
+      @auraclothing.vnr
+    </small>
+  </div>
+</a>
 
         <a href="https://facebook.com/auraclothing.vnr" data-site-link="facebook" target="_blank" rel="noopener"
           style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"

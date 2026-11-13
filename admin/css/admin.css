@@ -2139,3 +2139,16 @@ html:not([data-theme="dark"]) #sb .p-total-row .total-input { background: var(--
 html:not([data-theme="dark"]) #sb .p-color-row,
 html:not([data-theme="dark"]) #sb .p-form-row label,
 html:not([data-theme="dark"]) #sb .szs label { color: var(--muted) !important; }
+
+
+/* 🔥 Fix for Dark Mode Text Visibility 🔥 */
+[data-theme="dark"] .top-item b,
+[data-theme="dark"] .top-item .info b {
+  color: #ffffff !important; }
+
+[data-theme="dark"] .top-item div[style*="color:#7a6a70"] {
+  color: #b0a5a9 !important; }
+
+[data-theme="dark"] .top-item div[style*="color:#a3194a"] {
+  color: #ff7ba9 !important; 
+}

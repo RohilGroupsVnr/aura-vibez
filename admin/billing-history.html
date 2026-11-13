@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Billing History — AURA Admin</title>
-  <link rel="icon" href="../assets/favicon.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Billing History — AURA Admin</title>
+    <link rel="icon" href="../assets/favicon.png">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
 
-  <style>
+    <style>
     /* ===== Billing History — scoped styles (admin.css-oda conflict aagaadhu) ===== */
     .bh {
       --p: #a3194a;
@@ -581,69 +582,72 @@
       border-color: var(--p);
     }
   </style>
-</head>
+  </head>
 
-<body>
-  <div class="aw">
-    <aside class="admin-side" id="adminSide"></aside>
+  <body>
+    <div class="aw">
+      <aside class="admin-side" id="adminSide"></aside>
 
-    <main class="admin-main bh">
-      <div id="err"></div>
+      <main class="admin-main bh">
+        <div id="err"></div>
 
-      <div class="bh-head">
-        <div>
-          <h1>Billing History</h1>
-          <p>All bills generated from the billing counter. Search and reprint
-            any bill.</p>
-        </div>
-        <span class="bh-pill" id="hsum"><i class="fa-solid fa-file-invoice"></i> 0 bills</span>
-      </div>
-
-      <div class="bh-stats">
-        <div class="bh-stat">
-          <i class="fa-solid fa-receipt"></i>
-          <div><span>Total bills</span><b id="stBills">0</b></div>
-        </div>
-        <div class="bh-stat g">
-          <i class="fa-solid fa-indian-rupee-sign"></i>
-          <div><span>Total sales</span><b id="stSales">₹0</b></div>
-        </div>
-        <div class="bh-stat a">
-          <i class="fa-solid fa-calendar-day"></i>
-          <div><span>Today's sales</span><b id="stToday">₹0</b></div>
-        </div>
-      </div>
-
-      <div class="bh-card">
-        <div class="bh-search">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input id="hq" type="search" placeholder="Search by bill no, customer or phone…" autocomplete="off">
+        <div class="bh-head">
+          <div>
+            <h1>Billing History</h1>
+            <p>All bills generated from the billing counter. Search and reprint
+              any bill.</p>
+          </div>
+          <span class="bh-pill" id="hsum"><i
+              class="fa-solid fa-file-invoice"></i> 0 bills</span>
         </div>
 
-        <div class="bh-tw">
-          <table>
-            <thead>
-              <tr>
-                <th>Bill</th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Items</th>
-                <th>Payment</th>
-                <th class="num">Total</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="hb"></tbody>
-          </table>
+        <div class="bh-stats">
+          <div class="bh-stat">
+            <i class="fa-solid fa-receipt"></i>
+            <div><span>Total bills</span><b id="stBills">0</b></div>
+          </div>
+          <div class="bh-stat g">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+            <div><span>Total sales</span><b id="stSales">₹0</b></div>
+          </div>
+          <div class="bh-stat a">
+            <i class="fa-solid fa-calendar-day"></i>
+            <div><span>Today's sales</span><b id="stToday">₹0</b></div>
+          </div>
         </div>
-      </div>
-    </main>
-  </div>
 
-  <div id="rc"></div>
-  <div class="toast" id="toast"></div>
+        <div class="bh-card">
+          <div class="bh-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="hq" type="search"
+              placeholder="Search by bill no, customer or phone…"
+              autocomplete="off">
+          </div>
 
-  <script type="module">
+          <div class="bh-tw">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bill</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Payment</th>
+                  <th class="num">Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="hb"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="rc"></div>
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
     import * as FB from "./js/firebase.js";
     import { adminReady } from "./js/admin-shell.js";
     const { db, collection, doc, onSnapshot, query, orderBy, limit, runTransaction, updateDoc, serverTimestamp } = FB;
@@ -766,6 +770,6 @@
       $("hb").onclick = e => { const b = e.target.closest("[data-b]"); if (b) print(B.find(x => x.id === b.dataset.b)) };
     })();
   </script>
-</body>
+  </body>
 
 </html>

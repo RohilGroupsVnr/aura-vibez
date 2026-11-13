@@ -15,14 +15,25 @@ import * as FB from "./firebase.js";
     shipFee: 0,
     prepaidOff: 0,
     codFee: 0,
-    codEnabled: true,             // set true to show Cash on Delivery again
-    razorpayKey: "",               // paste your Razorpay key_id to enable AUTOMATIC online payment (then QR step is skipped)
-    /* ---- manual UPI QR (used while razorpayKey is empty) ---- */
+    codEnabled: true,              // set true to show Cash on Delivery again
+
+    /* ---- ONLINE PAYMENT GATEWAY ---- */
+    gateway: "payu",               // "payu"  or  "razorpay"
+    // PayU (active when gateway = "payu")
+    payuInitUrl: "https://asia-south1-aura-8a9b5.cloudfunctions.net/payuInit",
+    payuVerifyUrl: "https://asia-south1-aura-8a9b5.cloudfunctions.net/payuVerify",
+    // Razorpay (hidden now. To use it again: gateway "razorpay" + paste your public key id below)
+    razorpayKey: "",               // e.g. "rzp_test_xxxxxxxx"  (public Key ID only, never the secret)
+    rzpCreateUrl: "https://asia-south1-aura-8a9b5.cloudfunctions.net/createRazorpayOrder",
+    rzpVerifyUrl: "https://asia-south1-aura-8a9b5.cloudfunctions.net/verifyRazorpayPayment",
+
+    /* ---- manual UPI QR (used only when no online gateway is on) ---- */
     upiId: "sofiajohnsonece-2@oksbi",
     upiName: "Sofia Johnson",
     qrImage: "",                   // optional: your own QR image, e.g. "../assets/upi-qr.jpg". Empty = QR is generated with the exact amount
     trackUrl: "trackorder.html",
-    pincodeApi: "https://asia-south1-aura-8a9b5.cloudfunctions.net/ekartPincode", coupons: { AURA10: { pct: 10 }, WELCOME100: { flat: 100, min: 999 } }
+    pincodeApi: "https://asia-south1-aura-8a9b5.cloudfunctions.net/ekartPincode",
+    coupons: { AURA10: { pct: 10 }, WELCOME100: { flat: 100, min: 999 } }
   }, window.AURA_CHECKOUT_CONFIG || {});
 
   /* ---------- helpers ---------- */
@@ -66,8 +77,11 @@ import * as FB from "./firebase.js";
     { id: "wallet", name: "Wallets", ico: I.wallet },
     { id: "cod", name: "Cash on Delivery", ico: I.cod }
   ];
-  /* manual mode (no razorpayKey): only UPI QR + COD. Card / Netbanking / Wallet come back automatically once razorpayKey is set */
-  const manualMode = () => !CFG.razorpayKey;
+
+  /* is an online gateway (PayU / Razorpay) switched on? */
+  const onlineOn = () => CFG.gateway === "payu" ? !!CFG.payuInitUrl : !!CFG.razorpayKey;
+  /* manual mode (no online gateway): only UPI QR + COD. Card / Netbanking / Wallet come back automatically once a gateway is on */
+  const manualMode = () => !onlineOn();
   const payList = () => {
     let list = manualMode() ? PAY.filter(m => m.id === "upi" || m.id === "cod") : PAY;
     if (!CFG.codEnabled) list = list.filter(m => m.id !== "cod");   // COD hidden unless codEnabled: true
@@ -245,6 +259,11 @@ import * as FB from "./firebase.js";
             <label class="ck-pillr"><input type="radio" name="ckLbl" value="home" ${(a.label || "home") === "home" ? "checked" : ""}>Home<i></i></label>
             <label class="ck-pillr"><input type="radio" name="ckLbl" value="work" ${a.label === "work" ? "checked" : ""}>Work<i></i></label>
           </div>
+          <label class="ck-wa" style="display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13px;line-height:1.4;cursor:pointer">
+            <input type="checkbox" id="ckWa" ${a.waOptIn ? "checked" : ""} style="margin-top:3px;width:18px;height:18px;accent-color:#A3194A;flex:none">
+            <span>I agree to receive order updates &amp; offers on WhatsApp. * <small style="color:#777">(Reply STOP anytime to opt out.)</small></span>
+          </label>
+          <p id="ckWaErr" style="color:#d93025;font-size:12px;margin:4px 0 0 28px;display:none">Please tick this box to continue</p>
           <p class="ck-help">${I.info} Please enter the complete address for smooth delivery.</p>
         </div>
       </div>
@@ -284,10 +303,10 @@ import * as FB from "./firebase.js";
 
   function payRow(m) {
     const prepaid = m.id !== "cod", t = calc(m.id), open = S.method === m.id;
-    /* prepaid -> automatic Razorpay when a key is set, otherwise the manual UPI QR screen */
-    const act = !prepaid ? "cod" : (CFG.razorpayKey ? "pay" : "upi");
-    const label = !prepaid ? `Place order · ${inr(t.total)}` : (CFG.razorpayKey ? `Pay ${inr(t.total)}` : `Pay ${inr(t.total)} with UPI QR`);
-    const note = !prepaid ? "Pay in cash when your order arrives." : (CFG.razorpayKey ? "You'll complete the payment in a secure window." : "Scan the QR with any UPI app (GPay, PhonePe, Paytm…).");
+    /* prepaid -> online gateway (PayU / Razorpay) when it is on, otherwise the manual UPI QR screen */
+    const act = !prepaid ? "cod" : (onlineOn() ? "pay" : "upi");
+    const label = !prepaid ? `Place order · ${inr(t.total)}` : (onlineOn() ? `Pay ${inr(t.total)}` : `Pay ${inr(t.total)} with UPI QR`);
+    const note = !prepaid ? "Pay in cash when your order arrives." : (onlineOn() ? "You'll complete the payment on a secure payment page." : "Scan the QR with any UPI app (GPay, PhonePe, Paytm…).");
     return `<div class="ck-pay ${open ? "open" : ""}">
       <button type="button" class="ck-pay-h" data-a="method" data-m="${m.id}" aria-expanded="${open}">
         <span class="ico">${m.ico}</span>
@@ -455,17 +474,19 @@ import * as FB from "./firebase.js";
   }
 
   /* ---------- order ---------- */
-  /* manual = true  -> customer paid by scanning the QR, admin must verify the UTR (paymentStatus "verification") */
-  async function placeOrder(method, paymentId, manual) {
+  /* manual = true  -> customer paid by scanning the QR, admin must verify the UTR (paymentStatus "verification")
+     extra          -> extra fields saved on the order (e.g. payuTxnId / rzpOrderId) */
+  async function placeOrder(method, paymentId, manual, extra) {
     const t = calc(method), a = S.addr, d = digits(phoneOf());
     const order = {
       orderId: "",   // filled inside the transaction: AURA#01, AURA#02, ...
       uid: S.user.uid, phone: d.length === 10 ? "+91" + d : phoneOf(), email: a.email, customerName: a.name,
       address: a, items: S.items, subtotal: t.sub, shipping: t.ship, discount: t.disc, coupon: S.coupon ? S.coupon.code : "",
       prepaidDiscount: t.pre, codFee: t.cod, total: t.total,
-      paymentMethod: method, paymentId: paymentId || "",
+      paymentMethod: method, paymentId: paymentId || "", ...(extra || {}),
       paymentStatus: method === "cod" ? "pending" : (manual ? "verification" : "paid"),
       upiId: manual ? CFG.upiId : "",
+      whatsappOptIn: !!a.waOptIn,
       status: "pending",
       stockReduced: true     // admin uses this to give the stock back if the order is cancelled / payment rejected
     };
@@ -538,12 +559,22 @@ import * as FB from "./firebase.js";
       console.error("Order save failed:", err);
       S.busy = false; render();
       if (err && err.stock) {
-        toast(err.message + (method !== "cod" && manual ? ". If you already paid, contact support with your UTR." : ""), true);
+        toast(err.message + (method !== "cod" ? ". If you already paid, contact support with your payment ID." : ""), true);
         S.step = "summary"; render();
       } else {
         toast("Couldn't place your order. Please try again.", true);
       }
       return;
+    }
+    /* WhatsApp opt-in -> users/{uid}.whatsappOptIn (never blocks the order if it fails) */
+    if (order.whatsappOptIn) {
+      try {
+        const ref = FB.doc(FB.db, "users", S.user.uid);
+        const data = { whatsappOptIn: true, whatsappOptInAt: FB.serverTimestamp ? FB.serverTimestamp() : new Date(), whatsappPhone: order.phone };
+        if (FB.setDoc) await FB.setDoc(ref, data, { merge: true });
+        else if (FB.updateDoc) await FB.updateDoc(ref, data);
+        else console.warn("firebase.js must export setDoc (or updateDoc) to save WhatsApp opt-in");
+      } catch (e) { console.warn("WhatsApp opt-in save failed:", e); }
     }
     S.busy = false; S.order = order; S.step = "done"; S.utr = "";
     if (!S.buyNow) { try { localStorage.removeItem(CFG.cartKey); } catch (e) { } }
@@ -551,6 +582,78 @@ import * as FB from "./firebase.js";
     render();
   }
 
+  /* ================= PAYU (redirect flow) ================= */
+  async function payOnlinePayu() {
+    if (S.busy) return;
+    const t = calc(), a = S.addr;
+    S.busy = true;
+    try {
+      const r = await fetch(CFG.payuInitUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: S.items.map(i => ({ id: i.id, qty: i.qty, size: i.size, color: i.color })),
+          customer: { name: a.name, phone: ten(phoneOf()), email: a.email },
+          returnUrl: location.origin + location.pathname + location.search
+        })
+      });
+      const o = await r.json();
+      if (!o.ok) throw new Error(o.error || "Couldn't start the payment");
+      if (Math.abs(Number(o.amount) - t.total) > 0.009) throw new Error("Price changed. Please check your bag and try again.");
+
+      /* PayU takes the customer to its own page, so keep the order details to finish after the return */
+      sessionStorage.setItem("aura_payu_pending", JSON.stringify({
+        txnid: o.params.txnid, items: S.items, addr: S.addr, coupon: S.coupon, method: S.method, buyNow: S.buyNow
+      }));
+
+      const f = document.createElement("form");
+      f.method = "POST"; f.action = o.action;
+      Object.entries(o.params).forEach(([k, v]) => {
+        const i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = v; f.appendChild(i);
+      });
+      document.body.appendChild(f);
+      f.submit();
+    } catch (e) {
+      S.busy = false;
+      toast(e.message || "Couldn't start the payment. Please try again.", true);
+    }
+  }
+
+  /* runs on page load: when the customer comes back from PayU (?payu=success|failed&txnid=...) */
+  async function finishPayu() {
+    const q = new URLSearchParams(location.search);
+    const st = q.get("payu"), txnid = q.get("txnid");
+    if (!st || !txnid) return;
+    q.delete("payu"); q.delete("txnid");
+    history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : ""));
+
+    let pend = null;
+    try { pend = JSON.parse(sessionStorage.getItem("aura_payu_pending") || "null"); } catch (e) { }
+    await authReady;
+    if (!pend || pend.txnid !== txnid) return;
+    sessionStorage.removeItem("aura_payu_pending");
+
+    S.items = pend.items.map(normItem); S.buyNow = !!pend.buyNow; S.coupon = pend.coupon || null;
+    S.addr = pend.addr; S.method = pend.method; S.order = null; S.utr = "";
+    S.open = true; root.classList.add("show"); document.body.style.overflow = "hidden"; startRibbon();
+
+    if (!S.user) {
+      S.step = "login"; render();
+      return toast("Please log in again. Payment reference: " + txnid, true);
+    }
+    S.step = "summary"; render();
+
+    if (st !== "success") return toast("Payment failed or cancelled. Please try again.", true);
+    try {
+      const v = await (await fetch(CFG.payuVerifyUrl + "?txnid=" + encodeURIComponent(txnid))).json();
+      if (!v.ok || Math.abs(Number(v.amount) - calc().total) > 0.009) throw new Error("verify");
+      placeOrder(S.method, v.mihpayid, false, { payuTxnId: txnid, gateway: "payu" });
+    } catch (e) {
+      toast("Payment may have been received but couldn't be verified. Contact support with ID " + txnid, true);
+    }
+  }
+
+  /* ================= RAZORPAY (popup flow, hidden unless gateway = "razorpay") ================= */
   function loadRzp() {
     return new Promise((res, rej) => {
       if (window.Razorpay) return res();
@@ -560,13 +663,50 @@ import * as FB from "./firebase.js";
   }
   async function payOnline() {
     if (!CFG.razorpayKey) { toast("Online payment isn't enabled yet. Please choose Cash on Delivery.", true); return; }
-    try { await loadRzp(); } catch (e) { toast("Couldn't reach the payment gateway. Check your connection.", true); return; }
+    if (S.busy) return;
     const t = calc(), method = S.method, a = S.addr;
-    new window.Razorpay({
-      key: CFG.razorpayKey, amount: Math.round(t.total * 100), currency: "INR", name: "AURA", description: `${count()} item(s)`,
-      prefill: { name: a.name, email: a.email, contact: ten(phoneOf()) }, theme: { color: "#A3194A" },
-      handler: r => placeOrder(method, r.razorpay_payment_id)
-    }).open();
+    S.busy = true;
+    try {
+      await loadRzp();
+      const r = await fetch(CFG.rzpCreateUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: S.items.map(i => ({ id: i.id, qty: i.qty, size: i.size, color: i.color })),
+          customer: { name: a.name, phone: ten(phoneOf()), email: a.email }
+        })
+      });
+      const o = await r.json();
+      if (!o.ok) throw new Error(o.error || "Couldn't start the payment");
+      if (o.amount !== Math.round(t.total * 100)) throw new Error("Price changed. Please check your bag and try again.");
+
+      const rzp = new window.Razorpay({
+        key: o.keyId, amount: o.amount, currency: "INR", order_id: o.rzpOrderId,
+        name: "AURA", description: `${count()} item(s)`,
+        prefill: { name: a.name, email: a.email, contact: ten(phoneOf()) },
+        theme: { color: "#A3194A" },
+        handler: async resp => {
+          try {
+            const v = await fetch(CFG.rzpVerifyUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(resp)
+            });
+            const vr = await v.json();
+            if (!vr.ok) throw new Error("verify");
+            placeOrder(method, resp.razorpay_payment_id, false, { rzpOrderId: resp.razorpay_order_id, gateway: "razorpay" });
+          } catch (err) {
+            toast("Payment received but couldn't be verified. Contact support with ID " + resp.razorpay_payment_id, true);
+          }
+        }
+      });
+      rzp.on("payment.failed", ev => toast((ev.error && ev.error.description) || "Payment failed. Please try again.", true));
+      S.busy = false;
+      rzp.open();
+    } catch (e) {
+      S.busy = false;
+      toast(e.message || "Couldn't start the payment. Please try again.", true);
+    }
   }
 
   /* ---------- events ---------- */
@@ -600,6 +740,10 @@ import * as FB from "./firebase.js";
         await revealFromPin(pin); return;
       }
       if (!validateAddr()) return;
+      if (!($("ckWa") && $("ckWa").checked)) {
+        const er = $("ckWaErr"); if (er) er.style.display = "block";
+        $("ckWa").scrollIntoView({ block: "center", behavior: "smooth" }); return;
+      }
       if (S.pinInfo && S.pinInfo.pin === $("ckPin").value.trim() && !S.pinInfo.serviceable) {
         setErr("ckPin", "Sorry, we can't deliver to this pincode yet"); $("ckPin").focus(); return;
       }
@@ -610,7 +754,8 @@ import * as FB from "./firebase.js";
         landmark: $("ckLandmark").value.trim(),
         name: $("ckName").value.trim(), email: $("ckMail").value.trim(),
         phone: mob ? "+91" + mob : (S.user && S.user.phoneNumber) || "",
-        label: (document.querySelector('input[name="ckLbl"]:checked') || {}).value || "home"
+        label: (document.querySelector('input[name="ckLbl"]:checked') || {}).value || "home",
+        waOptIn: !!($("ckWa") && $("ckWa").checked)
       });
       S.step = "summary"; render(); flash("Your new address has been updated successfully.");
     }
@@ -623,7 +768,7 @@ import * as FB from "./firebase.js";
     }
     else if (a === "pay") {
       const m = await checkStock(); if (m) return toast(m, true);
-      payOnline();
+      if (CFG.gateway === "payu") payOnlinePayu(); else payOnline();
     }
     else if (a === "upi") {
       const m = await checkStock(); if (m) return toast(m, true);
@@ -650,6 +795,7 @@ import * as FB from "./firebase.js";
       const d = digits(e.target.value).slice(0, 10); S.phoneDraft = d; e.target.value = g55(d);
       const er = $("ckPhErr"); if (er) er.textContent = "";
     }
+    if (id === "ckWa") { const er = $("ckWaErr"); if (er) er.style.display = e.target.checked ? "none" : "block"; }
     if (id === "ckMob") e.target.value = digits(e.target.value).slice(0, 10);
     if (id === "ckUtr") { const d = digits(e.target.value).slice(0, 12); e.target.value = d; S.utr = d; }
     if (id === "ckPin") {
@@ -686,4 +832,7 @@ import * as FB from "./firebase.js";
   } else authResolve();
 
   window.AuraCheckout = { open, close, buyNow: item => open({ items: [item] }) };
+
+  /* back from PayU? finish the order */
+  finishPayu();
 })();

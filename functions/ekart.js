@@ -20,13 +20,13 @@ const REGION = "asia-south1";
 const CFG = {
   sellerName: "AURA",
   sellerAddress: "2nd Floor, Digital Canara Bank, Virudhunagar, Tamil Nadu 626001",
-  sellerGstTin: "",                 // GST irundha podunga. Create-la error vandha Ekart account manager-kitta kelunga
-  pickupAlias: "",                  // kaali = Ekart-la register aana 1st address auto-va edukkum
-  service: "SURFACE",               // SURFACE illa EXPRESS
+  sellerGstTin: "",                  // Ekart manager sonna padi (GST illa-na blank)
+  pickupAlias: "ENGA_PASTE_PANNUNGA", // Ekart panel > Settings > Addresses > Location Name
+  service: "SURFACE",                // SURFACE illa EXPRESS
   category: "Apparel",
-  weightPerItem: 500,               // grams
-  length: 30, width: 25, height: 5, // cm
-  verifyWebhook: false              // first test-ku false
+  weightPerItem: 500,                // grams
+  length: 30, width: 25, height: 5,  // cm
+  verifyWebhook: false               // first test-ku false
 };
 
 /* ---------- token (24h cache) ---------- */
@@ -39,10 +39,7 @@ async function getToken() {
     body: JSON.stringify({ username: EKART_USER.value(), password: EKART_PASS.value() })
   });
   const d = await r.json().catch(() => ({}));
-  if (!r.ok || !d.access_token) {
-    console.error("Ekart auth failed", r.status, JSON.stringify(d));
-    throw new Error("Ekart auth failed (" + r.status + ")");
-  }
+  if (!r.ok || !d.access_token) throw new Error("Ekart auth failed (" + r.status + ")");
   tokenCache = {
     value: `${d.token_type || "Bearer"} ${d.access_token}`,
     exp: Date.now() + Math.max(60, (Number(d.expires_in) || 3600) - 300) * 1000
@@ -57,64 +54,40 @@ async function ekart(method, path, body) {
   });
 }
 
-/* pickup / return address alias */
-let aliasCache = null;
-async function getAlias() {
-  if (CFG.pickupAlias) return CFG.pickupAlias;
-  if (aliasCache) return aliasCache;
-  const r = await ekart("GET", "/api/v2/addresses");
-  const d = await r.json().catch(() => []);
-  if (!r.ok || !Array.isArray(d) || !d.length || !d[0].alias) {
-    console.error("Ekart addresses", r.status, JSON.stringify(d));
-    throw new HttpsError("failed-precondition", "Ekart-la pickup address illa. Account manager-kitta add panna sollunga, illa CFG.pickupAlias set pannunga");
-  }
-  aliasCache = d[0].alias;
-  return aliasCache;
-}
-
-const ADMIN_EMAILS = ["auraclothing.vnr@gmail.com", "auravibezclothing@gmail.com"];
-
 async function requireAdmin(req) {
   if (!req.auth) throw new HttpsError("unauthenticated", "Login pannunga");
-  const email = String(req.auth.token.email || "").toLowerCase();
-  if (!ADMIN_EMAILS.includes(email)) throw new HttpsError("permission-denied", "Admin mattum");
+  const a = await db.collection("admins").doc(req.auth.uid).get();
+  if (!a.exists) throw new HttpsError("permission-denied", "Admin mattum");
 }
 
 const digits = s => String(s || "").replace(/\D/g, "").slice(-10);
-const tc = s => String(s || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-const refOf = s => String(s || "").replace(/[^A-Za-z0-9-]/g, "");   // AURA#01 -> AURA01
 
 /* ---------- AURA order -> Ekart payload ---------- */
-function buildPayload(o, alias) {
+function buildPayload(o) {
   const items = Array.isArray(o.items) ? o.items : [];
-  const a = o.address || {};
   const qty = items.reduce((s, i) => s + (Number(i.qty) || 1), 0) || 1;
   const total = Math.round(Number(o.total) || 0);
-  const isCod = String(o.paymentMethod || "").toLowerCase() === "cod";
-  const phone = digits(o.phone || a.phone);
-  const pin = Number(String(a.pin || "").replace(/\D/g, ""));
+  const isCod = /cod|cash/i.test(String(o.paymentMethod || ""));
+  const phone = digits(o.phone);
+  const pin = Number(String(o.pincode || o.pin || "").replace(/\D/g, ""));
 
   if (total < 1) throw new HttpsError("failed-precondition", "Order total sari illa");
-  if (!isCod && o.paymentStatus !== "paid") throw new HttpsError("failed-precondition", "Payment verify aagala. Mudhalla 'Mark paid' pannunga");
   if (isCod && total > 49999) throw new HttpsError("failed-precondition", "COD amount 49,999-ku mela anuppa mudiyaadhu");
   if (phone.length < 10) throw new HttpsError("failed-precondition", "Customer phone sari illa");
-  if (pin < 100000) throw new HttpsError("failed-precondition", "Order-la pincode illa");
+  if (!pin) throw new HttpsError("failed-precondition", "Order-la pincode illa");
 
-  const name = a.name || o.customerName || "Customer";
-  const street = [a.flat, a.area, a.landmark && "Landmark: " + a.landmark].filter(Boolean).join(", ");
-  const desc = items.map(i => i.name + (i.size ? " (" + i.size + ")" : "")).join(", ").slice(0, 200) || "Clothing";
-
+  const name = o.name || "Customer";
   return {
     seller_name: CFG.sellerName,
     seller_address: CFG.sellerAddress,
     seller_gst_tin: CFG.sellerGstTin,
     consignee_gst_amount: 0,
-    order_number: refOf(o.orderId) || "AURA" + Date.now(),
-    invoice_number: refOf(o.billNo || o.orderId) || "AURA" + Date.now(),
+    order_number: String(o.orderId),
+    invoice_number: String(o.orderId),
     invoice_date: new Date().toISOString().slice(0, 10),
     consignee_name: name,
     consignee_alternate_phone: phone,
-    products_desc: desc,
+    products_desc: items.map(i => i.name).filter(Boolean).join(", ").slice(0, 200) || "Clothing",
     payment_mode: isCod ? "COD" : "Prepaid",
     category_of_goods: CFG.category,
     total_amount: total,
@@ -126,11 +99,11 @@ function buildPayload(o, alias) {
     weight: CFG.weightPerItem * qty,
     length: CFG.length, width: CFG.width, height: CFG.height,
     drop_location: {
-      location_type: "Home", address: street, city: tc(a.city),
-      state: tc(a.state), country: "India", name, phone: Number(phone), pin
+      location_type: "Home", address: String(o.address || ""), city: String(o.city || ""),
+      state: String(o.state || ""), country: "India", name: name, phone: Number(phone), pin: pin
     },
-    pickup_location: { name: alias },
-    return_location: { name: alias },
+    pickup_location: { name: CFG.pickupAlias },
+    return_location: { name: CFG.pickupAlias },
     service: CFG.service
   };
 }
@@ -145,8 +118,7 @@ exports.createEkartShipment = onCall({ region: REGION, secrets: API_SECRETS }, a
   if (o.trackingId) throw new HttpsError("already-exists", "Already created: " + o.trackingId);
   if (String(o.status || "").toLowerCase() === "cancelled") throw new HttpsError("failed-precondition", "Order cancelled");
 
-  const alias = await getAlias();
-  const r = await ekart("PUT", "/api/v1/package/create", buildPayload(o, alias));
+  const r = await ekart("PUT", "/api/v1/package/create", buildPayload(o));
   const d = await r.json().catch(() => ({}));
   if (!r.ok || !d.status) {
     console.error("Ekart create failed", r.status, JSON.stringify(d));
@@ -154,10 +126,9 @@ exports.createEkartShipment = onCall({ region: REGION, secrets: API_SECRETS }, a
   }
   await ref.update({
     trackingId: d.tracking_id,
-    trackingUrl: `${BASE}/track/${d.tracking_id}`,   // Ekart public tracking link
+    trackingUrl: `${BASE}/track/${d.tracking_id}`,
     courier: d.vendor || "Ekart",
     ekartBarcodes: d.barcodes || null,
-    ekartCancelled: false,
     status: "shipped",
     shippedAt: FV.serverTimestamp(),
     updatedAt: FV.serverTimestamp()
@@ -166,7 +137,6 @@ exports.createEkartShipment = onCall({ region: REGION, secrets: API_SECRETS }, a
 });
 
 /* ---------- CANCEL SHIPMENT (admin) ---------- */
-/* shipment mattum cancel aagum, order "pending"-ku thirumbum (order cancel panna admin dropdown use pannunga) */
 exports.cancelEkartShipment = onCall({ region: REGION, secrets: API_SECRETS }, async req => {
   await requireAdmin(req);
   const ref = db.collection("orders").doc(String(req.data?.orderDocId || ""));
@@ -180,21 +150,7 @@ exports.cancelEkartShipment = onCall({ region: REGION, secrets: API_SECRETS }, a
     console.error("Ekart cancel failed", r.status, t);
     throw new HttpsError("internal", "Ekart cancel failed (" + r.status + ")");
   }
-  await ref.update({
-    status: "pending",
-    ekartCancelled: true,
-    ekartCancelledId: o.trackingId,
-    trackingId: FV.delete(),
-    trackingUrl: FV.delete(),
-    courier: FV.delete(),
-    ekartStatus: FV.delete(),
-    ekartDesc: FV.delete(),
-    ekartLocation: FV.delete(),
-    ekartHistory: FV.delete(),
-    edd: FV.delete(),
-    shippedAt: FV.delete(),
-    updatedAt: FV.serverTimestamp()
-  });
+  await ref.update({ status: "cancelled", ekartCancelled: true, updatedAt: FV.serverTimestamp() });
   return { ok: true };
 });
 
@@ -248,10 +204,7 @@ exports.ekartWebhook = onRequest({ region: REGION, secrets: [WEBHOOK_SECRET] }, 
           updatedAt: FV.serverTimestamp()
         };
         if (b.edd) upd.edd = Number(b.edd);
-        if (st.toLowerCase() === "delivered") {
-          upd.status = "delivered";
-          upd.deliveredAt = FV.serverTimestamp();   // 7-day return timer inge irundhu start aagum
-        }
+        if (st.toLowerCase() === "delivered") upd.status = "delivered";
         await q.docs[0].ref.update(upd);
       }
     }

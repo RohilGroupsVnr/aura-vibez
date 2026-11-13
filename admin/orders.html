@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orders — AURA Admin</title>
-  <link rel="icon" href="../assets/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css">
-  <style>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders — AURA Admin</title>
+    <link rel="icon" href="../assets/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <style>
     .ord-sel {
       padding: 6px 8px;
       border-radius: 8px;
@@ -413,64 +413,67 @@
       color: #6c5b61;
     }
   </style>
-</head>
+  </head>
 
-<body>
-  <div class="admin-layout">
-    <aside class="admin-side" id="adminSide"></aside>
+  <body>
+    <div class="admin-layout">
+      <aside class="admin-side" id="adminSide"></aside>
 
-    <main class="admin-main">
-      <div class="admin-topbar">
-        <div>
-          <h1>Orders</h1>
-          <p>Manage customer orders</p>
+      <main class="admin-main">
+        <div class="admin-topbar">
+          <div>
+            <h1>Orders</h1>
+            <p>Manage customer orders</p>
+          </div>
+          <div class="admin-user"><b id="adminEmail"></b></div>
         </div>
-        <div class="admin-user"><b id="adminEmail"></b></div>
-      </div>
 
-      <div class="verify-banner" id="verifyBanner">
-        <span id="verifyTxt"></span>
-        <button type="button" id="verifyShow">Show these orders</button>
-      </div>
-
-      <div class="admin-card scroll-x">
-        <div class="admin-filters">
-          <input type="search" id="orderSearch" placeholder="Search by order ID, customer, phone, email or UTR…">
-          <select id="statusFilter">
-            <option value="">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="shipped">Shipped</option>
-            <option value="delivered">Delivered</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="return_requested">Return requested</option>
-          </select>
-          <select id="payFilter">
-            <option value="">All Payments</option>
-            <option value="verification">Needs verification</option>
-            <option value="paid">Paid</option>
-            <option value="pending">Payment pending</option>
-            <option value="failed">Failed</option>
-            <option value="refunded">Refunded</option>
-          </select>
+        <div class="verify-banner" id="verifyBanner">
+          <span id="verifyTxt"></span>
+          <button type="button" id="verifyShow">Show these orders</button>
         </div>
-        <div id="ordersWrap">
-          <p style="color:var(--muted)">Loading…</p>
+
+        <div class="admin-card scroll-x">
+          <div class="admin-filters">
+            <input type="search" id="orderSearch"
+              placeholder="Search by order ID, customer, phone, email or UTR…">
+            <select id="statusFilter">
+              <option value>All Status</option>
+              <option value="pending">Pending</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="return_requested">Return requested</option>
+            </select>
+            <select id="payFilter">
+              <option value>All Payments</option>
+              <option value="verification">Needs verification</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Payment pending</option>
+              <option value="failed">Failed</option>
+              <option value="refunded">Refunded</option>
+            </select>
+          </div>
+          <div id="ordersWrap">
+            <p style="color:var(--muted)">Loading…</p>
+          </div>
         </div>
-      </div>
-    </main>
-  </div>
-
-  <div id="print-section"></div>
-
-  <!-- ORDER DETAILS POPUP -->
-  <div class="om" id="ordModal" role="dialog" aria-modal="true" aria-labelledby="omTitle">
-    <div class="om-box">
-      <button type="button" class="om-x" id="omClose" aria-label="Close">&times;</button>
-      <div id="omBody"></div>
+      </main>
     </div>
-  </div>
 
-  <script type="module">
+    <div id="print-section"></div>
+
+    <!-- ORDER DETAILS POPUP -->
+    <div class="om" id="ordModal" role="dialog" aria-modal="true"
+      aria-labelledby="omTitle">
+      <div class="om-box">
+        <button type="button" class="om-x" id="omClose"
+          aria-label="Close">&times;</button>
+        <div id="omBody"></div>
+      </div>
+    </div>
+
+    <script type="module">
     import { db, collection, getDocs, query, orderBy, where, addDoc, doc, updateDoc, serverTimestamp } from "./js/firebase.js";
     import { adminReady } from "./js/admin-shell.js";
     import * as FBX from "./js/firebase.js";   // runTransaction is read from here so the page still loads even if it isn't exported
@@ -1084,6 +1087,6 @@
     $("payFilter").addEventListener("change", render);
     adminReady.then(load);
   </script>
-</body>
+  </body>
 
 </html>

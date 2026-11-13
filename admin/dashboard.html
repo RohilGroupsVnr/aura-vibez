@@ -1,173 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard — AURA Admin</title>
-    <link rel="icon" href="../assets/favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/admin.css">
-</head>
-<body>
-    <div class="admin-layout">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard — AURA Admin</title>
+        <link rel="icon" href="../assets/favicon.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="css/admin.css">
+    </head>
 
-        <!-- SIDEBAR (filled by js/admin-shell.js) -->
-        <aside class="admin-side" id="adminSide"></aside>
+    <body>
+        <div class="admin-layout">
 
-        <main class="admin-main">
-            <div class="admin-topbar">
-                <div>
-                    <h1>Dashboard</h1>
-                    <p>Welcome back, <b id="adminName">Admin</b></p>
-                </div>
-                <div class="admin-user"><b id="adminEmail"></b></div>
-            </div>
+            <!-- SIDEBAR (filled by js/admin-shell.js) -->
+            <aside class="admin-side" id="adminSide"></aside>
 
-            <div class="dash-hero">
-                <h2>Good to see you, <em><span id="dashName">Admin</span></em>.</h2>
-                <p>Here's what's happening at AURA today. Track orders, monitor stock and reach your customers — all in
-                    one place.</p>
-                <div class="dash-hero-meta">
-                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <rect x="3" y="4" width="18" height="18" rx="2" />
-                            <path d="M16 2v4M8 2v4M3 10h18" />
-                        </svg> <span id="dashDate">—</span></span>
-                    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M12 6v6l4 2" />
-                        </svg> <span id="dashTime">—</span></span>
+            <main class="admin-main">
+                <div class="admin-topbar">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p>Welcome back, <b id="adminName">Admin</b></p>
+                    </div>
+                    <div class="admin-user"><b id="adminEmail"></b></div>
                 </div>
-            </div>
 
-            <div class="admin-stats">
-                <div class="stat-card orders"><small>Total Orders</small><b id="statOrders">0</b><span class="stat-diff"
-                        id="statOrdersDiff">+0 today</span>
-                    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-                            <path d="M3 6h18" />
-                            <path d="M16 10a4 4 0 0 1-8 0" />
-                        </svg></div>
+                <div class="dash-hero">
+                    <h2>Good to see you, <em><span
+                                id="dashName">Admin</span></em>.</h2>
+                    <p>Here's what's happening at AURA today. Track orders,
+                        monitor stock and reach your customers — all in
+                        one place.</p>
+                    <div class="dash-hero-meta">
+                        <span><svg width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18"
+                                    rx="2" />
+                                <path d="M16 2v4M8 2v4M3 10h18" />
+                            </svg> <span id="dashDate">—</span></span>
+                        <span><svg width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg> <span id="dashTime">—</span></span>
+                    </div>
                 </div>
-                <div class="stat-card revenue"><small>Revenue</small><b id="statRevenue">₹0</b><span class="stat-diff"
-                        id="statRevenueDiff">+₹0 today</span>
-                    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="currentColor">
-                            <text x="50%" y="50%" font-size="21" text-anchor="middle"
-                                dominant-baseline="central">₹</text>
-                        </svg></div>
-                </div>
-                <div class="stat-card subs"><small>Subscribers</small><b id="statSubs">0</b><span class="stat-diff"
-                        id="statSubsDiff">+0 this week</span>
-                    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                            <circle cx="9" cy="7" r="4" />
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                        </svg></div>
-                </div>
-                <div class="stat-card products"><small>Products</small><b id="statProducts">0</b><span class="stat-diff"
-                        id="statProductsDiff">In stock</span>
-                    <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 7 12 3 4 7v10l8 4 8-4V7Z" />
-                            <path d="m4 7 8 4 8-4" />
-                            <path d="M12 21V11" />
-                        </svg></div>
-                </div>
-            </div>
 
-            <div class="dash-grid">
-                <div class="admin-card scroll-x" style="margin-bottom:0">
-                    <h2>Recent Orders</h2>
-                    <div id="recentOrders"></div>
-                </div>
-                <div class="admin-card" style="margin-bottom:0">
-                    <h2>Quick Actions</h2>
-                    <div class="quick-actions">
-                        <a href="orders.html" class="quick-action"><svg viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                <div class="admin-stats">
+                    <div class="stat-card orders"><small>Total Orders</small><b
+                            id="statOrders">0</b><span class="stat-diff"
+                            id="statOrdersDiff">+0 today</span>
+                        <div class="stat-icon"><svg viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
                                 <path d="M3 6h18" />
                                 <path d="M16 10a4 4 0 0 1-8 0" />
-                            </svg>View Orders</a>
-                        <a href="stock.html" class="quick-action"><svg viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
+                            </svg></div>
+                    </div>
+                    <div class="stat-card revenue"><small>Revenue</small><b
+                            id="statRevenue">₹0</b><span class="stat-diff"
+                            id="statRevenueDiff">+₹0 today</span>
+                        <div class="stat-icon"><svg viewBox="0 0 24 24"
+                                fill="currentColor">
+                                <text x="50%" y="50%" font-size="21"
+                                    text-anchor="middle"
+                                    dominant-baseline="central">₹</text>
+                            </svg></div>
+                    </div>
+                    <div class="stat-card subs"><small>Subscribers</small><b
+                            id="statSubs">0</b><span class="stat-diff"
+                            id="statSubsDiff">+0 this week</span>
+                        <div class="stat-icon"><svg viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                            </svg></div>
+                    </div>
+                    <div class="stat-card products"><small>Products</small><b
+                            id="statProducts">0</b><span class="stat-diff"
+                            id="statProductsDiff">In stock</span>
+                        <div class="stat-icon"><svg viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <path d="M20 7 12 3 4 7v10l8 4 8-4V7Z" />
                                 <path d="m4 7 8 4 8-4" />
                                 <path d="M12 21V11" />
-                            </svg>Manage Stock</a>
-                        <a href="newsletter.html" class="quick-action"><svg viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                <polyline points="22,6 12,13 2,6" />
-                            </svg>Subscribers</a>
-                        <a href="settings.html" class="quick-action"><svg viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="3" />
-                                <path
-                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
-                            </svg>Settings</a>
+                            </svg></div>
                     </div>
                 </div>
-            </div>
 
-            <div class="dash-grid" style="margin-top:22px">
-                <div class="admin-card" style="margin-bottom:0">
-                    <h2>Recent Activity</h2>
-                    <div id="activityList" class="activity-list"></div>
+                <div
+                    style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:22px; margin-bottom:22px">
+                    <div class="admin-card" style="margin-bottom:0">
+                        <h2><i class="fa-solid fa-fire"
+                                style="color:#e74c3c; margin-right:8px"></i> Top
+                            Selling Products</h2>
+                        <div id="topProductsList" class="top-list"></div>
+                    </div>
+                    <div class="admin-card" style="margin-bottom:0">
+                        <h2>Most Viewed Products</h2>
+                        <div id="topViewsList" class="top-list"></div>
+                    </div>
                 </div>
-                <div class="admin-card" style="margin-bottom:0">
-                    <h2>Top Subscribers</h2>
-                    <div id="topSubs" class="top-list"></div>
-                </div>
-            </div>
 
-            <!-- 🔥 NEW: Top Selling Products Section 🔥 -->
-            <div class="admin-card" style="margin-top:22px; margin-bottom:0">
-                <h2><i class="fa-solid fa-fire" style="color: #e74c3c; margin-right: 8px;"></i> Top Selling Products
-                </h2>
-                <div id="topProductsList" class="top-list"></div>
-            </div>
-
-            <!-- 🔥 NEW: Modal for Product Sales Details 🔥 -->
-            <div class="a-modal" id="salesModal" style="z-index: 1000;">
-                <div class="a-modal-box" style="width: min(600px, 100%);">
-                    <div class="a-modal-head">
-                        <h2 id="modalProdName">Product Sales</h2>
-                        <button type="button" onclick="closeSalesModal()"
-                            style="font-size: 20px; color: var(--muted);">&times;</button>
+                <div class="dash-grid">
+                    <div class="admin-card scroll-x" style="margin-bottom:0">
+                        <h2>Recent Orders</h2>
+                        <div id="recentOrders"></div>
                     </div>
-                    <div style="max-height: 50vh; overflow-y: auto;">
-                        <table class="admin-table" style="width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>Bill No</th>
-                                    <th>Date</th>
-                                    <th>Qty</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="modalSalesBody">
-                                <!-- Rows will be injected here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="a-modal-foot">
-                        <button type="button" class="btn-admin ghost" onclick="closeSalesModal()">Close</button>
+                    <div class="admin-card" style="margin-bottom:0">
+                        <h2>Quick Actions</h2>
+                        <div class="quick-actions">
+                            <a href="orders.html" class="quick-action"><svg
+                                    viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                                    <path d="M3 6h18" />
+                                    <path d="M16 10a4 4 0 0 1-8 0" />
+                                </svg>View Orders</a>
+                            <a href="stock.html" class="quick-action"><svg
+                                    viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M20 7 12 3 4 7v10l8 4 8-4V7Z" />
+                                    <path d="m4 7 8 4 8-4" />
+                                    <path d="M12 21V11" />
+                                </svg>Manage Stock</a>
+                            <a href="newsletter.html" class="quick-action"><svg
+                                    viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>Subscribers</a>
+                            <a href="settings.html" class="quick-action"><svg
+                                    viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3" />
+                                    <path
+                                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+                                </svg>Settings</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </main>
+
+                <div class="dash-grid" style="margin-top:22px">
+                    <div class="admin-card" style="margin-bottom:0">
+                        <h2>Recent Activity</h2>
+                        <div id="activityList" class="activity-list"></div>
+                    </div>
+                    <div class="admin-card" style="margin-bottom:0">
+                        <h2>Top Subscribers</h2>
+                        <div id="topSubs" class="top-list"></div>
+                    </div>
+                </div>
+
+                <!-- 🔥 NEW: Recently Viewed Customers (Manual WhatsApp) 🔥 -->
+                <div class="admin-card" style="margin-top:22px">
+                    <h2>
+                        <i class="fa-brands fa-whatsapp"
+                            style="color:#25D366; margin-right:8px"></i>
+                        Recently Viewed Customers
+                        <span
+                            style="font-size:12px; color:#7a6a70; font-weight:400; margin-left:8px;">
+                            (Manual WhatsApp follow-up)
+                        </span>
+                    </h2>
+
+                    <div
+                        style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+                        <button type="button" class="btn-admin" id="filterNew"
+                            style="font-size:12px; padding:6px 14px;">
+                            Not Contacted
+                        </button>
+                        <button type="button" class="btn-admin ghost"
+                            id="filterAll"
+                            style="font-size:12px; padding:6px 14px;">
+                            All
+                        </button>
+                    </div>
+
+                    <div id="recentViewersList" class="top-list">
+                        <p
+                            style="padding:14px; color:#827078; font-size:13px;">Loading...</p>
+                    </div>
+                </div>
+<!-- 🔥 NEW: Product Viewers Detail Modal 🔥 -->
+<div class="a-modal" id="viewersModal" style="z-index:1001;">
+  <div class="a-modal-box" style="width:min(640px, 100%);">
+    <div class="a-modal-head">
+      <h2>👁 <span id="vmProductName">Product</span> — Viewers</h2>
+      <button type="button" onclick="closeViewersModal()"
+              style="font-size:20px; color:var(--muted);">&times;</button>
     </div>
 
-    <script type="module">
-        import { db, collection, getDocs, query, orderBy, limit } from "./js/firebase.js";
-        import { adminReady } from "./js/admin-shell.js";
+    <div style="padding:6px 0;">
+      <div style="display:flex; gap:12px; align-items:center; padding:12px; background:#fdf9f4; border-radius:10px; margin-bottom:14px;">
+        <img id="vmProductImg" src="" style="width:60px; height:78px; object-fit:cover; border-radius:8px;">
+        <div style="flex:1;">
+          <b id="vmProductTitle" style="font-size:15px; color:#2b1b21;"></b>
+          <div style="font-size:13px; color:#7a6a70; margin-top:4px;">
+            Total: <b id="vmTotalViews" style="color:#a3194a;">0</b> views ·
+            <span id="vmUniqueCount">0</span> unique viewers
+          </div>
+        </div>
+      </div>
+
+      <div style="max-height:55vh; overflow-y:auto;">
+        <table class="admin-table" style="width:100%;">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Views</th>
+              <th>Last Seen</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="vmViewersBody">
+            <tr><td colspan="6" style="text-align:center; padding:20px; color:#7a6a70;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="a-modal-foot">
+      <button type="button" class="btn-admin ghost" onclick="closeViewersModal()">Close</button>
+    </div>
+  </div>
+</div>
+            </main>
+        </div>
+
+        <script type="module">
+        import { db, collection, getDocs, query, orderBy, limit, doc, setDoc, serverTimestamp } from "./js/firebase.js"; import { adminReady } from "./js/admin-shell.js";
 
         const $ = id => document.getElementById(id);
         const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -195,7 +274,142 @@
             $("dashTime").textContent = n.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
         }
         tick(); setInterval(tick, 30000);
+/* ============================================
+   🔥 RECENTLY VIEWED CUSTOMERS (WhatsApp Manual) 🔥
+   ============================================ */
 
+let RV_DATA = [];
+let RV_FILTER = "new";  // "new" = not contacted, "all" = everyone
+
+async function loadRecentlyViewed() {
+  const wrap = $("recentViewersList");
+  try {
+    // Fetch recentlyViewed docs
+    const rvSnap = await getDocs(
+      query(collection(db, "recentlyViewed"), orderBy("viewedAt", "desc"), limit(50))
+    );
+
+    if (rvSnap.empty) {
+      wrap.innerHTML = empty(P.user, "No recently viewed products yet.");
+      return;
+    }
+
+    // Deduplicate: one row per user (latest product they viewed)
+    const seen = new Map();
+    rvSnap.docs.forEach(d => {
+      const r = d.data();
+      if (!r.userId || seen.has(r.userId)) return;
+      seen.set(r.userId, { id: d.id, ...r });
+    });
+
+    // Fetch user details (name, phone) for each
+    const userIds = [...seen.keys()];
+    const usersMap = new Map();
+
+    await Promise.all(userIds.map(async uid => {
+      try {
+        const uSnap = await getDocs(query(collection(db, "users")));
+        // (better: use where uid == ... but safeDocs pattern here)
+        const u = uSnap.docs.find(d => d.id === uid);
+        if (u) usersMap.set(uid, u.data());
+      } catch (e) { /* skip */ }
+    }));
+
+    // Simpler: fetch each user doc directly
+    const { getDoc: gd, doc: dref } = await import("./js/firebase.js");
+    await Promise.all(userIds.map(async uid => {
+      try {
+        const uSnap = await gd(dref(db, "users", uid));
+        if (uSnap.exists()) usersMap.set(uid, uSnap.data());
+      } catch (e) { /* skip */ }
+    }));
+
+    RV_DATA = [...seen.values()].map(r => {
+      const u = usersMap.get(r.userId) || {};
+      return {
+        docId: r.id,
+        userId: r.userId,
+        name: u.name || u.displayName || "Customer",
+        phone: u.phone || u.whatsappNumber || "",
+        productId: r.productId,
+        productName: r.productName || "Product",
+        productImage: r.productImage || "",
+        productPrice: r.productPrice || 0,
+        viewedAt: r.viewedAt,
+        notified: r.notified === true,
+        contacted: r.contacted === true,
+      };
+    });
+
+    renderRecentViewers();
+  } catch (e) {
+    console.warn("Recently viewed error:", e);
+    wrap.innerHTML = empty(P.user, "Could not load recent viewers.");
+  }
+}
+
+function renderRecentViewers() {
+  const wrap = $("recentViewersList");
+  let rows = RV_DATA;
+  if (RV_FILTER === "new") rows = rows.filter(r => !r.contacted);
+
+  if (!rows.length) {
+    wrap.innerHTML = empty(P.user, RV_FILTER === "new"
+      ? "No pending customers to contact. 🎉"
+      : "No recent viewers yet.");
+    return;
+  }
+
+  wrap.innerHTML = rows.map((r, i) => `
+    <div class="top-item" style="align-items:flex-start; padding:14px 0; border-bottom:1px solid #f0e5e8;">
+      <img src="${esc(r.productImage || '../images/partywear.webp')}"
+           style="width:44px; height:56px; object-fit:cover; border-radius:6px; flex:none;"
+           onerror="this.src='../images/partywear.webp'">
+
+      <div class="info" style="flex:1; min-width:0;">
+        <b style="font-size:14px; color:#2b1b21;">${esc(r.name)}</b>
+        <small style="display:block; color:#7a6a70; font-size:12px; margin-top:2px;">
+          ${r.phone ? "📱 " + esc(r.phone) : "⚠️ No phone"} ·
+          ${timeAgo(r.viewedAt?.toDate?.(), true)}
+        </small>
+        <small style="display:block; color:#a3194a; font-size:11px; margin-top:4px;">
+          Viewed: ${esc(r.productName)} · ₹${Number(r.productPrice).toLocaleString("en-IN")}
+        </small>
+      </div>
+
+      ${r.contacted
+        ? `<span style="font-size:11px; color:#17805A; background:#e6f5ed; padding:4px 10px; border-radius:99px;">✓ Contacted</span>`
+        : `<button type="button"
+              class="btn-admin"
+              style="background:#25D366; color:#fff; border-color:#25D366; font-size:12px; padding:6px 12px; white-space:nowrap;"
+              onclick="openWaFor('${esc(r.docId)}')">
+            <i class="fa-brands fa-whatsapp"></i> Message
+          </button>`
+      }
+    </div>
+  `).join("");
+}
+
+// Filter buttons
+document.addEventListener("DOMContentLoaded", () => {
+  const btnNew = $("filterNew");
+  const btnAll = $("filterAll");
+  if (btnNew) btnNew.onclick = () => {
+    RV_FILTER = "new";
+    btnNew.classList.remove("ghost");
+    btnAll.classList.add("ghost");
+    renderRecentViewers();
+  };
+  if (btnAll) btnAll.onclick = () => {
+    RV_FILTER = "all";
+    btnAll.classList.remove("ghost");
+    btnNew.classList.add("ghost");
+    renderRecentViewers();
+  };
+});
+
+// Load on admin ready
+adminReady.then(loadRecentlyViewed);
         /* data */
         async function safeDocs(name) {
             try { return (await getDocs(collection(db, name))).docs.map(d => ({ id: d.id, ...d.data() })); }
@@ -268,49 +482,69 @@
             if (!id) return "#" + fallback;
             return id.includes("#") ? id : "#" + id;
         };
-        /* 🔥 NEW: Load Top Selling Products from Bills 🔥 */
+        const INCLUDE_ONLINE_ORDERS = false;   // true = website orders-um serthu count pannum
+
         async function loadTopProducts() {
             const wrap = $("topProductsList");
             try {
-                // Fetch all bills
-                const bills = await safeDocs("bills");
-                const productSales = {};
+                const [bills, prods, orders] = await Promise.all([
+                    safeDocs("bills"),
+                    safeDocs("products"),
+                    INCLUDE_ONLINE_ORDERS ? safeDocs("orders") : Promise.resolve([])
+                ]);
 
-                // Calculate total quantity sold per product
-                bills.forEach(bill => {
-                    if (bill.items && Array.isArray(bill.items)) {
-                        bill.items.forEach(item => {
-                            if (!item.name) return;
-                            if (!productSales[item.name]) {
-                                productSales[item.name] = { name: item.name, qty: 0, revenue: 0 };
-                            }
-                            productSales[item.name].qty += (Number(item.qty) || 1);
-                            productSales[item.name].revenue += (Number(item.total) || (Number(item.qty) * Number(item.rate)) || 0);
-                        });
-                    }
-                });
+                /* bill item-a product-oda match panna: productId, illa name */
+                const byId = new Map(prods.map(p => [p.id, p]));
+                const byName = new Map(prods.map(p => [String(p.name || "").trim().toLowerCase(), p.id]));
 
-                // Sort by quantity (highest first) and take top 5
-                const top = Object.values(productSales)
-                    .sort((a, b) => b.qty - a.qty)
-                    .slice(0, 5);
+                const sales = {};
+                const add = (item) => {
+                    const name = String(item.name || "").trim();
+                    if (!name) return;
+                    let pid = item.productId || item.pid || item.id || "";
+                    if (!byId.has(pid)) pid = byName.get(name.toLowerCase()) || "";
+                    const key = pid || "n:" + name.toLowerCase();
+                    const qty = Number(item.qty) || 1;
+                    const rev = Number(item.total) || (qty * Number(item.rate)) || (qty * Number(item.price)) || 0;
+                    if (!sales[key]) sales[key] = { id: pid, name, qty: 0, revenue: 0 };
+                    sales[key].qty += qty;
+                    sales[key].revenue += rev;
+                };
+
+                bills.forEach(b => Array.isArray(b.items) && b.items.forEach(add));
+                orders
+                    .filter(o => (o.status || "pending") !== "cancelled")
+                    .forEach(o => Array.isArray(o.items) && o.items.forEach(add));
+
+                const all = Object.values(sales).sort((a, b) => b.qty - a.qty);
+                const top = all.slice(0, 5);
 
                 if (!top.length) {
                     wrap.innerHTML = empty(P.bag, "No sales data yet.");
                     return;
                 }
 
-                // Render list
                 wrap.innerHTML = top.map((p, i) => `
-                        <div class="top-item">
-                            <div class="rank ${["top-1", "top-2", "top-3"][i] || ""}">${i + 1}</div>
-                            <div class="info">
-                                <b>${esc(p.name)}</b>
-                                <small>${p.qty} items sold</small>
-                            </div>
-                            <div class="qty">${inr(p.revenue)}</div>
-                        </div>
-                    `).join("");
+            <div class="top-item">
+                <div class="rank ${["top-1", "top-2", "top-3"][i] || ""}">${i + 1}</div>
+                <div class="info">
+                    <b>${esc(p.name)}</b>
+                    <small>${p.qty} items sold</small>
+                </div>
+                <div class="qty">${inr(p.revenue)}</div>
+            </div>
+        `).join("");
+
+                /* HOME PAGE-ku save: product match aana items mattum (link-ku id venum) */
+                try {
+                    const forHome = all.filter(p => p.id).slice(0, 5).map(p => ({ id: p.id, sold: p.qty }));
+                    await setDoc(doc(db, "siteStats", "topSelling"), {
+                        items: forHome,
+                        updatedAt: serverTimestamp()
+                    });
+                } catch (e) {
+                    console.warn("Could not publish top sellers to home page:", e);
+                }
             } catch (e) {
                 console.warn("Top products error:", e);
                 wrap.innerHTML = empty(P.bag, "Could not load sales data.");
@@ -325,7 +559,166 @@
             loadTopSubs(subs);
             loadTopProducts(); // 🔥 Call the new function
         });
-    </script>
-</body>
+async function loadTopViews() {
+  const wrap = $("topViewsList");
+  const rows = (await safeDocs("productViews"))
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 5);
+
+  if (!rows.length) {
+    wrap.innerHTML = empty(P.bag, "No views yet.");
+    return;
+  }
+
+  wrap.innerHTML = rows.map((r, i) => `
+    <div class="top-item"
+         style="cursor:pointer; transition:background .2s;"
+         onclick="openViewersModal('${esc(r.id)}')"
+         onmouseover="this.style.background='#fdf9f4'"
+         onmouseout="this.style.background=''">
+      <div class="rank ${["top-1", "top-2", "top-3"][i] || ""}">${i + 1}</div>
+      <div class="info">
+        <b>${esc(r.name || r.id)}</b>
+        <small>Last viewed ${timeAgo(r.lastViewedAt?.toDate?.(), true)} · <span style="color:#a3194a; font-weight:500;">Click to see who viewed ↗</span></small>
+      </div>
+      <div class="qty">${r.views || 0} views</div>
+    </div>
+  `).join("");
+}
+adminReady.then(loadTopViews);
+ 
+ /* ============================================
+   🔥 PRODUCT VIEWERS DETAIL MODAL 🔥
+   ============================================ */
+
+let CURRENT_VM = null;
+
+window.openViewersModal = async function (productId) {
+  CURRENT_VM = productId;
+
+  // Show modal with loading state
+  $("vmProductName").textContent = "Loading...";
+  $("vmProductTitle").textContent = "Loading...";
+  $("vmProductImg").src = "../images/partywear.webp";
+  $("vmTotalViews").textContent = "0";
+  $("vmUniqueCount").textContent = "0";
+  $("vmViewersBody").innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#7a6a70;">Loading...</td></tr>`;
+  $("viewersModal").classList.add("show");
+
+  try {
+    const { getDoc: gd, doc: dref, collection: col, getDocs: gds } = await import("./js/firebase.js");
+
+    // Product summary
+    const pSnap = await gd(dref(db, "productViews", productId));
+    const pData = pSnap.exists() ? pSnap.data() : {};
+
+    // Product details
+    const prodSnap = await gd(dref(db, "products", productId));
+    const prod = prodSnap.exists() ? prodSnap.data() : {};
+    const productImage = (prod.images && prod.images[0]) || prod.image || "../images/partywear.webp";
+    const productName = prod.name || pData.name || "Product";
+
+    $("vmProductName").textContent = productName;
+    $("vmProductTitle").textContent = productName;
+    $("vmProductImg").src = productImage;
+    $("vmTotalViews").textContent = pData.views || 0;
+
+    // Fetch viewers sub-collection
+    const viewSnap = await gds(col(db, "productViews", productId, "viewers"));
+    const viewers = viewSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    $("vmUniqueCount").textContent = viewers.length;
+
+    if (!viewers.length) {
+      $("vmViewersBody").innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#7a6a70;">
+        No per-user data yet.<br>
+        <small>Users must be logged in (OTP) for tracking.</small>
+      </td></tr>`;
+      return;
+    }
+
+    // Fetch user details (name, phone)
+    const usersMap = new Map();
+    await Promise.all(viewers.map(async v => {
+      try {
+        const uSnap = await gd(dref(db, "users", v.userId || v.id));
+        if (uSnap.exists()) {
+          const u = uSnap.data();
+          usersMap.set(v.userId || v.id, {
+            name: u.name || u.displayName || v.userName || "Customer",
+            phone: u.phone || u.whatsappNumber || v.userPhone || ""
+          });
+        } else {
+          usersMap.set(v.userId || v.id, {
+            name: v.userName || "Customer",
+            phone: v.userPhone || ""
+          });
+        }
+      } catch (e) {
+        usersMap.set(v.userId || v.id, { name: v.userName || "Customer", phone: v.userPhone || "" });
+      }
+    }));
+
+    // Sort by lastViewedAt desc
+    viewers.sort((a, b) => ms(b.lastViewedAt) - ms(a.lastViewedAt));
+
+    // Render
+    $("vmViewersBody").innerHTML = viewers.map((v, i) => {
+      const u = usersMap.get(v.userId || v.id) || {};
+      const name = u.name || "Customer";
+      const phone = u.phone || "";
+      const views = v.views || 1;
+      const lastSeen = timeAgo(v.lastViewedAt?.toDate?.(), true);
+
+      return `<tr>
+        <td>${i + 1}</td>
+        <td><b>${esc(name)}</b></td>
+        <td>${phone ? esc(phone) : '<span style="color:#c62828;">⚠️ No phone</span>'}</td>
+        <td>${views} view${views > 1 ? "s" : ""}</td>
+        <td>${lastSeen}</td>
+        <td>
+          ${phone
+            ? `<button class="btn-admin" style="background:#25D366; color:#fff; border-color:#25D366; font-size:11px; padding:4px 10px;"
+                  onclick="quickWaViewer('${esc(phone)}', '${esc(name)}', '${esc(productName)}', '${esc(productId)}')">
+                <i class="fa-brands fa-whatsapp"></i> Message
+              </button>`
+            : `<span style="color:#999; font-size:11px;">—</span>`
+          }
+        </td>
+      </tr>`;
+    }).join("");
+
+  } catch (e) {
+    console.warn("Viewers modal error:", e);
+    $("vmViewersBody").innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#c62828;">
+      Error: ${esc(e.message || e)}
+    </td></tr>`;
+  }
+};
+
+window.closeViewersModal = function () {
+  $("viewersModal").classList.remove("show");
+  CURRENT_VM = null;
+};
+
+window.quickWaViewer = function (phone, name, productName, productId) {
+  const clean = String(phone).replace(/\D/g, "");
+  const formatted = clean.startsWith("91") ? clean : "91" + clean;
+  const link = "https://your-site.com/product.html?id=" + productId;
+  const msg = `Hi ${name.split(" ")[0]}! 👋
+
+I noticed you viewed *${productName}* on AURA.
+
+Need help with size, fabric or delivery? Just reply here — happy to help! 💕
+
+Or revisit the product 👇
+${link}
+
+— Team AURA`;
+
+  window.open("https://wa.me/" + formatted + "?text=" + encodeURIComponent(msg), "_blank");
+};
+ </script>
+    </body>
 
 </html>

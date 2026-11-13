@@ -207,26 +207,34 @@
                 <path
                     d="M0,40 C240,0 480,110 720,60 C960,10 1200,100 1440,40 L1440,0 L0,0 Z" />
             </svg>
-            <div class="fmark" aria-hidden="true">AURA</div>
+            <div class="fmark" data-site-text="storeName"
+                aria-hidden="true">AURA</div>
             <div class="aura-footer-intro"><span
-                    class="aura-footer-kicker">DRESSED IN YOUR OWN WAY</span>
+                    class="aura-footer-kicker">DRESSED
+                    IN
+                    YOUR OWN WAY</span>
                 <h2>Every outfit tells <em>your story.</em></h2>
                 <p>Discover styles that celebrate your individuality, from
-                    everyday essentials to the moments worth dressing up
+                    everyday
+                    essentials to the moments worth dressing up
                     for.</p><a href="shop.html" class="aura-footer-cta">Discover
-                    Your Style <span>↗</span></a>
+                    Your
+                    Style <span>↗</span></a>
             </div>
             <div class="fgrid aura-footer-grid">
                 <div class="fbrand aura-footer-brand"><a href="index.html"
                         aria-label="AURA Home"><img src="../assets/logo.png"
                             alt="AURA"></a>
-                    <p>AURA brings together timeless elegance and modern
-                        fashion, with thoughtfully selected styles for every
-                        mood,
+                    <p data-site-text="storeDesc">AURA brings together timeless
+                        elegance
+                        and modern fashion, with
+                        thoughtfully selected styles for every mood,
                         moment and occasion.</p>
                     <div class="aura-footer-note"><span>Made for your
                             moments.</span><span>Designed for your
                             AURA.</span></div>
+
+                    <!-- Social icons (auto-updated from Admin > Settings) -->
                     <div class="social aura-social">
                         <a href="#" data-site-link="instagram"
                             aria-label="Instagram" title="Instagram"><i
@@ -241,6 +249,54 @@
                             aria-label="YouTube" title="YouTube"><i
                                 class="fa-brands fa-youtube"></i></a>
                     </div>
+
+                    <!-- Contact details (auto-updated from Admin > Settings) -->
+                    <div class="aura-footer-contact">
+                        <a href="#" data-site-link="supportEmail"
+                            style="display:none"><i
+                                class="fa-solid fa-envelope"></i> <span
+                                data-site-text="supportEmail"></span></a>
+                        <a href="#" data-site-link="supportPhone"
+                            style="display:none"><i
+                                class="fa-solid fa-phone"></i> <span
+                                data-site-text="supportPhone"></span></a>
+                        <a href="#" data-site-link="whatsappNumber"
+                            style="display:none"><i
+                                class="fa-brands fa-whatsapp"></i> <span
+                                data-site-text="whatsappNumber"></span></a>
+                        <p data-site-item style="display:none"><i
+                                class="fa-solid fa-location-dot"></i> <span
+                                data-site-text="storeAddress"></span></p>
+                    </div>
+                    <style>
+          .aura-footer-contact {
+            display: grid;
+            gap: 10px;
+            margin-top: 16px;
+            font-size: 14px;
+          }
+
+          .aura-footer-contact a,
+          .aura-footer-contact p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+            color: inherit;
+            text-decoration: none;
+            opacity: .85;
+            transition: opacity .2s;
+          }
+
+          .aura-footer-contact a:hover {
+            opacity: 1;
+          }
+
+          .aura-footer-contact i {
+            width: 16px;
+            text-align: center;
+          }
+        </style>
                 </div>
                 <div class="aura-footer-links">
                     <h5>Explore</h5><a href="shop.html">All Collections</a><a
@@ -254,11 +310,11 @@
                 </div>
                 <div class="aura-footer-links">
                     <h5>Our Styles</h5><a
-                        href="shop.html?cat=tops-with-pants">Tops &amp;
-                        Pants</a><a
-                        href="shop.html?cat=jeans">Jeans &amp; Denim</a><a
-                        href="shop.html?cat=kurta-sets">Kurta Sets</a><a
-                        href="shop.html?cat=sarees">Sarees</a><a
+                        href="shop.html?cat=tops-with-pants">Tops
+                        &amp;
+                        Pants</a><a href="shop.html?cat=jeans">Jeans &amp;
+                        Denim</a><a href="shop.html?cat=kurta-sets">Kurta
+                        Sets</a><a href="shop.html?cat=sarees">Sarees</a><a
                         href="shop.html?cat=palazzo">Palazzo Sets</a><a
                         href="shop.html?cat=leggings">Leggings</a><a
                         href="shop.html?cat=skirts">Skirts &amp; Tops</a>
@@ -278,11 +334,10 @@
             <div class="aura-footer-newsletter"
                 style="background: linear-gradient(135deg, #2B1B21, #1A0A11); border-radius: 16px; padding: 50px; margin: 60px auto; max-width: 1200px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between; align-items: center; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
 
-                <!-- Background Glow Effect -->
                 <div
-                    style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(163,25,74,0.4) 0%, transparent 60%); border-radius: 50%; pointer-events: none;"></div>
+                    style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(163,25,74,0.4) 0%, transparent 60%); border-radius: 50%; pointer-events: none;">
+                </div>
 
-                <!-- Left Content: Text -->
                 <div
                     style="flex: 1; min-width: 300px; position: relative; z-index: 2;">
                     <span
@@ -297,37 +352,41 @@
                     <p
                         style="color: rgba(255, 248, 241, 0.7); font-size: 1rem; line-height: 1.6; max-width: 450px; margin: 0;">
                         Get personalised outfit recommendations, sizing help,
-                        and styling advice from our expert curators. Connect
-                        with us on social media.
+                        and styling
+                        advice from our expert curators. Connect with us on
+                        social media.
                     </p>
                 </div>
 
-                <!-- Right Content: Social Links -->
                 <div
                     style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 2; min-width: 280px;">
 
-                    <!-- Instagram Action -->
-                    <a href="https://instagram.com/auraclothing.vnr"
-                        target="_blank"
-                        style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
+                    <a href="#" data-site-link="instagram" target="_blank"
+                        rel="noopener"
+                        style="display:flex; align-items:center; gap:16px; background:rgba(255,255,255,0.05); padding:16px 24px; border-radius:12px; text-decoration:none; border:1px solid rgba(255,255,255,0.1); transition:all 0.3s;"
                         onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
                         onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+
                         <div
-                            style="width: 44px; height: 44px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 20px;">
+                            style="width:44px; height:44px; background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); border-radius:50%; display:grid; place-items:center; color:#fff; font-size:20px;">
                             <i class="fa-brands fa-instagram"></i>
                         </div>
+
                         <div>
                             <b
-                                style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Follow
-                                on Instagram</b>
-                            <small
-                                style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">@auraclothing.vnr</small>
+                                style="display:block; color:#FFF8F1; font-size:15px; font-family:'Jost',sans-serif;">
+                                Follow on Instagram
+                            </b>
+
+                            <small data-site-handle="instagram"
+                                style="color:rgba(255,248,241,0.6); font-size:12px; font-family:'Jost',sans-serif;">
+                                @auraclothing.vnr
+                            </small>
                         </div>
                     </a>
 
-                    <!-- Facebook Action -->
                     <a href="https://facebook.com/auraclothing.vnr"
-                        target="_blank"
+                        data-site-link="facebook" target="_blank" rel="noopener"
                         style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
                         onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
                         onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
@@ -339,7 +398,7 @@
                             <b
                                 style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Connect
                                 on Facebook</b>
-                            <small
+                            <small data-site-handle="facebook"
                                 style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">AURA
                                 Clothing</small>
                         </div>
@@ -355,19 +414,22 @@
           padding: 30px 20px !important;
           text-align: center;
         }
-        .aura-footer-newsletter > div {
+
+        .aura-footer-newsletter>div {
           justify-content: center;
           width: 100%;
         }
+
         .aura-footer-newsletter a {
-          justify-content: flex-start; /* Mobile-layum left align-a irukkum */
+          justify-content: flex-start;
           text-align: left;
         }
       }
     </style>
             <div class="fbottom aura-footer-bottom"><span>© 2026 AURA. All
-                    rights reserved.</span><span
-                    class="aura-footer-made">Developed by <span
+                    rights
+                    reserved.</span><span class="aura-footer-made">Developed by
+                    <span
                         style="color: #E8A5BB; font-weight: 500;">Rohil
                         Technologies</span></span>
                 <div class="aura-footer-bottom-links"><a
@@ -376,7 +438,6 @@
                         href="contact.html">Support</a></div>
             </div>
         </footer>
-
         <button id="backToTop" class="back-to-top" type="button"
             aria-label="Back to top" title="Back to top">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -813,15 +874,14 @@
   });
 </script>
 
-
         <script type="module" src="js/site-settings.js"></script>
         <script defer src="./js/subscribe-popup.js"></script>
         <script src="js/theme.js"></script>
         <script src="js/cart-drawer.js"></script>
         <script type="module" src="js/checkout.js"></script>
-<script src="js/nav-menu.js"></script> 
+        <script src="js/nav-menu.js"></script>
         <!-- ============ LOGIN + ACCOUNT MENU + LOGOUT (only place this logic lives) ============ -->
         <script type="module" src="js/session.js"></script>
-   
+
     </body>
 </html>

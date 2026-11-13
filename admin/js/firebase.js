@@ -54,11 +54,16 @@ export const app = initializeApp(firebaseConfig, "aura-admin");
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-/* ---------- Ekart (Cloud Functions, region = ekart.js-la REGION) ---------- */
+/* ---------- Cloud Functions (region = functions code-la irukkura region) ---------- */
 const fns = getFunctions(app, "asia-south1");
+
+// Ekart
 export const ekartCreate = (orderDocId) => httpsCallable(fns, "createEkartShipment")({ orderDocId });
 export const ekartCancel = (orderDocId) => httpsCallable(fns, "cancelEkartShipment")({ orderDocId });
 export const ekartLabel  = (orderDocId) => httpsCallable(fns, "getEkartLabel")({ orderDocId });
+
+// WhatsApp Business API (image + View Product button template)
+export const waSend = (data) => httpsCallable(fns, "sendWhatsAppReminder")(data);
 
 setPersistence(auth, browserLocalPersistence).catch((e) => console.warn("Persistence:", e));
 

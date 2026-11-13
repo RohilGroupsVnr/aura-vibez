@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WhatsApp Follow-up — AURA Admin</title>
+
+    <link rel="icon" href="../assets/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet">
+
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+
+    <style>
+    .wa-customer-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0e5e8;
+    }
+
+    .wa-avatar {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      background: #a3194a;
+      border-radius: 50%;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 600;
+    }
+
+    .wa-customer-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .wa-customer-info b {
+      font-size: 14px;
+      color: #2b1b21;
+    }
+
+    .wa-customer-meta {
+      color: #7a6a70;
+      font-size: 12px;
+      margin-top: 4px;
+      overflow-wrap: anywhere;
+    }
+
+    .wa-product-name {
+      color: #a3194a;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .wa-optin {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 8px;
+      border-radius: 99px;
+      font-size: 10px;
+      background: #e6f5ed;
+      color: #17805A;
+      vertical-align: middle;
+    }
+
+    .wa-message-btn {
+      background: #25D366 !important;
+      color: #fff !important;
+      border: none !important;
+      font-size: 12px !important;
+      padding: 7px 12px !important;
+      white-space: nowrap;
+    }
+
+    .wa-status {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      white-space: nowrap;
+      background: #e6f5ed;
+      color: #17805A;
+    }
+
+    .wa-hidden-note {
+      margin: 0 0 12px;
+      font-size: 12px;
+      color: #7a6a70;
+    }
+
+    #waProductImg {
+      width: 50px;
+      height: 65px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    #waMessage {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      padding: 12px;
+      border: 1.5px solid #e8e1d3;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.6;
+      box-sizing: border-box;
+    }
+
+    .wa-from {
+      margin: 0 0 12px;
+      font-size: 13px;
+      color: #17805A;
+      font-weight: 500;
+    }
+
+    .wa-api-note {
+      margin: 8px 0 0;
+      font-size: 12px;
+      color: #7a6a70;
+      line-height: 1.5;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    /* WhatsApp message preview (image + text + footer + button) */
+    .wa-preview-wrap {
+      background: #efe7de;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .wa-bubble {
+      background: #fff;
+      border-radius: 10px;
+      max-width: 320px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .18);
+      color: #111;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .wa-bubble img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      background: #eee;
+    }
+
+    .wa-bubble-body {
+      padding: 10px 12px 4px;
+      white-space: pre-line;
+    }
+
+    .wa-bubble-foot {
+      padding: 0 12px 8px;
+      font-size: 12px;
+      color: #667781;
+    }
+
+    .wa-bubble-btn {
+      border-top: 1px solid #e9edef;
+      text-align: center;
+      padding: 10px;
+      color: #027eb5;
+      font-weight: 500;
+    }
+
+    .wa-error {
+      padding: 20px;
+      color: #c62828;
+      background: #fff5f5;
+      border-radius: 10px;
+    }
+
+    /* self-contained modal + toast (does not depend on admin.css) */
+    .wa-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(20, 8, 14, .55);
+    }
+
+    .wa-modal.show {
+      display: flex;
+    }
+
+    .wa-modal-box {
+      background: #fff;
+      color: #2b1b21;
+      border-radius: 14px;
+      padding: 24px;
+      max-height: 92vh;
+      overflow-y: auto;
+      box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .5);
+    }
+
+    .wa-modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .wa-modal-head h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .wa-modal-foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    #closeWaBtn {
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .wa-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #2b1b21;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+      z-index: 3000;
+      font-size: 14px;
+    }
+
+    .wa-toast.show {
+      opacity: 1;
+      transform: translateX(-50%);
+    }
+
+    .wa-toast.err {
+      background: #c62828;
+    }
+  </style>
+  </head>
+
+  <body>
+
+    <div class="admin-layout">
+
+      <aside class="admin-side" id="adminSide"></aside>
+
+      <main class="admin-main">
+
+        <div class="admin-topbar">
+          <div>
+            <h1>WhatsApp Follow-up</h1>
+            <p>Customers who recently viewed products. Send them a direct
+              message.</p>
+          </div>
+        </div>
+
+        <div class="admin-card">
+
+          <div
+            style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+
+            <h2>
+              <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i>
+              Recently Viewed Customers
+            </h2>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+              <button type="button" class="btn-admin" id="filterAll"
+                style="background:#a3194a;color:#fff;">
+                All
+              </button>
+
+              <button type="button" class="btn-admin ghost" id="filterNew">
+                Not Contacted
+              </button>
+
+              <button type="button" class="btn-admin ghost" id="refreshBtn">
+                <i class="fa-solid fa-rotate"></i> Refresh
+              </button>
+
+            </div>
+
+          </div>
+
+          <p class="wa-hidden-note is-hidden" id="waHiddenNote"></p>
+
+          <div id="recentViewersList" class="top-list">
+            <p style="padding:20px;color:#7a6a70;">
+              Loading customers...
+            </p>
+          </div>
+
+        </div>
+
+      </main>
+    </div>
+
+    <!-- WHATSAPP MODAL -->
+
+    <div class="wa-modal" id="waModal">
+
+      <div class="wa-modal-box" style="width:min(540px,100%);">
+
+        <div class="wa-modal-head">
+
+          <h2>
+            Send WhatsApp to
+            <span id="waCustomerName">Customer</span>
+          </h2>
+
+          <button type="button" id="closeWaBtn"
+            style="font-size:20px;color:var(--muted);" aria-label="Close">
+            &times;
+          </button>
+
+        </div>
+
+        <div style="padding:8px 0;">
+
+          <p class="wa-from" id="waFrom"></p>
+
+          <label
+            style="display:block;font-size:12px;color:#7a6a70;margin-bottom:6px;">
+            Product viewed
+          </label>
+
+          <div
+            style="background:#fdf9f4;border:1px solid #ead9df;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:14px;">
+
+            <img id="waProductImg" alt="Product">
+
+            <div style="flex:1;min-width:0;">
+
+              <b id="waProductName" style="font-size:14px;color:#2b1b21;"></b>
+
+              <div id="waProductPrice"
+                style="font-size:13px;color:#a3194a;"></div>
+
+            </div>
+
+          </div>
+
+          <label id="waMsgLabel"
+            style="display:block;font-size:12px;color:#7a6a70;margin-bottom:6px;">
+            Message
+          </label>
+
+          <!-- API mode: image + text + button preview -->
+          <div class="wa-preview-wrap is-hidden" id="waPreview">
+            <div class="wa-bubble">
+              <img id="waPrevImg" alt>
+              <div class="wa-bubble-body" id="waPrevBody"></div>
+              <div class="wa-bubble-foot">Type STOP to unsubscribe</div>
+              <div class="wa-bubble-btn">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> View
+                Product
+              </div>
+            </div>
+          </div>
+
+          <p class="wa-api-note is-hidden" id="waApiNote">
+            Idhu approved WhatsApp template. Product image-oda, "View Product"
+            button-oda pogum. Text-a inga edit panna mudiyaadhu.
+          </p>
+
+          <!-- Link mode: editable text -->
+          <textarea id="waMessage" rows="6"></textarea>
+
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"
+            id="waTemplateBtns">
+
+            <button type="button" class="btn-admin ghost" id="reminderBtn">
+              Use Reminder
+            </button>
+
+            <button type="button" class="btn-admin ghost" id="offerBtn">
+              Use Offer
+            </button>
+
+            <button type="button" class="btn-admin ghost" id="pickImgBtn">
+              <i class="fa-regular fa-image"></i> Attach image
+            </button>
+            <input type="file" id="pickImgInput" accept="image/*"
+              class="is-hidden">
+          </div>
+
+        </div>
+
+        <div class="wa-modal-foot">
+
+          <button type="button" class="btn-admin ghost" id="cancelWaBtn">
+            Cancel
+          </button>
+
+          <button type="button" class="btn-admin" id="sendWhatsAppBtn"
+            style="background:#25D366;color:#fff;border:none;">
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="wa-toast" id="toast" role="status"></div>
+
+    <script type="module">
+
+    import {
+      db,
+      collection,
+      getDocs,
+      doc,
+      getDoc,
+      updateDoc,
+      serverTimestamp,
+      waSend
+    } from "./js/firebase.js";
+
+    import { adminReady } from "./js/admin-shell.js";
+
+    /* =========================================
+       CONFIGURATION  (inga mattum maathunga)
+    ========================================= */
+
+    const CONFIG = {
+      // Messages anuppura business number (display mattum)
+      senderNumber: "+91 95145 09053",
+
+      // "api"  = image + "View Product" button-oda professional message. WhatsApp Business API + approved template venum.
+      // "link" = wa.me link (text mattum). Indha device-la WhatsApp login aagirukkura number-la irundhu pogum. Free.
+      sendMode: "link",
+
+      // true = users/{id}.whatsappOptIn === true irukkura customers-ku mattum Message button kaattum
+      requireOptIn: false,
+
+      // link mode: customer-ku message-la pogura product link (live site)
+      productUrl: "https://www.aura-vibez.com/user/product.html?id=",
+
+      // Product-ku public https image illa-na preview-layum, message-layum idhu use aagum
+      fallbackImage: "https://www.aura-vibez.com/assets/logo.png",
+
+      // api mode settings
+      apiRegion: "asia-south1",
+      apiFunction: "sendWhatsAppReminder"
+    };
+
+    const $ = id => document.getElementById(id);
+    const IS_API = CONFIG.sendMode === "api";
+
+    /* =========================================
+       STATE
+    ========================================= */
+
+    let RV_DATA = [];
+    let RV_FILTER = "all";
+    let CURRENT_WA = null;
+    let toastTimer;
+    const USER_CACHE = new Map();
+
+    /* =========================================
+       HELPERS
+    ========================================= */
+
+    function esc(value) {
+      return String(value ?? "").replace(
+        /[&<>"']/g,
+        char => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[char]
+      );
+    }
+
+    function toast(message, kind = "ok") {
+      const el = $("toast");
+      el.className = "wa-toast show " + kind;
+      el.innerHTML =
+        `<i class="fa-solid ${kind === "ok" ? "fa-circle-check" : "fa-circle-exclamation"}"></i> ${esc(message)}`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 2800);
+    }
+
+    function getFirstValue(...values) {
+      return values.find(value =>
+        value !== undefined &&
+        value !== null &&
+        value !== ""
+      ) ?? "";
+    }
+
+    function getImageValue(value) {
+      if (typeof value === "string") return value;
+
+      if (Array.isArray(value)) {
+        return value[0] || "";
+      }
+
+      if (value && typeof value === "object") {
+        return getFirstValue(
+          value.url,
+          value.src,
+          value.image
+        );
+      }
+
+      return "";
+    }
+
+    function formatPhone(value) {
+      let phone = String(value || "").replace(/\D/g, "");
+
+      if (phone.startsWith("0091")) {
+        phone = phone.substring(4);
+      }
+
+      if (phone.startsWith("91") && phone.length === 12) {
+        phone = phone.substring(2);
+      }
+
+      if (phone.startsWith("0") && phone.length === 11) {
+        phone = phone.substring(1);
+      }
+
+      if (!/^[6-9]\d{9}$/.test(phone)) {
+        return null;
+      }
+
+      return "91" + phone;
+    }
+
+    function getTimestamp(value) {
+      if (!value) return 0;
+
+      if (typeof value.toMillis === "function") {
+        return value.toMillis();
+      }
+
+      if (typeof value.seconds === "number") {
+        return value.seconds * 1000;
+      }
+
+      if (typeof value === "number") {
+        return value;
+      }
+
+      const parsed = new Date(value).getTime();
+
+      return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    const firstName = name => String(name || "").trim().split(/\s+/)[0] || "";
+
+    // Message-la "Hi AURA!" maathiri varaama irukka: unmaiyaana peyar irundha mattum use pannum
+    const greetName = row => firstName(row.realName) || "dear";
+
+    // WhatsApp image header-ku public https image venum
+    const msgImage = row =>
+      /^https:\/\//i.test(row.productImage || "") ? row.productImage : CONFIG.fallbackImage;
+
+    /* =========================================
+       GET PRODUCT DETAILS
+    ========================================= */
+
+    async function getProductDetails(productId, viewData) {
+      let productData = { ...viewData };
+
+      try {
+        const productSnap = await getDoc(
+          doc(db, "products", productId)
+        );
+
+        if (productSnap.exists()) {
+          productData = {
+            ...viewData,
+            ...productSnap.data()
+          };
+        }
+      } catch (error) {
+        console.warn(
+          "Product details unavailable:",
+          productId,
+          error
+        );
+      }
+
+      return {
+        productName: getFirstValue(
+          productData.name,
+          productData.title,
+          productData.productName,
+          "AURA Product"
+        ),
+
+        productImage: getImageValue(
+          getFirstValue(
+            productData.image,
+            productData.imageUrl,
+            productData.mainImage,
+            productData.thumbnail,
+            productData.images
+          )
+        ),
+
+        productPrice: getFirstValue(
+          productData.price,
+          productData.salePrice,
+          productData.sellingPrice,
+          productData.discountPrice,
+          ""
+        )
+      };
+    }
+
+    /* =========================================
+       GET CUSTOMER DETAILS (cached per user)
+    ========================================= */
+
+    function fetchUser(userId) {
+      if (!USER_CACHE.has(userId)) {
+        USER_CACHE.set(
+          userId,
+          getDoc(doc(db, "users", userId))
+            .then(snap => (snap.exists() ? snap.data() : null))
+            .catch(error => {
+              console.warn("User details unavailable:", userId, error);
+              return null;
+            })
+        );
+      }
+
+      return USER_CACHE.get(userId);
+    }
+
+    async function getCustomerDetails(userId, viewerData) {
+      const userDoc = await fetchUser(userId);
+      const userData = { ...viewerData, ...(userDoc || {}) };
+
+      const realName = getFirstValue(
+        userData.name,
+        userData.displayName,
+        userData.fullName,
+        userData.username,
+        ""
+      );
+
+      return {
+        realName,
+        userName: realName || "AURA Customer",
+
+        userPhone: getFirstValue(
+          userData.phone,
+          userData.phoneNumber,
+          userData.mobile,
+          userData.mobileNumber,
+          userData.whatsappNumber,
+          userData.whatsapp,
+          viewerData.userPhone,
+          viewerData.phone,
+          ""
+        ),
+
+        optIn: userData.whatsappOptIn === true
+      };
+    }
+
+    /* =========================================
+       LOAD CUSTOMERS
+    ========================================= */
+
+    async function loadViewers() {
+      const wrap = $("recentViewersList");
+
+      wrap.innerHTML = `
+    <p style="padding:20px;color:#7a6a70;">
+      Loading customers...
+    </p>
+  `;
+
+      try {
+        const pvSnap = await getDocs(
+          collection(db, "productViews")
+        );
+
+        const allViewers = [];
+
+        await Promise.all(
+          pvSnap.docs.map(async pDoc => {
+            const pData = pDoc.data();
+            const productId = pDoc.id;
+
+            const viewSnap = await getDocs(
+              collection(db, "productViews", productId, "viewers")
+            );
+
+            if (viewSnap.empty) return;
+
+            const productDetails = await getProductDetails(
+              productId,
+              pData
+            );
+
+            const viewerPromises = viewSnap.docs.map(
+              async viewerDoc => {
+                const viewerData = viewerDoc.data();
+
+                const userId =
+                  viewerData.userId || viewerDoc.id;
+
+                if (!userId) return null;
+
+                const customer = await getCustomerDetails(
+                  userId,
+                  viewerData
+                );
+
+                return {
+                  productId,
+                  viewerDocId: viewerDoc.id,
+                  ...productDetails,
+                  userId,
+                  ...customer,
+
+                  views: getFirstValue(
+                    viewerData.views,
+                    viewerData.viewCount,
+                    1
+                  ),
+
+                  viewedAt: getFirstValue(
+                    viewerData.lastViewedAt,
+                    viewerData.updatedAt,
+                    viewerData.createdAt,
+                    null
+                  ),
+
+                  contacted: viewerData.contacted === true
+                };
+              }
+            );
+
+            const results = await Promise.all(viewerPromises);
+
+            allViewers.push(
+              ...results.filter(Boolean)
+            );
+          })
+        );
+
+        allViewers.sort((a, b) =>
+          getTimestamp(b.viewedAt) -
+          getTimestamp(a.viewedAt)
+        );
+
+        RV_DATA = allViewers.slice(0, 50);
+
+        renderList();
+
+      } catch (error) {
+        console.error("Viewer loading error:", error);
+
+        wrap.innerHTML = `
+      <div class="wa-error">
+        <b>Failed to load customers.</b>
+        <p style="margin-top:8px;font-size:13px;">
+          ${esc(error.message || "Unknown Firestore error")}
+        </p>
+        <p style="font-size:12px;margin-top:8px;">
+          Check Firestore Rules and productViews permissions.
+        </p>
+      </div>
+    `;
+      }
+    }
+
+    /* =========================================
+       RENDER CUSTOMER LIST
+    ========================================= */
+
+    function renderList() {
+      const wrap = $("recentViewersList");
+      const note = $("waHiddenNote");
+
+      let rows = RV_DATA;
+
+      if (RV_FILTER === "new") {
+        rows = rows.filter(row => !row.contacted);
+      }
+
+      let hidden = 0;
+
+      if (CONFIG.requireOptIn) {
+        const before = rows.length;
+        rows = rows.filter(row => row.optIn);
+        hidden = before - rows.length;
+      }
+
+      if (hidden > 0) {
+        note.textContent =
+          hidden + " customer" + (hidden === 1 ? "" : "s") +
+          " hidden (WhatsApp opt-in illa).";
+        note.classList.remove("is-hidden");
+      } else {
+        note.classList.add("is-hidden");
+      }
+
+      if (!rows.length) {
+        wrap.innerHTML = `
+      <div style="padding:25px;text-align:center;color:#7a6a70;">
+        <i class="fa-regular fa-face-smile"
+           style="font-size:25px;margin-bottom:10px;"></i>
+        <p>No customers found.</p>
+      </div>
+    `;
+        return;
+      }
+
+      wrap.innerHTML = rows.map(row => `
+    <div class="wa-customer-row">
+
+      <div class="wa-avatar">
+        ${esc((row.userName || "A").charAt(0).toUpperCase())}
+      </div>
+
+      <div class="wa-customer-info">
+        <b>${esc(row.userName)}</b>
+        ${row.optIn ? '<span class="wa-optin">✓ Opted in</span>' : ""}
+
+        <div class="wa-customer-meta">
+          ${row.userPhone
+          ? "📱 " + esc(row.userPhone)
+          : "⚠️ No phone number"
+        }
+          · ${Number(row.views) || 1} views
+        </div>
+
+        <div class="wa-product-name">
+          Last viewed: ${esc(row.productName)}
+        </div>
+      </div>
+
+      ${row.contacted
+          ? `<span class="wa-status">✓ Contacted</span>`
+          : `
+            <button
+              type="button"
+              class="btn-admin wa-message-btn"
+              data-user-id="${esc(row.userId)}"
+              data-product-id="${esc(row.productId)}">
+              <i class="fa-brands fa-whatsapp"></i>
+              Message
+            </button>
+          `
+        }
+
+    </div>
+  `).join("");
+    }
+
+    /* =========================================
+       FILTER BUTTONS
+    ========================================= */
+
+    function setFilter(mode) {
+      RV_FILTER = mode;
+
+      const on = mode === "new" ? $("filterNew") : $("filterAll");
+      const off = mode === "new" ? $("filterAll") : $("filterNew");
+
+      on.style.background = "#a3194a";
+      on.style.color = "#fff";
+      off.style.background = "transparent";
+      off.style.color = "inherit";
+
+      renderList();
+    }
+
+    $("filterNew").addEventListener("click", () => setFilter("new"));
+    $("filterAll").addEventListener("click", () => setFilter("all"));
+
+    $("refreshBtn").addEventListener("click", () => {
+      USER_CACHE.clear();
+      loadViewers();
+    });
+
+    /* =========================================
+       MARK AS CONTACTED (Firestore-la save)
+    ========================================= */
+
+    async function markContacted(row) {
+      if (!row) return;
+
+      row.contacted = true;
+
+      try {
+        await updateDoc(
+          doc(db, "productViews", row.productId, "viewers", row.viewerDocId),
+          {
+            contacted: true,
+            contactedAt: serverTimestamp(),
+            contactedVia: IS_API ? "whatsapp_api" : "whatsapp_link"
+          }
+        );
+      } catch (error) {
+        console.warn("Could not save contacted status:", error);
+        toast("Contacted status save aagala. Firestore rules check pannunga.", "err");
+      }
+
+      renderList();
+    }
+
+    /* =========================================
+       MODE-KU YETHA UI
+    ========================================= */
+
+    function setupSenderUI() {
+      const n = CONFIG.senderNumber;
+
+      $("waFrom").textContent = "From: " + n;
+
+      $("sendWhatsAppBtn").innerHTML = IS_API
+        ? '<i class="fa-brands fa-whatsapp"></i> Send from ' + esc(n)
+        : '<i class="fa-brands fa-whatsapp"></i> Open WhatsApp';
+
+      $("waMsgLabel").textContent = IS_API ? "Message preview" : "Message";
+      $("waPreview").classList.toggle("is-hidden", !IS_API);
+      $("waApiNote").classList.toggle("is-hidden", !IS_API);
+      $("waMessage").classList.toggle("is-hidden", IS_API);
+      $("waTemplateBtns").classList.toggle("is-hidden", IS_API);
+    }
+
+    /* =========================================
+       OPEN WHATSAPP MODAL
+    ========================================= */
+
+    function openWaFor(userId, productId) {
+      const row = RV_DATA.find(item =>
+        String(item.userId) === String(userId) &&
+        String(item.productId) === String(productId)
+      );
+
+      if (!row) {
+        toast("Customer details not found.", "err");
+        return;
+      }
+
+      if (!formatPhone(row.userPhone)) {
+        alert(
+          "Invalid customer phone number.\n\n" +
+          "Customer: " + row.userName + "\n" +
+          "Phone: " + (row.userPhone || "Not available")
+        );
+        return;
+      }
+
+      CURRENT_WA = row;
+
+      $("waCustomerName").textContent = row.userName;
+      $("waProductName").textContent = row.productName;
+
+      $("waProductPrice").textContent =
+        row.productPrice
+          ? "₹" + row.productPrice
+          : "";
+
+      const image = $("waProductImg");
+
+      if (row.productImage) {
+        image.src = row.productImage;
+        image.style.display = "block";
+      } else {
+        image.removeAttribute("src");
+        image.style.display = "none";
+      }
+
+      useWATemplate("reminder");
+
+      $("waModal").classList.add("show");
+    }
+
+    $("recentViewersList").addEventListener("click", event => {
+      const button = event.target.closest(".wa-message-btn");
+
+      if (!button) return;
+
+      try {
+        openWaFor(
+          button.dataset.userId,
+          button.dataset.productId
+        );
+      } catch (err) {
+        console.error("Message button error:", err);
+        alert("Message open aagala:\n" + (err && err.message ? err.message : err));
+      }
+    });
+
+    /* =========================================
+       CLOSE MODAL
+    ========================================= */
+
+    function closeWaModal() {
+      $("waModal").classList.remove("show");
+      CURRENT_WA = null;
+    }
+
+    $("closeWaBtn").addEventListener("click", closeWaModal);
+    $("cancelWaBtn").addEventListener("click", closeWaModal);
+
+    $("waModal").addEventListener("click", event => {
+      if (event.target === $("waModal")) {
+        closeWaModal();
+      }
+    });
+
+    /* =========================================
+       MESSAGE TEXT
+    ========================================= */
+
+    // Meta-la approve panna template body-oda EXACT same text (variables: {{1}} name, {{2}} product)
+    const apiBody = (name, product) =>
+      `Something caught your eye, ${name}? 👀
+
+You recently looked at ${product} on AURA. We've saved it for you, just in case you want to take another look.
+
+Questions? Just reply here, we're happy to help.`;
+
+    function useWATemplate(type) {
+      const row = CURRENT_WA;
+      if (!row) return;
+
+      // API mode: image + text + button preview
+      if (IS_API) {
+        $("waPrevImg").src = msgImage(row);
+        $("waPrevBody").textContent = apiBody(greetName(row), row.productName);
+        return;
+      }
+
+      // Link mode (text mattum)
+      const name = greetName(row);
+      const product = row.productName;
+      const link = CONFIG.productUrl + encodeURIComponent(row.productId);
+
+      let message = "";
+
+      if (type === "reminder") {
+        message =
+          `Hi ${name}! 👋
+
+You recently viewed *${product}* on AURA.
+${link}
+
+Still thinking about it? ❤️
+
+If you have any questions about this product, just reply here!
+
+— Team AURA`;
+      }
+
+      if (type === "offer") {
+        message =
+          `Hi ${name}! 🌹
+
+Good news! *${product}* is waiting for you at AURA.
+${link}
+
+We would love to help you complete your order.
+
+Reply to this message if you need any assistance!
+
+— Team AURA`;
+      }
+
+      $("waMessage").value = message;
+    }
+/* Attach image: file manager open aagum -> image select -> clipboard-ku copy -> WhatsApp chat-la Ctrl+V */
+$("pickImgBtn").addEventListener("click", () => $("pickImgInput").click());
+
+$("pickImgInput").addEventListener("change", async event => {
+  const file = event.target.files && event.target.files[0];
+  event.target.value = "";
+  if (!file) return;
+
+  try {
+    let blob = file;
+
+    // Clipboard PNG-a dhaan ellaa browser-layum support pannum
+    if (file.type !== "image/png") {
+      const bmp = await createImageBitmap(file);
+      const canvas = document.createElement("canvas");
+      canvas.width = bmp.width;
+      canvas.height = bmp.height;
+      canvas.getContext("2d").drawImage(bmp, 0, 0);
+      blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    }
+
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+    toast("Image copy aachu. Open WhatsApp click panni, chat-la Ctrl+V pannunga.");
+  } catch (error) {
+    console.warn("Image copy failed:", error);
+    toast("Copy aagala. WhatsApp chat-la 📎 click panni image select pannunga.", "err");
+  }
+});
+
+    $("reminderBtn").addEventListener("click", () => useWATemplate("reminder"));
+    $("offerBtn").addEventListener("click", () => useWATemplate("offer"));
+    /* =========================================
+       SEND: LINK MODE (wa.me)
+    ========================================= */
+
+    async function sendViaLink() {
+      const row = CURRENT_WA;
+
+      if (!row) {
+        toast("Please select a customer.", "err");
+        return;
+      }
+
+      const customerNumber = formatPhone(row.userPhone);
+
+      if (!customerNumber) {
+        toast("Invalid customer WhatsApp number.", "err");
+        return;
+      }
+
+      const message = $("waMessage").value.trim();
+
+      if (!message) {
+        toast("Please enter a message.", "err");
+        return;
+      }
+
+      const url =
+        "https://wa.me/" +
+        customerNumber +
+        "?text=" +
+        encodeURIComponent(message);
+
+      // Click-oda same moment-la open pannanum (popup block aagaama irukka)
+      const opened = window.open(url, "_blank");
+
+      closeWaModal();
+      await markContacted(row);
+
+      if (!opened) {
+        window.location.assign(url);
+      }
+    }
+
+    /* =========================================
+       SEND: API MODE (Cloud Function -> WhatsApp Business API)
+    ========================================= */
+
+    async function sendViaApi() {
+      const row = CURRENT_WA;
+
+      if (!row) {
+        toast("Please select a customer.", "err");
+        return;
+      }
+
+      const phone = formatPhone(row.userPhone);
+
+      if (!phone) {
+        toast("Invalid customer WhatsApp number.", "err");
+        return;
+      }
+
+      const btn = $("sendWhatsAppBtn");
+      const label = btn.innerHTML;
+
+      btn.disabled = true;
+      btn.textContent = "Sending…";
+      try {
+        await waSend({
+          phone,
+          name: greetName(row),
+          product: row.productName,
+          productId: row.productId,
+          viewerDocId: row.viewerDocId,
+          userId: row.userId,
+          imageUrl: msgImage(row)
+        });
+
+        row.contacted = true;
+        closeWaModal();
+        renderList();
+        toast("Message sent from " + CONFIG.senderNumber);
+
+      } catch (error) {
+        console.error("WhatsApp API error:", error);
+
+        const notDeployed = String(error.code || "").includes("not-found");
+
+        alert(
+          "Message anuppa mudiyala:\n" +
+          (notDeployed
+            ? "Cloud Function (" + CONFIG.apiFunction + ") deploy aagala. firebase deploy --only functions pannunga."
+            : (error.message || "Unknown error"))
+        );
+
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = label;
+      }
+    }
+
+    $("sendWhatsAppBtn").addEventListener("click", event => {
+      event.preventDefault();
+
+      if (IS_API) {
+        sendViaApi();
+      } else {
+        sendViaLink();
+      }
+    });
+
+    /* =========================================
+       INITIALIZE
+    ========================================= */
+
+    async function initializeWhatsAppFollowup() {
+      setupSenderUI();
+
+      try {
+        await adminReady;
+        await loadViewers();
+
+      } catch (error) {
+        console.error("AURA WhatsApp initialization failed:", error);
+
+        $("recentViewersList").innerHTML = `
+      <div class="wa-error">
+        <b>Admin initialization failed.</b>
+        <p style="margin-top:8px;">
+          ${esc(error.message || "Please login again.")}
+        </p>
+      </div>
+    `;
+      }
+    }
+
+    initializeWhatsAppFollowup();
+
+  </script>
+
+  </body>
+
+</html>

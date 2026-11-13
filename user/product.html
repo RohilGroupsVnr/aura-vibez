@@ -1,26 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product — AURA</title>
-  <meta name="description" content="View product details — AURA premium storefront.">
-  <link rel="icon" href="../assets/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="stylesheet" href="./css/theme.css">
-  <link rel="stylesheet" href="./css/checkout.css">
-  <script>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product — AURA</title>
+    <meta name="description"
+      content="View product details — AURA premium storefront.">
+    <link rel="icon" href="../assets/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/theme.css">
+    <link rel="stylesheet" href="./css/checkout.css">
+    <script>
+
     try { if (localStorage.getItem('aura_auth_hint') === '1') document.documentElement.classList.add('is-user'); } catch (e) { }
   </script>
-
-  <style>
+    <script async
+      src="https://www.googletagmanager.com/gtag/js?id=G-ZCSHSQY3EY"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-ZCSHSQY3EY');
+  </script>
+    <style>
     .nav-actions {
       display: flex;
       align-items: center;
@@ -1842,429 +1852,703 @@
       cursor: pointer;
       color: #999;
     }
+
     /* ===== SKIN TONE MATCH ===== */
-.pd-skin { margin: 0 0 18px; padding: 16px; border: 1px solid var(--pd-line); border-radius: 12px; background: #fffcf8; }
-.pd-skin-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
-.pd-skin-head .pd-sect-title { margin: 0; }
-.pd-skin-head small { font-size: 12px; color: var(--pd-muted); }
-.pd-tone-row { display: flex; flex-wrap: wrap; gap: 10px; }
-.pd-tone { display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1px solid var(--pd-line); border-radius: 999px; background: #fff; cursor: pointer; font: 400 13px "Jost", sans-serif; color: var(--pd-ink); transition: .2s; }
-.pd-tone i { width: 24px; height: 24px; border-radius: 50%; background: var(--tone); border: 1px solid rgba(0, 0, 0, .12); flex: none; }
-.pd-tone:hover { border-color: var(--pd-ink); }
-.pd-tone.on { border-color: var(--pd-accent); background: var(--pd-soft); color: var(--pd-accent); font-weight: 600; }
-.pd-skin-result { margin: 12px 0 0; font-size: 14px; line-height: 1.5; color: var(--pd-ink); }
-.pd-skin-result b { color: var(--pd-accent); }
-.pd-skin-result small { display: block; margin-top: 4px; font-size: 12px; color: var(--pd-muted); }
+    .pd-skin {
+      margin: 0 0 18px;
+      padding: 16px;
+      border: 1px solid var(--pd-line);
+      border-radius: 12px;
+      background: #fffcf8;
+    }
 
-.pd-color-card { position: relative; }
+    .pd-skin-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .pd-skin-head .pd-sect-title {
+      margin: 0;
+    }
+
+    .pd-skin-head small {
+      font-size: 12px;
+      color: var(--pd-muted);
+    }
+
+    .pd-tone-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pd-tone {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px 6px 6px;
+      border: 1px solid var(--pd-line);
+      border-radius: 999px;
+      background: #fff;
+      cursor: pointer;
+      font: 400 13px "Jost", sans-serif;
+      color: var(--pd-ink);
+      transition: .2s;
+    }
+
+    .pd-tone i {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--tone);
+      border: 1px solid rgba(0, 0, 0, .12);
+      flex: none;
+    }
+
+    .pd-tone:hover {
+      border-color: var(--pd-ink);
+    }
+
+    .pd-tone.on {
+      border-color: var(--pd-accent);
+      background: var(--pd-soft);
+      color: var(--pd-accent);
+      font-weight: 600;
+    }
+
+    .pd-skin-result {
+      margin: 12px 0 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--pd-ink);
+    }
+
+    .pd-skin-result b {
+      color: var(--pd-accent);
+    }
+
+    .pd-skin-result small {
+      display: block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--pd-muted);
+    }
+
+    .pd-color-card {
+      position: relative;
+    }
   </style>
-</head>
+  </head>
 
-<body class="pd-page">
+  <body class="pd-page">
 
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <defs>
-      <symbol id="i-heart" viewBox="0 0 24 24">
-        <path
-          d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-      </symbol>
-      <symbol id="i-bag" viewBox="0 0 24 24">
-        <path d="M6 7h12l1 13H5L6 7Z" />
-        <path d="M9 7a3 3 0 0 1 6 0" />
-      </symbol>
-      <symbol id="i-search" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="7" />
-        <path d="m20 20-3.5-3.5" />
-      </symbol>
-      <symbol id="i-user" viewBox="0 0 24 24">
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
-      </symbol>
-      <symbol id="i-chev" viewBox="0 0 24 24">
-        <path d="m6 9 6 6 6-6" />
-      </symbol>
-      <symbol id="i-ruler" viewBox="0 0 24 24">
-        <path d="M3 15 15 3l6 6L9 21z" />
-        <path d="m7 11 2 2M11 7l2 2" />
-      </symbol>
-    </defs>
-  </svg>
-
-  <div class="cursor-glow" aria-hidden="true"></div>
-
-  <script src="js/navbar.js" data-active="account"></script>
-
-  <div class="pd-crumb" id="pdCrumb">
-    <a href="index.html">Home</a><span>/</span>
-    <a href="shop.html">Shop</a><span>/</span>
-    <span id="pdCrumbName">Product</span>
-  </div>
-
-  <main class="pd-wrap" id="pdWrap">
-
-    <!-- GALLERY -->
-    <div class="pd-gallery-new">
-      <div class="pg-thumbs" id="pdThumbRow"></div>
-      <div class="main-img-wrap" id="pdZoomWrap">
-
-        <!-- STOCK ALERT STICKER -->
-        <div class="pd-offer-ribbon hidden" id="pdOfferRibbon">ONLY 2 LEFT</div>
-
-        <!-- SWIPE SLIDER -->
-        <div class="pd-slider" id="pdSlider"></div>
-
-        <button type="button" class="pd-nav prev" id="pdPrev" aria-label="Previous image"><i
-            class="fa-solid fa-chevron-left"></i></button>
-        <button type="button" class="pd-nav next" id="pdNext" aria-label="Next image"><i
-            class="fa-solid fa-chevron-right"></i></button>
-
-        <div class="pd-counter" id="pdCounter">1 / 1</div>
-        <div class="pd-dots" id="pdDots"></div>
-
-        <div class="video-reel-btn" id="pdVideoBtn" style="display:none;" onclick="openVideoModal()">
-          <i class="fa-solid fa-circle-play"></i> Watch Video
-        </div>
-      </div>
-    </div>
-
-    <div class="pd-info">
-      <!-- HEAD (Name & Price) -->
-      <div class="pd-head">
-        <h1 class="pd-name" id="pdName">Loading…</h1>
-        <div class="pd-price" id="pdPrice"></div>
-      </div>
-      <p class="pd-tax">Tax included.</p>
-      <div class="pd-badges"><span class="pd-cert"><i class="fa-solid fa-award"></i> Certified</span></div>
-
-      <!-- 🔥 URGENCY BAR (Meesho Style) 🔥 -->
-      <div class="pd-urgency" id="pdUrgency" hidden>
-        <p id="pdUrgencyTxt">Hurry, only 4 items left in stock!</p>
-        <div class="pd-urgency-bar"><i id="pdUrgencyBar"></i></div>
-      </div>
-
-      <!-- COLOR SELECTOR -->
-      <div class="pd-colors-block" id="pdColorBlock" style="display: none;">
-        <h3 class="pd-sect-title" style="margin-bottom: 10px;"><span id="pdColorCount">Colors</span> · <b
-            id="pdColorName"></b></h3>
-        <div class="pd-colors-row" id="pdColors"></div>
-      </div>
-
-      <!-- SKIN TONE MATCH -->
-<div class="pd-skin" id="pdSkin">
-  <div class="pd-skin-head">
-    <h3 class="pd-sect-title">Find your colour match</h3>
-    <small>Pick your skin tone</small>
-  </div>
-  <div class="pd-tone-row" id="pdTones"></div>
-  <p class="pd-skin-result" id="pdSkinResult" hidden></p>
-</div>
-
-      <!-- Sizes -->
-      <div class="pd-sizes-block">
-        <div class="pd-sizes-head">
-          <h3 class="pd-sect-title">Select Size</h3>
-          <a href="size-guide.html" class="pd-guide"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <use href="#i-ruler" />
-            </svg> Size
-            Guide</a>
-        </div>
-        <div class="pd-size-row" id="pdSizes"></div>
-      </div>
-
-      <!-- Key Highlights -->
-      <div class="pd-hl" id="pdHighlights">
-        <h4>Key Highlights</h4>
-        <div class="pd-hl-item"><span>Fit</span><b id="hlFit">—</b></div>
-        <div class="pd-hl-item"><span>Top Fabric</span><b id="hlFabric">—</b></div>
-        <div class="pd-hl-item"><span>Neck</span><b id="hlNeck">—</b></div>
-        <div class="pd-hl-item"><span>Sleeve Styling</span><b id="hlSleeve">—</b></div>
-        <div class="pd-hl-item"><span>Sleeve Length</span><b id="hlSleeveLen">—</b></div>
-        <div class="pd-hl-item"><span>Top Technique</span><b id="hlTech">—</b></div>
-      </div>
-
-      <!-- CTA -->
-      <div class="pd-cta">
-        <button type="button" class="pd-btn" id="pdWishBtn">♡ Add to
-          Wishlist</button>
-        <button type="button" class="pd-btn primary" id="pdCartBtn" disabled>Add to Cart</button>
-      </div>
-      <button type="button" class="pd-btn primary" id="pdBuyBtn" disabled style="width:100%;margin:-14px 0 18px">Buy
-        Now</button>
-      <p class="pd-hint" id="pdHint">Please select a size to continue.</p>
-
-      <!-- Accordions -->
-      <div class="pd-acc" id="pdAcc">
-        <div class="pd-acc-item open"><button class="pd-acc-head" type="button">Description <i
-              class="fa-solid fa-chevron-down"></i></button>
-          <div class="pd-acc-body">
-            <p id="pdDescTxt">A thoughtfully designed
-              piece from the AURA collection, crafted with premium fabric and
-              finished with an elegant silhouette for effortless everyday
-              style.</p>
-          </div>
-        </div>
-        <div class="pd-acc-item"><button class="pd-acc-head" type="button">Wash Care Instructions <i
-              class="fa-solid fa-chevron-down"></i></button>
-          <div class="pd-acc-body">
-            <ul>
-              <li>Hand wash separately in cold
-                water</li>
-              <li>Do not bleach or tumble dry</li>
-              <li>Dry in shade
-                to preserve colour</li>
-              <li>Iron on reverse on low
-                heat</li>
-            </ul>
-          </div>
-        </div>
-        <div class="pd-acc-item"><button class="pd-acc-head" type="button">Shipping &amp; Exchanges <i
-              class="fa-solid fa-chevron-down"></i></button>
-          <div class="pd-acc-body">
-            <p><b>Dispatch Time:</b> Orders are processed
-              and dispatched within 24–48 working hours.</p>
-            <p><b>Returns
-                &amp; Exchanges:</b> Easy 7-day returns and exchanges on
-              unworn items with original tags intact. Custom-stitched or
-              altered items are non-returnable.</p>
-          </div>
-        </div>
-        <div class="pd-acc-item"><button class="pd-acc-head" type="button">Customer Care <i
-              class="fa-solid fa-chevron-down"></i></button>
-          <div class="pd-acc-body">
-            <p>Questions? Our care team is here to
-              help.</p>
-
-            <p>Email: <a href="mailto:auravibezclothing@gmail.com">auravibezclothing@gmail.com</a>
-              · Mon–Sat, 10 AM – 7 PM</p>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- 🔥 CUSTOMER REVIEWS SECTION 🔥 -->
-      <div class="pd-reviews" id="pdReviews">
-        <h3 class="pd-sect-title" style="font-size: 16px; margin-bottom: 20px; color: var(--pd-ink);">Customer
-          Reviews</h3>
-
-        <!-- Review Summary (Avg Rating) -->
-        <div class="review-summary">
-          <div class="rs-score">
-            <b id="avgRating">0.0</b>
-            <div class="rs-stars" id="avgStars">☆☆☆☆☆</div>
-            <small id="totalReviews">0 Reviews</small>
-          </div>
-          <button type="button" class="pd-btn" id="writeReviewBtn"
-            style="height: 44px; font-size: 12px; padding: 0 20px; width: auto;">Write
-            a Review</button>
-        </div>
-
-        <!-- Review List -->
-        <div class="review-list" id="reviewList">
-          <!-- Reviews will be injected here by JS -->
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- VIDEO MODAL -->
-  <div class="video-modal" id="videoModal">
-    <div class="video-box">
-      <button class="video-close" onclick="closeVideoModal()" aria-label="Close video"><i
-          class="fa-solid fa-xmark"></i></button>
-      <div id="videoContainer" style="width:100%;height:100%"></div>
-    </div>
-  </div>
-
-  <section class="pd-also">
-    <h3>You May Also Like</h3>
-    <div class="pd-also-grid" id="pdAlsoGrid"></div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer aura-footer" id="footer">
-    <svg class="fwave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0,40 C240,0 480,110 720,60 C960,10 1200,100 1440,40 L1440,0 L0,0 Z" />
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-heart" viewBox="0 0 24 24">
+          <path
+            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+        </symbol>
+        <symbol id="i-bag" viewBox="0 0 24 24">
+          <path d="M6 7h12l1 13H5L6 7Z" />
+          <path d="M9 7a3 3 0 0 1 6 0" />
+        </symbol>
+        <symbol id="i-search" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </symbol>
+        <symbol id="i-user" viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+        </symbol>
+        <symbol id="i-chev" viewBox="0 0 24 24">
+          <path d="m6 9 6 6 6-6" />
+        </symbol>
+        <symbol id="i-ruler" viewBox="0 0 24 24">
+          <path d="M3 15 15 3l6 6L9 21z" />
+          <path d="m7 11 2 2M11 7l2 2" />
+        </symbol>
+      </defs>
     </svg>
-    <div class="fmark" aria-hidden="true">AURA</div>
-    <div class="aura-footer-intro"><span class="aura-footer-kicker">DRESSED IN
-        YOUR OWN WAY</span>
-      <h2>Every outfit tells <em>your
-          story.</em></h2>
-      <p>Discover styles that celebrate your
-        individuality, from everyday essentials to the moments worth dressing
-        up for.</p><a href="shop.html" class="aura-footer-cta">Discover Your
-        Style <span>↗</span></a>
+
+    <div class="cursor-glow" aria-hidden="true"></div>
+
+    <script src="js/navbar.js" data-active="account"></script>
+
+    <div class="pd-crumb" id="pdCrumb">
+      <a href="index.html">Home</a><span>/</span>
+      <a href="shop.html">Shop</a><span>/</span>
+      <span id="pdCrumbName">Product</span>
     </div>
-    <div class="fgrid aura-footer-grid">
-      <div class="fbrand aura-footer-brand"><a href="index.html" aria-label="AURA Home"><img src="../assets/logo.png"
-            alt="AURA"></a>
-        <p>AURA brings together timeless elegance and
-          modern fashion, with thoughtfully selected styles for every mood,
-          moment and occasion.</p>
-        <div class="aura-footer-note"><span>Made for
-            your moments.</span><span>Designed for your AURA.</span></div>
-        <div class="social aura-social"><a href="#" data-site-link="instagram" aria-label="Instagram"
-            title="Instagram"><i class="fa-brands fa-instagram"></i></a><a href="#" data-site-link="facebook"
-            aria-label="Facebook" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a><a href="#"
-            data-site-link="pinterest" aria-label="Pinterest" title="Pinterest"><i
-              class="fa-brands fa-pinterest-p"></i></a><a href="#" data-site-link="youtube" aria-label="YouTube"
-            title="YouTube"><i class="fa-brands fa-youtube"></i></a></div>
+
+    <main class="pd-wrap" id="pdWrap">
+
+      <!-- GALLERY -->
+      <div class="pd-gallery-new">
+        <div class="pg-thumbs" id="pdThumbRow"></div>
+        <div class="main-img-wrap" id="pdZoomWrap">
+
+          <!-- STOCK ALERT STICKER -->
+          <div class="pd-offer-ribbon hidden" id="pdOfferRibbon">ONLY 2
+            LEFT</div>
+
+          <!-- SWIPE SLIDER -->
+          <div class="pd-slider" id="pdSlider"></div>
+
+          <button type="button" class="pd-nav prev" id="pdPrev"
+            aria-label="Previous image"><i
+              class="fa-solid fa-chevron-left"></i></button>
+          <button type="button" class="pd-nav next" id="pdNext"
+            aria-label="Next image"><i
+              class="fa-solid fa-chevron-right"></i></button>
+
+          <div class="pd-counter" id="pdCounter">1 / 1</div>
+          <div class="pd-dots" id="pdDots"></div>
+
+          <div class="video-reel-btn" id="pdVideoBtn" style="display:none;"
+            onclick="openVideoModal()">
+            <i class="fa-solid fa-circle-play"></i> Watch Video
+          </div>
+        </div>
       </div>
-      <div class="aura-footer-links">
-        <h5>Explore</h5><a href="shop.html">All
-          Collections</a><a href="shop.html?cat=new-arrivals">New
-          Arrivals</a><a href="shop.html?cat=trending-dresses">Trending
-          Dresses</a><a href="shop.html?cat=western-wear">Western Wear</a><a href="shop.html?cat=ethnic-wear">Ethnic
-          Wear</a><a href="shop.html?cat=party-wear">Party Wear</a><a href="shop.html?cat=casual-wear">Casual Wear</a>
+
+      <div class="pd-info">
+        <!-- HEAD (Name & Price) -->
+        <div class="pd-head">
+          <h1 class="pd-name" id="pdName">Loading…</h1>
+          <div class="pd-price" id="pdPrice"></div>
+        </div>
+        <p class="pd-tax">Tax included.</p>
+        <div class="pd-badges"><span class="pd-cert"><i
+              class="fa-solid fa-award"></i> Certified</span></div>
+
+        <!-- 🔥 URGENCY BAR (Meesho Style) 🔥 -->
+        <div class="pd-urgency" id="pdUrgency" hidden>
+          <p id="pdUrgencyTxt">Hurry, only 4 items left in stock!</p>
+          <div class="pd-urgency-bar"><i id="pdUrgencyBar"></i></div>
+        </div>
+
+        <!-- COLOR SELECTOR -->
+        <div class="pd-colors-block" id="pdColorBlock" style="display: none;">
+          <h3 class="pd-sect-title" style="margin-bottom: 10px;"><span
+              id="pdColorCount">Colors</span> · <b
+              id="pdColorName"></b></h3>
+          <div class="pd-colors-row" id="pdColors"></div>
+        </div>
+
+        <!-- SKIN TONE MATCH -->
+        <div class="pd-skin" id="pdSkin">
+          <div class="pd-skin-head">
+            <h3 class="pd-sect-title">Find your colour match</h3>
+            <small>Pick your skin tone</small>
+          </div>
+          <div class="pd-tone-row" id="pdTones"></div>
+          <p class="pd-skin-result" id="pdSkinResult" hidden></p>
+        </div>
+
+        <!-- Sizes -->
+        <div class="pd-sizes-block">
+          <div class="pd-sizes-head">
+            <h3 class="pd-sect-title">Select Size</h3>
+            <a href="size-guide.html" class="pd-guide"><svg width="14"
+                height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+                <use href="#i-ruler" />
+              </svg> Size
+              Guide</a>
+          </div>
+          <div class="pd-size-row" id="pdSizes"></div>
+        </div>
+
+        <!-- Key Highlights -->
+        <div class="pd-hl" id="pdHighlights">
+          <h4>Key Highlights</h4>
+          <div class="pd-hl-item"><span>Fit</span><b id="hlFit">—</b></div>
+          <div class="pd-hl-item"><span>Top Fabric</span><b
+              id="hlFabric">—</b></div>
+          <div class="pd-hl-item"><span>Neck</span><b id="hlNeck">—</b></div>
+          <div class="pd-hl-item"><span>Sleeve Styling</span><b
+              id="hlSleeve">—</b></div>
+          <div class="pd-hl-item"><span>Sleeve Length</span><b
+              id="hlSleeveLen">—</b></div>
+          <div class="pd-hl-item"><span>Top Technique</span><b
+              id="hlTech">—</b></div>
+        </div>
+
+        <!-- CTA -->
+        <div class="pd-cta">
+          <button type="button" class="pd-btn" id="pdWishBtn">♡ Add to
+            Wishlist</button>
+          <button type="button" class="pd-btn primary" id="pdCartBtn"
+            disabled>Add to Cart</button>
+        </div>
+        <button type="button" class="pd-btn primary" id="pdBuyBtn" disabled
+          style="width:100%;margin:-14px 0 18px">Buy
+          Now</button>
+        <p class="pd-hint" id="pdHint">Please select a size to continue.</p>
+
+        <!-- Accordions -->
+        <div class="pd-acc" id="pdAcc">
+          <div class="pd-acc-item open"><button class="pd-acc-head"
+              type="button">Description <i
+                class="fa-solid fa-chevron-down"></i></button>
+            <div class="pd-acc-body">
+              <p id="pdDescTxt">A thoughtfully designed
+                piece from the AURA collection, crafted with premium fabric and
+                finished with an elegant silhouette for effortless everyday
+                style.</p>
+            </div>
+          </div>
+          <div class="pd-acc-item"><button class="pd-acc-head"
+              type="button">Wash Care Instructions <i
+                class="fa-solid fa-chevron-down"></i></button>
+            <div class="pd-acc-body">
+              <ul>
+                <li>Hand wash separately in cold
+                  water</li>
+                <li>Do not bleach or tumble dry</li>
+                <li>Dry in shade
+                  to preserve colour</li>
+                <li>Iron on reverse on low
+                  heat</li>
+              </ul>
+            </div>
+          </div>
+          <div class="pd-acc-item"><button class="pd-acc-head"
+              type="button">Shipping &amp; Exchanges <i
+                class="fa-solid fa-chevron-down"></i></button>
+            <div class="pd-acc-body">
+              <p><b>Dispatch Time:</b> Orders are processed
+                and dispatched within 24–48 working hours.</p>
+              <p><b>Returns
+                  &amp; Exchanges:</b> Easy 7-day returns and exchanges on
+                unworn items with original tags intact. Custom-stitched or
+                altered items are non-returnable.</p>
+            </div>
+          </div>
+          <div class="pd-acc-item"><button class="pd-acc-head"
+              type="button">Customer Care <i
+                class="fa-solid fa-chevron-down"></i></button>
+            <div class="pd-acc-body">
+              <p>Questions? Our care team is here to
+                help.</p>
+
+              <p>Email: <a
+                  href="mailto:auravibezclothing@gmail.com">auravibezclothing@gmail.com</a>
+                · Mon–Sat, 10 AM – 7 PM</p>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- 🔥 CUSTOMER REVIEWS SECTION 🔥 -->
+        <div class="pd-reviews" id="pdReviews">
+          <h3 class="pd-sect-title"
+            style="font-size: 16px; margin-bottom: 20px; color: var(--pd-ink);">Customer
+            Reviews</h3>
+
+          <!-- Review Summary (Avg Rating) -->
+          <div class="review-summary">
+            <div class="rs-score">
+              <b id="avgRating">0.0</b>
+              <div class="rs-stars" id="avgStars">☆☆☆☆☆</div>
+              <small id="totalReviews">0 Reviews</small>
+            </div>
+            <button type="button" class="pd-btn" id="writeReviewBtn"
+              style="height: 44px; font-size: 12px; padding: 0 20px; width: auto;">Write
+              a Review</button>
+          </div>
+
+          <!-- Review List -->
+          <div class="review-list" id="reviewList">
+            <!-- Reviews will be injected here by JS -->
+          </div>
+        </div>
       </div>
-      <div class="aura-footer-links">
-        <h5>Our Styles</h5><a href="shop.html?cat=tops-with-pants">Tops &amp; Pants</a><a
-          href="shop.html?cat=jeans">Jeans &amp; Denim</a><a href="shop.html?cat=kurta-sets">Kurta Sets</a><a
-          href="shop.html?cat=sarees">Sarees</a><a href="shop.html?cat=palazzo">Palazzo Sets</a><a
-          href="shop.html?cat=leggings">Leggings</a><a href="shop.html?cat=skirts">Skirts &amp; Tops</a>
-      </div>
-      <div class="aura-footer-links">
-        <h5>Customer Care</h5><a href="contact.html">Contact Us</a><a href="trackorder.html">Track
-          Your Order</a><a href="shipping.html">Shipping Information</a><a href="returns.html">Returns &amp;
-          Exchanges</a><a href="faq.html">Frequently Asked Questions</a><a href="size-guide.html">Size Guide</a><a
-          href="privacy-policy.html">Privacy Policy</a><a href="terms.html">Terms &amp; Conditions</a>
+    </main>
+
+    <!-- VIDEO MODAL -->
+    <div class="video-modal" id="videoModal">
+      <div class="video-box">
+        <button class="video-close" onclick="closeVideoModal()"
+          aria-label="Close video"><i
+            class="fa-solid fa-xmark"></i></button>
+        <div id="videoContainer" style="width:100%;height:100%"></div>
       </div>
     </div>
-    <div class="fbottom aura-footer-bottom"><span>© 2026 AURA. All rights
-        reserved.</span><span class="aura-footer-made">Developed by <span
-          style="color: #E8A5BB; font-weight: 500;">Rohil
-          Technologies</span></span>
-      <div class="aura-footer-bottom-links"><a href="privacy-policy.html">Privacy</a><a href="terms.html">Terms</a><a
-          href="contact.html">Support</a></div>
-    </div>
-  </footer>
 
-  <!-- 🔥 REVIEW FORM MODAL 🔥 -->
-  <div class="review-modal" id="reviewModal">
-    <div class="review-form-card">
-      <button class="review-close">&times;</button>
-      <h3>Write a Review</h3>
+    <section class="pd-also">
+      <h3>You May Also Like</h3>
+      <div class="pd-also-grid" id="pdAlsoGrid"></div>
+    </section>
 
-      <input type="text" id="reviewName" placeholder="Your Name (e.g. Priya)"
-        style="width: 100%; padding: 12px; border: 1px solid var(--pd-line); border-radius: 8px; font-family: inherit; margin-bottom: 12px; outline: none;" />
-
-      <div class="star-input">
-        <i class="fa-solid fa-star active" data-val="1"></i>
-        <i class="fa-solid fa-star active" data-val="2"></i>
-        <i class="fa-solid fa-star active" data-val="3"></i>
-        <i class="fa-solid fa-star active" data-val="4"></i>
-        <i class="fa-solid fa-star active" data-val="5"></i>
+    <!-- ===== AURA PREMIUM FOOTER ===== -->
+    <footer class="footer aura-footer" id="footer">
+      <svg class="fwave" viewBox="0 0 1440 80" preserveAspectRatio="none"
+        aria-hidden="true">
+        <path
+          d="M0,40 C240,0 480,110 720,60 C960,10 1200,100 1440,40 L1440,0 L0,0 Z" />
+      </svg>
+      <div class="fmark" data-site-text="storeName"
+        aria-hidden="true">AURA</div>
+      <div class="aura-footer-intro"><span class="aura-footer-kicker">DRESSED
+          IN
+          YOUR OWN WAY</span>
+        <h2>Every outfit tells <em>your story.</em></h2>
+        <p>Discover styles that celebrate your individuality, from everyday
+          essentials to the moments worth dressing up
+          for.</p><a href="shop.html" class="aura-footer-cta">Discover Your
+          Style <span>↗</span></a>
       </div>
-      <textarea id="reviewText" placeholder="What did you like or dislike?"></textarea>
-      <button type="button" class="pd-btn primary" id="submitReviewBtn" style="width:100%; border-radius:8px;">Submit
-        Review</button>
-    </div>
-  </div>
+      <div class="fgrid aura-footer-grid">
+        <div class="fbrand aura-footer-brand"><a href="index.html"
+            aria-label="AURA Home"><img src="../assets/logo.png"
+              alt="AURA"></a>
+          <p data-site-text="storeDesc">AURA brings together timeless elegance
+            and modern fashion, with
+            thoughtfully selected styles for every mood,
+            moment and occasion.</p>
+          <div class="aura-footer-note"><span>Made for your
+              moments.</span><span>Designed for your AURA.</span></div>
 
-  <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top"><svg width="22" height="22"
-      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-      stroke-linejoin="round">
-      <path d="M12 19V5"></path>
-      <path d="M5 12l7-7 7 7"></path>
-    </svg></button>
+          <!-- Social icons (auto-updated from Admin > Settings) -->
+          <div class="social aura-social">
+            <a href="#" data-site-link="instagram" aria-label="Instagram"
+              title="Instagram"><i
+                class="fa-brands fa-instagram"></i></a>
+            <a href="#" data-site-link="facebook" aria-label="Facebook"
+              title="Facebook"><i
+                class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" data-site-link="pinterest" aria-label="Pinterest"
+              title="Pinterest"><i
+                class="fa-brands fa-pinterest-p"></i></a>
+            <a href="#" data-site-link="youtube" aria-label="YouTube"
+              title="YouTube"><i
+                class="fa-brands fa-youtube"></i></a>
+          </div>
 
-  <!-- Login Popup -->
-  <div class="aura-login-overlay" id="auraLoginOverlay" role="dialog" aria-modal="true" aria-labelledby="auraLoginTitle"
-    aria-hidden="true">
-    <div class="aura-login-card">
-      <button class="aura-login-x" type="button" aria-label="Close login"><i class="fa-solid fa-xmark"></i></button>
-      <div class="aura-login-img"><img src="../images/partywear.webp" alt="AURA" onerror="this.remove()"></div>
-      <div class="aura-login-body"><span class="aura-login-eyebrow">AURA
-          ACCOUNT</span>
-        <h2 id="auraLoginTitle">Welcome <em>back.</em></h2>
-        <p class="aura-login-sub">Sign in with your mobile number to save
-          favourites and track your orders.</p>
-        <form id="auraPhoneForm" novalidate><label class="aura-login-field"><span>Mobile number (10
-              digits)</span> <input type="tel" id="auraPhone" placeholder="+919876543210" autocomplete="tel"
-              inputmode="tel" required></label>
-          <div id="recaptcha-container"></div><button type="submit" class="aura-login-submit" id="auraSendOtp">Send
-            OTP</button>
-          <div id="auraOtpSection" hidden><label class="aura-login-field"><span>Enter 6-digit OTP</span><input
-                type="text" id="auraOtp" placeholder="Enter OTP" inputmode="numeric" autocomplete="one-time-code"
-                maxlength="6"></label><button type="button" class="aura-login-submit" id="auraVerifyOtp">Verify
-              OTP</button></div>
-          <p class="aura-login-msg" id="auraPhoneMsg" role="status" aria-live="polite"></p>
-        </form>
-        <p class="aura-login-switch">By continuing, you agree to our <a href="terms.html">Terms</a> and <a
-            href="privacy-policy.html">Privacy Policy</a>.</p>
+          <!-- Contact details (auto-updated from Admin > Settings) -->
+          <div class="aura-footer-contact">
+            <a href="#" data-site-link="supportEmail" style="display:none"><i
+                class="fa-solid fa-envelope"></i> <span
+                data-site-text="supportEmail"></span></a>
+            <a href="#" data-site-link="supportPhone" style="display:none"><i
+                class="fa-solid fa-phone"></i> <span
+                data-site-text="supportPhone"></span></a>
+            <a href="#" data-site-link="whatsappNumber" style="display:none"><i
+                class="fa-brands fa-whatsapp"></i> <span
+                data-site-text="whatsappNumber"></span></a>
+            <p data-site-item style="display:none"><i
+                class="fa-solid fa-location-dot"></i> <span
+                data-site-text="storeAddress"></span></p>
+          </div>
+          <style>
+          .aura-footer-contact {
+            display: grid;
+            gap: 10px;
+            margin-top: 16px;
+            font-size: 14px;
+          }
+
+          .aura-footer-contact a,
+          .aura-footer-contact p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+            color: inherit;
+            text-decoration: none;
+            opacity: .85;
+            transition: opacity .2s;
+          }
+
+          .aura-footer-contact a:hover {
+            opacity: 1;
+          }
+
+          .aura-footer-contact i {
+            width: 16px;
+            text-align: center;
+          }
+        </style>
+        </div>
+        <div class="aura-footer-links">
+          <h5>Explore</h5><a href="shop.html">All Collections</a><a
+            href="shop.html?cat=new-arrivals">New Arrivals</a><a
+            href="shop.html?cat=trending-dresses">Trending Dresses</a><a
+            href="shop.html?cat=western-wear">Western
+            Wear</a><a href="shop.html?cat=ethnic-wear">Ethnic Wear</a><a
+            href="shop.html?cat=party-wear">Party Wear</a><a
+            href="shop.html?cat=casual-wear">Casual Wear</a>
+        </div>
+        <div class="aura-footer-links">
+          <h5>Our Styles</h5><a href="shop.html?cat=tops-with-pants">Tops
+            &amp;
+            Pants</a><a href="shop.html?cat=jeans">Jeans &amp; Denim</a><a
+            href="shop.html?cat=kurta-sets">Kurta
+            Sets</a><a href="shop.html?cat=sarees">Sarees</a><a
+            href="shop.html?cat=palazzo">Palazzo Sets</a><a
+            href="shop.html?cat=leggings">Leggings</a><a
+            href="shop.html?cat=skirts">Skirts &amp; Tops</a>
+        </div>
+        <div class="aura-footer-links">
+          <h5>Customer Care</h5><a href="contact.html">Contact Us</a><a
+            href="trackorder.html">Track Your Order</a><a
+            href="shipping.html">Shipping Information</a><a
+            href="returns.html">Returns &amp; Exchanges</a><a
+            href="faq.html">Frequently Asked Questions</a><a
+            href="size-guide.html">Size Guide</a><a
+            href="privacy-policy.html">Privacy Policy</a><a
+            href="terms.html">Terms &amp; Conditions</a>
+        </div>
+      </div>
+      <!-- ===== AURA STYLE CONCIERGE (Social Media Version) ===== -->
+      <div class="aura-footer-newsletter"
+        style="background: linear-gradient(135deg, #2B1B21, #1A0A11); border-radius: 16px; padding: 50px; margin: 60px auto; max-width: 1200px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between; align-items: center; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+
+        <div
+          style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(163,25,74,0.4) 0%, transparent 60%); border-radius: 50%; pointer-events: none;">
+        </div>
+
+        <div style="flex: 1; min-width: 300px; position: relative; z-index: 2;">
+          <span
+            style="display: inline-block; color: #E8A5BB; font-size: 11px; letter-spacing: 0.3em; font-weight: 600; text-transform: uppercase; margin-bottom: 12px;">The
+            AURA Style Concierge</span>
+          <h3
+            style="font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 3vw, 3rem); color: #FFF8F1; margin: 0 0 16px; font-weight: 500; line-height: 1.1;">
+            Not sure what to wear?<br><em
+              style="color: #E8A5BB; font-style: italic;">We've got you.</em>
+          </h3>
+          <p
+            style="color: rgba(255, 248, 241, 0.7); font-size: 1rem; line-height: 1.6; max-width: 450px; margin: 0;">
+            Get personalised outfit recommendations, sizing help, and styling
+            advice from our expert curators. Connect with us on social media.
+          </p>
+        </div>
+
+        <div
+          style="flex: 0 0 auto; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 2; min-width: 280px;">
+
+          <a href="#" data-site-link="instagram" target="_blank" rel="noopener"
+            style="display:flex; align-items:center; gap:16px; background:rgba(255,255,255,0.05); padding:16px 24px; border-radius:12px; text-decoration:none; border:1px solid rgba(255,255,255,0.1); transition:all 0.3s;"
+            onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+
+            <div
+              style="width:44px; height:44px; background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); border-radius:50%; display:grid; place-items:center; color:#fff; font-size:20px;">
+              <i class="fa-brands fa-instagram"></i>
+            </div>
+
+            <div>
+              <b
+                style="display:block; color:#FFF8F1; font-size:15px; font-family:'Jost',sans-serif;">
+                Follow on Instagram
+              </b>
+
+              <small data-site-handle="instagram"
+                style="color:rgba(255,248,241,0.6); font-size:12px; font-family:'Jost',sans-serif;">
+                @auraclothing.vnr
+              </small>
+            </div>
+          </a>
+
+          <a href="https://facebook.com/auraclothing.vnr"
+            data-site-link="facebook" target="_blank" rel="noopener"
+            style="display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;"
+            onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='translateX(5px)'"
+            onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='translateX(0)'">
+            <div
+              style="width: 44px; height: 44px; background: #1877F2; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 20px;">
+              <i class="fa-brands fa-facebook-f"></i>
+            </div>
+            <div>
+              <b
+                style="display: block; color: #FFF8F1; font-size: 15px; font-family: 'Jost', sans-serif;">Connect
+                on Facebook</b>
+              <small data-site-handle="facebook"
+                style="color: rgba(255,248,241,0.6); font-size: 12px; font-family: 'Jost', sans-serif;">AURA
+                Clothing</small>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Mobile Responsive Fix -->
+      <style>
+      @media (max-width: 768px) {
+        .aura-footer-newsletter {
+          padding: 30px 20px !important;
+          text-align: center;
+        }
+
+        .aura-footer-newsletter>div {
+          justify-content: center;
+          width: 100%;
+        }
+
+        .aura-footer-newsletter a {
+          justify-content: flex-start;
+          text-align: left;
+        }
+      }
+    </style>
+      <div class="fbottom aura-footer-bottom"><span>© 2026 AURA. All rights
+          reserved.</span><span class="aura-footer-made">Developed by <span
+            style="color: #E8A5BB; font-weight: 500;">Rohil
+            Technologies</span></span>
+        <div class="aura-footer-bottom-links"><a
+            href="privacy-policy.html">Privacy</a><a
+            href="terms.html">Terms</a><a
+            href="contact.html">Support</a></div>
+      </div>
+    </footer>
+    <!-- 🔥 REVIEW FORM MODAL 🔥 -->
+    <div class="review-modal" id="reviewModal">
+      <div class="review-form-card">
+        <button class="review-close">&times;</button>
+        <h3>Write a Review</h3>
+
+        <div class="star-input">
+          <i class="fa-solid fa-star active" data-val="1"></i>
+          <i class="fa-solid fa-star active" data-val="2"></i>
+          <i class="fa-solid fa-star active" data-val="3"></i>
+          <i class="fa-solid fa-star active" data-val="4"></i>
+          <i class="fa-solid fa-star active" data-val="5"></i>
+        </div>
+
+        <input type="text" id="reviewName" placeholder="Your Name (e.g. Priya)"
+          style="width: 100%; padding: 12px; border: 1px solid var(--pd-line); border-radius: 8px; font-family: inherit; margin-bottom: 12px; outline: none;" />
+
+        <textarea id="reviewText"
+          placeholder="What did you like or dislike?"></textarea>
+        <button type="button" class="pd-btn primary" id="submitReviewBtn"
+          style="width:100%; border-radius:8px;">Submit
+          Review</button>
       </div>
     </div>
-  </div>
 
-  <!-- Size Guide Modal -->
-  <div class="size-modal-overlay" id="sizeModal">
-    <div class="size-modal-card">
-      <button class="size-modal-close" id="closeSizeModal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-      <h2 class="size-modal-title">Size Guide</h2>
-      <div class="size-modal-subtitle">Find Your Perfect Fit</div>
+    <button id="backToTop" class="back-to-top" type="button"
+      aria-label="Back to top"><svg width="22" height="22"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M12 19V5"></path>
+        <path d="M5 12l7-7 7 7"></path>
+      </svg></button>
 
-      <table class="size-table">
-        <thead>
-          <tr>
-            <th>Size</th>
-            <th>Bust</th>
-            <th>Hip</th>
-            <th>Flair</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>S</td>
-            <td>36"</td>
-            <td>38"</td>
-            <td>40"</td>
-          </tr>
-          <tr>
-            <td>M</td>
-            <td>39"</td>
-            <td>41"</td>
-            <td>43"</td>
-          </tr>
-          <tr>
-            <td>L</td>
-            <td>41"</td>
-            <td>43"</td>
-            <td>45"</td>
-          </tr>
-          <tr>
-            <td>XL</td>
-            <td>43"</td>
-            <td>45"</td>
-            <td>47"</td>
-          </tr>
-          <tr>
-            <td>2XL</td>
-            <td>46"</td>
-            <td>48"</td>
-            <td>50"</td>
-          </tr>
-          <tr>
-            <td>3XL</td>
-            <td>50"</td>
-            <td>52"</td>
-            <td>56"</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="size-branding-box">
-        <p>
-          Comes with <b>1” margin</b>, <b>slit lock</b>, and <b>interlocked
-            fine stitch count</b>.<br>
-          <b>Same as a good brand.</b>
-        </p>
+    <!-- Login Popup -->
+    <div class="aura-login-overlay" id="auraLoginOverlay" role="dialog"
+      aria-modal="true" aria-labelledby="auraLoginTitle"
+      aria-hidden="true">
+      <div class="aura-login-card">
+        <button class="aura-login-x" type="button" aria-label="Close login"><i
+            class="fa-solid fa-xmark"></i></button>
+        <div class="aura-login-img"><img src="../images/partywear.webp"
+            alt="AURA" onerror="this.remove()"></div>
+        <div class="aura-login-body"><span class="aura-login-eyebrow">AURA
+            ACCOUNT</span>
+          <h2 id="auraLoginTitle">Welcome <em>back.</em></h2>
+          <p class="aura-login-sub">Sign in with your mobile number to save
+            favourites and track your orders.</p>
+          <form id="auraPhoneForm" novalidate><label
+              class="aura-login-field"><span>Mobile number (10
+                digits)</span> <input type="tel" id="auraPhone"
+                placeholder="+919876543210" autocomplete="tel"
+                inputmode="tel" required></label>
+            <div id="recaptcha-container"></div><button type="submit"
+              class="aura-login-submit" id="auraSendOtp">Send
+              OTP</button>
+            <div id="auraOtpSection" hidden><label
+                class="aura-login-field"><span>Enter 6-digit OTP</span><input
+                  type="text" id="auraOtp" placeholder="Enter OTP"
+                  inputmode="numeric" autocomplete="one-time-code"
+                  maxlength="6"></label><button type="button"
+                class="aura-login-submit" id="auraVerifyOtp">Verify
+                OTP</button></div>
+            <p class="aura-login-msg" id="auraPhoneMsg" role="status"
+              aria-live="polite"></p>
+          </form>
+          <p class="aura-login-switch">By continuing, you agree to our <a
+              href="terms.html">Terms</a> and <a
+              href="privacy-policy.html">Privacy Policy</a>.</p>
+        </div>
       </div>
-
     </div>
-  </div>
 
-  <script>
+    <!-- Size Guide Modal -->
+    <div class="size-modal-overlay" id="sizeModal">
+      <div class="size-modal-card">
+        <button class="size-modal-close" id="closeSizeModal"
+          aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        <h2 class="size-modal-title">Size Guide</h2>
+        <div class="size-modal-subtitle">Find Your Perfect Fit</div>
+
+        <table class="size-table">
+          <thead>
+            <tr>
+              <th>Size</th>
+              <th>Bust</th>
+              <th>Hip</th>
+              <th>Flair</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>S</td>
+              <td>36"</td>
+              <td>38"</td>
+              <td>40"</td>
+            </tr>
+            <tr>
+              <td>M</td>
+              <td>39"</td>
+              <td>41"</td>
+              <td>43"</td>
+            </tr>
+            <tr>
+              <td>L</td>
+              <td>41"</td>
+              <td>43"</td>
+              <td>45"</td>
+            </tr>
+            <tr>
+              <td>XL</td>
+              <td>43"</td>
+              <td>45"</td>
+              <td>47"</td>
+            </tr>
+            <tr>
+              <td>2XL</td>
+              <td>46"</td>
+              <td>48"</td>
+              <td>50"</td>
+            </tr>
+            <tr>
+              <td>3XL</td>
+              <td>50"</td>
+              <td>52"</td>
+              <td>56"</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="size-branding-box">
+          <p>
+            Comes with <b>1” margin</b>, <b>slit lock</b>, and <b>interlocked
+              fine stitch count</b>.<br>
+            <b>Same as a good brand.</b>
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
     (function () {
       var IMG_PLACEHOLDER = "../images/partywear.webp";
       var HEX = { Black: "#000", White: "#fff", Red: "#C0334F", Pink: "#E879A9", Rose: "#A3194A", Navy: "#1F2E5A", Green: "#2F6B3A", Yellow: "#F3D56B", Beige: "#E8D5B7", Maroon: "#6E0E33" };
@@ -2484,119 +2768,119 @@
       }
 
       /* ---------- SKIN TONE MATCH ---------- */
-var TONES = [
-  { id: "fair", label: "Fair", sw: "#F6D9C6" },
-  { id: "wheatish", label: "Wheatish", sw: "#E0B48F" },
-  { id: "medium", label: "Medium / Dusky", sw: "#B98259" },
-  { id: "deep", label: "Deep", sw: "#7A4A2E" }
-];
+      var TONES = [
+        { id: "fair", label: "Fair", sw: "#F6D9C6" },
+        { id: "wheatish", label: "Wheatish", sw: "#E0B48F" },
+        { id: "medium", label: "Medium / Dusky", sw: "#B98259" },
+        { id: "deep", label: "Deep", sw: "#7A4A2E" }
+      ];
 
-// [color name regex, fair, wheatish, medium, deep]  →  2 = best match, 1 = good, 0 = not ideal
-// Order mukkiyam: specific shades munnaadi, generic kadaisila
-var COLOR_RULES = [
-  [/sky|baby ?blue|powder|ice ?blue|pastel blue/, 2, 1, 1, 0],
-  [/navy|royal|cobalt|indigo|midnight/, 2, 2, 2, 2],
-  [/turquoise|aqua|teal|peacock/, 2, 2, 2, 2],
-  [/blue/, 1, 2, 2, 2],
-  [/mint|pista|pistachio|sea ?green|lime/, 2, 1, 1, 1],
-  [/green|emerald|bottle|olive|forest/, 1, 2, 2, 2],
-  [/fuchsia|magenta|rani|hot ?pink/, 1, 2, 2, 2],
-  [/maroon|wine|burgundy|plum|mulberry/, 2, 2, 1, 1],
-  [/pink|rose|blush|salmon/, 2, 1, 1, 1],
-  [/peach/, 2, 1, 0, 0],
-  [/coral/, 1, 2, 2, 2],
-  [/orange|rust|terracotta|brick/, 1, 2, 2, 2],
-  [/mustard|yellow|gold|lemon/, 0, 2, 2, 2],
-  [/red|crimson|scarlet|cherry/, 1, 2, 2, 2],
-  [/lavender|lilac|mauve|orchid/, 2, 1, 2, 2],
-  [/purple|violet/, 1, 2, 2, 2],
-  [/cream|ivory|off ?white/, 0, 1, 2, 2],
-  [/beige|nude|sand|champagne/, 0, 1, 0, 0],
-  [/white/, 1, 2, 2, 2],
-  [/black|charcoal/, 1, 1, 1, 0],
-  [/grey|gray|silver|ash/, 1, 1, 1, 0],
-  [/brown|chocolate|coffee|tan|khaki|camel|mocha/, 1, 1, 0, 0]
-];
+      // [color name regex, fair, wheatish, medium, deep]  →  2 = best match, 1 = good, 0 = not ideal
+      // Order mukkiyam: specific shades munnaadi, generic kadaisila
+      var COLOR_RULES = [
+        [/sky|baby ?blue|powder|ice ?blue|pastel blue/, 2, 1, 1, 0],
+        [/navy|royal|cobalt|indigo|midnight/, 2, 2, 2, 2],
+        [/turquoise|aqua|teal|peacock/, 2, 2, 2, 2],
+        [/blue/, 1, 2, 2, 2],
+        [/mint|pista|pistachio|sea ?green|lime/, 2, 1, 1, 1],
+        [/green|emerald|bottle|olive|forest/, 1, 2, 2, 2],
+        [/fuchsia|magenta|rani|hot ?pink/, 1, 2, 2, 2],
+        [/maroon|wine|burgundy|plum|mulberry/, 2, 2, 1, 1],
+        [/pink|rose|blush|salmon/, 2, 1, 1, 1],
+        [/peach/, 2, 1, 0, 0],
+        [/coral/, 1, 2, 2, 2],
+        [/orange|rust|terracotta|brick/, 1, 2, 2, 2],
+        [/mustard|yellow|gold|lemon/, 0, 2, 2, 2],
+        [/red|crimson|scarlet|cherry/, 1, 2, 2, 2],
+        [/lavender|lilac|mauve|orchid/, 2, 1, 2, 2],
+        [/purple|violet/, 1, 2, 2, 2],
+        [/cream|ivory|off ?white/, 0, 1, 2, 2],
+        [/beige|nude|sand|champagne/, 0, 1, 0, 0],
+        [/white/, 1, 2, 2, 2],
+        [/black|charcoal/, 1, 1, 1, 0],
+        [/grey|gray|silver|ash/, 1, 1, 1, 0],
+        [/brown|chocolate|coffee|tan|khaki|camel|mocha/, 1, 1, 0, 0]
+      ];
 
-/* Product-wise override (optional): Firestore-la  skinMatch: { "Maroon": ["fair","wheatish"], "Printed": ["medium","deep"] } */
-function toneScore(color, toneId) {
-  var ov = product && product.skinMatch && product.skinMatch[color];
-  if (Array.isArray(ov)) return ov.indexOf(toneId) > -1 ? 2 : 0;
-  var idx = TONES.map(function (t) { return t.id; }).indexOf(toneId);
-  var name = String(color || "").toLowerCase();
-  for (var i = 0; i < COLOR_RULES.length; i++) {
-    if (COLOR_RULES[i][0].test(name)) return COLOR_RULES[i][idx + 1];
-  }
-  return null; // theriyaadha color → rating illa
-}
+      /* Product-wise override (optional): Firestore-la  skinMatch: { "Maroon": ["fair","wheatish"], "Printed": ["medium","deep"] } */
+      function toneScore(color, toneId) {
+        var ov = product && product.skinMatch && product.skinMatch[color];
+        if (Array.isArray(ov)) return ov.indexOf(toneId) > -1 ? 2 : 0;
+        var idx = TONES.map(function (t) { return t.id; }).indexOf(toneId);
+        var name = String(color || "").toLowerCase();
+        for (var i = 0; i < COLOR_RULES.length; i++) {
+          if (COLOR_RULES[i][0].test(name)) return COLOR_RULES[i][idx + 1];
+        }
+        return null; // theriyaadha color → rating illa
+      }
 
-function getTone() { try { return localStorage.getItem("aura_skin_tone") || ""; } catch (e) { return ""; } }
-function setTone(v) { try { if (v) localStorage.setItem("aura_skin_tone", v); else localStorage.removeItem("aura_skin_tone"); } catch (e) { } }
-function toneLabel(id) { var t = TONES.filter(function (x) { return x.id === id; })[0]; return t ? t.label : ""; }
+      function getTone() { try { return localStorage.getItem("aura_skin_tone") || ""; } catch (e) { return ""; } }
+      function setTone(v) { try { if (v) localStorage.setItem("aura_skin_tone", v); else localStorage.removeItem("aura_skin_tone"); } catch (e) { } }
+      function toneLabel(id) { var t = TONES.filter(function (x) { return x.id === id; })[0]; return t ? t.label : ""; }
 
-function skinColors(tone, min) {
-  return (product.colors || []).filter(function (c) {
-    return c !== "Default" && colorStock(c) > 0 && toneScore(c, tone) >= min;
-  });
-}
+      function skinColors(tone, min) {
+        return (product.colors || []).filter(function (c) {
+          return c !== "Default" && colorStock(c) > 0 && toneScore(c, tone) >= min;
+        });
+      }
 
-function renderTones() {
-  var cur = getTone();
-  $("pdTones").innerHTML = TONES.map(function (t) {
-    return '<button type="button" class="pd-tone' + (t.id === cur ? ' on' : '') + '" data-tone="' + t.id + '">' +
-      '<i style="--tone:' + t.sw + '"></i>' + esc(t.label) + '</button>';
-  }).join("");
-}
+      function renderTones() {
+        var cur = getTone();
+        $("pdTones").innerHTML = TONES.map(function (t) {
+          return '<button type="button" class="pd-tone' + (t.id === cur ? ' on' : '') + '" data-tone="' + t.id + '">' +
+            '<i style="--tone:' + t.sw + '"></i>' + esc(t.label) + '</button>';
+        }).join("");
+      }
 
-function applySkinBadges() {
-  var tone = getTone();
-  document.querySelectorAll(".pcc-match").forEach(function (b) { b.remove(); });
-  if (!tone) return;
-  document.querySelectorAll(".pd-color-card").forEach(function (card) {
-    var s = toneScore(card.dataset.color, tone);
-   
-  });
-}
+      function applySkinBadges() {
+        var tone = getTone();
+        document.querySelectorAll(".pcc-match").forEach(function (b) { b.remove(); });
+        if (!tone) return;
+        document.querySelectorAll(".pd-color-card").forEach(function (card) {
+          var s = toneScore(card.dataset.color, tone);
 
-function updateSkinResult() {
-  var el = $("pdSkinResult"), tone = getTone();
-  if (!tone || !product) { el.hidden = true; return; }
-  var label = toneLabel(tone), sel = selectedColor, s = toneScore(sel, tone);
-  var best = skinColors(tone, 2), msg = "";
+        });
+      }
 
-  if (s === null) msg = 'No skin-tone rating for <b>' + esc(sel || "this shade") + '</b>.';
-  else if (s === 2) msg = '✓ <b>' + esc(sel) + '</b> is a great match for <b>' + esc(label) + '</b> skin.';
-  else if (s === 1) msg = '<b>' + esc(sel) + '</b> works well on <b>' + esc(label) + '</b> skin.';
-  else msg = 'For <b>' + esc(label) + '</b> skin, <b>' + esc(sel || "this shade") + '</b> is a subtler choice.';
+      function updateSkinResult() {
+        var el = $("pdSkinResult"), tone = getTone();
+        if (!tone || !product) { el.hidden = true; return; }
+        var label = toneLabel(tone), sel = selectedColor, s = toneScore(sel, tone);
+        var best = skinColors(tone, 2), msg = "";
 
-  if (s !== 2 && best.length && best.indexOf(sel) < 0) msg += ' Best picks: <b>' + best.map(esc).join(", ") + '</b>.';
-  msg += '<small>Styling suggestion only. The final look depends on your undertone and lighting.</small>';
-  el.innerHTML = msg; el.hidden = false;
-}
+        if (s === null) msg = 'No skin-tone rating for <b>' + esc(sel || "this shade") + '</b>.';
+        else if (s === 2) msg = '✓ <b>' + esc(sel) + '</b> is a great match for <b>' + esc(label) + '</b> skin.';
+        else if (s === 1) msg = '<b>' + esc(sel) + '</b> works well on <b>' + esc(label) + '</b> skin.';
+        else msg = 'For <b>' + esc(label) + '</b> skin, <b>' + esc(sel || "this shade") + '</b> is a subtler choice.';
 
-function renderSkin() {
-  var multi = product.colors.length > 0 && !(product.colors.length === 1 && product.colors[0] === "Default");
-  $("pdSkin").style.display = multi ? "" : "none";
-  if (!multi) return;
-  renderTones(); applySkinBadges(); updateSkinResult();
-}
+        if (s !== 2 && best.length && best.indexOf(sel) < 0) msg += ' Best picks: <b>' + best.map(esc).join(", ") + '</b>.';
+        msg += '<small>Styling suggestion only. The final look depends on your undertone and lighting.</small>';
+        el.innerHTML = msg; el.hidden = false;
+      }
 
-function initSkin() {
-  $("pdTones").addEventListener("click", function (e) {
-    var b = e.target.closest(".pd-tone"); if (!b || !product) return;
-    var id = b.dataset.tone, was = getTone() === id;
-    setTone(was ? "" : id);
-    renderTones(); applySkinBadges();
-    
-    // 🔥 NEW: Tone maarumbothu gallery image ah update pannu 🔥
-    updateGalleryImages(product, selectedColor); 
-    // 🔥 END 🔥
+      function renderSkin() {
+        var multi = product.colors.length > 0 && !(product.colors.length === 1 && product.colors[0] === "Default");
+        $("pdSkin").style.display = multi ? "" : "none";
+        if (!multi) return;
+        renderTones(); applySkinBadges(); updateSkinResult();
+      }
 
-    /* colour is NOT changed automatically any more - the customer keeps the colour they picked;
-       the text below only suggests the best-match colours */
-    updateSkinResult();
-  });
-}
+      function initSkin() {
+        $("pdTones").addEventListener("click", function (e) {
+          var b = e.target.closest(".pd-tone"); if (!b || !product) return;
+          var id = b.dataset.tone, was = getTone() === id;
+          setTone(was ? "" : id);
+          renderTones(); applySkinBadges();
+
+          // 🔥 NEW: Tone maarumbothu gallery image ah update pannu 🔥
+          updateGalleryImages(product, selectedColor);
+          // 🔥 END 🔥
+
+          /* colour is NOT changed automatically any more - the customer keeps the colour they picked;
+             the text below only suggests the best-match colours */
+          updateSkinResult();
+        });
+      }
       /* ---------- gallery ---------- */
       /* ---------- gallery (swipe slider) ---------- */
       function slideIndex() {
@@ -2625,13 +2909,13 @@ function initSkin() {
 
         // 🔥 NEW SKIN TONE LOGIC 🔥
         var activeTone = getTone(); // Current selected tone (fair, wheatish, etc.)
-        
+
         // Antha color ku antha tone la image irukka nu check pannu
         var toneImgData = p.toneImages && p.toneImages[color] && p.toneImages[color][activeTone];
-        
+
         // Oru vela tone image (front) irundha, FIRST image ah mattum athuku maathu
         if (toneImgData && toneImgData.front) {
-            list[0].src = toneImgData.front;
+          list[0].src = toneImgData.front;
         }
         // 🔥 END OF NEW LOGIC 🔥
 
@@ -2712,7 +2996,7 @@ function initSkin() {
         $("pdVideoBtn").style.display = currentVideoUrl ? "flex" : "none";
 
         renderColors();
-renderSkin();
+        renderSkin();
         renderSizes();
         updatePrice();
 
@@ -2784,9 +3068,9 @@ renderSkin();
       }
 
       /* ---------- interactions ---------- */
-  function initInteractions() {
-  initSkin();
-  $("pdColors").addEventListener("click", function (e) {
+      function initInteractions() {
+        initSkin();
+        $("pdColors").addEventListener("click", function (e) {
           var b = e.target.closest(".pd-color-card");
           if (!b || !product) return;
           document.querySelectorAll(".pd-color-card").forEach(function (x) { x.classList.remove("sel"); });
@@ -2812,7 +3096,7 @@ renderSkin();
           b.classList.add("sel");
           selectedSize = b.dataset.size;
           updateCTA();
-                 renderSizes();      // sizes / sold-out / stock differ per color
+          renderSizes();      // sizes / sold-out / stock differ per color
           updateCTA();
           updateSkinResult();   // ← idha add pannunga
         });
@@ -2892,10 +3176,9 @@ renderSkin();
 
         // do not allow more than the stock of this color + size
         var avail = availableStock(selectedColor, selectedSize);
-        var inCart = getCart().filter(function (x) {
+        var inCart = buyNow ? 0 : getCart().filter(function (x) {
           return x.id === product.id && x.size === selectedSize && x.color === selectedColor;
         }).reduce(function (a, x) { return a + (x.qty || 1); }, 0);
-
         if (inCart + 1 > avail) {
           alert("Sorry, only " + avail + " item" + (avail === 1 ? "" : "s") + " available in this size.");
           return;
@@ -2908,37 +3191,37 @@ renderSkin();
 
         var finalPrice = currentPrice();
 
-var finalImg = (product.images && product.images[0]) || product.image || IMG_PLACEHOLDER;
-var cl = colorImageList(product, selectedColor);
-if (cl.length) finalImg = cl[0].src;
+        var finalImg = (product.images && product.images[0]) || product.image || IMG_PLACEHOLDER;
+        var cl = colorImageList(product, selectedColor);
+        if (cl.length) finalImg = cl[0].src;
 
-// 🔥 NEW: Tone select pannirundha, antha front image ah cart ku edu 🔥
-var activeTone = getTone();
-var toneData = product.toneImages && product.toneImages[selectedColor] && product.toneImages[selectedColor][activeTone];
-if (toneData && toneData.front) {
-    finalImg = toneData.front;
-}
-// 🔥 END 🔥
-        if (existing > -1) {
-          cart[existing].qty = (cart[existing].qty || 1) + 1;
-        } else {
-          cart.push({
-            id: product.id,
-            name: product.name,
-            price: finalPrice,
-            image: finalImg,
-            size: selectedSize,
-            color: selectedColor || "",
-            qty: 1,
-            gift: $("pdGift") && $("pdGift").checked ? 399 : 0
-          });
+        // 🔥 NEW: Tone select pannirundha, antha front image ah cart ku edu 🔥
+        var activeTone = getTone();
+        var toneData = product.toneImages && product.toneImages[selectedColor] && product.toneImages[selectedColor][activeTone];
+        if (toneData && toneData.front) {
+          finalImg = toneData.front;
         }
+        // 🔥 END 🔥
+        if (!buyNow) {
+          if (existing > -1) {
+            cart[existing].qty = (cart[existing].qty || 1) + 1;
+          } else {
+            cart.push({
+              id: product.id,
+              name: product.name,
+              price: finalPrice,
+              image: finalImg,
+              size: selectedSize,
+              color: selectedColor || "",
+              qty: 1,
+              gift: $("pdGift") && $("pdGift").checked ? 399 : 0
+            });
+          }
+          setCart(cart);
 
-        setCart(cart);
-
-        // Force open the cart drawer
-        if (window.AuraCart && typeof window.AuraCart.open === "function") {
-          window.AuraCart.open();
+          if (window.AuraCart && typeof window.AuraCart.open === "function") {
+            window.AuraCart.open();
+          }
         }
 
         if (buyNow) {
@@ -3002,6 +3285,66 @@ if (toneData && toneData.front) {
         updateCartBadge();
       }
 
+async function trackView(p) {
+  try {
+    if (typeof gtag === "function") {
+      gtag("event", "view_item", {
+        currency: "INR", value: p.price || 0,
+        items: [{ item_id: p.id, item_name: p.name || "", price: p.price || 0 }]
+      });
+    }
+    if (localStorage.getItem("aura_no_track")) return;
+
+    var m = await import("./js/firebase.js");
+    var f = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");
+
+    // ⭐ WAIT for auth to restore (important!)
+    try { if (m.auth && m.auth.authStateReady) await m.auth.authStateReady(); } catch (e) { }
+
+    // 1️⃣ Total views (existing) - இது டேஷ்போர்டு "Most Viewed" காட்டும்
+    var key = "aura_pv_" + p.id;
+    if (!sessionStorage.getItem(key)) {
+      sessionStorage.setItem(key, "1");
+      var ref = f.doc(m.db, "productViews", p.id);
+      var snap = await f.getDoc(ref);
+      if (!snap.exists()) {
+        await f.setDoc(ref, { name: p.name || "", views: 1, lastViewedAt: f.serverTimestamp() });
+      } else {
+        await f.updateDoc(ref, { views: f.increment(1), lastViewedAt: f.serverTimestamp() });
+      }
+    }
+
+    // 2️⃣ ⭐ NEW: Per-user view tracking (இது தான் WhatsApp Follow-up-க்கு உதவும்)
+    const uid = m.auth?.currentUser?.uid;
+    console.log("🔍 trackView — uid:", uid); 
+
+    if (uid) {
+      const userRef = f.doc(m.db, "productViews", p.id, "viewers", uid);
+      const userSnap = await f.getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        await f.setDoc(userRef, {
+          userId: uid,
+          userName: m.auth.currentUser.displayName || "",
+          userPhone: m.auth.currentUser.phoneNumber || "", // இங்க தான் நம்பர் சேவ் ஆகுது
+          views: 1,
+          firstViewedAt: f.serverTimestamp(),
+          lastViewedAt: f.serverTimestamp()
+        });
+        console.log("✅ viewers doc created");
+      } else {
+        await f.updateDoc(userRef, {
+          views: f.increment(1),
+          lastViewedAt: f.serverTimestamp()
+        });
+        console.log("✅ viewers doc updated");
+      }
+    } else {
+      console.warn("⚠️ No uid — customer not logged in. Per-user tracking skipped.");
+    }
+  } catch (e) { console.warn("view track failed", e); }
+}
+
       /* ---------- boot ---------- */
       async function boot() {
         var params = new URLSearchParams(location.search);
@@ -3019,6 +3362,7 @@ if (toneData && toneData.front) {
             : "No products available yet.");
         } else {
           render();
+          trackView(product);
         }
         initInteractions();
       }
@@ -3059,8 +3403,8 @@ if (toneData && toneData.front) {
     document.getElementById("videoModal").addEventListener("click", function (e) { if (e.target === this) window.closeVideoModal(); });
   </script>
 
-  <!-- Size Guide Modal Script -->
-  <script>
+    <!-- Size Guide Modal Script -->
+    <script>
     (function () {
       var link = document.querySelector('.pd-guide');
       var modal = document.getElementById('sizeModal');
@@ -3071,21 +3415,19 @@ if (toneData && toneData.front) {
     })();
   </script>
 
-  <!-- 🔥 REVIEWS JS LOGIC 🔥 -->
-  <script type="module">
-    import { db, collection, addDoc, getDocs, query, where, serverTimestamp, orderBy } from "./js/firebase.js";
+    <script type="module">
+    import { db, collection, addDoc, getDocs, query, where, serverTimestamp } from "./js/firebase.js";
 
     let currentRating = 5;
     const productId = new URLSearchParams(location.search).get('id');
+    const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
     async function loadReviews() {
       if (!productId) return;
       const listEl = document.getElementById('reviewList');
 
       try {
-        // no orderBy -> no Firestore index error; we sort manually below
-        const q = query(collection(db, "reviews"), where("productId", "==", productId));
-        const snap = await getDocs(q);
+        const snap = await getDocs(query(collection(db, "reviews"), where("productId", "==", productId)));
 
         if (snap.empty) {
           listEl.innerHTML = '<p style="font-size:14px; color:var(--pd-muted);">No reviews yet. Be the first to review!</p>';
@@ -3095,43 +3437,32 @@ if (toneData && toneData.front) {
           return;
         }
 
+        /* createdAt innum server-la set aagala-na (just submit pannadhu), adhu newest-a eduthukkum */
+        const ms = r => (r.createdAt && r.createdAt.toMillis) ? r.createdAt.toMillis() : Date.now();
+        const rows = snap.docs.map(d => d.data()).sort((a, b) => ms(b) - ms(a));
+
         let totalStars = 0;
-        let html = '';
-
-        let reviewsData = [];
-        snap.docs.forEach(doc => reviewsData.push(doc.data()));
-        reviewsData.sort((a, b) => {
-          const timeA = a.createdAt?.toMillis() || 0;
-          const timeB = b.createdAt?.toMillis() || 0;
-          return timeB - timeA; // Newest first
-        });
-
-        reviewsData.forEach(r => {
-          totalStars += r.rating;
-          const date = r.createdAt ? r.createdAt.toDate().toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recent';
-          const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-          const initial = (r.userName || 'A')[0].toUpperCase();
-
-          html += `
+        const html = rows.map(r => {
+          const rating = Math.max(1, Math.min(5, Number(r.rating) || 5));
+          totalStars += rating;
+          const date = (r.createdAt && r.createdAt.toDate)
+            ? r.createdAt.toDate().toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })
+            : 'Just now';
+          const name = r.userName || r.name || 'AURA Customer';
+          return `
             <div class="review-item">
-              <div class="ri-head">
-                <div class="ri-user">
-                  <div class="ri-avatar">${initial}</div>
-                  <span class="ri-name">${r.userName || 'AURA Customer'}</span>
-                </div>
-                <span class="ri-date">${date}</span>
-              </div>
-              <div class="ri-stars">${stars}</div>
-              <p class="ri-text">${r.text}</p>
-            </div>
-          `;
-        });
+              <div class="ri-stars">${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}</div>
+              <b class="ri-name" style="display:block; margin-bottom:4px;">${esc(name)}</b>
+              <p class="ri-text">${esc(r.text)}</p>
+              <span class="ri-date" style="display:block; margin-top:6px;">${date}</span>
+            </div>`;
+        }).join('');
 
         listEl.innerHTML = html;
 
-        const avg = (totalStars / reviewsData.length).toFixed(1);
-        document.getElementById('avgRating').textContent = avg;
-        document.getElementById('totalReviews').textContent = reviewsData.length + " Reviews";
+        const avg = totalStars / rows.length;
+        document.getElementById('avgRating').textContent = avg.toFixed(1);
+        document.getElementById('totalReviews').textContent = rows.length + (rows.length === 1 ? " Review" : " Reviews");
         document.getElementById('avgStars').textContent = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
 
       } catch (e) {
@@ -3153,9 +3484,7 @@ if (toneData && toneData.front) {
     stars.forEach(star => {
       star.addEventListener('click', () => {
         currentRating = Number(star.dataset.val);
-        stars.forEach(s => {
-          s.classList.toggle('active', Number(s.dataset.val) <= currentRating);
-        });
+        stars.forEach(s => s.classList.toggle('active', Number(s.dataset.val) <= currentRating));
       });
     });
 
@@ -3166,6 +3495,7 @@ if (toneData && toneData.front) {
         const nameInput = document.getElementById('reviewName').value.trim();
         const text = document.getElementById('reviewText').value.trim();
 
+        if (!productId) return alert("Product not found.");
         if (!nameInput) return alert("Please enter your name!");
         if (!text) return alert("Please write something!");
 
@@ -3184,13 +3514,12 @@ if (toneData && toneData.front) {
           document.getElementById('reviewName').value = '';
           document.getElementById('reviewText').value = '';
           modal.classList.remove('show');
-          alert("Thank you for your review!");
-
-          loadReviews();
+          await loadReviews();
+          document.getElementById('pdReviews').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         } catch (e) {
-          console.error(e);
-          alert("Failed to submit review.");
+          console.error("Review save failed:", e);
+          alert("Failed to submit review" + (e && e.code ? " (" + e.code + ")" : "") + ". Please try again.");
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = "Submit Review";
@@ -3199,15 +3528,14 @@ if (toneData && toneData.front) {
     }
 
     document.addEventListener("DOMContentLoaded", loadReviews);
-
-    
   </script>
-  <script src="js/nav-menu.js"></script>
-  <script type="module" src="js/checkout.js"></script>
-  <script src="./js/cart-drawer.js"></script>
-  <script src="js/theme.js"></script>
-  <script type="module" src="js/site-settings.js"></script>
-  <script type="module" src="js/session.js"></script>
-</body>
+
+    <script src="js/nav-menu.js"></script>
+    <script type="module" src="js/checkout.js"></script>
+    <script src="./js/cart-drawer.js"></script>
+    <script src="js/theme.js"></script>
+    <script type="module" src="js/site-settings.js"></script>
+    <script type="module" src="js/session.js"></script>
+  </body>
 
 </html>
