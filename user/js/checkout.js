@@ -10,6 +10,7 @@ import * as FB from "./firebase.js";
     cartKey: "aura_cart",          // localStorage key your cart uses
     ordersCollection: "orders",    // Firestore collection the admin orders page reads
     productsCollection: "products",
+    intentsCollection: "paymentIntents", // started online payments (used to recover orders if the customer never comes back)
     logo: "../assets/logo.png",
     freeShipOver: 0,
     shipFee: 0,
@@ -36,6 +37,8 @@ import * as FB from "./firebase.js";
     coupons: { AURA10: { pct: 10 }, WELCOME100: { flat: 100, min: 999 } }
   }, window.AURA_CHECKOUT_CONFIG || {});
 
+  const MAX_ADDR = 5;               // saved addresses per customer
+
   /* ---------- helpers ---------- */
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const inr = n => "₹" + Number(n).toLocaleString("en-IN", { maximumFractionDigits: 0 });
@@ -43,6 +46,8 @@ import * as FB from "./firebase.js";
   const digits = s => String(s ?? "").replace(/\D/g, "");
   const num = v => Number(String(v ?? 0).replace(/[^\d.]/g, "")) || 0;
   const titleCase = s => String(s || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const clean = o => JSON.parse(JSON.stringify(o));   // drops undefined (Firestore rejects it)
 
   /* phone helpers: keep the last 10 digits + country code, so the number always shows correctly */
   const ten = p => digits(p).slice(-10);
@@ -67,7 +72,8 @@ import * as FB from "./firebase.js";
     wallet: sv(22, 22, '<path d="M20 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15v13a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V5"/><circle cx="16.5" cy="14" r="1"/>'),
     cod: sv(22, 22, '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>'),
     info: sv(13, 13, '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>', 2),
-    check: sv(38, 38, '<path d="m5 12 5 5 9-10"/>', 3)
+    check: sv(38, 38, '<path d="m5 12 5 5 9-10"/>', 3),
+    warn: sv(38, 38, '<path d="M12 7v6M12 17h.01"/>', 3)
   };
 
   const PAY = [
@@ -92,9 +98,14 @@ import * as FB from "./firebase.js";
   };
 
   /* ---------- state ---------- */
-  const S = { open: false, step: "login", items: [], buyNow: false, user: null, addr: null, coupon: null, method: null, busy: false, itemsOpen: false, tip: true, order: null, phoneDraft: "", msgI: 0, reveal: false, utr: "", pinInfo: null };
-  let authResolve, pending = null, ribbonTimer, toastTimer, flashTimer;
+  const S = {
+    open: false, step: "login", items: [], buyNow: false, user: null, addr: null, coupon: null, method: null, busy: false,
+    itemsOpen: false, tip: true, order: null, phoneDraft: "", msgI: 0, reveal: false, utr: "", pinInfo: null,
+    addrs: [], defId: "", pickedId: "", editing: null, addrFrom: "summary", pulledFor: "", paidFail: null
+  };
+  let authResolve, pending = null, ribbonTimer, toastTimer, flashTimer, resume = null;
   const authReady = new Promise(r => (authResolve = r));
+  const handling = new Set();   // payment txn ids that this page is already finishing
 
   /* ---------- DOM shell ---------- */
   const root = document.createElement("div");
@@ -117,6 +128,33 @@ import * as FB from "./firebase.js";
     </div>`;
   document.body.appendChild(root);
   const $ = id => document.getElementById(id);
+
+  /* small extra styles for the saved-address list (kept here so checkout.css needs no change) */
+  (function addCss() {
+    const st = document.createElement("style");
+    st.id = "ckAddrCss";
+    st.textContent = `
+      .ck-chg-row{display:flex;justify-content:flex-end;margin-top:12px}
+      .ck-chg{border:1px solid #A3194A;background:#fff;color:#A3194A;border-radius:999px;padding:7px 16px;font:500 13px "Jost",sans-serif;cursor:pointer}
+      .ck-chg:hover{background:#A3194A;color:#fff}
+      .ck-al{display:grid;gap:12px;margin:8px 0 16px}
+      .ck-ai{display:flex;gap:10px;align-items:flex-start;padding:14px;border:1.5px solid #ead9df;border-radius:14px;background:#fff}
+      .ck-ai.on{border-color:#A3194A;background:#fdf4f7}
+      .ck-ai-main{display:flex;gap:12px;align-items:flex-start;flex:1;min-width:0;background:none;border:0;padding:0;text-align:left;font:inherit;color:inherit;cursor:pointer}
+      .ck-ai-r{flex:none;width:18px;height:18px;border-radius:50%;border:2px solid #cdb6bf;margin-top:2px;background:#fff}
+      .ck-ai.on .ck-ai-r{border-color:#A3194A;background:#A3194A;box-shadow:inset 0 0 0 3px #fff}
+      .ck-ai-t{display:block;min-width:0}
+      .ck-ai-t b{display:flex;align-items:center;gap:8px;font-size:15px}
+      .ck-ai-t em{font-style:normal;font-size:11px;font-weight:600;color:#A3194A;background:#fbeef2;border-radius:999px;padding:2px 8px}
+      .ck-ai-t p{margin:3px 0 0;font-size:13px;line-height:1.45;color:#5f4e54;overflow-wrap:anywhere}
+      .ck-ai-act{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+      .ck-ai-act button{background:none;border:0;color:#A3194A;font:500 12px "Jost",sans-serif;cursor:pointer;padding:2px 4px}
+      .ck-ai-act button:hover{text-decoration:underline}
+      .ck-def{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13px;line-height:1.4;cursor:pointer}
+      .ck-def input{margin-top:3px;width:18px;height:18px;accent-color:#A3194A;flex:none}
+    `;
+    document.head.appendChild(st);
+  })();
 
   /* ---------- cart + totals ---------- */
   const normItem = i => ({ id: i.id || i.productId || "", name: i.name || i.title || "Product", price: num(i.price), qty: Number(i.qty || i.quantity || 1) || 1, image: i.image || (i.images && i.images[0]) || "", size: i.size || i.selectedSize || "", color: i.color || "" });
@@ -143,14 +181,76 @@ import * as FB from "./firebase.js";
   /* the customer's mobile number: Firebase phone login first, then what they typed / saved */
   const phoneOf = () => (S.user && S.user.phoneNumber) || (S.addr && S.addr.phone) || "";
 
-  /* ---------- saved address (per user) ---------- */
-  const addrKey = () => "aura_addr_" + (S.user ? S.user.uid : "guest");
-  function loadAddr() { try { const a = JSON.parse(localStorage.getItem(addrKey()) || "{}"); S.addr = a[a.last] || null; } catch (e) { S.addr = null; } }
-  function saveAddr(a) {
-    let all = {}; try { all = JSON.parse(localStorage.getItem(addrKey()) || "{}"); } catch (e) { }
-    all[a.label] = a; all.last = a.label;
-    try { localStorage.setItem(addrKey(), JSON.stringify(all)); } catch (e) { }
-    S.addr = a;
+  /* ================= SAVED ADDRESSES (many per customer, kept on the account) =================
+     Stored in localStorage (instant) AND in Firestore users/{uid}.savedAddresses (so a new phone / browser
+     shows the same addresses). The address used for the last order becomes the default. */
+  const newId = () => "a" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const aKey = () => "aura_addrs_" + (S.user ? S.user.uid : "guest");
+  const oldKey = () => "aura_addr_" + (S.user ? S.user.uid : "guest");   // old single-address format (auto migrated)
+  const addrLine = a => [a.flat, a.area, titleCase(a.city), titleCase(a.state), a.pin].filter(Boolean).join(", ");
+
+  function readLocalAddrs() {
+    let list = [], def = "";
+    try {
+      const raw = JSON.parse(localStorage.getItem(aKey()) || "null");
+      if (raw && Array.isArray(raw.list)) { list = raw.list; def = raw.def || ""; }
+      else {
+        const old = JSON.parse(localStorage.getItem(oldKey()) || "{}");
+        Object.keys(old).forEach(k => { if (k !== "last" && old[k] && old[k].pin) list.push(Object.assign({ id: newId(), label: k }, old[k])); });
+        const m = list.find(x => x.label === old.last);
+        def = m ? m.id : "";
+      }
+    } catch (e) { }
+    list = list.filter(a => a && a.pin).map(a => a.id ? a : Object.assign({ id: newId() }, a)).slice(0, MAX_ADDR);
+    if (!list.some(a => a.id === def)) def = list[0] ? list[0].id : "";
+    return { list, def };
+  }
+  function loadAddrs() {
+    const r = readLocalAddrs();
+    S.addrs = r.list; S.defId = r.def; S.pickedId = "";
+    S.addr = S.addrs.find(a => a.id === S.defId) || S.addrs[0] || null;
+  }
+  function writeLocalAddrs() { try { localStorage.setItem(aKey(), JSON.stringify({ list: S.addrs, def: S.defId })); } catch (e) { } }
+  async function persistAddrs() {
+    writeLocalAddrs();
+    const u = S.user;
+    if (!u || !FB.setDoc || !FB.doc || !FB.db) return;
+    try { await FB.setDoc(FB.doc(FB.db, "users", u.uid), clean({ savedAddresses: S.addrs, defaultAddressId: S.defId }), { merge: true }); }
+    catch (e) { console.warn("Address sync skipped:", e); }
+  }
+  /* pull the account's addresses (needed on a new device / after clearing the browser) */
+  async function pullAddrs() {
+    const u = S.user; if (!u || !FB.getDoc || !FB.doc || !FB.db) return;
+    const had = !!S.addr;
+    try {
+      const snap = await FB.getDoc(FB.doc(FB.db, "users", u.uid));
+      if (!S.user || S.user.uid !== u.uid || !snap.exists()) return;
+      const d = snap.data() || {};
+      const remote = Array.isArray(d.savedAddresses) ? d.savedAddresses.filter(a => a && a.pin && a.id) : [];
+      if (!remote.length) { if (S.addrs.length) persistAddrs(); return; }       // account empty -> upload this device's addresses
+      const ids = new Set(remote.map(a => a.id));
+      const extra = S.addrs.filter(a => !ids.has(a.id));
+      S.addrs = remote.concat(extra).slice(0, MAX_ADDR);
+      S.defId = S.addrs.some(a => a.id === d.defaultAddressId) ? d.defaultAddressId : (S.addrs.some(a => a.id === S.defId) ? S.defId : S.addrs[0].id);
+      S.addr = S.addrs.find(a => a.id === (S.pickedId || S.defId)) || S.addrs[0];
+      writeLocalAddrs();
+      if (extra.length) persistAddrs();
+      if (!S.open) return;
+      if (!had && S.step === "address" && !S.editing && !(($("ckPin") || {}).value)) {   // first-time form was showing but the account has addresses
+        S.step = "summary"; S.reveal = true; ensurePin(); render();
+      } else if (S.step === "summary") { ensurePin(); render(); }
+      else if (S.step === "addrlist") { delete $("ckSheet").dataset.built; render(); }
+    } catch (e) { console.warn("Address load skipped:", e); }
+  }
+  /* after an order: that address becomes the default for next time */
+  function rememberAddr(a) {
+    if (!a || !S.user) return;
+    if (!a.id) a.id = newId();
+    const i = S.addrs.findIndex(x => x.id === a.id);
+    if (i > -1) S.addrs[i] = Object.assign({}, S.addrs[i], a);
+    else if (S.addrs.length < MAX_ADDR) S.addrs.push(a);
+    if (S.addrs.some(x => x.id === a.id)) S.defId = a.id;
+    persistAddrs();
   }
 
   /* ---------- open / close ---------- */
@@ -159,7 +259,7 @@ import * as FB from "./firebase.js";
     S.items = (opts.items || readCart()).map(normItem);
     S.buyNow = !!opts.items;
     if (!S.items.length) { alert("Your bag is empty."); return; }
-    S.coupon = opts.coupon || null; S.method = null; S.itemsOpen = false; S.tip = true; S.order = null; S.utr = "";
+    S.coupon = opts.coupon || null; S.method = null; S.itemsOpen = false; S.tip = true; S.order = null; S.utr = ""; S.editing = null; S.paidFail = null;
     S.open = true;
     root.classList.add("show");
     document.body.style.overflow = "hidden";
@@ -174,9 +274,14 @@ import * as FB from "./firebase.js";
     $("ckFlash").classList.remove("on");
   }
   function route() {
-    if (S.step === "done" && S.order) return render();
-    if (!S.user) { S.step = "login"; S.addr = null; }
-    else { loadAddr(); S.step = S.addr ? "summary" : "address"; S.reveal = !!S.addr; ensurePin(); } render();
+    if ((S.step === "done" && S.order) || (S.step === "paidfail" && S.paidFail)) return render();
+    if (!S.user) { S.step = "login"; S.addr = null; S.addrs = []; S.pulledFor = ""; }
+    else {
+      loadAddrs();
+      S.step = S.addr ? "summary" : "address"; S.reveal = !!S.addr; S.editing = null; ensurePin();
+      if (S.pulledFor !== S.user.uid) { S.pulledFor = S.user.uid; pullAddrs(); }
+    }
+    render();
   }
 
   /* ---------- ribbon / toast / flash ---------- */
@@ -205,14 +310,17 @@ import * as FB from "./firebase.js";
     box.hidden = !S.itemsOpen;
     box.innerHTML = S.itemsOpen ? S.items.map(i => `<div class="ck-it"><img src="${esc(i.image)}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(i.name)}</b><small>${i.size ? "Size " + esc(i.size) + " · " : ""}${i.color ? esc(i.color) + " · " : ""}Qty ${i.qty}</small></div><span>${inr(i.price * i.qty)}</span></div>`).join("") : "";
 
-    /* the address sheet slides up over the page behind it (like HAY) */
-    const base = S.step === "address" ? (S.addr ? "summary" : "login") : S.step;
-    ({ login: viewLogin, summary: viewSummary, upi: viewUpi, done: viewDone })[base]();
+    /* the address sheet (form or saved-address list) slides up over the page behind it (like Zomato / HAY) */
+    const showSheet = S.step === "address" || S.step === "addrlist";
+    const base = showSheet ? (S.addr ? "summary" : "login") : S.step;
+    ({ login: viewLogin, summary: viewSummary, upi: viewUpi, done: viewDone, paidfail: viewPaidFail })[base]();
 
-    const sheet = $("ckSheet"), showSheet = S.step === "address";
+    const sheet = $("ckSheet");
     $("ckDim").classList.toggle("on", showSheet);
     if (showSheet) {
-      if (!sheet.dataset.built) { viewSheet(); sheet.dataset.built = "1"; requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add("show"))); }
+      const first = !sheet.dataset.built;
+      if (sheet.dataset.built !== S.step) { (S.step === "addrlist" ? viewAddrList : viewSheet)(); sheet.dataset.built = S.step; }
+      if (first) requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add("show")));
     } else { delete sheet.dataset.built; sheet.classList.remove("show"); sheet.innerHTML = ""; }
     $("ckBody").scrollTop = 0;
   }
@@ -235,14 +343,16 @@ import * as FB from "./firebase.js";
 
   const F = (id, label, val, o = {}) => `<div class="ck-f" data-f="${id}"><input id="${id}" placeholder=" " value="${esc(val)}" ${o.type ? `type="${o.type}"` : ""} ${o.max ? `maxlength="${o.max}"` : ""} ${o.mode ? `inputmode="${o.mode}"` : ""} autocomplete="${o.ac || "off"}"><label for="${id}">${label}</label><p class="ck-ferr"></p></div>`;
 
+  /* add / edit address form */
   function viewSheet() {
-    const a = S.addr || {}, u = S.user || {};
+    const a = S.editing || {}, pre = S.addr || {}, u = S.user || {};
     const needPhone = !u.phoneNumber;
     const sheet = $("ckSheet");
+    const lbl = a.label || "home";
     sheet.classList.toggle("rev", S.reveal);
     sheet.innerHTML = `
       <div class="ck-sheet-b">
-        <p class="ck-title">Add Delivery Address</p>
+        <p class="ck-title">${S.editing ? "Edit Delivery Address" : "Add Delivery Address"}</p>
         <p class="ck-sub">Shipping Address</p>
         ${F("ckPin", "Pincode *", a.pin || "", { mode: "numeric", max: 6, ac: "postal-code" })}
         <div class="ck-more">
@@ -251,16 +361,18 @@ import * as FB from "./firebase.js";
           ${F("ckArea", "Apartment, Area, Sector, Village *", a.area || "", { ac: "address-line2" })}
           ${F("ckLandmark", "Landmark (Optional)", a.landmark || "", { ac: "off" })}
           <p class="ck-title" style="margin-top:14px">Customer Information</p>
-          ${F("ckName", "Full Name *", a.name || u.displayName || "", { ac: "name" })}
-          ${F("ckMail", "Email Address *", a.email || u.email || "", { type: "email", ac: "email" })}
-          ${needPhone ? F("ckMob", "Mobile Number *", ten(a.phone || S.phoneDraft), { mode: "numeric", max: 10, ac: "tel-national" }) : ""}
+          ${F("ckName", "Full Name *", a.name || pre.name || u.displayName || "", { ac: "name" })}
+          ${F("ckMail", "Email Address *", a.email || pre.email || u.email || "", { type: "email", ac: "email" })}
+          ${needPhone ? F("ckMob", "Mobile Number *", ten(a.phone || pre.phone || S.phoneDraft), { mode: "numeric", max: 10, ac: "tel-national" }) : ""}
           <p class="ck-title" style="margin-top:14px">Save Address As</p>
           <div class="ck-save">
-            <label class="ck-pillr"><input type="radio" name="ckLbl" value="home" ${(a.label || "home") === "home" ? "checked" : ""}>Home<i></i></label>
-            <label class="ck-pillr"><input type="radio" name="ckLbl" value="work" ${a.label === "work" ? "checked" : ""}>Work<i></i></label>
+            <label class="ck-pillr"><input type="radio" name="ckLbl" value="home" ${lbl === "home" ? "checked" : ""}>Home<i></i></label>
+            <label class="ck-pillr"><input type="radio" name="ckLbl" value="work" ${lbl === "work" ? "checked" : ""}>Work<i></i></label>
+            <label class="ck-pillr"><input type="radio" name="ckLbl" value="other" ${lbl === "other" ? "checked" : ""}>Other<i></i></label>
           </div>
+          ${S.addrs.length ? `<label class="ck-def"><input type="checkbox" id="ckDef" ${S.editing && S.editing.id === S.defId ? "checked" : ""}><span>Make this my default address</span></label>` : ""}
           <label class="ck-wa" style="display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13px;line-height:1.4;cursor:pointer">
-            <input type="checkbox" id="ckWa" ${a.waOptIn ? "checked" : ""} style="margin-top:3px;width:18px;height:18px;accent-color:#A3194A;flex:none">
+            <input type="checkbox" id="ckWa" ${a.waOptIn || pre.waOptIn ? "checked" : ""} style="margin-top:3px;width:18px;height:18px;accent-color:#A3194A;flex:none">
             <span>I agree to receive order updates &amp; offers on WhatsApp. * <small style="color:#777">(Reply STOP anytime to opt out.)</small></span>
           </label>
           <p id="ckWaErr" style="color:#d93025;font-size:12px;margin:4px 0 0 28px;display:none">Please tick this box to continue</p>
@@ -272,15 +384,47 @@ import * as FB from "./firebase.js";
     if (!S.reveal) setTimeout(() => $("ckPin") && $("ckPin").focus(), 380);
   }
 
+  /* saved addresses list (choose / edit / delete / make default / add new) */
+  function viewAddrList() {
+    const sheet = $("ckSheet");
+    sheet.classList.add("rev");
+    const mine = pCompact(phoneOf());
+    sheet.innerHTML = `
+      <div class="ck-sheet-b">
+        <p class="ck-title">Select delivery address</p>
+        <p class="ck-sub">Saved addresses</p>
+        <div class="ck-al">${S.addrs.map(a => {
+      const on = !!S.addr && S.addr.id === a.id, ph = a.phone ? pCompact(a.phone) : mine;
+      return `<div class="ck-ai ${on ? "on" : ""}">
+            <button type="button" class="ck-ai-main" data-a="pickAddr" data-id="${esc(a.id)}" aria-pressed="${on}">
+              <span class="ck-ai-r"></span>
+              <span class="ck-ai-t"><b>${esc(titleCase(a.label || "home"))}${a.id === S.defId ? "<em>Default</em>" : ""}</b>
+                <p>${esc(a.name)}${ph ? " · " + esc(ph) : ""}</p>
+                <p>${esc(addrLine(a))}</p></span>
+            </button>
+            <div class="ck-ai-act">
+              <button type="button" data-a="editAddrId" data-id="${esc(a.id)}">Edit</button>
+              ${a.id === S.defId ? "" : `<button type="button" data-a="setDef" data-id="${esc(a.id)}">Make default</button>`}
+              <button type="button" data-a="delAddr" data-id="${esc(a.id)}">Delete</button>
+            </div>
+          </div>`;
+    }).join("")}</div>
+        ${S.addrs.length >= MAX_ADDR ? `<p class="ck-note">You can save up to ${MAX_ADDR} addresses. Delete one to add another.</p>` : ""}
+      </div>
+      <div class="ck-sheet-f"><button type="button" class="ck-btn" data-a="addNew" ${S.addrs.length >= MAX_ADDR ? "disabled" : ""}>+ Add new address</button></div>`;
+  }
+
   function viewSummary() {
     const a = S.addr, t = calc(), u = S.user, p = phoneOf();
     $("ckBody").innerHTML = `
       <p class="ck-sec" style="margin-top:4px">Delivery details</p>
       <div class="ck-card"><div class="ck-del">
         ${I.pin}
-        <div><b>Deliver To ${esc(a.name)}</b><p class="ad">${esc(a.flat)}, ${esc(a.area)}</p>
+        <div><b>Deliver To ${esc(a.name)}${a.label ? " · " + esc(titleCase(a.label)) : ""}</b><p class="ad">${esc(a.flat)}, ${esc(a.area)}</p>
         ${a.landmark ? `<p class="ad" style="font-size:12px; color:#666;">Landmark: ${esc(a.landmark)}</p>` : ""}
         <p>${esc(titleCase(a.state))}, ${esc(a.pin)}</p><p class="ph">${p ? esc(pCompact(p)) + " &nbsp;|&nbsp; " : ""}${esc(a.email)}</p></div></div>
+        <div class="ck-chg-row"><button type="button" class="ck-chg" data-a="addrList">${S.addrs.length > 1 ? "Change" : "Change / Add address"}</button></div>
+      </div>
 
       <p class="ck-sec">Price details</p>
       <div class="ck-card"><div class="ck-rows">
@@ -371,8 +515,19 @@ import * as FB from "./firebase.js";
     $("ckBody").innerHTML = `<div class="ck-done"><div class="ck-tick">${I.check}</div><h3>Order placed!</h3>
       <p>Thank you, ${esc(o.address.name)}. We'll send updates to ${esc(pCompact(o.phone) || o.address.email)}.</p>
       <span class="id">${esc(o.orderId)}</span>
-      <p>${o.paymentMethod === "cod" ? "Pay " + inr(o.total) + " in cash on delivery." : manual ? "Payment of " + inr(o.total) + " submitted (Ref " + esc(o.paymentId) + "). We'll confirm it shortly." : "Payment of " + inr(o.total) + " received."}</p></div>`;
+      <p>${o.paymentMethod === "cod" ? "Pay " + inr(o.total) + " in cash on delivery." : manual ? "Payment of " + inr(o.total) + " submitted (Ref " + esc(o.paymentId) + "). We'll confirm it shortly." : "Payment of " + inr(o.total) + " received."}</p>
+      ${o.stockIssue ? `<p style="margin-top:10px;color:#c62828">Some items just went out of stock. Our team will contact you shortly to refund or arrange an alternative.</p>` : ""}</div>`;
     $("ckFoot").innerHTML = `<button type="button" class="ck-btn" data-a="track">Track order</button><button type="button" class="ck-btn line" style="margin-top:10px" data-a="close">Continue shopping</button>`;
+  }
+
+  /* shown when money was taken but the order couldn't be saved yet. Customer must NOT pay again */
+  function viewPaidFail() {
+    const it = S.paidFail || {};
+    $("ckBody").innerHTML = `<div class="ck-done"><div class="ck-tick" style="background:#f3a82b">${I.warn}</div><h3>Payment received</h3>
+      <p>We couldn't confirm your order just yet. <b>Please don't pay again.</b></p>
+      <span class="id">${esc(it.txnid || "")}</span>
+      <p>Tap “Try again” to finish your order. If it keeps failing, contact support with the reference above and we'll sort it out.</p></div>`;
+    $("ckFoot").innerHTML = `<button type="button" class="ck-btn" data-a="retryIntent" ${S.busy ? "disabled" : ""}>Try again</button><button type="button" class="ck-btn line" style="margin-top:10px" data-a="close">Close</button>`;
   }
 
   /* ---------- address helpers ---------- */
@@ -475,9 +630,12 @@ import * as FB from "./firebase.js";
 
   /* ---------- order ---------- */
   /* manual = true  -> customer paid by scanning the QR, admin must verify the UTR (paymentStatus "verification")
-     extra          -> extra fields saved on the order (e.g. payuTxnId / rzpOrderId) */
+     extra          -> extra fields saved on the order (e.g. payuTxnId / rzpOrderId)
+     returns true when the order is saved, false when it is not.
+     PayU orders use the fixed document id "payu_<txnid>", so the same payment can never create two orders. */
   async function placeOrder(method, paymentId, manual, extra) {
     const t = calc(method), a = S.addr, d = digits(phoneOf());
+    const paidOnline = method !== "cod" && !manual;
     const order = {
       orderId: "",   // filled inside the transaction: AURA#01, AURA#02, ...
       uid: S.user.uid, phone: d.length === 10 ? "+91" + d : phoneOf(), email: a.email, customerName: a.name,
@@ -490,81 +648,104 @@ import * as FB from "./firebase.js";
       status: "pending",
       stockReduced: true     // admin uses this to give the stock back if the order is cancelled / payment rejected
     };
+    const fixedId = extra && extra.payuTxnId ? "payu_" + extra.payuTxnId : "";
     S.busy = true; render();
     try {
       const { db, doc, collection, runTransaction, serverTimestamp } = FB;
       if (!db || !doc || !collection || !runTransaction)
         throw new Error("firebase.js must export db, doc, collection, runTransaction (and serverTimestamp)");
 
-      const counterRef = doc(db, "counters", "orders");
-      const orderRef = doc(collection(db, CFG.ordersCollection));   // auto document id
+      const orderRef = fixedId ? doc(db, CFG.ordersCollection, fixedId) : doc(collection(db, CFG.ordersCollection));   // auto id for normal orders
 
-      await runTransaction(db, async tx => {
-        /* ---- 1) ALL READS FIRST ---- */
-        const counterSnap = await tx.get(counterRef);
-        const ids = [...new Set(S.items.map(i => i.id))];
-        const pSnaps = await Promise.all(ids.map(id => tx.get(doc(db, CFG.productsCollection, id))));
+      /* same payment already turned into an order (e.g. return page + recovery both ran)? then just show it */
+      let already = false;
+      if (fixedId && FB.getDoc) {
+        try { const ex = await FB.getDoc(orderRef); if (ex.exists()) { Object.assign(order, ex.data()); already = true; } } catch (e) { /* can't read -> carry on */ }
+      }
 
-        /* ---- 2) CHECK STOCK + CALCULATE NEW VALUES ---- */
-        const writes = [];
-        pSnaps.forEach((snap, k) => {
-          const list = S.items.filter(i => i.id === ids[k]);
-          if (!snap.exists()) throw stockErr(`${list[0].name} is no longer available`);
-          const p = snap.data();
-          if (String(p.status || "active").toLowerCase() === "draft") throw stockErr(`${list[0].name} is no longer available`);
+      /* reduce = true : normal path (check + reduce stock).  reduce = false : paid online but stock ran out -> still save the order, flagged for admin */
+      const commit = async reduce => {
+        const counterRef = doc(db, "counters", "orders");
+        await runTransaction(db, async tx => {
+          /* ---- 1) ALL READS FIRST ---- */
+          const counterSnap = await tx.get(counterRef);
+          const ids = reduce ? [...new Set(S.items.map(i => i.id))] : [];
+          const pSnaps = await Promise.all(ids.map(id => tx.get(doc(db, CFG.productsCollection, id))));
 
-          const variants = JSON.parse(JSON.stringify(p.variants || {}));
-          let stock = Number(p.stock) || 0;
+          /* ---- 2) CHECK STOCK + CALCULATE NEW VALUES ---- */
+          const writes = [];
+          pSnaps.forEach((snap, k) => {
+            const list = S.items.filter(i => i.id === ids[k]);
+            if (!snap.exists()) throw stockErr(`${list[0].name} is no longer available`);
+            const p = snap.data();
+            if (String(p.status || "active").toLowerCase() === "draft") throw stockErr(`${list[0].name} is no longer available`);
 
-          list.forEach(it => {
-            const v = pickVariant(variants, it);   // works even if the cart line has no color
-            if (v && v.sizeStock) {
-              const have = Number(v.sizeStock[it.size]) || 0;
-              if (have < it.qty) throw stockErr(have <= 0 ? `${itemLabel(it)} is sold out` : `${itemLabel(it)} – only ${have} left`);
-              v.sizeStock[it.size] = have - it.qty;
+            const variants = JSON.parse(JSON.stringify(p.variants || {}));
+            let stock = Number(p.stock) || 0;
+
+            list.forEach(it => {
+              const v = pickVariant(variants, it);   // works even if the cart line has no color
+              if (v && v.sizeStock) {
+                const have = Number(v.sizeStock[it.size]) || 0;
+                if (have < it.qty) throw stockErr(have <= 0 ? `${itemLabel(it)} is sold out` : `${itemLabel(it)} – only ${have} left`);
+                v.sizeStock[it.size] = have - it.qty;
+              } else {
+                if (stock < it.qty) throw stockErr(`${it.name} is out of stock`);
+                stock -= it.qty;
+              }
+            });
+
+            const upd = {};
+            if (Object.keys(variants).length) {
+              const colorSold = {}, colorStock = {};
+              let total = 0;
+              Object.entries(variants).forEach(([c, v]) => {
+                const ss = v.sizeStock || {};
+                v.stock = (v.sizes || []).reduce((acc, s) => acc + (Number(ss[s]) || 0), 0);
+                v.soldSizes = (v.sizes || []).filter(s => (Number(ss[s]) || 0) <= 0);
+                colorSold[c] = v.soldSizes;
+                colorStock[c] = v.stock;
+                total += v.stock;
+              });
+              Object.assign(upd, { variants, colorSold, colorStock, stock: total });
             } else {
-              if (stock < it.qty) throw stockErr(`${it.name} is out of stock`);
-              stock -= it.qty;
+              upd.stock = stock;
             }
+            upd.updatedAt = serverTimestamp ? serverTimestamp() : new Date();
+            writes.push([doc(db, CFG.productsCollection, ids[k]), upd]);
           });
 
-          const upd = {};
-          if (Object.keys(variants).length) {
-            const colorSold = {}, colorStock = {};
-            let total = 0;
-            Object.entries(variants).forEach(([c, v]) => {
-              const ss = v.sizeStock || {};
-              v.stock = (v.sizes || []).reduce((acc, s) => acc + (Number(ss[s]) || 0), 0);
-              v.soldSizes = (v.sizes || []).filter(s => (Number(ss[s]) || 0) <= 0);
-              colorSold[c] = v.soldSizes;
-              colorStock[c] = v.stock;
-              total += v.stock;
-            });
-            Object.assign(upd, { variants, colorSold, colorStock, stock: total });
-          } else {
-            upd.stock = stock;
-          }
-          upd.updatedAt = serverTimestamp ? serverTimestamp() : new Date();
-          writes.push([doc(db, CFG.productsCollection, ids[k]), upd]);
+          /* ---- 3) ALL WRITES (order number + stock + order) ---- */
+          const next = (counterSnap.exists() ? Number(counterSnap.data().last) || 0 : 0) + 1;
+          order.orderId = "AURA#" + String(next).padStart(2, "0");     // 1 -> AURA#01 ... 100 -> AURA#100
+          tx.set(counterRef, { last: next });
+          writes.forEach(([ref, upd]) => tx.update(ref, upd));
+          tx.set(orderRef, { ...order, createdAt: serverTimestamp ? serverTimestamp() : new Date() });
         });
+      };
 
-        /* ---- 3) ALL WRITES (order number + stock + order) ---- */
-        const next = (counterSnap.exists() ? Number(counterSnap.data().last) || 0 : 0) + 1;
-        order.orderId = "AURA#" + String(next).padStart(2, "0");     // 1 -> AURA#01 ... 100 -> AURA#100
-        tx.set(counterRef, { last: next });
-        writes.forEach(([ref, upd]) => tx.update(ref, upd));
-        tx.set(orderRef, { ...order, createdAt: serverTimestamp ? serverTimestamp() : new Date() });
-      });
+      if (!already) {
+        try { await commit(true); }
+        catch (err) {
+          if (err && err.stock && paidOnline) {
+            /* money is already taken: never lose the order. Save it without touching stock and flag it for admin */
+            order.stockReduced = false; order.stockIssue = true;
+            order.adminNote = "Paid online but stock ran out (" + err.message + "). Please fulfil or refund.";
+            await commit(false);
+          } else throw err;
+        }
+      }
     } catch (err) {
       console.error("Order save failed:", err);
       S.busy = false; render();
+      if (paidOnline) return false;     // the caller shows the "payment received, don't pay again" screen
       if (err && err.stock) {
-        toast(err.message + (method !== "cod" ? ". If you already paid, contact support with your payment ID." : ""), true);
+        toast(err.message, true);
         S.step = "summary"; render();
       } else {
         toast("Couldn't place your order. Please try again.", true);
       }
-      return;
+      return false;
     }
     /* WhatsApp opt-in -> users/{uid}.whatsappOptIn (never blocks the order if it fails) */
     if (order.whatsappOptIn) {
@@ -576,10 +757,145 @@ import * as FB from "./firebase.js";
         else console.warn("firebase.js must export setDoc (or updateDoc) to save WhatsApp opt-in");
       } catch (e) { console.warn("WhatsApp opt-in save failed:", e); }
     }
+    rememberAddr(a);     // this address is now the default for the next order
     S.busy = false; S.order = order; S.step = "done"; S.utr = "";
     if (!S.buyNow) { try { localStorage.removeItem(CFG.cartKey); } catch (e) { } }
     window.dispatchEvent(new CustomEvent("aura:order-placed", { detail: order }));
     render();
+    return true;
+  }
+
+  /* ================= PAYMENT INTENTS =================
+     Before the customer is sent to PayU we save "payment started" (this browser + Firestore paymentIntents/{txnid}).
+     If they pay and never come back to the site (closed the tab, UPI app didn't redirect...), the next time they open
+     the site the order is created automatically from that saved intent after PayU confirms the payment. */
+  const INT_KEY = "aura_pay_intents";
+  const readInts = () => { try { const a = JSON.parse(localStorage.getItem(INT_KEY) || "[]"); return Array.isArray(a) ? a : []; } catch (e) { return []; } };
+  const writeInts = a => { try { localStorage.setItem(INT_KEY, JSON.stringify(a.slice(-10))); } catch (e) { } };
+  const saveIntent = it => writeInts(readInts().filter(x => x.txnid !== it.txnid).concat(it));
+  const dropIntent = txnid => writeInts(readInts().filter(x => x.txnid !== txnid));
+  async function cloudIntent(txnid, data) {      // best effort, never blocks the customer
+    if (!FB.setDoc || !FB.doc || !FB.db) return;
+    try {
+      await FB.setDoc(FB.doc(FB.db, CFG.intentsCollection, txnid), Object.assign({ updatedAt: FB.serverTimestamp ? FB.serverTimestamp() : new Date() }, clean(data)), { merge: true });
+    } catch (e) { console.warn("paymentIntents write skipped:", e); }
+  }
+  async function fetchIntent(txnid) {
+    const l = readInts().find(x => x.txnid === txnid);
+    if (l) return l;
+    if (!FB.getDoc || !FB.doc || !FB.db) return null;
+    try {
+      const s = await FB.getDoc(FB.doc(FB.db, CFG.intentsCollection, txnid));
+      const d = s.exists() ? s.data() : null;
+      return d && Array.isArray(d.items) && d.addr ? d : null;
+    } catch (e) { return null; }
+  }
+
+  /* ask PayU (through our function) if the payment really went through. Retries because PayU can lag a few seconds */
+  async function verifyPayu(txnid, tries = 3) {
+    for (let i = 0; i < tries; i++) {
+      try {
+        const v = await (await fetch(CFG.payuVerifyUrl + "?txnid=" + encodeURIComponent(txnid))).json();
+        if (v && v.ok) return v;
+      } catch (e) { }
+      if (i < tries - 1) await sleep(2500);
+    }
+    return null;
+  }
+
+  /* put the checkout popup back into the state it had when the customer left for PayU */
+  function openFor(it) {
+    S.items = it.items.map(normItem); S.buyNow = !!it.buyNow; S.coupon = it.coupon || null;
+    loadAddrs(); S.addr = it.addr; S.pickedId = (it.addr && it.addr.id) || "";
+    S.method = it.method; S.order = null; S.utr = ""; S.editing = null; S.paidFail = null;
+    S.open = true; root.classList.add("show"); document.body.style.overflow = "hidden"; startRibbon();
+  }
+  function showPaidFail(it) {
+    S.paidFail = it; S.busy = false; S.step = "paidfail"; render();
+  }
+  /* payment is confirmed by PayU -> create the order */
+  async function completeIntent(it, v) {
+    openFor(it);
+    S.step = "summary"; render();
+    const ok = await placeOrder(it.method, v.mihpayid, false, { payuTxnId: it.txnid, gateway: "payu" });
+    if (ok) {
+      dropIntent(it.txnid);
+      cloudIntent(it.txnid, { status: "completed", orderId: S.order ? S.order.orderId : "" });
+    } else showPaidFail(it);      // intent stays saved, so it also retries on the next visit
+    return ok;
+  }
+  const amountOk = (v, it) => Math.abs(Number(v.amount) - Number(it.total)) <= 0.009;
+
+  /* the customer came back from PayU (?payu=success|failed&txnid=...) */
+  async function handleReturn(it, st) {
+    if (st !== "success") {
+      openFor(it); S.step = "summary"; render();
+      dropIntent(it.txnid); cloudIntent(it.txnid, { status: "failed" });
+      return toast("Payment failed or cancelled. Please try again.", true);
+    }
+    openFor(it); S.step = "summary"; render();
+    toast("Confirming your payment…");
+    const v = await verifyPayu(it.txnid, 3);
+    if (!v || !amountOk(v, it)) return showPaidFail(it);
+    return completeIntent(it, v);
+  }
+
+  /* runs on page load: when the customer comes back from PayU */
+  async function finishPayu() {
+    const q = new URLSearchParams(location.search);
+    const st = q.get("payu"), txnid = q.get("txnid");
+    if (!st || !txnid) return;
+    handling.add(txnid);
+    q.delete("payu"); q.delete("txnid");
+    history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : ""));
+    await authReady;
+
+    const it = await fetchIntent(txnid);
+    if (!it) {
+      if (st === "success") alert("We received your payment (reference " + txnid + ") but couldn't restore your order on this device. Please log in with the same number and check My Orders, or contact support with this reference.");
+      return;
+    }
+    if (!S.user) {         // keep the saved intent; we continue as soon as they log in
+      openFor(it); S.step = "login"; render(); resume = { it, st };
+      return toast("Please log in again to finish your order. Payment reference: " + txnid, true);
+    }
+    handleReturn(it, st);
+  }
+
+  /* runs after login on every page: finds payments that were started but never turned into an order */
+  let recovering = false;
+  async function recoverPayments() {
+    if (recovering || S.open || !S.user || CFG.gateway !== "payu") return;
+    recovering = true;
+    try {
+      const uid = S.user.uid, now = Date.now();
+      const cloudDone = new Set(), cands = {};
+      if (FB.getDocs && FB.query && FB.collection && FB.where && FB.db) {
+        try {
+          const snap = await FB.getDocs(FB.query(FB.collection(FB.db, CFG.intentsCollection), FB.where("uid", "==", uid)));
+          snap.docs.forEach(d => {
+            const x = d.data() || {};
+            if (!x.txnid) return;
+            if (x.status === "started" && Array.isArray(x.items) && x.addr) cands[x.txnid] = x; else cloudDone.add(x.txnid);
+          });
+        } catch (e) { /* rules not added yet / offline: local intents still work */ }
+      }
+      readInts().filter(x => x.uid === uid).forEach(x => { if (cloudDone.has(x.txnid)) dropIntent(x.txnid); else cands[x.txnid] = Object.assign({}, cands[x.txnid], x); });
+
+      for (const it of Object.values(cands)) {
+        if (handling.has(it.txnid)) continue;
+        const age = now - (it.at || 0);
+        if (age < 90000) continue;                                   // just started: the normal return page will handle it
+        if (age > 24 * 3600 * 1000) { dropIntent(it.txnid); cloudIntent(it.txnid, { status: "abandoned" }); continue; }
+        const v = await verifyPayu(it.txnid, 1);
+        if (!v) continue;                                            // not paid (yet)
+        if (!amountOk(v, it)) { console.warn("Recovered payment amount mismatch", it.txnid); continue; }
+        handling.add(it.txnid);
+        await completeIntent(it, v);
+        return;                                                      // one at a time
+      }
+    } catch (e) { console.warn("Payment recovery skipped:", e); }
+    finally { recovering = false; }
   }
 
   /* ================= PAYU (redirect flow) ================= */
@@ -601,10 +917,13 @@ import * as FB from "./firebase.js";
       if (!o.ok) throw new Error(o.error || "Couldn't start the payment");
       if (Math.abs(Number(o.amount) - t.total) > 0.009) throw new Error("Price changed. Please check your bag and try again.");
 
-      /* PayU takes the customer to its own page, so keep the order details to finish after the return */
-      sessionStorage.setItem("aura_payu_pending", JSON.stringify({
-        txnid: o.params.txnid, items: S.items, addr: S.addr, coupon: S.coupon, method: S.method, buyNow: S.buyNow
-      }));
+      /* PayU takes the customer to its own page. Save everything first, so the order can be finished even if they never come back */
+      const intent = clean({
+        txnid: o.params.txnid, uid: S.user.uid, status: "started", at: Date.now(),
+        items: S.items, addr: S.addr, coupon: S.coupon, method: S.method, buyNow: S.buyNow, total: t.total, phone: ten(phoneOf())
+      });
+      saveIntent(intent);
+      await Promise.race([cloudIntent(intent.txnid, intent), sleep(1500)]);   // don't keep the customer waiting if Firestore is slow
 
       const f = document.createElement("form");
       f.method = "POST"; f.action = o.action;
@@ -616,40 +935,6 @@ import * as FB from "./firebase.js";
     } catch (e) {
       S.busy = false;
       toast(e.message || "Couldn't start the payment. Please try again.", true);
-    }
-  }
-
-  /* runs on page load: when the customer comes back from PayU (?payu=success|failed&txnid=...) */
-  async function finishPayu() {
-    const q = new URLSearchParams(location.search);
-    const st = q.get("payu"), txnid = q.get("txnid");
-    if (!st || !txnid) return;
-    q.delete("payu"); q.delete("txnid");
-    history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : ""));
-
-    let pend = null;
-    try { pend = JSON.parse(sessionStorage.getItem("aura_payu_pending") || "null"); } catch (e) { }
-    await authReady;
-    if (!pend || pend.txnid !== txnid) return;
-    sessionStorage.removeItem("aura_payu_pending");
-
-    S.items = pend.items.map(normItem); S.buyNow = !!pend.buyNow; S.coupon = pend.coupon || null;
-    S.addr = pend.addr; S.method = pend.method; S.order = null; S.utr = "";
-    S.open = true; root.classList.add("show"); document.body.style.overflow = "hidden"; startRibbon();
-
-    if (!S.user) {
-      S.step = "login"; render();
-      return toast("Please log in again. Payment reference: " + txnid, true);
-    }
-    S.step = "summary"; render();
-
-    if (st !== "success") return toast("Payment failed or cancelled. Please try again.", true);
-    try {
-      const v = await (await fetch(CFG.payuVerifyUrl + "?txnid=" + encodeURIComponent(txnid))).json();
-      if (!v.ok || Math.abs(Number(v.amount) - calc().total) > 0.009) throw new Error("verify");
-      placeOrder(S.method, v.mihpayid, false, { payuTxnId: txnid, gateway: "payu" });
-    } catch (e) {
-      toast("Payment may have been received but couldn't be verified. Contact support with ID " + txnid, true);
     }
   }
 
@@ -694,7 +979,8 @@ import * as FB from "./firebase.js";
             });
             const vr = await v.json();
             if (!vr.ok) throw new Error("verify");
-            placeOrder(method, resp.razorpay_payment_id, false, { rzpOrderId: resp.razorpay_order_id, gateway: "razorpay" });
+            const ok = await placeOrder(method, resp.razorpay_payment_id, false, { rzpOrderId: resp.razorpay_order_id, gateway: "razorpay" });
+            if (!ok) toast("Payment received but the order couldn't be saved. Please don't pay again. Contact support with ID " + resp.razorpay_payment_id, true);
           } catch (err) {
             toast("Payment received but couldn't be verified. Contact support with ID " + resp.razorpay_payment_id, true);
           }
@@ -713,11 +999,14 @@ import * as FB from "./firebase.js";
   root.addEventListener("click", async e => {
     if (e.target === root) return close();
     const b = e.target.closest("[data-a]"); if (!b) return;
-    const a = b.dataset.a;
+    const a = b.dataset.a, id = b.dataset.id;
     if (a === "close") close();
     else if (a === "back") {
       if (S.step === "upi") { S.step = "summary"; render(); }
-      else if (S.step === "address") { if (S.addr) { S.step = "summary"; render(); } else close(); }
+      else if (S.step === "addrlist") { S.step = "summary"; render(); }
+      else if (S.step === "address") {
+        if (S.addr) { S.editing = null; S.step = S.addrFrom === "list" ? "addrlist" : "summary"; render(); } else close();
+      }
       else close();
     }
     else if (a === "flashClose") { $("ckFlash").classList.remove("on"); }
@@ -748,7 +1037,8 @@ import * as FB from "./firebase.js";
         setErr("ckPin", "Sorry, we can't deliver to this pincode yet"); $("ckPin").focus(); return;
       }
       const mob = $("ckMob") ? digits($("ckMob").value) : "";
-      saveAddr({
+      const rec = {
+        id: S.editing ? S.editing.id : newId(),
         pin: $("ckPin").value.trim(), city: $("ckCity").value.trim(), state: $("ckState").value.trim(),
         flat: $("ckFlat").value.trim(), area: $("ckArea").value.trim(),
         landmark: $("ckLandmark").value.trim(),
@@ -756,10 +1046,43 @@ import * as FB from "./firebase.js";
         phone: mob ? "+91" + mob : (S.user && S.user.phoneNumber) || "",
         label: (document.querySelector('input[name="ckLbl"]:checked') || {}).value || "home",
         waOptIn: !!($("ckWa") && $("ckWa").checked)
-      });
-      S.step = "summary"; render(); flash("Your new address has been updated successfully.");
+      };
+      const i = S.addrs.findIndex(x => x.id === rec.id);
+      if (i > -1) S.addrs[i] = rec; else S.addrs.push(rec);
+      if (($("ckDef") && $("ckDef").checked) || !S.addrs.some(x => x.id === S.defId)) S.defId = rec.id;   // first address is always the default
+      S.addr = rec; S.pickedId = rec.id; S.editing = null;
+      persistAddrs();
+      ensurePin();
+      S.step = "summary"; render(); flash("Your address has been saved successfully.");
     }
-    else if (a === "editAddr") { S.step = "address"; S.reveal = true; render(); }
+    else if (a === "addrList") { S.step = "addrlist"; render(); }
+    else if (a === "pickAddr") {
+      const x = S.addrs.find(v => v.id === id); if (!x) return;
+      S.addr = x; S.pickedId = x.id; S.step = "summary"; ensurePin(); render();
+    }
+    else if (a === "addNew") {
+      if (S.addrs.length >= MAX_ADDR) return toast(`You can save up to ${MAX_ADDR} addresses`, true);
+      S.editing = null; S.reveal = false; S.addrFrom = "list"; S.step = "address"; render();
+    }
+    else if (a === "editAddrId") {
+      const x = S.addrs.find(v => v.id === id); if (!x) return;
+      S.editing = x; S.reveal = true; S.addrFrom = "list"; S.step = "address"; render();
+    }
+    else if (a === "editAddr") { S.editing = S.addr; S.reveal = true; S.addrFrom = "summary"; S.step = "address"; render(); }
+    else if (a === "setDef") {
+      S.defId = id; persistAddrs();
+      delete $("ckSheet").dataset.built; render(); toast("Default address updated");
+    }
+    else if (a === "delAddr") {
+      if (!confirm("Delete this address?")) return;
+      S.addrs = S.addrs.filter(v => v.id !== id);
+      if (S.defId === id) S.defId = S.addrs[0] ? S.addrs[0].id : "";
+      if (S.addr && S.addr.id === id) { S.addr = S.addrs.find(v => v.id === S.defId) || S.addrs[0] || null; S.pickedId = ""; }
+      persistAddrs();
+      if (!S.addrs.length) { S.addr = null; S.editing = null; S.reveal = false; S.addrFrom = "summary"; S.step = "address"; }
+      else delete $("ckSheet").dataset.built;
+      render(); toast("Address deleted");
+    }
     else if (a === "method") { S.method = S.method === b.dataset.m ? null : b.dataset.m; S.tip = false; render(); }
     else if (a === "cod") {
       if (S.busy || !CFG.codEnabled) return;
@@ -784,6 +1107,14 @@ import * as FB from "./firebase.js";
       if (utr.length !== 12) { setErr("ckUtr", "Enter the 12-digit UTR / Transaction ID"); $("ckUtr").focus(); return; }
       S.utr = utr;
       placeOrder("upi", utr, true);
+    }
+    else if (a === "retryIntent") {
+      const it = S.paidFail; if (!it || S.busy) return;
+      S.busy = true; render();
+      const v = await verifyPayu(it.txnid, 3);
+      S.busy = false;
+      if (v && amountOk(v, it)) completeIntent(it, v);
+      else { render(); toast("Still confirming. Please try again in a minute. Don't pay again.", true); }
     }
     else if (a === "logout") { try { await FB.signOut(FB.auth); } catch (err) { console.error(err); } }
     else if (a === "track") { location.href = CFG.trackUrl; }
@@ -828,6 +1159,8 @@ import * as FB from "./firebase.js";
       authResolve();
       if (S.open) { if (!u) S.step = "login"; route(); }
       else if (u && pending) { const p = pending; pending = null; open(p); }
+      if (u && resume) { const r = resume; resume = null; handleReturn(r.it, r.st); }
+      else if (u) setTimeout(recoverPayments, 4000);     // paid but never came back? finish that order now
     });
   } else authResolve();
 
