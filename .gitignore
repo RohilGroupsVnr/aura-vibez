@@ -67,3 +67,25 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+
+
+# Google Cloud Service Account Credentials
+serviceAccountKey.json
+**/serviceAccountKey.json
+*service-account*.json
+
+# Environment variables
+.env.*
+!.env.example
+
+# Private keys
+*.pem
+*.key
+
+# Firebase Functions dependencies
+functions/node_modules/
+
+# Python cache
+__pycache__/
+*.pyc

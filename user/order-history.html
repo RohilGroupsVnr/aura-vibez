@@ -818,11 +818,11 @@
       }
     }
   </style>
-<!-- SEO:start -->
-<meta name="robots" content="noindex,follow">
-<meta name="description" content="View your AURA orders, track shipments and manage your account.">
-<link rel="apple-touch-icon" href="../assets/favicon.png">
-<!-- SEO:end -->
+  <!-- SEO:start -->
+  <meta name="robots" content="noindex,follow">
+  <meta name="description" content="View your AURA orders, track shipments and manage your account.">
+  <link rel="apple-touch-icon" href="../assets/favicon.png">
+  <!-- SEO:end -->
 </head>
 
 <body>
@@ -994,7 +994,6 @@
     }
 
     /* ---------- return helpers ---------- */
-    /* 7-day return window (starts when admin marks the order delivered) */
     function inReturnWindow(o) {
       const dd = o.deliveredAt || o.updatedAt || o.createdAt;
       if (!dd) return true;
@@ -1002,7 +1001,7 @@
       const days = (Date.now() - t) / (1000 * 3600 * 24);
       return days <= 7 && days >= 0;
     }
-    /* has a return already been requested for this exact item of this order? */
+
     function returnFor(o, i) {
       return RETURNS.find(r =>
         r.orderId === o.orderId &&

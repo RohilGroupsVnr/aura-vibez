@@ -140,7 +140,7 @@
   /* ---------- DESKTOP NAVBAR ---------- */
   var nav =
     '<nav class="nav" id="nav" aria-label="Main">' +
-    '<a href="index.html" class="brand"><img src="../assets/logo.png" alt="AURA"></a>' +
+    '<a href="index.html" class="brand"><img src="../assets/logo.webp" alt="AURA"></a>' +
     '<div class="links">' +
     '<a href="index.html" class="' + getActiveClass('home') + '">Home</a>' +
     '<a href="newcollections.html" class="' + getActiveClass('new') + '">New Collection</a>' +
@@ -176,11 +176,10 @@
     '</svg>' +
     '<span class="badge" id="wishBadge">0</span>' +
     '</button>' +
-    '<button class="icon-btn" id="cartBtn" aria-label="Shopping Cart" onclick="location.href=\'cart.html\'">' +
+    '<button class="icon-btn" id="cartBtn" aria-label="Shopping Bag" onclick="location.href=\'cart.html\'">' +
     '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-    '<circle cx="9" cy="21" r="1"></circle>' +
-    '<circle cx="19" cy="21" r="1"></circle>' +
-    '<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>' +
+    '<path d="M6 7h12l1 13H5L6 7Z"></path>' +
+    '<path d="M9 7a3 3 0 0 1 6 0"></path>' +
     '</svg>' +
     '<span class="badge" id="cartBadge">0</span>' +
     '</button>' +
@@ -223,7 +222,7 @@
     '<i class="fa-solid fa-xmark"></i>' +
     '</button>' +
     '<a href="index.html" class="mmenu-logo">' +
-    '<img src="../assets/logo.png" alt="AURA">' +
+    '<img src="../assets/logo.webp" alt="AURA">' +
     '</a>' +
     '<div class="mmenu-icons">' +
     '<a href="wishlist.html" class="m-icon-link">' +
@@ -233,7 +232,7 @@
     '</a>' +
     '<a href="cart.html" class="m-icon-link">' +
     '<i class="fa-solid fa-bag-shopping"></i>' +
-    '<span>Cart</span>' +
+    '<span>Bag</span>' +
     '<span class="badge" id="mCartBadge">0</span>' +
     '</a>' +
     '</div>' +
@@ -383,7 +382,7 @@
     });
   });
 
-  /* ---------- WISHLIST + CART BADGES ---------- */
+  /* ---------- WISHLIST + BAG BADGES ---------- */
   function badges() {
     try {
       var w = (JSON.parse(localStorage.getItem('aura_wishlist')) || []).length;

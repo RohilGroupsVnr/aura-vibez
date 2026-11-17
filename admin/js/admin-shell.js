@@ -102,7 +102,7 @@ if (side) {
   side.id = "adminSide";
   side.innerHTML = `
     <div class="admin-brand" style="height:auto !important;min-height:120px !important;max-height:none !important;overflow:visible !important;">
-      <img src="../assets/logo.png" alt="AURA" style="display:block !important;height:75px !important;min-height:75px !important;max-height:none !important;width:auto !important;max-width:200px !important;margin:0 auto !important;padding:0 !important;border:0 !important;background:none !important;box-shadow:none !important;filter:brightness(0) invert(1) !important;opacity:1 !important;">
+      <img src="../assets/logo.webp" alt="AURA" style="display:block !important;height:75px !important;min-height:75px !important;max-height:none !important;width:auto !important;max-width:200px !important;margin:0 auto !important;padding:0 !important;border:0 !important;background:none !important;box-shadow:none !important;filter:brightness(0) invert(1) !important;opacity:1 !important;">
       <div><small>Admin Panel</small></div>
     </div>
     <nav class="admin-nav">

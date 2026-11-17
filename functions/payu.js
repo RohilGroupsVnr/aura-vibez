@@ -7,11 +7,25 @@ const PAYU_KEY = defineSecret("PAYU_KEY");
 const PAYU_SALT = defineSecret("PAYU_SALT");
 const opts = { region: "asia-south1", cors: true, secrets: [PAYU_KEY, PAYU_SALT] };
 
-const PAYU_URL = "https://test.payu.in/_payment"; // LIVE: https://secure.payu.in/_payment
-const CALLBACK_URL = "https://asia-south1-aura-8a9b5.cloudfunctions.net/payuCallback";
+const PAYU_MODE = (process.env.PAYU_MODE || "test").toLowerCase();
+const PAYU_URL = process.env.PAYU_URL || (PAYU_MODE === "live" ? "https://secure.payu.in/_payment" : "https://test.payu.in/_payment");
+const CALLBACK_URL = process.env.PAYU_CALLBACK_URL || "https://asia-south1-aura-8a9b5.cloudfunctions.net/payuCallback";
 const SHIPPING = 0;
-// customer thirumba varura site origins (live domain vandha idhula serkkanum)
-const ALLOWED_ORIGINS = ["http://127.0.0.1:5758", "http://127.0.0.1:5501", "http://localhost:5758"];
+const DEFAULT_ALLOWED_ORIGINS = [
+  "http://127.0.0.1:5758",
+  "http://127.0.0.1:5501",
+  "http://localhost:5758",
+  "https://aura-vibez.web.app",
+  "https://aura-vibez.firebaseapp.com",
+  "https://localhost:5758",
+  "https://127.0.0.1:5758",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+];
+const ALLOWED_ORIGINS = [...new Set([
+  ...(process.env.PAYU_ALLOWED_ORIGINS || "").split(",").map((s) => s.trim()).filter(Boolean),
+  ...DEFAULT_ALLOWED_ORIGINS,
+])];
 
 const sha512 = (s) => crypto.createHash("sha512").update(s).digest("hex");
 const clean = (s, n) => String(s || "").replace(/[^a-zA-Z0-9 ]/g, "").trim().slice(0, n);
@@ -29,7 +43,6 @@ function unitPrice(p, it) {
   return Number(p.price);
 }
 
-// 1) Hash + params (amount server-la calculate aagum)
 exports.payuInit = onRequest(opts, async (req, res) => {
   try {
     if (req.method !== "POST") return res.status(405).json({ ok: false, error: "POST only" });

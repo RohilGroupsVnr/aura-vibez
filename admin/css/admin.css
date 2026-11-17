@@ -159,7 +159,7 @@ body.admin-login .seg { display: none; }
 /* ============ 4 · PANEL LAYOUT (sidebar + main) ============ */
 .admin-layout { display: grid; grid-template-columns: var(--sidebar-w) 1fr; min-height: 100vh; }
 
-.admin-side { background: var(--rose-dark); color: rgba(255, 248, 241, .78); padding: 28px 20px 40px; position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; }
+.admin-side { background: var(--rose-dark); color: rgba(255, 248, 241, .78); padding: 28px 20px 40px; position: sticky; top: 0; width: 250px; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; gap: 30px; }
 .admin-brand { display: flex; align-items: center; gap: 12px; padding-bottom: 24px; border-bottom: 1px solid rgba(255, 248, 241, .12); }
 .admin-brand img { height: 38px; filter: brightness(0) invert(1); }
 .admin-brand span { font-family: var(--serif); font-size: 1.4rem; color: #FFF8F1; letter-spacing: .02em; }

@@ -1,0 +1,913 @@
+<!-- =====================================================================
+  AURA WARDROBE HERO  (plain HTML + CSS + JS, no React / no libraries)
+  Paste this whole block into user/index.html, right AFTER the navbar line:
+      <script src="js/navbar.js" ...></script>
+  It loads your newest ACTIVE products from Firestore automatically.
+  (Optional) To use your own list instead, define BEFORE this block:
+      window.WARDROBE_PRODUCTS = [{ id, name, image, thumb, colorHex }, ...];
+===================================================================== -->
+
+<style>
+  /* ---------- WARDROBE HERO ---------- */
+  .wd-hero {
+    --wd-ink: #292326;
+    --wd-accent: #b2214a;
+    --wd-accent-d: #921538;
+    --wd-cream: #fff9f3;
+    --wd-line: #e8d8c8;
+    --wd-wc: 54px;
+    /* collapsed hanger width */
+    --wd-wo: 260px;
+    /* expanded hanger width  */
+    --wd-h: 405px;
+    /* hanger height          */
+    position: relative;
+    width: 100%;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    border-bottom: 1px solid var(--wd-line);
+    font-family: "Jost", system-ui, sans-serif;
+    color: var(--wd-ink);
+    background:
+      radial-gradient(900px 420px at 50% 8%, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 70%),
+      linear-gradient(180deg, #fffaf4 0%, #f8ece1 62%, #f1dfd0 100%);
+  }
+
+  .wd-hero *,
+  .wd-hero *::before,
+  .wd-hero *::after {
+    box-sizing: border-box;
+  }
+
+  .wd-hero[hidden] {
+    display: none;
+  }
+
+  .wd-sound {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    z-index: 30;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(255, 255, 255, .7);
+    color: #a5949a;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: color .2s, background .2s;
+  }
+
+  .wd-sound:hover {
+    background: #fff;
+    color: var(--wd-accent);
+  }
+
+  .wd-sound.on {
+    color: var(--wd-accent);
+  }
+
+  .wd-sound svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .wd-sound .wd-on {
+    display: none;
+  }
+
+  .wd-sound.on .wd-on {
+    display: block;
+  }
+
+  .wd-sound.on .wd-off {
+    display: none;
+  }
+
+  .wd-main {
+    position: relative;
+    width: 100%;
+    max-width: 1280px;
+    margin: auto;
+    padding: 26px 24px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .wd-perspective {
+    width: 100%;
+    perspective: 1200px;
+  }
+
+  .wd-stage {
+    position: relative;
+    width: 100%;
+    min-height: 470px;
+    padding: 12px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    will-change: transform;
+    transform-origin: 50% 0;
+  }
+
+  .wd-stage::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ---- metallic rod ---- */
+  .wd-rodwrap {
+    position: absolute;
+    top: 34px;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    pointer-events: none;
+    padding: 0 12px;
+    will-change: transform;
+  }
+
+  .wd-rod-in {
+    position: relative;
+    max-width: 1152px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .wd-flange {
+    position: relative;
+    z-index: 3;
+    width: 28px;
+    height: 56px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f7f9fb 0%, #c3cad1 55%, #8f979f 100%);
+    border: 1px solid rgba(255, 255, 255, .65);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .18);
+  }
+
+  .wd-flange::before,
+  .wd-flange::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3f454c;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, .5);
+  }
+
+  .wd-flange::before {
+    top: 12px;
+    transform: translateX(-50%);
+  }
+
+  .wd-flange::after {
+    bottom: 12px;
+    transform: translateX(-50%);
+  }
+
+  .wd-collar {
+    position: relative;
+    z-index: 3;
+    width: 24px;
+    height: 28px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #eef1f3, #9aa2aa 60%, #cfd5da);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+  }
+
+  .wd-flange.l {
+    margin-right: -4px;
+  }
+
+  .wd-collar.l {
+    margin-right: 0;
+  }
+
+  .wd-collar.r {
+    margin-left: 0;
+  }
+
+  .wd-flange.r {
+    margin-left: -4px;
+  }
+
+  .wd-rod {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    height: 18px;
+    border-radius: 2px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #e6eaee 0%, #aab2ba 34%, #6f7780 70%, #c5cbd1 100%);
+  }
+
+  .wd-rod::before {
+    content: "";
+    position: absolute;
+    top: 15%;
+    left: 0;
+    right: 0;
+    height: 20%;
+    background: rgba(255, 255, 255, .72);
+  }
+
+  .wd-rod::after {
+    content: "";
+    position: absolute;
+    bottom: 10%;
+    left: 0;
+    right: 0;
+    height: 15%;
+    background: rgba(255, 255, 255, .4);
+  }
+
+  .wd-rodshadow {
+    position: absolute;
+    left: 40px;
+    right: 40px;
+    bottom: -22px;
+    height: 16px;
+    background: linear-gradient(180deg, rgba(43, 38, 32, .16), transparent);
+    filter: blur(8px);
+    z-index: 0;
+  }
+
+  /* ---- rail + hangers ---- */
+  .wd-rail {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 14px;
+    width: max-content;
+    max-width: none;
+    margin: 0 auto;
+    padding: 8px 40px 0;
+  }
+
+  .wd-item {
+    position: relative;
+    flex: none;
+    width: var(--wd-wc);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transform-origin: 50% 0;
+    transition: width .55s cubic-bezier(.22, 1, .36, 1), transform .45s cubic-bezier(.22, 1, .36, 1);
+    outline: none;
+  }
+
+  .wd-item.is-active {
+    width: var(--wd-wo);
+    transform: translateY(-4px) scale(1.06);
+  }
+
+  .wd-item:focus-visible .wd-label p {
+    outline: 2px solid var(--wd-accent);
+    outline-offset: 4px;
+  }
+
+  .wd-swing {
+    transform-origin: 50% 0;
+    width: 100%;
+  }
+
+  .wd-item.swing .wd-swing {
+    animation: wdSwing .85s ease-out;
+  }
+
+  @keyframes wdSwing {
+    0% {
+      transform: rotate(0)
+    }
+
+    25% {
+      transform: rotate(-2.2deg)
+    }
+
+    55% {
+      transform: rotate(1.5deg)
+    }
+
+    80% {
+      transform: rotate(-.6deg)
+    }
+
+    100% {
+      transform: rotate(0)
+    }
+  }
+
+  .wd-garment {
+    position: relative;
+    width: 100%;
+    height: var(--wd-h);
+  }
+
+  .wd-layer {
+    position: absolute;
+    inset: 0 0 auto 0;
+    display: flex;
+    justify-content: center;
+    transition: opacity .3s ease-out, transform .3s ease-out, visibility .3s;
+  }
+
+  .wd-profile {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    pointer-events: none;
+  }
+
+  .wd-profile svg {
+    width: 56px;
+    height: 380px;
+    overflow: visible;
+    filter: drop-shadow(0 12px 22px rgba(178, 33, 74, .18));
+  }
+
+  .wd-item.is-active .wd-profile {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(.85);
+  }
+
+  .wd-front {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(.92);
+  }
+
+  .wd-item.is-active .wd-front {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+  }
+
+  .wd-front-in {
+    width: var(--wd-wo);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .wd-hanger {
+    position: relative;
+    z-index: 2;
+    width: 220px;
+    height: 52px;
+    margin-bottom: -18px;
+    overflow: visible;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .22));
+  }
+
+  .wd-photo {
+    position: relative;
+    width: 100%;
+    height: 330px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #f3e6ea;
+    box-shadow: 0 16px 32px rgba(146, 21, 56, .22);
+  }
+
+  .wd-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  .wd-photo.contain {
+    background: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .wd-photo.contain img {
+    object-fit: contain;
+    filter: drop-shadow(0 16px 32px rgba(146, 21, 56, .22));
+  }
+
+  .wd-gshadow {
+    width: 150px;
+    height: 10px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: rgba(146, 21, 56, .13);
+    filter: blur(3.5px);
+  }
+
+  .wd-label {
+    height: 28px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .wd-label p {
+    margin: 0;
+    white-space: nowrap;
+    font: 600 14px/1.2 "Cormorant Garamond", Georgia, serif;
+    letter-spacing: .06em;
+    color: var(--wd-accent-d);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity .3s, transform .3s, visibility .3s;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wd-item.is-active .wd-label p {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  /* ---- arrows ---- */
+  .wd-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 30;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #d5cdbd;
+    background: rgba(255, 255, 255, .78);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: #332e29;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background .2s, box-shadow .2s, transform .2s;
+  }
+
+  .wd-arrow:hover {
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .12);
+  }
+
+  .wd-arrow:active {
+    transform: translateY(-50%) scale(.95);
+  }
+
+  .wd-arrow.prev {
+    left: 20px;
+  }
+
+  .wd-arrow.next {
+    right: 20px;
+  }
+
+  .wd-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* ---- CTA ---- */
+  .wd-cta-wrap {
+    margin: 12px 0 8px;
+  }
+
+  .wd-cta {
+    display: inline-block;
+    padding: 10px 28px;
+    border-radius: 999px;
+    border: 1px solid rgba(178, 33, 74, .4);
+    background: rgba(255, 249, 243, .92);
+    color: var(--wd-ink);
+    font: 500 12px "Jost", sans-serif;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(178, 33, 74, .12);
+    transition: background .25s, color .25s, border-color .25s, transform .15s ease-out;
+    will-change: transform;
+  }
+
+  .wd-cta:hover {
+    background: var(--wd-accent);
+    border-color: var(--wd-accent);
+    color: var(--wd-cream);
+  }
+
+  /* ---- marquee ---- */
+  .wd-marquee {
+    width: 100%;
+    overflow: hidden;
+    background: var(--wd-accent);
+    color: var(--wd-cream);
+    padding: 11px 0;
+  }
+
+  .wd-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: wdMarquee 32s linear infinite;
+  }
+
+  .wd-marquee:hover .wd-marquee-track {
+    animation-play-state: paused;
+  }
+
+  .wd-marquee span {
+    flex: none;
+    padding: 0 26px;
+    font: 500 12px "Jost", sans-serif;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .wd-marquee span::after {
+    content: "✦";
+    margin-left: 52px;
+    opacity: .7;
+  }
+
+  @keyframes wdMarquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* ---- mobile ---- */
+  @media (max-width: 640px) {
+    .wd-hero {
+      --wd-wc: 40px;
+      --wd-wo: 216px;
+      --wd-h: 350px;
+      min-height: 500px;
+    }
+
+    .wd-main {
+      padding: 18px 6px 4px;
+    }
+
+    .wd-stage {
+      min-height: 420px;
+    }
+
+    .wd-rail {
+      gap: 4px;
+      padding: 8px 28px 0;
+    }
+
+    .wd-profile svg {
+      width: 44px;
+      height: 300px;
+    }
+
+    .wd-hanger {
+      width: 184px;
+      height: 44px;
+      margin-bottom: -15px;
+    }
+
+    .wd-photo {
+      height: 280px;
+    }
+
+    .wd-gshadow {
+      width: 120px;
+    }
+
+    .wd-arrow {
+      width: 34px;
+      height: 34px;
+    }
+
+    .wd-arrow.prev {
+      left: 6px;
+    }
+
+    .wd-arrow.next {
+      right: 6px;
+    }
+
+    .wd-flange {
+      width: 22px;
+      height: 46px;
+    }
+
+    .wd-collar {
+      width: 18px;
+      height: 22px;
+    }
+
+    .wd-rodwrap {
+      top: 30px;
+    }
+
+    .wd-rod {
+      height: 14px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+
+    .wd-item,
+    .wd-layer {
+      transition: none;
+    }
+
+    .wd-item.swing .wd-swing {
+      animation: none;
+    }
+
+    .wd-marquee-track {
+      animation-duration: 90s;
+    }
+  }
+</style>
+
+<section class="wd-hero" id="wardrobeHero" aria-label="Featured wardrobe">
+  <button type="button" class="wd-sound" id="wdSound" aria-label="Toggle hanger sound" title="Enable hanger sound">
+    <svg class="wd-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+      <path d="m22 9-6 6M16 9l6 6" />
+    </svg>
+    <svg class="wd-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+      <path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14" />
+    </svg>
+  </button>
+
+  <div class="wd-main">
+    <div class="wd-perspective">
+      <div class="wd-stage" id="wdStage">
+        <div class="wd-rodwrap" id="wdRod" aria-hidden="true">
+          <div class="wd-rod-in">
+            <div class="wd-flange l"></div>
+            <div class="wd-collar l"></div>
+            <div class="wd-rod"></div>
+            <div class="wd-collar r"></div>
+            <div class="wd-flange r"></div>
+            <div class="wd-rodshadow"></div>
+          </div>
+        </div>
+        <div class="wd-rail" id="wdRail" role="listbox" aria-label="Garments"></div>
+      </div>
+    </div>
+
+    <button type="button" class="wd-arrow prev" id="wdPrev" aria-label="Previous garment">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6" />
+      </svg>
+    </button>
+    <button type="button" class="wd-arrow next" id="wdNext" aria-label="Next garment">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="m9 18 6-6-6-6" />
+      </svg>
+    </button>
+
+    <div class="wd-cta-wrap"><a class="wd-cta" id="wdCta" href="shop.html">See Availability</a></div>
+  </div>
+
+  <div class="wd-marquee" aria-hidden="true">
+    <div class="wd-marquee-track" id="wdMarquee"></div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById("wardrobeHero");
+    if (!root) return;
+
+    var rail = document.getElementById("wdRail"), stage = document.getElementById("wdStage"),
+      rod = document.getElementById("wdRod"), cta = document.getElementById("wdCta"),
+      soundBtn = document.getElementById("wdSound");
+    var items = [], products = [], active = 2, soundOn = false, audioCtx = null, lockUntil = 0, hoverT = 0;
+
+    /* ---------- marquee ---------- */
+    (function () {
+      var t = ["Free shipping across India", "7-day easy returns", "New arrivals every week", "Premium fabrics", "Dressed in your own way"];
+      var html = t.map(function (s) { return "<span>" + s + "</span>"; }).join("");
+      document.getElementById("wdMarquee").innerHTML = html + html;
+    })();
+
+    function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+
+    function isLight(hex) {
+      var h = String(hex || "").replace("#", "");
+      if (h.length === 3) h = h.replace(/(.)/g, "$1$1");
+      if (h.length !== 6) return false;
+      var r = parseInt(h.substr(0, 2), 16), g = parseInt(h.substr(2, 2), 16), b = parseInt(h.substr(4, 2), 16);
+      return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.8;
+    }
+
+    /* ---------- data ---------- */
+    function withTimeout(p, ms) { return Promise.race([p, new Promise(function (_, rej) { setTimeout(function () { rej(new Error("timeout")); }, ms); })]); }
+
+    function mapDoc(d) {
+      var colors = d.colors || [], c0 = colors[0];
+      var hex = (d.colorHex && d.colorHex[c0]) || "#B2214A";
+      if (c0 === "Default") hex = "#B2214A";
+      var v0 = (d.variants && d.variants[c0]) || {};
+      var th = (v0.thumbs && (v0.thumbs.front || v0.thumbs.back)) || d.thumb || "";
+      return { id: d.id, name: d.name || "AURA", image: d.image || (d.images && d.images[0]) || "", thumb: th, colorHex: hex, _t: (d.createdAt && d.createdAt.toMillis && d.createdAt.toMillis()) || 0 };
+    }
+
+    function getProducts() {
+      if (Array.isArray(window.WARDROBE_PRODUCTS)) return Promise.resolve(window.WARDROBE_PRODUCTS);
+      return withTimeout(import("./js/firebase.js"), 7000).then(function (m) {
+        return withTimeout(m.getDocs(m.query(m.collection(m.db, "products"), m.where("status", "==", "active"))), 8000);
+      }).then(function (snap) {
+        var rows = snap.docs.map(function (d) { return mapDoc(Object.assign({ id: d.id }, d.data())); });
+        rows = rows.filter(function (p) { return p.image && p.image.indexOf("partywear.webp") < 0; });
+        rows.sort(function (a, b) { return b._t - a._t; });
+        return rows.slice(0, 9);
+      }).catch(function (e) { console.warn("Wardrobe hero: products not loaded", e); return []; });
+    }
+
+    /* ---------- SVG: hanging (profile) garment ---------- */
+    function profileSVG(p, i) {
+      var id = "wd" + i, hex = p.colorHex || "#B2214A", light = isLight(hex);
+      var accent = p.accentColor || "#D4AF37", zari = p.borderZari || "#C89D58";
+      var shadow = light ? "rgba(70,50,40,.22)" : "rgba(0,0,0,.45)", high = light ? "rgba(255,255,255,.75)" : "rgba(255,255,255,.22)";
+      return '<svg viewBox="0 0 60 380" aria-hidden="true"><defs>' +
+        '<linearGradient id="hk' + id + '" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#8A602D"/><stop offset="35%" stop-color="#F3E1BA"/><stop offset="60%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#AA8022"/></linearGradient>' +
+        '<linearGradient id="wo' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#5A341E"/><stop offset="50%" stop-color="#3E200F"/><stop offset="100%" stop-color="#251208"/></linearGradient>' +
+        '<linearGradient id="sk' + id + '" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="' + hex + '"/><stop offset="35%" stop-color="' + (light ? "#FFFFFF" : "#C22D5E") + '" stop-opacity="' + (light ? .6 : .3) + '"/><stop offset="70%" stop-color="' + hex + '"/><stop offset="100%" stop-color="' + (light ? "#D5C4B5" : "#4A081C") + '"/></linearGradient>' +
+        '</defs>' +
+        '<path d="M 30,55 L 30,36 C 30,22 24,14 18,14 C 12,14 10,20 10,26 C 10,28 12,28 13,27 C 14,25 15,20 18,20 C 22,20 25,25 25,35 L 25,55 Z" fill="url(#hk' + id + ')"/>' +
+        '<rect x="26" y="52" width="8" height="6" rx="2" fill="#D4AF37"/>' +
+        '<path d="M 23,56 C 25,55 35,55 37,56 C 40,58 39,66 35,68 C 30,70 25,68 23,66 Z" fill="url(#wo' + id + ')"/>' +
+        '<circle cx="30" cy="62" r="1.5" fill="#FFE082"/>' +
+        '<path d="M 22,66 C 27,65 37,65 41,68 C 44,95 46,160 48,240 C 49,295 48,340 43,352 C 34,354 22,354 17,350 C 15,315 16,250 18,180 C 20,120 20,85 22,66 Z" fill="url(#sk' + id + ')"/>' +
+        '<path d="M 24,70 C 26,130 27,220 25,348" stroke="' + shadow + '" stroke-width="2.5" stroke-linecap="round" fill="none"/>' +
+        '<path d="M 34,72 C 37,140 38,230 36,348" stroke="' + high + '" stroke-width="2" stroke-linecap="round" fill="none"/>' +
+        '<path d="M 38,75 C 44,110 46,180 47,260 C 48,310 46,345 42,354" stroke="' + accent + '" stroke-width="3.5" stroke-linecap="round" opacity=".75" fill="none"/>' +
+        '<rect x="18" y="342" width="25" height="7" rx="1" fill="' + zari + '" opacity=".9"/>' +
+        '<line x1="18" y1="345" x2="43" y2="345" stroke="#FFE899" stroke-width="1" stroke-dasharray="2,1"/>' +
+        '<ellipse cx="29" cy="358" rx="7" ry="2" fill="' + hex + '" opacity=".85"/><ellipse cx="29" cy="362" rx="6" ry="1.8" fill="' + hex + '" opacity=".7"/>' +
+        '<ellipse cx="30" cy="374" rx="15" ry="3.5" fill="rgba(178,33,74,.12)"/></svg>';
+    }
+
+    /* ---------- SVG: front view hanger ---------- */
+    function hangerSVG(p, i) {
+      var id = "wf" + i;
+      return '<svg class="wd-hanger" viewBox="0 0 280 65" aria-hidden="true"><defs>' +
+        '<linearGradient id="fh' + id + '" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7A5323"/><stop offset="35%" stop-color="#F6E3B4"/><stop offset="60%" stop-color="#FFFFFF"/><stop offset="85%" stop-color="#D4AF37"/><stop offset="100%" stop-color="#8A602D"/></linearGradient>' +
+        '<linearGradient id="fw' + id + '" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4A2E1B"/><stop offset="25%" stop-color="#6F452A"/><stop offset="50%" stop-color="#8C5835"/><stop offset="75%" stop-color="#5A341E"/><stop offset="100%" stop-color="#381F10"/></linearGradient>' +
+        '</defs>' +
+        '<rect x="137" y="32" width="6" height="8" rx="2" fill="url(#fh' + id + ')"/>' +
+        '<path d="M 140,33 L 140,16 C 140,5 132,1 124,1 C 116,1 112,8 112,14 C 112,17 114,18 116,16 C 118,13 120,7 124,7 C 129,7 134,10 134,16 L 134,33 Z" fill="url(#fh' + id + ')"/>' +
+        '<path d="M 40,56 C 75,44 105,36 140,32 C 175,36 205,44 240,56 C 244,58 243,63 238,63 C 205,52 175,42 140,40 C 105,42 75,52 42,63 C 37,63 36,58 40,56 Z" fill="url(#fw' + id + ')"/>' +
+        '<circle cx="140" cy="38" r="2.2" fill="#FFE082" stroke="#8C6D1F" stroke-width=".5"/><circle cx="95" cy="51" r="1.3" fill="#FFE082"/><circle cx="185" cy="51" r="1.3" fill="#FFE082"/></svg>';
+    }
+
+    /* ---------- build ---------- */
+    function build() {
+      rail.innerHTML = products.map(function (p, i) {
+        var src = p.thumb || p.image;
+        return '<div class="wd-item" role="option" tabindex="0" data-i="' + i + '" aria-label="' + esc(p.name) + '">' +
+          '<div class="wd-swing"><div class="wd-garment">' +
+          '<div class="wd-layer wd-profile">' + profileSVG(p, i) + '</div>' +
+          '<div class="wd-layer wd-front"><div class="wd-front-in">' + hangerSVG(p, i) +
+          '<div class="wd-photo' + (p.cutout ? " contain" : "") + '"><img src="' + esc(src) + '" data-full="' + esc(p.image) + '" alt="' + esc(p.name) + '" ' + (i === active ? 'fetchpriority="high"' : 'loading="lazy"') + ' decoding="async" draggable="false"></div>' +
+          '<div class="wd-gshadow"></div></div></div>' +
+          '</div></div>' +
+          '<div class="wd-label"><p>' + esc(p.shortTitle || p.name) + '</p></div></div>';
+      }).join("");
+      items = Array.prototype.slice.call(rail.children);
+    }
+
+    /* ---------- activate ---------- */
+    function sharpen(i) {  // swap light thumbnail -> full photo once a garment is opened
+      var img = items[i] && items[i].querySelector("img"), full = img && img.getAttribute("data-full");
+      if (!img || !full || img.src === full || img.getAttribute("data-sharp")) return;
+      img.setAttribute("data-sharp", "1");
+      var pre = new Image(); pre.onload = function () { img.src = full; }; pre.src = full;
+    }
+
+    function chime() {
+      if (!soundOn) return;
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime;
+        o.type = "sine"; o.frequency.setValueAtTime(460, t); o.frequency.exponentialRampToValueAtTime(200, t + .07);
+        g.gain.setValueAtTime(.035, t); g.gain.exponentialRampToValueAtTime(.001, t + .07);
+        o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(t + .08);
+      } catch (e) { }
+    }
+
+    function linkOf(p) { return p && p.id ? "product.html?id=" + encodeURIComponent(p.id) : "shop.html"; }
+
+    function activate(i, opts) {
+      opts = opts || {};
+      i = (i + items.length) % items.length;
+      if (i === active && !opts.force) return;
+      active = i; lockUntil = Date.now() + 380;
+      items.forEach(function (el, k) {
+        var on = k === i;
+        el.classList.toggle("is-active", on);
+        el.setAttribute("aria-selected", on ? "true" : "false");
+        el.style.zIndex = on ? 40 : 20 - Math.abs(i - k);
+        el.classList.remove("swing");
+      });
+      void items[i].offsetWidth;                  // restart the pendulum swing
+      items[i].classList.add("swing");
+      sharpen(i);
+      cta.href = linkOf(products[i]);
+      if (!opts.silent) chime();
+      if (opts.scroll) centerItem(i);
+    }
+
+    function centerItem(i) {
+      if (stage.scrollWidth <= stage.clientWidth + 4) return;
+      var el = items[i], open = parseFloat(getComputedStyle(root).getPropertyValue("--wd-wo")) || 260;
+      var left = el.offsetLeft + rail.offsetLeft - (stage.clientWidth - open) / 2;
+      stage.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+    }
+
+    /* ---------- events ---------- */
+    var canHover = window.matchMedia && window.matchMedia("(hover:hover)").matches;
+
+    rail.addEventListener("mousemove", function (e) {
+      if (!canHover) return;
+      var el = e.target.closest(".wd-item"); if (!el) return;
+      var i = +el.dataset.i; if (i === active) { clearTimeout(hoverT); return; }
+      if (Date.now() < lockUntil) return;          // wait for the layout to settle (no flicker)
+      clearTimeout(hoverT);
+      hoverT = setTimeout(function () { activate(i); }, 70);
+    });
+    rail.addEventListener("mouseleave", function () { clearTimeout(hoverT); });
+
+    rail.addEventListener("click", function (e) {
+      var el = e.target.closest(".wd-item"); if (!el) return;
+      var i = +el.dataset.i;
+      if (i === active) { location.href = linkOf(products[i]); }   // open product
+      else activate(i, { scroll: true });                          // first tap = select
+    });
+
+    rail.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight") { e.preventDefault(); activate(active + 1, { scroll: true }); items[active].focus({ preventScroll: true }); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); activate(active - 1, { scroll: true }); items[active].focus({ preventScroll: true }); }
+      else if (e.key === "Enter" || e.key === " ") { var el = e.target.closest(".wd-item"); if (el) { e.preventDefault(); if (+el.dataset.i === active) location.href = linkOf(products[active]); else activate(+el.dataset.i, { scroll: true }); } }
+    });
+
+    document.getElementById("wdPrev").addEventListener("click", function () { activate(active - 1, { scroll: true }); });
+    document.getElementById("wdNext").addEventListener("click", function () { activate(active + 1, { scroll: true }); });
+
+    soundBtn.addEventListener("click", function () {
+      soundOn = !soundOn; soundBtn.classList.toggle("on", soundOn);
+      soundBtn.title = soundOn ? "Mute hanger sound" : "Enable hanger sound";
+      if (soundOn) chime();
+    });
+
+    /* magnetic CTA */
+    cta.addEventListener("mousemove", function (e) {
+      var r = cta.getBoundingClientRect();
+      cta.style.transform = "translate(" + ((e.clientX - r.left - r.width / 2) * .22) + "px," + ((e.clientY - r.top - r.height / 2) * .3) + "px)";
+    });
+    cta.addEventListener("mouseleave", function () { cta.style.transform = ""; });
+
+    /* 3D scroll "camera pull-back" */
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches, ticking = false;
+    function onScroll() {
+      if (ticking) return; ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        var r = root.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) return;
+        var p = Math.min(1, Math.max(0, -r.top / r.height));
+        stage.style.transform = "rotateX(" + (12 * p) + "deg) scale(" + (1 - .06 * p) + ") translate3d(0," + (40 * p) + "px," + (-100 * p) + "px)";
+        rod.style.transform = "translate3d(0," + (-25 * p) + "px," + (-60 * p) + "px)";
+      });
+    }
+    if (!reduce) { addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", onScroll); }
+
+    /* ---------- start ---------- */
+    getProducts().then(function (list) {
+      products = list || [];
+      if (products.length < 2) { root.hidden = true; return; }
+      active = Math.min(2, products.length - 1);
+      build();
+      activate(active, { force: true, silent: true });
+      requestAnimationFrame(function () { centerItem(active); onScroll(); });
+    });
+  })();
+</script>

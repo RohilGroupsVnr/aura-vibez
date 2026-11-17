@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/admin.css">
 
   <style>
+    
     .upload-btn {
       display: inline-block;
       width: 100%;
@@ -493,9 +494,6 @@
       margin-top: 12px;
     }
   </style>
-<!-- SEO:start -->
-<meta name="robots" content="noindex,nofollow,noarchive">
-<!-- SEO:end -->
 </head>
 
 <body>
@@ -814,7 +812,7 @@
       ["office-wear", "Office Wear"], ["college-wear", "College Wear"],
       ["maxi-dresses", "Maxi Dresses"], ["casual-dresses", "Casual Dresses"], ["floral-dresses", "Floral Dresses"], ["tops", "Tops"],
       ["t-shirt", "T-shirts"], ["crop-tops", "Crop Tops"], ["leggings", "Leggings"], ["palazzo", "Palazzo"],
-      ["jeans", "Jeans & Denim"], ["skirts", "Skirts"], ["night-suits", "Night Suits"], ["shawls", "Shawls"]
+      ["jeans", "Jeans & Denim"], ["skirts", "Skirts"], ["night-suits", "Night Suits"], ["jump-suit", "Jump Suit"], ["shawls", "Shawls"]
     ];
 
     const SIZES = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL", "3XL", "4XL", "5XL", "Free Size"];
@@ -841,7 +839,7 @@
     let currentSelectedColor = "";
 
     currentTone = "fair";
-    const newV = () => ({ price: "", mrp: "", sizes: [], sizePrices: {}, sizeStock: {}, sold: [], images: { front: "", back: "", side: "", quality: "" }, tone: {} });
+    const newV = () => ({ price: "", mrp: "", sizes: [], sizePrices: {}, sizeStock: {}, sold: [], images: { front: "", back: "", side: "", quality: "" }, thumbs: {}, tone: {} });
     const getV = c => {
       if (!c) return null;
       const v = (variantData[c] = variantData[c] || newV());
@@ -850,6 +848,7 @@
       if (!v.sizes) v.sizes = [];
       if (!v.sold) v.sold = [];
       if (!v.tone) v.tone = {};
+      if (!v.thumbs) v.thumbs = {};
       return v;
     };
     const cur = () => getV(currentSelectedColor);
@@ -885,7 +884,7 @@
       $("relatedGrid").innerHTML = others.map(p => `
       <label class="related-item">
         <input type="checkbox" value="${esc(p.id)}" ${pickedRelated.has(p.id) ? "checked" : ""}>
-        <img src="${esc(p.image || "../images/partywear.webp")}" alt="" onerror="this.src='../images/partywear.webp'">
+        <img src="${esc(p.thumb || p.image || "../images/partywear.webp")}" loading="lazy" alt="" onerror="this.src='../images/partywear.webp'">
         <span>${esc(p.name)}</span>
       </label>
     `).join("");
@@ -1026,24 +1025,52 @@
       toast(`Copied from ${from} — now enter stock for each size`);
     });
 
+    /* make every photo light (max 1400px, WebP) BEFORE upload, so the storefront loads fast */
+    async function shrinkImage(file, max = 1400, q = 0.85) {
+      try {
+        const bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
+        const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+        const w = Math.round(bmp.width * k), h = Math.round(bmp.height * k);
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        const x = c.getContext("2d"); x.fillStyle = "#fff"; x.fillRect(0, 0, w, h); x.drawImage(bmp, 0, 0, w, h);
+        const blob = await new Promise(res => c.toBlob(res, "image/webp", q));
+        if (blob && blob.size > 0 && blob.size < file.size) return blob;
+      } catch (e) { console.warn("Image shrink skipped, uploading original:", e); }
+      return file;
+    }
+    const upMeta = f => ({ contentType: f.type || "image/webp", cacheControl: "public,max-age=31536000,immutable" });
+    const upExt = f => (f.type === "image/webp" ? "webp" : "jpg");
+
+    /* uploads a full photo (max 1000px) + a small thumbnail (max 320px) */
+    async function uploadBoth(file, tag) {
+      const full = await shrinkImage(file, 1000, 0.8);
+      const thumb = await shrinkImage(file, 320, 0.75);
+      const base = `products/${Date.now()}_${tag}_${Math.random().toString(36).slice(2, 8)}`;
+      const [a, b] = await Promise.all([
+        uploadBytes(ref(storage, `${base}.${upExt(full)}`), full, upMeta(full)),
+        uploadBytes(ref(storage, `${base}_t.${upExt(thumb)}`), thumb, upMeta(thumb))
+      ]);
+      return { url: await getDownloadURL(a.ref), thumb: await getDownloadURL(b.ref) };
+    }
+
     // images (live + upload)
     SLOTS.forEach(([key, urlId, fileId, prevId]) => {
       $(urlId).addEventListener("input", () => {
         const v = cur(); if (!v) return;
-        v.images[key] = $(urlId).value.trim();
+        v.images[key] = $(urlId).value.trim(); delete v.thumbs[key];
         showPrev(prevId, v.images[key]); updateStatus();
       });
       $(fileId).addEventListener("change", async e => {
         const file = e.target.files[0]; if (!file) return;
         const color = currentSelectedColor;
         if (!color) { toast("Pick a color first", "err"); e.target.value = ""; return; }
-        if (file.size > 3 * 1024 * 1024) { toast("Image must be under 3MB", "err"); e.target.value = ""; return; }
+        if (file.size > 15 * 1024 * 1024) { toast("Image must be under 15MB", "err"); e.target.value = ""; return; }
         $(prevId).innerHTML = `<small style="color:#a3194a">Uploading…</small>`;
         try {
-          const r = ref(storage, `products/${Date.now()}_${key}_${Math.random().toString(36).slice(2, 8)}.jpg`);
-          const snap = await uploadBytes(r, file);
-          const url = await getDownloadURL(snap.ref);
+          const upd = await uploadBoth(file, key);
+          const url = upd.url;
           getV(color).images[key] = url;
+          getV(color).thumbs[key] = upd.thumb;
           if (color === currentSelectedColor) { $(urlId).value = url; showPrev(prevId, url); }
           updateStatus(); scheduleDraft();
           toast(`${color} · ${key} image uploaded`);
@@ -1095,11 +1122,12 @@
         const file = e.target.files[0]; if (!file) return;
         const color = currentSelectedColor, tone = currentTone;
         if (!color) { toast("Pick a color first", "err"); e.target.value = ""; return; }
-        if (file.size > 3 * 1024 * 1024) { toast("Image must be under 3MB", "err"); e.target.value = ""; return; }
+        if (file.size > 15 * 1024 * 1024) { toast("Image must be under 15MB", "err"); e.target.value = ""; return; }
         $(prevId).innerHTML = `<small style="color:#a3194a">Uploading…</small>`;
         try {
-          const r = ref(storage, `products/${Date.now()}_tone_${tone}_${key}_${Math.random().toString(36).slice(2, 8)}.jpg`);
-          const snap = await uploadBytes(r, file);
+          const up = await shrinkImage(file);
+          const r = ref(storage, `products/${Date.now()}_tone_${tone}_${key}_${Math.random().toString(36).slice(2, 8)}.${upExt(up)}`);
+          const snap = await uploadBytes(r, up, upMeta(up));
           const url = await getDownloadURL(snap.ref);
           toneImgs(getV(color), tone)[key] = url;
           if (color === currentSelectedColor && tone === currentTone) { $(urlId).value = url; showPrev(prevId, url); }
@@ -1180,11 +1208,11 @@
       $("empty").hidden = list.length > 0;
       $("tbody").innerHTML = list.map(p => {
         const price = p.price ?? 0, mrp = p.mrp ?? 0, off = mrp > price ? Math.round((1 - price / mrp) * 100) : 0, status = p.status || "active";
-        const img = p.image || (Array.isArray(p.images) ? p.images[0] : "") || "";
+        const img = p.thumb || p.image || (Array.isArray(p.images) ? p.images[0] : "") || "";
         const nColors = (p.colors || []).length;
         const catPills = catsOf(p).map(c => `<span class="cat-pill">${esc(catLabel(c))}</span>`).join(" ");
         return `<tr>
-        <td class="prod-thumb-cell"><img src="${esc(img)}" alt="" onerror="this.style.opacity=.2"></td>
+        <td class="prod-thumb-cell"><img src="${esc(img)}" alt="" loading="lazy" decoding="async" onerror="this.style.opacity=.2"></td>
         <td><div class="prod-name">${esc(p.name || "Untitled")}</div><div class="prod-meta">${p.badge ? esc(p.badge) : ""}${p.isNew ? (p.badge ? " · " : "") + "In new collection" : ""}${nColors ? ((p.badge || p.isNew) ? " · " : "") + nColors + " color" + (nColors > 1 ? "s" : "") : ""}</div></td>
         <td>${catPills}</td>
         <td><div class="prod-price">₹${Number(price).toLocaleString("en-IN")}</div>${off ? `<div class="prod-mrp">₹${Number(mrp).toLocaleString("en-IN")}<b>${off}% off</b></div>` : ""}</td>
@@ -1237,7 +1265,7 @@
             v.price = sv.price ?? ""; v.mrp = sv.mrp ?? "";
             v.sizes = [...(sv.sizes || [])]; v.sizePrices = { ...(sv.sizePrices || {}) };
             v.sizeStock = { ...(sv.sizeStock || {}) }; v.sold = [...(sv.soldSizes || [])];
-            Object.assign(v.images, sv.images || {});
+            Object.assign(v.images, sv.images || {}); v.thumbs = { ...(sv.thumbs || {}) };
           } else {
             // older save format: sizes/prices were shared by every color
             v.sizes = [...(p.sizes || [])]; v.sizePrices = { ...(p.sizePrices || {}) };
@@ -1349,7 +1377,7 @@
         COLORS.Default = "#cccccc";
       }
       // build variants (one per color)
-      const variants = {}, colorImages = {}, colorHex = {}, colorSold = {};
+      const variants = {}, colorImages = {}, colorHex = {}, colorSold = {}, colorThumbs = {};
       const toneImages = {};
       const unionSizes = new Set();
       let totalStock = 0; const colorStock = {};
@@ -1358,6 +1386,8 @@
         const sizes = SIZES.filter(s => v.sizes.includes(s));
         if (!sizes.length) { currentSelectedColor = color; $("imgColorSelect").value = color; renderVariant(); return err(`"${color}": pick at least one size.`); }
         const imgs = { front: v.images.front || "", back: v.images.back || "", side: v.images.side || "", quality: v.images.quality || "" };
+        const thumbs = {};
+        IMG_KEYS.forEach(k => { if (imgs[k] && v.thumbs[k]) thumbs[k] = v.thumbs[k]; });
         if (!IMG_KEYS.some(k => imgs[k])) { currentSelectedColor = color; $("imgColorSelect").value = color; renderVariant(); return err(`"${color}": add at least one image (front recommended).`); }
         const vp = Number(v.price) > 0 ? Number(v.price) : price;
         const vm = Number(v.mrp) > 0 ? Number(v.mrp) : Math.max(mrp, vp);
@@ -1389,7 +1419,8 @@
         });
         if (Object.keys(tImgs).length) toneImages[color] = tImgs;
 
-        variants[color] = { price: vp, mrp: vm, sizes, sizePrices, soldSizes, sizeStock, stock: cTotal, images: imgs };
+        variants[color] = { price: vp, mrp: vm, sizes, sizePrices, soldSizes, sizeStock, stock: cTotal, images: imgs, thumbs };
+        colorThumbs[color] = thumbs;
         colorImages[color] = imgs;
         colorSold[color] = soldSizes;
         colorHex[color] = COLORS[color] || "#cccccc";
@@ -1408,6 +1439,8 @@
         const data = {
           name, category, categories, price, mrp, stock: totalStock, colorStock, status: $("fState").value, badge: $("fBadge").value || "",
           image: mainImageUrl,
+          thumb: first.thumbs.front || first.thumbs.back || "",
+          colorThumbs,
           colors: colorsArr,
           colorHex,
           variants,                          // per-color price / mrp / sizes / size prices / size stock / images

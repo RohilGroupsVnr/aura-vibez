@@ -16,6 +16,7 @@ import * as FB from "./firebase.js";
     shipFee: 0,
     prepaidOff: 0,
     codFee: 0,
+    deliveryDays: 5,               // fallback "Estimated Delivery" days (Ekart pincode days are used when available)
     codEnabled: true,              // set true to show Cash on Delivery again
 
     /* ---- ONLINE PAYMENT GATEWAY ---- */
@@ -71,6 +72,7 @@ import * as FB from "./firebase.js";
     bank: sv(22, 22, '<path d="M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>'),
     wallet: sv(22, 22, '<path d="M20 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15v13a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V5"/><circle cx="16.5" cy="14" r="1"/>'),
     cod: sv(22, 22, '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>'),
+    eye: sv(16, 16, '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>', 2),
     info: sv(13, 13, '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>', 2),
     check: sv(38, 38, '<path d="m5 12 5 5 9-10"/>', 3),
     warn: sv(38, 38, '<path d="M12 7v6M12 17h.01"/>', 3)
@@ -101,7 +103,8 @@ import * as FB from "./firebase.js";
   const S = {
     open: false, step: "login", items: [], buyNow: false, user: null, addr: null, coupon: null, method: null, busy: false,
     itemsOpen: false, tip: true, order: null, phoneDraft: "", msgI: 0, reveal: false, utr: "", pinInfo: null,
-    addrs: [], defId: "", pickedId: "", editing: null, addrFrom: "summary", pulledFor: "", paidFail: null
+    addrs: [], defId: "", pickedId: "", editing: null, addrFrom: "summary", pulledFor: "", paidFail: null,
+    cpOpen: false, qrShown: false
   };
   let authResolve, pending = null, ribbonTimer, toastTimer, flashTimer, resume = null;
   const authReady = new Promise(r => (authResolve = r));
@@ -129,7 +132,7 @@ import * as FB from "./firebase.js";
   document.body.appendChild(root);
   const $ = id => document.getElementById(id);
 
-  /* small extra styles for the saved-address list (kept here so checkout.css needs no change) */
+  /* small extra styles (kept here so checkout.css needs no change) */
   (function addCss() {
     const st = document.createElement("style");
     st.id = "ckAddrCss";
@@ -152,6 +155,28 @@ import * as FB from "./firebase.js";
       .ck-ai-act button:hover{text-decoration:underline}
       .ck-def{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:13px;line-height:1.4;cursor:pointer}
       .ck-def input{margin-top:3px;width:18px;height:18px;accent-color:#A3194A;flex:none}
+
+      /* Nyra-style delivery card */
+      .ck-dc{position:relative}
+      .ck-tip{position:absolute;top:-12px;right:14px;background:#111;color:#fff;font:500 12px "Jost",sans-serif;padding:5px 10px;border-radius:8px;z-index:2}
+      .ck-tip:after{content:"";position:absolute;bottom:-5px;right:30px;border:5px solid transparent;border-top-color:#111;border-bottom:0}
+      .ck-chg-abs{position:absolute;right:14px;top:34px;border-color:#111;color:#111;border-radius:8px;padding:6px 12px;background:#fff}
+      .ck-chg-abs:hover{background:#111;color:#fff}
+      .ck-dtxt{padding-right:84px;min-width:0}
+      .ck-trunc{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .ck-ship{margin-top:12px;background:#f6f6f6;border-radius:10px;padding:10px 12px}
+      .ck-ship small{display:block;font-size:13px}
+      .ck-ship span{font-size:13px;color:#0a7a3d}
+      .ck-ship em{font-style:normal;background:#22c55e;color:#fff;font-size:11px;font-weight:600;border-radius:5px;padding:1px 7px;margin-left:6px}
+
+      /* inline UPI QR (manual mode) */
+      .ck-iqr{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:6px 0 12px}
+      .ck-iqr-w{position:relative;width:132px;height:132px;flex:none}
+      .ck-iqr-box{width:132px;height:132px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+      .ck-iqr-box img,.ck-iqr-box canvas{width:132px!important;height:132px!important}
+      .ck-iqr-box.blur{filter:blur(6px)}
+      .ck-showqr{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:6px;align-items:center;background:#fff;border:1px solid #111;border-radius:999px;padding:6px 12px;font:600 13px "Jost",sans-serif;cursor:pointer;white-space:nowrap}
+      .ck-iqr-t{flex:1;text-align:right;font-size:13px;line-height:1.4}
     `;
     document.head.appendChild(st);
   })();
@@ -167,7 +192,11 @@ import * as FB from "./firebase.js";
   }
   const subtotal = () => S.items.reduce((a, i) => a + i.price * i.qty, 0);
   const count = () => S.items.reduce((a, i) => a + i.qty, 0);
-  function discountAmt(sub) { const c = S.coupon; if (!c) return 0; return Math.min(sub, c.pct ? Math.round(sub * c.pct / 100) : (c.flat || 0)); }
+  function discountAmt(sub) {
+    const c = S.coupon; if (!c) return 0;
+    if (c.min && sub < c.min) return 0;
+    return Math.min(sub, c.pct ? Math.round(sub * c.pct / 100) : (c.flat || 0));
+  }
   function calc(method = S.method) {
     const sub = subtotal();
     const ship = sub >= CFG.freeShipOver ? 0 : CFG.shipFee;
@@ -182,17 +211,20 @@ import * as FB from "./firebase.js";
   const phoneOf = () => (S.user && S.user.phoneNumber) || (S.addr && S.addr.phone) || "";
 
   /* ================= SAVED ADDRESSES (many per customer, kept on the account) =================
-     Stored in localStorage (instant) AND in Firestore users/{uid}.savedAddresses (so a new phone / browser
-     shows the same addresses). The address used for the last order becomes the default. */
+     Stored in localStorage (instant, under the uid AND the phone number) and in Firestore
+     users/{uid}.savedAddresses (so a new phone / browser shows the same addresses).
+     The address used for the last order becomes the default.
+     Firestore rules needed:  match /users/{uid} { allow read, write: if request.auth != null && request.auth.uid == uid; } */
   const newId = () => "a" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const aKey = () => "aura_addrs_" + (S.user ? S.user.uid : "guest");
+  const pKey = () => S.user && ten(S.user.phoneNumber).length === 10 ? "aura_addrs_ph_" + ten(S.user.phoneNumber) : "";   // same number = same addresses, even if the uid changes
   const oldKey = () => "aura_addr_" + (S.user ? S.user.uid : "guest");   // old single-address format (auto migrated)
   const addrLine = a => [a.flat, a.area, titleCase(a.city), titleCase(a.state), a.pin].filter(Boolean).join(", ");
 
   function readLocalAddrs() {
     let list = [], def = "";
     try {
-      const raw = JSON.parse(localStorage.getItem(aKey()) || "null");
+      const raw = JSON.parse(localStorage.getItem(aKey()) || (pKey() ? localStorage.getItem(pKey()) : null) || "null");
       if (raw && Array.isArray(raw.list)) { list = raw.list; def = raw.def || ""; }
       else {
         const old = JSON.parse(localStorage.getItem(oldKey()) || "{}");
@@ -210,13 +242,27 @@ import * as FB from "./firebase.js";
     S.addrs = r.list; S.defId = r.def; S.pickedId = "";
     S.addr = S.addrs.find(a => a.id === S.defId) || S.addrs[0] || null;
   }
-  function writeLocalAddrs() { try { localStorage.setItem(aKey(), JSON.stringify({ list: S.addrs, def: S.defId })); } catch (e) { } }
+  function writeLocalAddrs() {
+    try {
+      const v = JSON.stringify({ list: S.addrs, def: S.defId });
+      localStorage.setItem(aKey(), v);
+      if (pKey()) localStorage.setItem(pKey(), v);
+    } catch (e) { }
+  }
   async function persistAddrs() {
     writeLocalAddrs();
     const u = S.user;
     if (!u || !FB.setDoc || !FB.doc || !FB.db) return;
-    try { await FB.setDoc(FB.doc(FB.db, "users", u.uid), clean({ savedAddresses: S.addrs, defaultAddressId: S.defId }), { merge: true }); }
-    catch (e) { console.warn("Address sync skipped:", e); }
+    for (let i = 0; i < 3; i++) {
+      try {
+        await FB.setDoc(FB.doc(FB.db, "users", u.uid), clean({ savedAddresses: S.addrs, defaultAddressId: S.defId }), { merge: true });
+        return;
+      } catch (e) {
+        console.error("Address sync failed:", e && (e.code || e));
+        if (e && e.code === "permission-denied") return;   // Firestore rules problem: retrying won't help
+        await sleep(1000 * (i + 1));
+      }
+    }
   }
   /* pull the account's addresses (needed on a new device / after clearing the browser) */
   async function pullAddrs() {
@@ -224,7 +270,7 @@ import * as FB from "./firebase.js";
     const had = !!S.addr;
     try {
       const snap = await FB.getDoc(FB.doc(FB.db, "users", u.uid));
-      if (!S.user || S.user.uid !== u.uid || !snap.exists()) return;
+      if (!S.user || S.user.uid !== u.uid || !snap.exists()) { if (S.addrs.length) persistAddrs(); return; }
       const d = snap.data() || {};
       const remote = Array.isArray(d.savedAddresses) ? d.savedAddresses.filter(a => a && a.pin && a.id) : [];
       if (!remote.length) { if (S.addrs.length) persistAddrs(); return; }       // account empty -> upload this device's addresses
@@ -260,6 +306,7 @@ import * as FB from "./firebase.js";
     S.buyNow = !!opts.items;
     if (!S.items.length) { alert("Your bag is empty."); return; }
     S.coupon = opts.coupon || null; S.method = null; S.itemsOpen = false; S.tip = true; S.order = null; S.utr = ""; S.editing = null; S.paidFail = null;
+    S.cpOpen = false; S.qrShown = false;
     S.open = true;
     root.classList.add("show");
     document.body.style.overflow = "hidden";
@@ -416,17 +463,28 @@ import * as FB from "./firebase.js";
 
   function viewSummary() {
     const a = S.addr, t = calc(), u = S.user, p = phoneOf();
+    const days = (S.pinInfo && Number(S.pinInfo.days)) || CFG.deliveryDays || 5;
+    const eta = new Date(Date.now() + days * 864e5).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+    let tipSeen = false; try { tipSeen = !!localStorage.getItem("aura_tip_seen"); } catch (e) { }
+
     $("ckBody").innerHTML = `
-      <p class="ck-sec" style="margin-top:4px">Delivery details</p>
-      <div class="ck-card"><div class="ck-del">
-        ${I.pin}
-        <div><b>Deliver To ${esc(a.name)}${a.label ? " · " + esc(titleCase(a.label)) : ""}</b><p class="ad">${esc(a.flat)}, ${esc(a.area)}</p>
-        ${a.landmark ? `<p class="ad" style="font-size:12px; color:#666;">Landmark: ${esc(a.landmark)}</p>` : ""}
-        <p>${esc(titleCase(a.state))}, ${esc(a.pin)}</p><p class="ph">${p ? esc(pCompact(p)) + " &nbsp;|&nbsp; " : ""}${esc(a.email)}</p></div></div>
-        <div class="ck-chg-row"><button type="button" class="ck-chg" data-a="addrList">${S.addrs.length > 1 ? "Change" : "Change / Add address"}</button></div>
+      <p class="ck-sec" style="margin-top:4px">DELIVERY DETAILS</p>
+      <div class="ck-card ck-dc">
+        ${tipSeen ? "" : '<span class="ck-tip">Tap To Edit Address</span>'}
+        <div class="ck-del">
+          ${I.pin}
+          <div class="ck-dtxt"><b>Deliver To ${esc(a.name)}${a.label ? " · " + esc(titleCase(a.label)) : ""}</b>
+            <p class="ad ck-trunc">${esc(a.flat)}, ${esc(a.area)}</p>
+            ${a.landmark ? `<p class="ad ck-trunc" style="font-size:12px;color:#666">Landmark: ${esc(a.landmark)}</p>` : ""}
+            <p>${esc(titleCase(a.state))}, ${esc(a.pin)}</p>
+            <p class="ph">${p ? esc(pCompact(p)) + " &nbsp;|&nbsp; " : ""}${esc(a.email)}</p></div>
+          <button type="button" class="ck-chg ck-chg-abs" data-a="addrList">Change</button>
+        </div>
+        <div class="ck-ship"><small>Shipping</small>
+          <span>Estimated Delivery By ${eta} <em>${t.ship ? inr(t.ship) : "Free"}</em></span></div>
       </div>
 
-      <p class="ck-sec">Price details</p>
+      <p class="ck-sec">PRICE DETAILS</p>
       <div class="ck-card"><div class="ck-rows">
         <div><span>Subtotal</span><span>${inr(t.sub)}</span></div>
         <div><span>Shipping</span><span>${t.ship ? inr(t.ship) : "Free"}</span></div>
@@ -436,13 +494,14 @@ import * as FB from "./firebase.js";
         <div class="t"><span>${S.method ? "Total payable" : "Total"}</span><span>${inr(t.total)}</span></div>
       </div></div>
 
-      <p class="ck-sec">Payment options</p>
-      <p class="ck-banner">Extra ${inr(CFG.prepaidOff)} off on Prepaid</p>
+      <p class="ck-sec">PAYMENT OPTIONS</p>
+      <p class="ck-banner">Extra ${inr(CFG.prepaidOff)} off on prepaid orders</p>
       <div class="ck-pays">${payList().map(payRow).join("")}</div>
 
       <div class="ck-login"><div>${I.user}<span>Logged in using ${esc(pGroup(p) || (u && u.email) || "your account")}</span></div><button type="button" data-a="logout">Logout</button></div>
       <p class="ck-fine">By proceeding, you agree to AURA's <a href="privacy-policy.html">Privacy Policy</a> and <a href="terms.html">T&amp;C</a></p>`;
     $("ckFoot").innerHTML = "";
+    if (S.method === "upi" && manualMode()) drawInlineQr(calc("upi").total);
   }
 
   function payRow(m) {
@@ -451,6 +510,12 @@ import * as FB from "./firebase.js";
     const act = !prepaid ? "cod" : (onlineOn() ? "pay" : "upi");
     const label = !prepaid ? `Place order · ${inr(t.total)}` : (onlineOn() ? `Pay ${inr(t.total)}` : `Pay ${inr(t.total)} with UPI QR`);
     const note = !prepaid ? "Pay in cash when your order arrives." : (onlineOn() ? "You'll complete the payment on a secure payment page." : "Scan the QR with any UPI app (GPay, PhonePe, Paytm…).");
+    /* manual mode: blurred QR right inside the UPI card, "Show QR" reveals it */
+    const iqr = open && m.id === "upi" && manualMode()
+      ? `<div class="ck-iqr">
+          <div class="ck-iqr-w"><div class="ck-iqr-box ${S.qrShown ? "" : "blur"}" id="ckQrInline"></div>${S.qrShown ? "" : `<button type="button" class="ck-showqr" data-a="showQr">${I.eye}Show QR</button>`}</div>
+          <div class="ck-iqr-t">Scan the QR using any UPI App</div>
+        </div>` : "";
     return `<div class="ck-pay ${open ? "open" : ""}">
       <button type="button" class="ck-pay-h" data-a="method" data-m="${m.id}" aria-expanded="${open}">
         <span class="ico">${m.ico}</span>
@@ -458,7 +523,7 @@ import * as FB from "./firebase.js";
         <span class="amt">${prepaid ? `<s>${money2(t.base)}</s>` : ""}<b>${money2(t.total)}</b></span>
         ${open ? I.down : I.right}
       </button>
-      ${open ? `<div class="ck-pay-b"><button type="button" class="ck-btn" data-a="${act}" ${S.busy ? "disabled" : ""}>${label}</button><p class="ck-note">${note}</p></div>` : ""}
+      ${open ? `<div class="ck-pay-b">${iqr}<button type="button" class="ck-btn" data-a="${act}" ${S.busy ? "disabled" : ""}>${label}</button><p class="ck-note">${note}</p></div>` : ""}
     </div>`;
   }
 
@@ -482,6 +547,19 @@ import * as FB from "./firebase.js";
       new window.QRCode(el, { text: upiLink(amt), width: 196, height: 196, correctLevel: window.QRCode.CorrectLevel.M });
     } catch (e) {
       const el = $("ckQr"); if (el) el.innerHTML = `<p class="ck-note">Couldn't load the QR. Please pay to the UPI ID below.</p>`;
+    }
+  }
+  /* small QR inside the UPI payment row (manual mode only) */
+  async function drawInlineQr(amt) {
+    const box = $("ckQrInline"); if (!box) return;
+    if (CFG.qrImage) { box.innerHTML = `<img src="${esc(CFG.qrImage)}" alt="UPI QR code">`; return; }
+    try {
+      await loadQrLib();
+      const el = $("ckQrInline"); if (!el || S.step !== "summary" || S.method !== "upi") return;
+      el.innerHTML = "";
+      new window.QRCode(el, { text: upiLink(amt), width: 132, height: 132, correctLevel: window.QRCode.CorrectLevel.M });
+    } catch (e) {
+      const el = $("ckQrInline"); if (el) el.innerHTML = "";
     }
   }
 
@@ -807,7 +885,7 @@ import * as FB from "./firebase.js";
   function openFor(it) {
     S.items = it.items.map(normItem); S.buyNow = !!it.buyNow; S.coupon = it.coupon || null;
     loadAddrs(); S.addr = it.addr; S.pickedId = (it.addr && it.addr.id) || "";
-    S.method = it.method; S.order = null; S.utr = ""; S.editing = null; S.paidFail = null;
+    S.method = it.method; S.order = null; S.utr = ""; S.editing = null; S.paidFail = null; S.cpOpen = false;
     S.open = true; root.classList.add("show"); document.body.style.overflow = "hidden"; startRibbon();
   }
   function showPaidFail(it) {
@@ -1055,7 +1133,10 @@ import * as FB from "./firebase.js";
       ensurePin();
       S.step = "summary"; render(); flash("Your address has been saved successfully.");
     }
-    else if (a === "addrList") { S.step = "addrlist"; render(); }
+    else if (a === "addrList") {
+      try { localStorage.setItem("aura_tip_seen", "1"); } catch (err) { }
+      S.step = "addrlist"; render();
+    }
     else if (a === "pickAddr") {
       const x = S.addrs.find(v => v.id === id); if (!x) return;
       S.addr = x; S.pickedId = x.id; S.step = "summary"; ensurePin(); render();
@@ -1083,7 +1164,8 @@ import * as FB from "./firebase.js";
       else delete $("ckSheet").dataset.built;
       render(); toast("Address deleted");
     }
-    else if (a === "method") { S.method = S.method === b.dataset.m ? null : b.dataset.m; S.tip = false; render(); }
+    else if (a === "method") { S.method = S.method === b.dataset.m ? null : b.dataset.m; S.tip = false; S.qrShown = false; render(); }
+    else if (a === "showQr") { S.qrShown = true; render(); }
     else if (a === "cod") {
       if (S.busy || !CFG.codEnabled) return;
       const m = await checkStock(); if (m) return toast(m, true);
