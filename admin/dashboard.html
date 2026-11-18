@@ -432,12 +432,22 @@ adminReady.then(loadRecentlyViewed);
             $("statSubs").textContent = subs.length;
             $("statSubsDiff").textContent = `+${subs.filter(s => now - ms(s.subscribedAt) < 7 * day).length} this week`;
 
-            $("statOrders").textContent = orders.length;
-            $("statOrdersDiff").textContent = `+${orders.filter(o => now - ms(o.createdAt) < day).length} today`;
-            const live = orders.filter(o => (o.status || "pending") !== "cancelled");
-            $("statRevenue").textContent = inr(live.reduce((s, o) => s + (Number(o.total) || 0), 0));
-            $("statRevenueDiff").textContent = "+" + inr(live.filter(o => now - ms(o.createdAt) < day).reduce((s, o) => s + (Number(o.total) || 0), 0)) + " today";
+   $("statOrders").textContent = orders.length;
+$("statOrdersDiff").textContent = `+${orders.filter(o => now - ms(o.createdAt) < day).length} today`;
 
+/* Revenue = only orders whose payment is marked "paid" in Orders page */
+const paid = orders.filter(o =>
+  (o.paymentStatus || "pending") === "paid" &&
+  (o.status || "pending") !== "cancelled"
+);
+$("statRevenue").textContent = inr(paid.reduce((s, o) => s + (Number(o.total) || 0), 0));
+
+/* "today" = orders that were verified/paid today (paymentVerifiedAt), fallback to createdAt */
+const paidTime = o => ms(o.paymentVerifiedAt) || ms(o.createdAt);
+$("statRevenueDiff").textContent = "+" + inr(
+  paid.filter(o => now - paidTime(o) < day)
+      .reduce((s, o) => s + (Number(o.total) || 0), 0)
+) + " today";
             $("statProducts").textContent = prods.length;
             const low = prods.filter(p => (p.stock ?? 0) <= 5).length;
             $("statProductsDiff").textContent = low ? `${low} low stock` : "All in stock";
@@ -582,8 +592,7 @@ async function loadTopViews() {
   wrap.innerHTML = rows.map((r, i) => `
     <div class="top-item"
          style="cursor:pointer; transition:background .2s;"
-         onclick="openViewersModal('${esc(r.id)}')"
-         onmouseover="this.style.background='#fdf9f4'"
+onclick="location.href='followup.html?product=${encodeURIComponent(r.id)}'"         onmouseover="this.style.background='#fdf9f4'"
          onmouseout="this.style.background=''">
       <div class="rank ${["top-1", "top-2", "top-3"][i] || ""}">${i + 1}</div>
       <div class="info">

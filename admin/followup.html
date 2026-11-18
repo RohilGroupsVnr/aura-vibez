@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>WhatsApp Follow-up — AURA Admin</title>
+  <title>WhatsApp Follow-up — AURA Admin</title>
 
-    <link rel="icon" href="../assets/favicon.png">
+  <link rel="icon" href="../assets/favicon.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
-      rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
 
-    <link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="css/admin.css">
 
-    <style>
+  <style>
     .wa-customer-row {
       display: flex;
       align-items: flex-start;
@@ -267,177 +266,176 @@
     }
   </style>
   <!-- SEO:start -->
-<meta name="robots" content="noindex,nofollow,noarchive">
-<!-- SEO:end -->
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <!-- SEO:end -->
 </head>
 
-  <body>
+<body>
 
-    <div class="admin-layout">
+  <div class="admin-layout">
 
-      <aside class="admin-side" id="adminSide"></aside>
+    <aside class="admin-side" id="adminSide"></aside>
 
-      <main class="admin-main">
+    <main class="admin-main">
 
-        <div class="admin-topbar">
-          <div>
-            <h1>WhatsApp Follow-up</h1>
-            <p>Customers who recently viewed products. Send them a direct
-              message.</p>
-          </div>
+      <div class="admin-topbar">
+        <div>
+          <h1>WhatsApp Follow-up</h1>
+          <p>Customers who recently viewed products. Send them a direct
+            message.</p>
         </div>
+      </div>
 
-        <div class="admin-card">
+      <div class="admin-card">
 
-          <div
-            style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-
-            <h2>
-              <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i>
-              Recently Viewed Customers
-            </h2>
-
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-
-              <button type="button" class="btn-admin" id="filterAll"
-                style="background:#a3194a;color:#fff;">
-                All
-              </button>
-
-              <button type="button" class="btn-admin ghost" id="filterNew">
-                Not Contacted
-              </button>
-
-              <button type="button" class="btn-admin ghost" id="refreshBtn">
-                <i class="fa-solid fa-rotate"></i> Refresh
-              </button>
-
-            </div>
-
-          </div>
-
-          <p class="wa-hidden-note is-hidden" id="waHiddenNote"></p>
-
-          <div id="recentViewersList" class="top-list">
-            <p style="padding:20px;color:#7a6a70;">
-              Loading customers...
-            </p>
-          </div>
-
-        </div>
-
-      </main>
-    </div>
-
-    <!-- WHATSAPP MODAL -->
-
-    <div class="wa-modal" id="waModal">
-
-      <div class="wa-modal-box" style="width:min(540px,100%);">
-
-        <div class="wa-modal-head">
+        <div
+          style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
 
           <h2>
-            Send WhatsApp to
-            <span id="waCustomerName">Customer</span>
+            <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i>
+            Recently Viewed Customers
           </h2>
 
-          <button type="button" id="closeWaBtn"
-            style="font-size:20px;color:var(--muted);" aria-label="Close">
-            &times;
-          </button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+            <button type="button" class="btn-admin" id="filterAll" style="background:#a3194a;color:#fff;">
+              All
+            </button>
+
+            <button type="button" class="btn-admin ghost" id="filterNew">
+              Not Contacted
+            </button>
+
+            <button type="button" class="btn-admin ghost" id="refreshBtn">
+              <i class="fa-solid fa-rotate"></i> Refresh
+            </button>
+
+          </div>
 
         </div>
 
-        <div style="padding:8px 0;">
+        <div id="prodFilterBar" class="is-hidden"
+          style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:10px 14px;border-radius:10px;background:#fdf9f4;border:1px solid #ead9df;font-size:13px;">
+          <span>Showing viewers of: <b id="prodFilterName" style="color:#a3194a;"></b></span>
+          <a href="?" class="btn-admin ghost" style="font-size:12px;padding:5px 12px;text-decoration:none;">Show all
+            products</a>
+        </div>
 
-          <p class="wa-from" id="waFrom"></p>
+        <p class="wa-hidden-note is-hidden" id="waHiddenNote"></p>
 
-          <label
-            style="display:block;font-size:12px;color:#7a6a70;margin-bottom:6px;">
-            Product viewed
-          </label>
-
-          <div
-            style="background:#fdf9f4;border:1px solid #ead9df;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:14px;">
-
-            <img id="waProductImg" alt="Product">
-
-            <div style="flex:1;min-width:0;">
-
-              <b id="waProductName" style="font-size:14px;color:#2b1b21;"></b>
-
-              <div id="waProductPrice"
-                style="font-size:13px;color:#a3194a;"></div>
-
-            </div>
-
-          </div>
-
-          <label id="waMsgLabel"
-            style="display:block;font-size:12px;color:#7a6a70;margin-bottom:6px;">
-            Message
-          </label>
-
-          <!-- API mode: image + text + button preview -->
-          <div class="wa-preview-wrap is-hidden" id="waPreview">
-            <div class="wa-bubble">
-              <img id="waPrevImg" alt>
-              <div class="wa-bubble-body" id="waPrevBody"></div>
-              <div class="wa-bubble-foot">Type STOP to unsubscribe</div>
-              <div class="wa-bubble-btn">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i> View
-                Product
-              </div>
-            </div>
-          </div>
-
-          <p class="wa-api-note is-hidden" id="waApiNote">
-            Idhu approved WhatsApp template. Product image-oda, "View Product"
-            button-oda pogum. Text-a inga edit panna mudiyaadhu.
+        <div id="recentViewersList" class="top-list">
+          <p style="padding:20px;color:#7a6a70;">
+            Loading customers...
           </p>
-
-          <!-- Link mode: editable text -->
-          <textarea id="waMessage" rows="6"></textarea>
-
-          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;"
-            id="waTemplateBtns">
-
-            <button type="button" class="btn-admin ghost" id="reminderBtn">
-              Use Reminder
-            </button>
-
-            <button type="button" class="btn-admin ghost" id="offerBtn">
-              Use Offer
-            </button>
-
-            <button type="button" class="btn-admin ghost" id="pickImgBtn">
-              <i class="fa-regular fa-image"></i> Attach image
-            </button>
-            <input type="file" id="pickImgInput" accept="image/*"
-              class="is-hidden">
-          </div>
-
-        </div>
-
-        <div class="wa-modal-foot">
-
-          <button type="button" class="btn-admin ghost" id="cancelWaBtn">
-            Cancel
-          </button>
-
-          <button type="button" class="btn-admin" id="sendWhatsAppBtn"
-            style="background:#25D366;color:#fff;border:none;">
-          </button>
-
         </div>
 
       </div>
+
+    </main>
+  </div>
+
+  <!-- WHATSAPP MODAL -->
+
+  <div class="wa-modal" id="waModal">
+
+    <div class="wa-modal-box" style="width:min(540px,100%);">
+
+      <div class="wa-modal-head">
+
+        <h2>
+          Send WhatsApp to
+          <span id="waCustomerName">Customer</span>
+        </h2>
+
+        <button type="button" id="closeWaBtn" style="font-size:20px;color:var(--muted);" aria-label="Close">
+          &times;
+        </button>
+
+      </div>
+
+      <div style="padding:8px 0;">
+
+        <p class="wa-from" id="waFrom"></p>
+
+        <label style="display:block;font-size:12px;color:#7a6a70;margin-bottom:6px;">
+          Product viewed
+        </label>
+
+        <div
+          style="background:#fdf9f4;border:1px solid #ead9df;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center;margin-bottom:14px;">
+
+          <img id="waProductImg" alt="Product">
+
+          <div style="flex:1;min-width:0;">
+
+            <b id="waProductName" style="font-size:14px;color:#2b1b21;"></b>
+
+            <div id="waProductPrice" style="font-size:13px;color:#a3194a;"></div>
+
+          </div>
+
+        </div>
+
+        <label id="waMsgLabel" style="display:block;font-size:12px;color:#7a6a70;margin-bottom:6px;">
+          Message
+        </label>
+
+        <!-- API mode: image + text + button preview -->
+        <div class="wa-preview-wrap is-hidden" id="waPreview">
+          <div class="wa-bubble">
+            <img id="waPrevImg" alt>
+            <div class="wa-bubble-body" id="waPrevBody"></div>
+            <div class="wa-bubble-foot">Type STOP to unsubscribe</div>
+            <div class="wa-bubble-btn">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> View
+              Product
+            </div>
+          </div>
+        </div>
+
+        <p class="wa-api-note is-hidden" id="waApiNote">
+          Idhu approved WhatsApp template. Product image-oda, "View Product"
+          button-oda pogum. Text-a inga edit panna mudiyaadhu.
+        </p>
+
+        <!-- Link mode: editable text -->
+        <textarea id="waMessage" rows="6"></textarea>
+
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;" id="waTemplateBtns">
+
+          <button type="button" class="btn-admin ghost" id="reminderBtn">
+            Use Reminder
+          </button>
+
+          <button type="button" class="btn-admin ghost" id="offerBtn">
+            Use Offer
+          </button>
+
+          <button type="button" class="btn-admin ghost" id="pickImgBtn">
+            <i class="fa-regular fa-image"></i> Attach image
+          </button>
+          <input type="file" id="pickImgInput" accept="image/*" class="is-hidden">
+        </div>
+
+      </div>
+
+      <div class="wa-modal-foot">
+
+        <button type="button" class="btn-admin ghost" id="cancelWaBtn">
+          Cancel
+        </button>
+
+        <button type="button" class="btn-admin" id="sendWhatsAppBtn" style="background:#25D366;color:#fff;border:none;">
+        </button>
+
+      </div>
+
     </div>
+  </div>
 
-    <div class="wa-toast" id="toast" role="status"></div>
+  <div class="wa-toast" id="toast" role="status"></div>
 
-    <script type="module">
+  <script type="module">
 
     import {
       db,
@@ -486,6 +484,8 @@
     ========================================= */
 
     let RV_DATA = [];
+
+    const PRODUCT_FILTER = new URLSearchParams(location.search).get("product") || "";
     let RV_FILTER = "all";
     let CURRENT_WA = null;
     let toastTimer;
@@ -819,6 +819,13 @@
 
       let rows = RV_DATA;
 
+      if (PRODUCT_FILTER) {
+        rows = rows.filter(row => String(row.productId) === PRODUCT_FILTER);
+        const bar = $("prodFilterBar");
+        const pName = RV_DATA.find(r => String(r.productId) === PRODUCT_FILTER)?.productName || "Selected product";
+        $("prodFilterName").textContent = pName;
+        bar.classList.remove("is-hidden");
+      }
       if (RV_FILTER === "new") {
         rows = rows.filter(row => !row.contacted);
       }
@@ -1108,34 +1115,34 @@ Reply to this message if you need any assistance!
 
       $("waMessage").value = message;
     }
-/* Attach image: file manager open aagum -> image select -> clipboard-ku copy -> WhatsApp chat-la Ctrl+V */
-$("pickImgBtn").addEventListener("click", () => $("pickImgInput").click());
+    /* Attach image: file manager open aagum -> image select -> clipboard-ku copy -> WhatsApp chat-la Ctrl+V */
+    $("pickImgBtn").addEventListener("click", () => $("pickImgInput").click());
 
-$("pickImgInput").addEventListener("change", async event => {
-  const file = event.target.files && event.target.files[0];
-  event.target.value = "";
-  if (!file) return;
+    $("pickImgInput").addEventListener("change", async event => {
+      const file = event.target.files && event.target.files[0];
+      event.target.value = "";
+      if (!file) return;
 
-  try {
-    let blob = file;
+      try {
+        let blob = file;
 
-    // Clipboard PNG-a dhaan ellaa browser-layum support pannum
-    if (file.type !== "image/png") {
-      const bmp = await createImageBitmap(file);
-      const canvas = document.createElement("canvas");
-      canvas.width = bmp.width;
-      canvas.height = bmp.height;
-      canvas.getContext("2d").drawImage(bmp, 0, 0);
-      blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-    }
+        // Clipboard PNG-a dhaan ellaa browser-layum support pannum
+        if (file.type !== "image/png") {
+          const bmp = await createImageBitmap(file);
+          const canvas = document.createElement("canvas");
+          canvas.width = bmp.width;
+          canvas.height = bmp.height;
+          canvas.getContext("2d").drawImage(bmp, 0, 0);
+          blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+        }
 
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-    toast("Image copy aachu. Open WhatsApp click panni, chat-la Ctrl+V pannunga.");
-  } catch (error) {
-    console.warn("Image copy failed:", error);
-    toast("Copy aagala. WhatsApp chat-la 📎 click panni image select pannunga.", "err");
-  }
-});
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        toast("Image copy aachu. Open WhatsApp click panni, chat-la Ctrl+V pannunga.");
+      } catch (error) {
+        console.warn("Image copy failed:", error);
+        toast("Copy aagala. WhatsApp chat-la 📎 click panni image select pannunga.", "err");
+      }
+    });
 
     $("reminderBtn").addEventListener("click", () => useWATemplate("reminder"));
     $("offerBtn").addEventListener("click", () => useWATemplate("offer"));
@@ -1279,6 +1286,6 @@ $("pickImgInput").addEventListener("change", async event => {
 
   </script>
 
-  </body>
+</body>
 
 </html>
