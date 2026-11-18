@@ -108,6 +108,7 @@ import * as FB from "./firebase.js";
   };
   let authResolve, pending = null, ribbonTimer, toastTimer, flashTimer, resume = null;
   const authReady = new Promise(r => (authResolve = r));
+  let lastBase = "";   // which screen was drawn last (so a re-draw of the SAME screen keeps its scroll)
   const handling = new Set();   // payment txn ids that this page is already finishing
 
   /* ---------- DOM shell ---------- */
@@ -177,6 +178,30 @@ import * as FB from "./firebase.js";
       .ck-iqr-box.blur{filter:blur(6px)}
       .ck-showqr{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;gap:6px;align-items:center;background:#fff;border:1px solid #111;border-radius:999px;padding:6px 12px;font:600 13px "Jost",sans-serif;cursor:pointer;white-space:nowrap}
       .ck-iqr-t{flex:1;text-align:right;font-size:13px;line-height:1.4}
+
+      /* ===== v2: modern payment cards + sticky pay bar ===== */
+      .ck-body{background:#fbf7f8}
+      .ck-banner{background:linear-gradient(90deg,#fbeef2,#fff4e8);border:1px dashed #e9bccb;color:#6e0e33;font-weight:500}
+      .ck-pays{display:grid;gap:10px;border:0;border-radius:0;overflow:visible}
+      .ck-pay{border:1.5px solid #ead9df;border-radius:14px;background:#fff;overflow:hidden;transition:border-color .2s,background .2s,box-shadow .2s}
+      .ck-pay+.ck-pay{border-top:1.5px solid #ead9df}
+      .ck-pay:hover{border-color:#d8aebd}
+      .ck-pay.open{outline:0;border-color:#A3194A;background:#fdf4f7;box-shadow:0 10px 24px -16px rgba(163,25,74,.6)}
+      .ck-pay .ico{width:38px;height:38px;border-radius:10px;background:#f6eef1;color:#6e0e33}
+      .ck-pay.open .ico{background:#fff}
+      .ck-radio{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid #cdb6bf;background:#fff;transition:all .15s}
+      .ck-pay.open .ck-radio{border-color:#A3194A;background:#A3194A;box-shadow:inset 0 0 0 3.5px #fff}
+      .ck-pay-b{padding:0 14px 14px}
+      .ck-price{padding:0;margin-top:14px}
+      .ck-ptog{width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 14px;font-size:15px;font-weight:600}
+      .ck-ptog>span:last-child{display:flex;align-items:center;gap:8px}
+      .ck-ptog svg{transition:transform .25s;color:#7b6a6f}
+      .ck-ptog[aria-expanded="true"] svg{transform:rotate(180deg)}
+      .ck-price .ck-rows{padding:12px 14px 14px;border-top:1px dashed #ead9df}
+      .ck-foot{border-top:1px solid #f0e3e8;box-shadow:0 -12px 24px -18px rgba(43,27,33,.35);padding:12px 14px 14px}
+      .ck-foot .ck-btn{height:52px;border-radius:14px;font-size:16px}
+      .ck-btn.idle{background:#eadfe3;color:#7b6a6f!important;box-shadow:none}
+      .ck-secure{display:flex;align-items:center;justify-content:center;gap:6px;margin:9px 0 0;font-size:12px;color:#7b6a6f}
     `;
     document.head.appendChild(st);
   })();
@@ -306,7 +331,7 @@ import * as FB from "./firebase.js";
     S.buyNow = !!opts.items;
     if (!S.items.length) { alert("Your bag is empty."); return; }
     S.coupon = opts.coupon || null; S.method = null; S.itemsOpen = false; S.tip = true; S.order = null; S.utr = ""; S.editing = null; S.paidFail = null;
-    S.cpOpen = false; S.qrShown = false;
+    S.cpOpen = false; S.qrShown = false; S.priceOpen = false;
     S.open = true;
     root.classList.add("show");
     document.body.style.overflow = "hidden";
@@ -314,7 +339,7 @@ import * as FB from "./firebase.js";
     route();
   }
   function close() {
-    S.open = false;
+    S.open = false; lastBase = "";
     root.classList.remove("show");
     document.body.style.overflow = "";
     clearInterval(ribbonTimer);
@@ -333,7 +358,7 @@ import * as FB from "./firebase.js";
 
   /* ---------- ribbon / toast / flash ---------- */
   function startRibbon() {
-    const msgs = () => [`Free Shipping on orders above ${inr(CFG.freeShipOver)}`, `Extra ${inr(CFG.prepaidOff)} off on Prepaid orders`, "100% secure checkout"];
+    const msgs = () => [CFG.freeShipOver > 0 ? `Free Shipping on orders above ${inr(CFG.freeShipOver)}` : "Free Shipping on all orders", CFG.prepaidOff > 0 ? `Extra ${inr(CFG.prepaidOff)} off on Prepaid orders` : "", "100% secure checkout"].filter(Boolean);
     const tick = () => { const m = msgs(), el = $("ckRib"); el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; el.textContent = m[S.msgI++ % m.length]; };
     clearInterval(ribbonTimer); tick(); ribbonTimer = setInterval(tick, 3200);
   }
@@ -348,6 +373,7 @@ import * as FB from "./firebase.js";
 
   /* ---------- render ---------- */
   function render() {
+    const prevTop = $("ckBody").scrollTop;   // remember where the customer was scrolled to
     const sub = subtotal(), n = count();
     $("ckHead").innerHTML = `
       <button type="button" class="ck-back" data-a="back" aria-label="Back">${I.back}</button>
@@ -369,7 +395,9 @@ import * as FB from "./firebase.js";
       if (sheet.dataset.built !== S.step) { (S.step === "addrlist" ? viewAddrList : viewSheet)(); sheet.dataset.built = S.step; }
       if (first) requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add("show")));
     } else { delete sheet.dataset.built; sheet.classList.remove("show"); sheet.innerHTML = ""; }
-    $("ckBody").scrollTop = 0;
+    /* jump to the top only when the SCREEN changes (login -> summary -> upi ...).
+       Re-drawing the same screen (picking a payment option, Show QR, items toggle) keeps the scroll position. */
+    if (base !== lastBase) { $("ckBody").scrollTop = 0; lastBase = base; } else $("ckBody").scrollTop = prevTop;
   }
 
   /* login step. After login (while the address sheet is open) the SAME card shows the saved mobile number */
@@ -484,46 +512,58 @@ import * as FB from "./firebase.js";
           <span>Estimated Delivery By ${eta} <em>${t.ship ? inr(t.ship) : "Free"}</em></span></div>
       </div>
 
-      <p class="ck-sec">PRICE DETAILS</p>
-      <div class="ck-card"><div class="ck-rows">
-        <div><span>Subtotal</span><span>${inr(t.sub)}</span></div>
-        <div><span>Shipping</span><span>${t.ship ? inr(t.ship) : "Free"}</span></div>
-        ${t.disc ? `<div class="g"><span>Coupon discount</span><span>− ${inr(t.disc)}</span></div>` : ""}
-        ${t.pre ? `<div class="g"><span>Prepaid discount</span><span>− ${inr(t.pre)}</span></div>` : ""}
-        ${t.cod ? `<div><span>COD fee</span><span>${inr(t.cod)}</span></div>` : ""}
-        <div class="t"><span>${S.method ? "Total payable" : "Total"}</span><span>${inr(t.total)}</span></div>
-      </div></div>
-
       <p class="ck-sec">PAYMENT OPTIONS</p>
-      <p class="ck-banner">Extra ${inr(CFG.prepaidOff)} off on prepaid orders</p>
-      <div class="ck-pays">${payList().map(payRow).join("")}</div>
+      ${CFG.prepaidOff > 0 ? `<p class="ck-banner">Extra ${inr(CFG.prepaidOff)} off on prepaid orders</p>` : ""}
+      <div class="ck-pays" role="radiogroup" aria-label="Payment options">${payList().map(payRow).join("")}</div>
+
+      <div class="ck-card ck-price">
+        <button type="button" class="ck-ptog" data-a="priceToggle" aria-expanded="${!!S.priceOpen}">
+          <span>${S.method ? "Total payable" : "Total"}</span><span><b>${inr(t.total)}</b>${I.down}</span>
+        </button>
+        ${S.priceOpen ? `<div class="ck-rows">
+          <div><span>Subtotal</span><span>${inr(t.sub)}</span></div>
+          <div><span>Shipping</span><span>${t.ship ? inr(t.ship) : "Free"}</span></div>
+          ${t.disc ? `<div class="g"><span>Coupon discount</span><span>− ${inr(t.disc)}</span></div>` : ""}
+          ${t.pre ? `<div class="g"><span>Prepaid discount</span><span>− ${inr(t.pre)}</span></div>` : ""}
+          ${t.cod ? `<div><span>COD fee</span><span>${inr(t.cod)}</span></div>` : ""}
+        </div>` : ""}
+      </div>
 
       <div class="ck-login"><div>${I.user}<span>Logged in using ${esc(pGroup(p) || (u && u.email) || "your account")}</span></div><button type="button" data-a="logout">Logout</button></div>
       <p class="ck-fine">By proceeding, you agree to AURA's <a href="privacy-policy.html">Privacy Policy</a> and <a href="terms.html">T&amp;C</a></p>`;
-    $("ckFoot").innerHTML = "";
+    const pa = S.method ? payAct(S.method) : null;
+    $("ckFoot").innerHTML = `<button type="button" class="ck-btn${pa ? "" : " idle"}" data-a="${pa ? pa.act : "needPay"}" ${S.busy ? "disabled" : ""}>${pa ? pa.label : "Choose a payment method"}</button>
+      <p class="ck-secure">${sv(13, 13, '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', 2)} 100% secure payment</p>`;
     if (S.method === "upi" && manualMode()) drawInlineQr(calc("upi").total);
   }
 
-  function payRow(m) {
-    const prepaid = m.id !== "cod", t = calc(m.id), open = S.method === m.id;
+  function payAct(id) {
+    const prepaid = id !== "cod", t = calc(id);
     /* prepaid -> online gateway (PayU / Razorpay) when it is on, otherwise the manual UPI QR screen */
-    const act = !prepaid ? "cod" : (onlineOn() ? "pay" : "upi");
-    const label = !prepaid ? `Place order · ${inr(t.total)}` : (onlineOn() ? `Pay ${inr(t.total)}` : `Pay ${inr(t.total)} with UPI QR`);
-    const note = !prepaid ? "Pay in cash when your order arrives." : (onlineOn() ? "You'll complete the payment on a secure payment page." : "Scan the QR with any UPI app (GPay, PhonePe, Paytm…).");
+    return {
+      act: !prepaid ? "cod" : (onlineOn() ? "pay" : "upi"),
+      label: !prepaid ? `Place order · ${inr(t.total)}` : (onlineOn() ? `Pay ${inr(t.total)}` : `Pay ${inr(t.total)} with UPI QR`),
+      note: !prepaid ? "Pay in cash when your order arrives." : (onlineOn() ? "You'll complete the payment on a secure payment page." : "Scan the QR with any UPI app (GPay, PhonePe, Paytm…).")
+    };
+  }
+
+  function payRow(m) {
+    const prepaid = m.id !== "cod", t = calc(m.id), open = S.method === m.id, note = payAct(m.id).note;
     /* manual mode: blurred QR right inside the UPI card, "Show QR" reveals it */
     const iqr = open && m.id === "upi" && manualMode()
       ? `<div class="ck-iqr">
           <div class="ck-iqr-w"><div class="ck-iqr-box ${S.qrShown ? "" : "blur"}" id="ckQrInline"></div>${S.qrShown ? "" : `<button type="button" class="ck-showqr" data-a="showQr">${I.eye}Show QR</button>`}</div>
           <div class="ck-iqr-t">Scan the QR using any UPI App</div>
         </div>` : "";
+    const badge = prepaid ? (CFG.prepaidOff > 0 ? `<em class="ok">Get ${inr(CFG.prepaidOff)} off</em>` : "") : (CFG.codFee ? `<em class="bad">${inr(CFG.codFee)} COD fee added</em>` : "");
     return `<div class="ck-pay ${open ? "open" : ""}">
-      <button type="button" class="ck-pay-h" data-a="method" data-m="${m.id}" aria-expanded="${open}">
+      <button type="button" class="ck-pay-h" data-a="method" data-m="${m.id}" role="radio" aria-checked="${open}">
         <span class="ico">${m.ico}</span>
-        <span class="nm"><b>${m.name}</b>${prepaid ? `<em class="ok">Get ${inr(CFG.prepaidOff)} off</em>` : (CFG.codFee ? `<em class="bad">${inr(CFG.codFee)} COD fee added</em>` : "")}</span>
-        <span class="amt">${prepaid ? `<s>${money2(t.base)}</s>` : ""}<b>${money2(t.total)}</b></span>
-        ${open ? I.down : I.right}
+        <span class="nm"><b>${m.name}</b>${badge}</span>
+        <span class="amt">${prepaid && t.pre > 0 ? `<s>${money2(t.base)}</s>` : ""}<b>${money2(t.total)}</b></span>
+        <span class="ck-radio" aria-hidden="true"></span>
       </button>
-      ${open ? `<div class="ck-pay-b">${iqr}<button type="button" class="ck-btn" data-a="${act}" ${S.busy ? "disabled" : ""}>${label}</button><p class="ck-note">${note}</p></div>` : ""}
+      ${open ? `<div class="ck-pay-b">${iqr}<p class="ck-note">${note}</p></div>` : ""}
     </div>`;
   }
 
@@ -1164,8 +1204,20 @@ import * as FB from "./firebase.js";
       else delete $("ckSheet").dataset.built;
       render(); toast("Address deleted");
     }
-    else if (a === "method") { S.method = S.method === b.dataset.m ? null : b.dataset.m; S.tip = false; S.qrShown = false; render(); }
+    else if (a === "method") {
+      S.method = S.method === b.dataset.m ? null : b.dataset.m; S.tip = false; S.qrShown = false; render();
+      const op = root.querySelector(".ck-pay.open");   // make sure the opened card (and its Pay button) is fully visible
+      if (op) op.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
     else if (a === "showQr") { S.qrShown = true; render(); }
+    else if (a === "priceToggle") {
+      S.priceOpen = !S.priceOpen; render();
+      if (S.priceOpen) { const el = root.querySelector(".ck-price"); if (el) el.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+    }
+    else if (a === "needPay") {
+      toast("Please choose a payment method");
+      const el = root.querySelector(".ck-pays"); if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
     else if (a === "cod") {
       if (S.busy || !CFG.codEnabled) return;
       const m = await checkStock(); if (m) return toast(m, true);

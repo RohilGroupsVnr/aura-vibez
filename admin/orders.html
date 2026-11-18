@@ -443,6 +443,7 @@
             <select id="statusFilter">
               <option value>All Status</option>
               <option value="pending">Pending</option>
+              <option value="processing">Processing</option>
               <option value="shipped">Shipped</option>
               <option value="delivered">Delivered</option>
               <option value="cancelled">Cancelled</option>
@@ -486,7 +487,7 @@
     const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN");
     const nice = s => { s = String(s || "").replace(/_/g, " "); return s.charAt(0).toUpperCase() + s.slice(1); };
 
-    const STATUS = ["pending", "shipped", "delivered", "cancelled", "return_requested"];
+    const STATUS = ["pending", "processing", "shipped", "delivered", "cancelled", "return_requested"];
     const PAY_STATUS = ["pending", "verification", "paid", "failed", "refunded"];
     const PAY_LABEL = { verification: "VERIFYING" };
     const payLabel = x => PAY_LABEL[x] || x.toUpperCase();

@@ -722,7 +722,11 @@
       scroll-snap-stop: always;
     }
 
-    .pd-slide.ok { animation: none; background: none; }
+    .pd-slide.ok {
+      animation: none;
+      background: none;
+    }
+
     /* image loading: soft shimmer until the photo arrives */
     .pd-slide {
       background: linear-gradient(100deg, #f4e4ea 30%, #fcf3f6 50%, #f4e4ea 70%);
@@ -2197,7 +2201,7 @@
       <div class="pd-cta">
         <button type="button" class="pd-btn" id="pdWishBtn">♡ Add to
           Wishlist</button>
-        <button type="button" class="pd-btn primary" id="pdCartBtn" disabled>Add to Cart</button>
+        <button type="button" class="pd-btn primary" id="pdCartBtn" disabled>Add to Bag</button>
       </div>
       <button type="button" class="pd-btn primary" id="pdBuyBtn" disabled style="width:100%;margin:-14px 0 18px">Buy
         Now</button>
@@ -2624,6 +2628,8 @@
       var IMG_LABELS = ["Front", "Back", "Side", "Quality"];
 
       function $(id) { return document.getElementById(id); }
+      function thumb(u, w) { if (!u || String(u).indexOf("firebasestorage.googleapis.com") < 0) return u; return "https://wsrv.nl/?url=" + encodeURIComponent(u) + "&w=" + w + "&output=webp&q=85"; }
+
       function fmt(n) { return "₹ " + Number(n).toLocaleString("en-IN"); }
       function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
@@ -2771,7 +2777,7 @@
         var disable = soldOut || !selectedSize || stock <= 0;
         $("pdCartBtn").disabled = disable;
         $("pdBuyBtn").disabled = disable;
-        $("pdCartBtn").textContent = soldOut ? "Sold out" : "Add to Cart";
+        $("pdCartBtn").textContent = soldOut ? "Sold out" : "Add to Bag";
         $("pdHint").textContent = soldOut ? "This color is currently unavailable." : (!selectedSize ? "Please select a size to continue." : "");
       }
 
@@ -2944,7 +2950,28 @@
         if (!multi) return;
         renderTones(); applySkinBadges(); updateSkinResult();
       }
-
+      /* skin tone change: swap ONLY the front photo (no rebuild, no flash). The new photo is loaded first, then swapped */
+      function toneFront(p, color) {
+        var list = colorImageList(p, color);
+        if (!list.length) return null;
+        var t = p.toneImages && p.toneImages[color] && p.toneImages[color][getTone()];
+        return (t && t.front) ? t.front : list[0].src;
+      }
+      function swapFront(p, color) {
+        var src = toneFront(p, color), img = $("pdSlider").querySelector(".pd-slide img");
+        if (!src || !img) { updateGalleryImages(p, color); return; }     // fallback: old behaviour
+        goToSlide(0);
+        if (img.getAttribute("src") === src) return;
+        var pre = new Image(); pre.decoding = "async";
+        pre.onload = function () { img.src = src; };                     // old photo stays until the new one is ready
+        pre.src = src;
+      }
+      /* start downloading a tone's photo the moment the mouse is over its button */
+      document.addEventListener("pointerover", function (e) {
+        var b = e.target.closest && e.target.closest(".pd-tone"); if (!b || !product) return;
+        var t = product.toneImages && product.toneImages[selectedColor] && product.toneImages[selectedColor][b.dataset.tone];
+        if (t && t.front) { var im = new Image(); im.src = t.front; }
+      });
       function initSkin() {
         $("pdTones").addEventListener("click", function (e) {
           var b = e.target.closest(".pd-tone"); if (!b || !product) return;
@@ -2952,12 +2979,9 @@
           setTone(was ? "" : id);
           renderTones(); applySkinBadges();
 
-          // 🔥 NEW: Tone maarumbothu gallery image ah update pannu 🔥
-          updateGalleryImages(product, selectedColor);
-          // 🔥 END 🔥
+          swapFront(product, selectedColor);          // 🔥 END 🔥
 
-          /* colour is NOT changed automatically any more - the customer keeps the colour they picked;
-             the text below only suggests the best-match colours */
+       
           updateSkinResult();
         });
       }
@@ -3000,9 +3024,9 @@
         // 🔥 END OF NEW LOGIC 🔥
 
         var s = $("pdSlider");
-    s.innerHTML = list.map(function (it, i) {
+        s.innerHTML = list.map(function (it, i) {
           var attr = i === 0 ? 'fetchpriority="high" decoding="async"' : 'loading="lazy" decoding="async"';
-          return '<div class="pd-slide"><img src="' + esc(it.src) + '" alt="' + esc((p.name || "") + " - " + it.label) + '" draggable="false" ' + attr +
+          return '<div class="pd-slide"><img src="' + esc(thumb(it.src, 1200)) + '" alt="' + esc((p.name || "") + " - " + it.label) + '" draggable="false" ' + attr +
             ' onload="this.parentNode.classList.add(\'ok\')" onerror="this.parentNode.classList.add(\'ok\');this.style.opacity=.3"></div>';
         }).join("");
 
@@ -3163,10 +3187,10 @@
         }
 
         $("pdAlsoGrid").innerHTML = picks.map(function (p) {
-          var img = p.thumb || (p.images && p.images[0]) || p.image || IMG_PLACEHOLDER;
+          var img = (p.images && p.images[0]) || p.image || p.thumb || IMG_PLACEHOLDER;
           var price = p.price || 0, mrp = p.mrp || price;
           return '<a class="pd-card" href="product.html?id=' + encodeURIComponent(p.id) + '">' +
-            '<div class="pd-card-media"><img src="' + esc(img) + '" alt="' + esc(p.name) + '" loading="lazy" onerror="this.style.opacity=.3"></div>' +
+            '<div class="pd-card-media"><img src="' + esc(thumb(img, 800)) + '" alt="' + esc(p.name) + '" loading="lazy" onerror="this.style.opacity=.3"></div>' +
             '<h4>' + esc(p.name || "Untitled") + '</h4>' +
             '<p>' + fmt(price) + (mrp > price ? ' <s>' + fmt(mrp) + '</s>' : '') + '</p>' +
             '</a>';
@@ -3474,10 +3498,24 @@
           return;
         }
 
-        var rows = await fetchProducts();
-        products = rows.map(normalizeProduct);
-        if (id) product = products.find(function (p) { return p.id === id; });
-        else if (products.length) product = products[0];
+        if (id) {
+          try {
+            var fm = await import("./js/firebase.js");
+            var one = await fm.getDoc(fm.doc(fm.db, "products", id));
+            if (one.exists()) {
+              var od = Object.assign({ id: one.id }, one.data()), os = String(od.status || "").toLowerCase();
+              if (os === "active" || os === "") { product = normalizeProduct(od); products = [product]; }
+            }
+          } catch (err) { console.warn("Single product load failed:", err); }
+        }
+        if (!product) {
+          var rows = await fetchProducts();
+          products = rows.map(normalizeProduct);
+          if (id) product = products.find(function (p) { return p.id === id; });
+          else if (products.length) product = products[0];
+        } else {
+          fetchProducts().then(function (rows) { products = rows.map(normalizeProduct); renderAlso(); });   // for "You may also like", in the background
+        }
 
         if (!product) {
           renderNotFound(id
@@ -3728,27 +3766,27 @@
 
 
     function getProductThumbnail(product) {
-  // 1. First check colorImages (if colors exist)
-  if (product.colors && product.colors.length > 0) {
-    var firstColor = product.colors[0];
-    if (product.colorImages && product.colorImages[firstColor] && product.colorImages[firstColor].front) {
-      return product.colorImages[firstColor].front;
+      // 1. First check colorImages (if colors exist)
+      if (product.colors && product.colors.length > 0) {
+        var firstColor = product.colors[0];
+        if (product.colorImages && product.colorImages[firstColor] && product.colorImages[firstColor].front) {
+          return product.colorImages[firstColor].front;
+        }
+      }
+
+      // 2. If colorImages not found, check images array
+      if (product.images && product.images.length > 0 && product.images[0]) {
+        return product.images[0];
+      }
+
+      // 3. If images array not found, check main image
+      if (product.image) {
+        return product.image;
+      }
+
+      // 4. Final fallback
+      return "../images/partywear.webp";
     }
-  }
-  
-  // 2. If colorImages not found, check images array
-  if (product.images && product.images.length > 0 && product.images[0]) {
-    return product.images[0];
-  }
-  
-  // 3. If images array not found, check main image
-  if (product.image) {
-    return product.image;
-  }
-  
-  // 4. Final fallback
-  return "../images/partywear.webp";
-}
   </script>
 
   <script src="js/nav-menu.js"></script>

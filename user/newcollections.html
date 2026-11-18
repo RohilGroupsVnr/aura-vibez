@@ -48,6 +48,7 @@
     <script
         type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@id":"https://www.aura-vibez.com/#organization","@type":["Organization","OnlineStore"],"name":"AURA","url":"https://www.aura-vibez.com/","logo":{"@type":"ImageObject","url":"https://www.aura-vibez.com/assets/logo.png"}},{"@type":"CollectionPage","@id":"https://www.aura-vibez.com/user/newcollections.html#webpage","url":"https://www.aura-vibez.com/user/newcollections.html","name":"New Collection — Latest Women's Fashion Arrivals | AURA","description":"Discover the latest AURA arrivals: fresh kurta sets, dresses and silhouettes for the season. Shop new women's fashion online with fast India-wide delivery.","inLanguage":"en-IN","isPartOf":{"@id":"https://www.aura-vibez.com/#website"},"breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.aura-vibez.com/"},{"@type":"ListItem","position":2,"name":"New Collection","item":"https://www.aura-vibez.com/user/newcollections.html"}]}}]}</script>
     <!-- SEO:end -->
+<style id="auraPerf">.hy-media{background:linear-gradient(100deg,#f3e6ea 30%,#fbf4f6 50%,#f3e6ea 70%);background-size:300% 100%;animation:hyShimA 1.4s linear 8}@keyframes hyShimA{to{background-position:-150% 0}}@media (prefers-reduced-motion:reduce){.hy-media{animation:none}}</style>
 </head>
 
 <body class="collections-page hy-page">
@@ -588,7 +589,7 @@
                 syncUI(); render();
             }
 
-            function card(p) {
+            function card(p, idx) {
                 var price = p.price || 0, mrp = p.mrp || price;
                 var off = mrp > price ? Math.round((1 - price / mrp) * 100) : 0;
                 var sold = (p.stock || 0) <= 0;
@@ -751,6 +752,17 @@
             $("drawerApply").addEventListener("click", closeD);
             overlay.addEventListener("click", closeD);
             document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeD(); });
+
+      /* extra slides load only when the customer touches / hovers / swipes the card */
+      function loadSlides(card) { card.querySelectorAll('img[data-src]').forEach(function (im) { im.src = im.dataset.src; im.removeAttribute('data-src'); }); }
+      (function () {
+        var g = document.getElementById('grid'); if (!g) return;
+        function go(e) { var c = e.target.closest && e.target.closest('.hy-card'); if (c) loadSlides(c); }
+        g.addEventListener('pointerenter', go, true);
+        g.addEventListener('touchstart', go, { passive: true, capture: true });
+        g.addEventListener('click', go, true);
+        g.addEventListener('scroll', go, true);
+      })();
 
             load();
         })();

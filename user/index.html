@@ -468,7 +468,7 @@
   <script
     type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Organization","OnlineStore"],"@id":"https://www.aura-vibez.com/#organization","name":"AURA","alternateName":["AURA Vibez","Aura Clothing"],"url":"https://www.aura-vibez.com/","logo":{"@type":"ImageObject","url":"https://www.aura-vibez.com/assets/logo.png"},"image":"https://www.aura-vibez.com/assets/logo.png","email":"auraclothing.vnr@gmail.com","description":"AURA is an online women's fashion store in India offering kurta sets, maxi dresses, sarees, night suits, jumpsuits, palazzos and more in premium fabrics.","areaServed":{"@type":"Country","name":"India"},"currenciesAccepted":"INR","contactPoint":{"@type":"ContactPoint","contactType":"customer support","email":"auraclothing.vnr@gmail.com","areaServed":"IN","availableLanguage":["English","Tamil","Hindi"]}},{"@type":"WebSite","@id":"https://www.aura-vibez.com/#website","url":"https://www.aura-vibez.com/","name":"AURA","inLanguage":"en-IN","publisher":{"@id":"https://www.aura-vibez.com/#organization"},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.aura-vibez.com/user/shop.html?q={search_term_string}"},"query-input":"required name=search_term_string"}}]}</script>
   <script
-    type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How long does delivery take?","acceptedAnswer":{"@type":"Answer","text":"Orders are processed and dispatched within 24–48 working hours. After dispatch, delivery usually takes 3–7 working days depending on your location."}},{"@type":"Question","name":"Is shipping free?","acceptedAnswer":{"@type":"Answer","text":"Yes, shipping is free across India on orders over ₹999."}},{"@type":"Question","name":"What is your return and exchange policy?","acceptedAnswer":{"@type":"Answer","text":"We offer easy 7-day returns and exchanges on unworn items with original tags intact. Custom-stitched or altered items are non-returnable. You can raise a return from My Orders."}},{"@type":"Question","name":"How can I track my order?","acceptedAnswer":{"@type":"Answer","text":"Go to Track Order and enter your order details. You can also see all your orders under Order History after logging in."}},{"@type":"Question","name":"Which payment methods do you accept?","acceptedAnswer":{"@type":"Answer","text":"We accept UPI, debit/credit cards, net banking, wallets and Cash on Delivery."}},{"@type":"Question","name":"How do I choose the right size?","acceptedAnswer":{"@type":"Answer","text":"Check our Size Guide for chest, waist and hip measurements. If you are between two sizes, we suggest choosing the larger one."}},{"@type":"Question","name":"Do you offer gift boxes?","acceptedAnswer":{"@type":"Answer","text":"Yes. You can add the AURA Gift Box for ₹399 on the product page before adding to cart."}},{"@type":"Question","name":"How do I contact customer support?","acceptedAnswer":{"@type":"Answer","text":"Visit our Contact page or message us on Instagram. We reply Mon–Sat, 10 AM – 7 PM."}}]}</script>
+    type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How long does delivery take?","acceptedAnswer":{"@type":"Answer","text":"Orders are processed and dispatched within 24–48 working hours. After dispatch, delivery usually takes 3–7 working days depending on your location."}},{"@type":"Question","name":"Is shipping free?","acceptedAnswer":{"@type":"Answer","text":"Yes, shipping is free across India on orders over ₹999."}},{"@type":"Question","name":"What is your return and exchange policy?","acceptedAnswer":{"@type":"Answer","text":"We offer easy 7-day returns and exchanges on unworn items with original tags intact. Custom-stitched or altered items are non-returnable. You can raise a return from My Orders."}},{"@type":"Question","name":"How can I track my order?","acceptedAnswer":{"@type":"Answer","text":"Go to Track Order and enter your order details. You can also see all your orders under Order History after logging in."}},{"@type":"Question","name":"Which payment methods do you accept?","acceptedAnswer":{"@type":"Answer","text":"We accept UPI, debit/credit cards, net banking, wallets and Cash on Delivery."}},{"@type":"Question","name":"How do I choose the right size?","acceptedAnswer":{"@type":"Answer","text":"Check our Size Guide for chest, waist and hip measurements. If you are between two sizes, we suggest choosing the larger one."}},{"@type":"Question","name":"Do you offer gift boxes?","acceptedAnswer":{"@type":"Answer","text":"Yes. You can add the AURA Gift Box for ₹399 on the product page before adding to bag."}},{"@type":"Question","name":"How do I contact customer support?","acceptedAnswer":{"@type":"Answer","text":"Visit our Contact page or message us on Instagram. We reply Mon–Sat, 10 AM – 7 PM."}}]}</script>
   <!-- SEO:end -->
 </head>
 
@@ -545,7 +545,7 @@
   <!-- ===== HERO ===== -->
   <header class="hm-hero" data-io-pause>
     <div class="hm-hero-bg" aria-hidden="true">
-      <video class="hero-video on" id="heroVideo" autoplay muted loop playsinline preload="auto" tabindex="-1" poster>
+      <video class="hero-video on" id="heroVideo" autoplay muted loop playsinline preload="auto" tabindex="-1">
         <source src="../video/Aura .mp4" type="video/mp4">Your browser
         does not support the video tag.
       </video>
@@ -617,7 +617,7 @@
         <!-- 1. Kurta Sets -->
         <a class="hm-arch" href="shop.html?cat=kurta-sets">
           <span class="hm-ph" style="--g1:#E879A9;--g2:#8A1640">
-            <img src="../realtime-images/green-trends-model-set.webp" alt="Kurta Sets" loading="lazy" draggable="false"
+            <img src="../realtime-images/green-trends-model-set.webp" alt="Kurta Sets" loading="lazy" decoding="async" draggable="false"
               onerror="this.remove()">
           </span>
           <span>Kurta Sets</span>
@@ -627,7 +627,7 @@
         <a class="hm-arch" href="shop.html?cat=dresses&type=maxi-dresses">
           <span class="hm-ph" style="--g1:#E8CFA0;--g2:#B88A4B">
             <img src="../realtime-images/Mediterranean Courtyard Dash-Print Dress.webp" alt="Maxi Dresses"
-              loading="lazy" draggable="false" onerror="this.remove()">
+              loading="lazy" decoding="async" draggable="false" onerror="this.remove()">
           </span>
           <span>Flared Kurti</span>
         </a>
@@ -635,7 +635,7 @@
         <!-- 3. Office Wear -->
         <a class="hm-arch" href="shop.html?cat=office-wear">
           <span class="hm-ph" style="--g1:#B4708B;--g2:#5C1A38">
-            <img src="../realtime-images/black-set.webp" alt="Office Wear" loading="lazy" draggable="false"
+            <img src="../realtime-images/black-set.webp" alt="Office Wear" loading="lazy" decoding="async" draggable="false"
               onerror="this.remove()">
           </span>
           <span>Office Wear</span>
@@ -644,7 +644,7 @@
         <!-- 4. College Dresses -->
         <a class="hm-arch" href="shop.html?cat=college-wear">
           <span class="hm-ph" style="--g1:#F2BCCB;--g2:#D6657F">
-            <img src="../realtime-images/green-set.webp" alt="College Dresses" loading="lazy" draggable="false"
+            <img src="../realtime-images/green-set.webp" alt="College Dresses" loading="lazy" decoding="async" draggable="false"
               onerror="this.remove()">
           </span>
           <span>College Dresses</span>
@@ -653,7 +653,7 @@
         <!-- 5. Jumpsuit (link fixed: was cat=sarees) -->
         <a class="hm-arch" href="shop.html?cat=jump-suit">
           <span class="hm-ph" style="--g1:#C93A68;--g2:#4B1230">
-            <img src="../realtime-images/Jump Suite.webp" alt="Jumpsuit" loading="lazy" draggable="false"
+            <img src="../realtime-images/Jump Suite.webp" alt="Jumpsuit" loading="lazy" decoding="async" draggable="false"
               onerror="this.remove()">
           </span>
           <span>Jumpsuit</span>
@@ -662,7 +662,7 @@
         <!-- 6. Night Suits -->
         <a class="hm-arch" href="shop.html?cat=night-suits">
           <span class="hm-ph" style="--g1:#B7A0E8;--g2:#513477">
-            <img src="../realtime-images/nightsuite-lightrose.webp" alt="Night Suits" loading="lazy" draggable="false"
+            <img src="../realtime-images/nightsuite-lightrose.webp" alt="Night Suits" loading="lazy" decoding="async" draggable="false"
               onerror="this.remove()">
           </span>
           <span>Night Suits</span>
@@ -671,7 +671,7 @@
         <!-- 7. Leggings -->
         <a class="hm-arch" href="shop.html?cat=leggings">
           <span class="hm-ph" style="--g1:#D8B4C8;--g2:#713B58">
-            <img src="../realtime-images/leggins(black).webp" alt="Leggings" loading="lazy" draggable="false"
+            <img src="../realtime-images/leggins(black).webp" alt="Leggings" loading="lazy" decoding="async" draggable="false"
               onerror="this.remove()">
           </span>
           <span>Leggings</span>
@@ -680,7 +680,7 @@
         <!-- 8. Palazzo -->
         <a class="hm-arch" href="shop.html?cat=palazzo">
           <span class="hm-ph" style="--g1:#D9C6A5;--g2:#80613D">
-            <img src="../realtime-images/palazzo-front(sandal).webp" alt="Palazzo" loading="lazy" draggable="false"
+            <img src="../realtime-images/palazzo-front(sandal).webp" alt="Palazzo" loading="lazy" decoding="async" draggable="false"
               onerror="this.remove()">
           </span>
           <span>Palazzo</span>
@@ -689,7 +689,7 @@
         <!-- 9. Shawls -->
         <a class="hm-arch" href="shop.html?cat=shawls">
           <span class="hm-ph" style="--g1:#E8B8C8;--g2:#8D3455">
-            <img src="../realtime-images/shawl-white.webp" alt="Shawls" loading="lazy" draggable="false"
+            <img src="../realtime-images/shawl-white.webp" alt="Shawls" loading="lazy" decoding="async" draggable="false"
               onerror="this.remove()">
           </span>
           <span>Shawls</span>
@@ -698,7 +698,7 @@
         <!-- 10. T-Shirt -->
         <a class="hm-arch" href="shop.html?cat=t-shirt">
           <span class="hm-ph" style="--g1:#B9CBB0;--g2:#405B3D">
-            <img src="../realtime-images/t-shirt(pink).webp" alt="T-Shirt" loading="lazy" draggable="false"
+            <img src="../realtime-images/t-shirt(pink).webp" alt="T-Shirt" loading="lazy" decoding="async" draggable="false"
               onerror="this.remove()">
           </span>
           <span>T-Shirt</span>
@@ -726,7 +726,7 @@
           <!-- 01 — JUMP SUITS -->
           <a href="shop.html?cat=jump-suit" class="cat cat-large reveal">
             <img class="cat-img" src="../realtime-images/Women's Printed Wide-Leg Jumpsuit2.PNG" alt="Jump Suits"
-              loading="lazy">
+              loading="lazy" decoding="async">
 
             <div class="aura-cat-overlay"></div>
 
@@ -744,7 +744,7 @@
             <!-- 02 — KURTA -->
             <a href="shop.html?cat=kurta-sets" class="cat cat-small reveal">
               <img class="cat-img" src="../realtime-images/Elegant Teal Floral Veranda Portrait.webp" alt="Kurtas"
-                loading="lazy">
+                loading="lazy" decoding="async">
 
               <div class="aura-cat-overlay"></div>
 
@@ -757,7 +757,7 @@
 
             <!-- 03 — CROP TOP -->
             <a href="shop.html?cat=crop-tops" class="cat cat-small reveal">
-              <img class="cat-img" src="../realtime-images/croptop-purple.webp" alt="Crop Tops" loading="lazy">
+              <img class="cat-img" src="../realtime-images/croptop-purple.webp" alt="Crop Tops" loading="lazy" decoding="async">
 
               <div class="aura-cat-overlay"></div>
 
@@ -772,7 +772,7 @@
 
           <!-- 04 — MAXI DRESS -->
           <a href="shop.html?cat=maxi-dresses" class="cat cat-large reveal">
-            <img class="cat-img" src="../realtime-images/courttype-with-court.webp" alt="Maxi Dresses" loading="lazy">
+            <img class="cat-img" src="../realtime-images/courttype-with-court.webp" alt="Maxi Dresses" loading="lazy" decoding="async">
 
             <div class="aura-cat-overlay"></div>
 
@@ -1039,14 +1039,32 @@
           font-size: clamp(1.15rem, 2vw, 1.5rem);
         }
       }
-
-      
     </style>
+
+    <style>
+      #mostviewed[hidden] {
+        display: none;
+      }
+
+      #mostviewed .mv-views {
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        z-index: 2;
+        padding: 5px 11px;
+        border-radius: 999px;
+        font: 500 11px 'Jost', sans-serif;
+        color: #fff;
+        background: rgba(20, 8, 14, .62);
+        backdrop-filter: blur(4px);
+      }
+    </style>
+
 
     <script type="module">
       import { db, doc, getDoc } from "./js/firebase.js";
 
-      const SHOW_SOLD = true;   // "5 sold" chip venaam-na false
+      const SHOW_SOLD = true;  
       const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
       const inr = n => "₹" + Number(n || 0).toLocaleString("en-IN");
       const sec = document.getElementById("bestsellers");
@@ -1058,7 +1076,7 @@
         const img = (p.images && p.images[0]) || p.image || p.imageUrl || p.image1 || "../images/partywear.webp";
         const link = "product.html?id=" + encodeURIComponent(r.id);
         return `<a class="aura-bs-card" href="${link}">
-      <img src="${esc(img)}" alt="${esc(p.name || "AURA")}" loading="lazy" onerror="this.src='../images/partywear.webp'">
+      <img src="${esc(img)}" alt="${esc(p.name || "AURA")}" loading="lazy" decoding="async" onerror="this.src='../images/partywear.webp'">
       <span class="aura-bs-no">${String(i + 1).padStart(2, "0")}</span>
       ${i === 0 ? '<span class="aura-bs-tag">★ No.1 Best Seller</span>' : ""}
       <div class="aura-bs-info">
@@ -1110,25 +1128,6 @@
       </div>
     </section>
 
-    <style>
-      #mostviewed[hidden] {
-        display: none;
-      }
-
-      #mostviewed .mv-views {
-        position: absolute;
-        left: 10px;
-        bottom: 10px;
-        z-index: 2;
-        padding: 5px 11px;
-        border-radius: 999px;
-        font: 500 11px 'Jost', sans-serif;
-        color: #fff;
-        background: rgba(20, 8, 14, .62);
-        backdrop-filter: blur(4px);
-      }
-    </style>
-
     <script type="module">
       import { db, collection, getDocs, query, orderBy, limit, doc, getDoc } from "./js/firebase.js";
 
@@ -1163,7 +1162,7 @@
             return `
             <div class="pcard">
               <div class="pmedia">
-                <a href="${link}"><img src="${esc(img)}" alt="${esc(p.name)}" loading="lazy" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='../images/partywear.webp'"></a>
+                <a href="${link}"><img src="${esc(img)}" alt="${esc(p.name)}" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='../images/partywear.webp'"></a>
                 ${off ? `<span class="product-badge">${off}% OFF</span>` : ""}
                 ${SHOW_VIEWS ? `<span class="mv-views">👁 ${r.views} view${r.views === 1 ? "" : "s"}</span>` : ""}
               </div>
@@ -1183,7 +1182,7 @@
     <!-- Campaign 1 -->
     <section class="section cmp">
       <div class="container cmp-split">
-        <div class="cmp-media arch-shape reveal-img" data-tone="rose"><img class="wm" src="assets/logo.webp" alt><img
+        <div class="cmp-media arch-shape reveal-img" data-tone="rose"><img class="wm" src="../assets/logo.webp" alt><img
             class="ph" src="../realtime-images/white-with-pink-kurta.webp" alt="Model in an AURA rose silk drape"
             loading="lazy" decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
         <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">01</span><span class="eyebrow reveal"
@@ -1202,7 +1201,7 @@
     </section>
     <section class="section cmp">
       <div class="container cmp-split rev">
-        <div class="cmp-media reveal-img" data-tone="blush"><img class="wm" src="assets/logo.webp" alt><img class="ph"
+        <div class="cmp-media reveal-img" data-tone="blush"><img class="wm" src="../assets/logo.webp" alt><img class="ph"
             src="../realtime-images/ramar-green.webp" alt="AURA beauty products on a blush backdrop" loading="lazy"
             decoding="async" data-parallax="0.08" onerror="this.remove()"></div>
         <div class="cmp-copy"><span class="cmp-num reveal" aria-hidden="true">02</span><span class="eyebrow reveal"
@@ -1230,7 +1229,7 @@
       <div class="vg-container">
         <!-- Video 1 - Office Wear -->
         <div class="vg-card">
-          <video class="vg-video" autoplay muted loop playsinline preload="metadata"
+          <video class="vg-video" muted loop playsinline preload="none"
             poster="../images/hompage-story/story1.png">
             <source src="../video/v1.mp4" type="video/mp4">
           </video>
@@ -1243,7 +1242,7 @@
 
         <!-- Video 2 - College Wear -->
         <div class="vg-card">
-          <video class="vg-video" autoplay muted loop playsinline preload="metadata"
+          <video class="vg-video" muted loop playsinline preload="none"
             poster="../images/hompage-story/story2.png">
             <source src="../video/v2.mp4" type="video/mp4">
           </video>
@@ -1256,7 +1255,7 @@
 
         <!-- Video 3 - Saree -->
         <div class="vg-card">
-          <video class="vg-video" autoplay muted loop playsinline preload="metadata"
+          <video class="vg-video" muted loop playsinline preload="none"
             poster="../images/hompage-story/story3.png">
             <source src="../video/v3.mp4" type="video/mp4">
           </video>
@@ -1286,8 +1285,8 @@
     <section class="section cmp">
       <div class="container">
         <div class="cmp-banner reveal-img" data-tone="gold">
-          <img class="wm" src="assets/logo.webp" alt>
-          <img class="ph" src="assets/campaign-jewellery.webp" alt="Premium AURA Collection" loading="lazy"
+          <img class="wm" src="../assets/logo.webp" alt>
+          <img class="ph" src="../assets/campaign-jewellery.webp" alt="Premium AURA Collection" loading="lazy"
             decoding="async" data-parallax="0.1" onerror="this.remove()">
           <div class="cmp-banner-copy">
             <span class="eyebrow reveal">The Signature Collection</span>
@@ -1325,7 +1324,7 @@
         <!-- 01 - Girls Wear -->
         <a class="hm-pane on" href="shop.html?cat=trending-dresses">
           <span class="hm-ph" style="--g1:#F4C7D5;--g2:#741D3B">
-            <img src="../realtime-images/black-set.webp" alt="Trending girls dresses" loading="lazy"
+            <img src="../realtime-images/black-set.webp" alt="Trending girls dresses" loading="lazy" decoding="async"
               onerror="this.remove()">
           </span>
 
@@ -1341,7 +1340,7 @@
         <!-- 02 - Jeans & Tops -->
         <a class="hm-pane" href="shop.html?cat=tops-with-pants">
           <span class="hm-ph" style="--g1:#B8D5E8;--g2:#263F59">
-            <img src="../realtime-images/miblue-top.webp" alt="Modern jeans and tops" loading="lazy"
+            <img src="../realtime-images/miblue-top.webp" alt="Modern jeans and tops" loading="lazy" decoding="async"
               onerror="this.remove()">
           </span>
 
@@ -1357,7 +1356,7 @@
         <!-- 03 - Jump Suits -->
         <a class="hm-pane" href="shop.html?cat=jump-suit">
           <span class="hm-ph" style="--g1:#E9B7C8;--g2:#761F42">
-            <img src="../realtime-images/Jump Suite.webp" alt="Stylish jumpsuit collection" loading="lazy"
+            <img src="../realtime-images/Jump Suite.webp" alt="Stylish jumpsuit collection" loading="lazy" decoding="async"
               onerror="this.remove()">
           </span>
 
@@ -1373,7 +1372,7 @@
         <!-- 04 - Crop Tops -->
         <a class="hm-pane" href="shop.html?cat=crop-tops">
           <span class="hm-ph" style="--g1:#F3C7D8;--g2:#A43D68">
-            <img src="../realtime-images/croptop-purple.webp" alt="Modern crop tops" loading="lazy"
+            <img src="../realtime-images/croptop-purple.webp" alt="Modern crop tops" loading="lazy" decoding="async"
               onerror="this.remove()">
           </span>
 
@@ -1389,7 +1388,7 @@
         <!-- 05 - Night Suits -->
         <a class="hm-pane" href="shop.html?cat=night-suits">
           <span class="hm-ph" style="--g1:#D9C5F0;--g2:#50316D">
-            <img src="../realtime-images/nightsuite-blue.webp" alt="Comfortable night suits collection" loading="lazy"
+            <img src="../realtime-images/nightsuite-blue.webp" alt="Comfortable night suits collection" loading="lazy" decoding="async"
               onerror="this.remove()">
           </span>
 
@@ -1406,7 +1405,7 @@
         <a class="hm-pane" href="shop.html?cat=skirts-with-tops">
           <span class="hm-ph" style="--g1:#C8D9B5;--g2:#354A2D">
             <img src="../realtime-images/Indigo Floral Kurta in a Modern Courtyard.webp"
-              alt="Skirts paired with stylish tops" loading="lazy" onerror="this.remove()">
+              alt="Skirts paired with stylish tops" loading="lazy" decoding="async" onerror="this.remove()">
           </span>
 
           <span class="lab">Skirts &amp; Tops</span>
@@ -1421,7 +1420,7 @@
         <!-- 07 - Floral Dresses -->
         <a class="hm-pane" href="shop.html?cat=dresses&type=floral-dresses">
           <span class="hm-ph" style="--g1:#F0C4CE;--g2:#722B45">
-            <img src="../realtime-images/floral.webp" alt="Beautiful floral dresses" loading="lazy"
+            <img src="../realtime-images/floral.webp" alt="Beautiful floral dresses" loading="lazy" decoding="async"
               onerror="this.remove()">
           </span>
 
@@ -1441,14 +1440,14 @@
     <section class="hm-story" id="story" aria-label="AURA stories">
       <div class="hm-sc on" data-title="First Light" data-kick="The ceremony story" data-href="shop.html?cat=fashion">
         <span class="hm-ph" style="--g1:#C9722B;--g2:#2B0F12"><img src="../images/hompage-story/story1.webp" alt
-            loading="lazy" onerror="this.remove()"></span>
+            loading="lazy" decoding="async" onerror="this.remove()"></span>
       </div>
       <div class="hm-sc" data-title="Wedding Circle" data-kick="The celebration story"
         data-href="shop.html?cat=jewellery"><span class="hm-ph" style="--g1:#8A7455;--g2:#1E1410"><img
-            src="../images/hompage-story/story2.webp" alt loading="lazy" onerror="this.remove()"></span></div>
+            src="../images/hompage-story/story2.webp" alt loading="lazy" decoding="async" onerror="this.remove()"></span></div>
       <div class="hm-sc" data-title="Golden Hour" data-kick="The evening story" data-href="shop.html?cat=beauty"><span
           class="hm-ph" style="--g1:#B3204D;--g2:#1A0A11"><img src="../images/hompage-story/story3.webp" alt
-            loading="lazy" onerror="this.remove()"></span></div>
+            loading="lazy" decoding="async" onerror="this.remove()"></span></div>
       <img class="hm-st-brand" src="../assets/logo.webp" alt="AURA">
       <div class="hm-st-title" id="stTitleBox">
         <h2 id="stTitle">First Light</h2>
@@ -1459,13 +1458,13 @@
       <div class="hm-st-kick" id="stKick">The ceremony story</div>
       <div class="hm-thumbs" role="tablist" aria-label="Choose a story">
         <button class="hm-th on" role="tab" aria-label="First Light"><span class="hm-ph"
-            style="--g1:#C9722B;--g2:#2B0F12"><img src="../images/hompage-story/story1.webp" alt loading="lazy"
+            style="--g1:#C9722B;--g2:#2B0F12"><img src="../images/hompage-story/story1.webp" alt loading="lazy" decoding="async"
               onerror="this.remove()"></span></button>
         <button class="hm-th" role="tab" aria-label="Wedding Circle"><span class="hm-ph"
-            style="--g1:#8A7455;--g2:#1E1410"><img src="../images/hompage-story/story2.webp" alt loading="lazy"
+            style="--g1:#8A7455;--g2:#1E1410"><img src="../images/hompage-story/story2.webp" alt loading="lazy" decoding="async"
               onerror="this.remove()"></span></button>
         <button class="hm-th" role="tab" aria-label="Golden Hour"><span class="hm-ph"
-            style="--g1:#B3204D;--g2:#1A0A11"><img src="../images/hompage-story/story3.webp" alt loading="lazy"
+            style="--g1:#B3204D;--g2:#1A0A11"><img src="../images/hompage-story/story3.webp" alt loading="lazy" decoding="async"
               onerror="this.remove()"></span></button>
       </div>
       <div class="hm-st-foot">
@@ -1488,11 +1487,11 @@
       <div class="reveal" style="--d:120ms; width: 100%;">
         <div class="hm-stack" id="trStack">
           <div class="hm-tc" data-pos="0"><span class="hm-ph" style="--g1:#D3567E;--g2:#6E0E33"><img
-                src="../images/latest-trends/trend-1.webp" alt loading="lazy" onerror="this.remove()"></span></div>
+                src="../images/latest-trends/trend-1.webp" alt loading="lazy" decoding="async" onerror="this.remove()"></span></div>
           <div class="hm-tc" data-pos="1"><span class="hm-ph" style="--g1:#E8CFA0;--g2:#B88A4B"><img
-                src="../images/latest-trends/trend-2.webp" alt loading="lazy" onerror="this.remove()"></span></div>
+                src="../images/latest-trends/trend-2.webp" alt loading="lazy" decoding="async" onerror="this.remove()"></span></div>
           <div class="hm-tc" data-pos="2"><span class="hm-ph" style="--g1:#F2BCCB;--g2:#A3194A"><img
-                src="../images/latest-trends/trend-3.webp" alt loading="lazy" onerror="this.remove()"></span></div>
+                src="../images/latest-trends/trend-3.webp" alt loading="lazy" decoding="async" onerror="this.remove()"></span></div>
         </div>
         <div class="hm-pager"><button type="button" id="trPrev" aria-label="Previous">‹</button><span id="trNum">1 /
             3</span><button type="button" id="trNext" aria-label="Next">›</button></div>
@@ -1546,7 +1545,7 @@
         </div>
       </div>
     </section>
-  </main>
+  
 
   <!-- ============ AURA FAQ ============ -->
   <section class="section aura-faq-section" id="faq" aria-labelledby="faqTitle">
@@ -1635,7 +1634,7 @@
           </button>
           <div class="aura-faq-a">
             <p>Yes. You can add the AURA Gift Box for
-              ₹399 on the product page before adding to cart.</p>
+              ₹399 on the product page before adding to bag.</p>
           </div>
         </div>
 
@@ -2046,7 +2045,7 @@
         const media = `
           <div class="rev-img" style="position:relative; aspect-ratio:4/5; overflow:hidden; background:linear-gradient(160deg,#D3567E,#6E0E33); display:grid; place-items:center;">
             <span style="font:500 clamp(64px,8vw,96px) 'Cormorant Garamond',serif; color:rgba(255,255,255,.92); line-height:1;">${initial}</span>
-            ${photo ? `<img src="${esc(photo)}" alt="${esc(fromProduct ? (data.productName || 'AURA product') : 'Customer photo')}" loading="lazy" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">` : ""}
+            ${photo ? `<img src="${esc(photo)}" alt="${esc(fromProduct ? (data.productName || 'AURA product') : 'Customer photo')}" loading="lazy" decoding="async" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">` : ""}
             ${fromProduct && data.productName ? `<span style="position:absolute; left:10px; right:10px; bottom:10px; padding:5px 10px; border-radius:999px; background:rgba(20,8,14,.62); color:#fff; font:500 11px 'Jost',sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(data.productName)}</span>` : ""}
           </div>`;
 
@@ -2175,7 +2174,7 @@
           }
 
           await addDoc(collection(db, "reviews"), {
-            name: name, rating: rating, image: finalImageUrl, text: text, createdAt: serverTimestamp()
+            name: name, rating: rating, image: finalImageUrl, text: text, uid: (auth.currentUser && auth.currentUser.uid) || null, createdAt: serverTimestamp()
           });
 
           alert("Thank you! Your review has been submitted.");
@@ -2260,9 +2259,9 @@
           html += `
             <div class="pcard">
               <div class="pmedia">
-                <a href="${link}"><img src="${esc(image)}" alt="${esc(name)}" loading="lazy" style="width:100%; height:100%; object-fit:cover;"></a>
+                <a href="${link}"><img src="${esc(image)}" alt="${esc(name)}" loading="lazy" decoding="async" style="width:100%; height:100%; object-fit:cover;"></a>
                 ${off ? `<span class="product-badge">${off}% OFF</span>` : ''}
-                <button class="wishlist-btn" onclick="toggleWishlist('${esc(id)}', '${esc(name).replace(/'/g, "\\'")}', '${esc(image)}', '₹${price}')" aria-label="Add to wishlist">
+                <button class="wishlist-btn" data-id="${esc(id)}" data-name="${esc(name)}" data-img="${esc(image)}" data-price="₹${price}" aria-label="Add to wishlist">
                   <i class="fa-regular fa-heart"></i>
                 </button>
               </div>
@@ -2276,6 +2275,22 @@
         });
 
         grid.innerHTML = html;
+
+        if (!grid.dataset.wl) {
+
+          grid.dataset.wl = "1";
+
+          grid.addEventListener("click", function (e) {
+
+            var b = e.target.closest(".wishlist-btn"); if (!b) return;
+
+            e.preventDefault();
+
+            if (typeof window.toggleWishlist === "function") window.toggleWishlist(b.dataset.id, b.dataset.name, b.dataset.img, b.dataset.price);
+
+          });
+
+        }
       } catch (err) {
         console.warn("Could not load featured products:", err);
         grid.innerHTML = '<p style="padding: 20px; color: #827078; text-align: center; width: 100%;">Failed to load styles.</p>';
@@ -2477,7 +2492,7 @@
 
       cards.forEach(card => {
         card.addEventListener("click", event => {
-          if (event.target.closest("a")) return;       // "Explore" link goes to the shop
+          if (event.target.closest(".go")) return;       // "Explore" link goes to the shop
           if (event.target.closest("button")) return;
           event.preventDefault();
           openLightbox(card);
