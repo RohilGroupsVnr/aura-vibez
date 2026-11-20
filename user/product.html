@@ -2669,14 +2669,68 @@
           return (st === "active" || st === "") ? d : null;
         } catch (err) { return null; }
       }
-      /* images of one color -> [{src,label}] */
+      /* images of one color -> [{key,src,thumb,label}] */
       function colorImageList(p, color) {
         var set = (p.colorImages && color && p.colorImages[color]) || null, list = [];
         var th = (p.variants && p.variants[color] && p.variants[color].thumbs) || (p.colorThumbs && p.colorThumbs[color]) || {};
         if (set) IMG_KEYS.forEach(function (k, i) {
-          if (set[k] && set[k].indexOf("partywear.webp") < 0) list.push({ src: set[k], thumb: th[k] || set[k], label: IMG_LABELS[i] });
+          if (set[k] && set[k].indexOf("partywear.webp") < 0) list.push({ key: k, src: set[k], thumb: th[k] || set[k], label: IMG_LABELS[i] });
         });
         return list;
+      }
+
+      /* base images + skin-tone overrides (front/back/side/quality) */
+      function galleryList(p, color) {
+        var list = colorImageList(p, color);
+        if (!list.length) (p.images || []).forEach(function (s, i) {
+          list.push({ key: IMG_KEYS[i], src: s, label: IMG_LABELS[i] || ("View " + (i + 1)) });
+        });
+        if (!list.length) list = [{ key: "front", src: IMG_PLACEHOLDER, label: "Front" }];
+
+        var tone = getTone();
+        var t = tone && color && p.toneImages && p.toneImages[color] && p.toneImages[color][tone];
+        if (t) list.forEach(function (it) {
+          if (it.key && t[it.key]) { it.src = t[it.key]; it.thumb = thumb(t[it.key], 300); }
+        });
+        return list;
+      }
+
+      /* tone maathumbodhu: gallery rebuild illama, images mattum safe ah swap */
+      var swapToken = 0;
+      function swapTone(p, color) {
+        var list = galleryList(p, color);
+        var slides = $("pdSlider").querySelectorAll(".pd-slide");
+        var thumbs = $("pdThumbRow").querySelectorAll(".thumb-item img");
+        if (slides.length !== list.length) { updateGalleryImages(p, color); return; }
+
+        var token = ++swapToken;                       // latest click mattum win
+        list.forEach(function (it, i) {
+          var full = thumb(it.src, 1200);
+          var img = slides[i].querySelector("img"), th = thumbs[i];
+          if (!img || img.getAttribute("src") === full) return;
+          var pre = new Image(); pre.decoding = "async";
+          pre.onload = function () {
+            if (token !== swapToken) return;
+            img.src = full;
+            if (th) th.src = it.thumb || it.src;
+          };
+          pre.src = full;                              // pazhaya photo ready aagura vara irukkum
+        });
+        goToSlide(0);
+      }
+
+      /* color cards la tone photo kaatu */
+      function refreshColorCards() {
+        if (!product) return;
+        var tone = getTone();
+        document.querySelectorAll(".pd-color-card").forEach(function (card) {
+          var c = card.dataset.color, img = card.querySelector(".pcc-img img");
+          if (!img) return;
+          var t = tone && product.toneImages && product.toneImages[c] && product.toneImages[c][tone];
+          var base = colorImageList(product, c)[0];
+          var s = (t && t.front) ? thumb(t.front, 300) : (base && (base.thumb || base.src));
+          if (s && img.getAttribute("src") !== s) img.src = s;
+        });
       }
 
       function normalizeProduct(p) {
@@ -2853,7 +2907,6 @@
         }).join("");
       }
 
-      /* ---------- SKIN TONE MATCH ---------- */
       var TONES = [
         { id: "fair", label: "Fair", sw: "#F6D9C6" },
         { id: "wheatish", label: "Wheatish", sw: "#E0B48F" },
@@ -2861,52 +2914,132 @@
         { id: "deep", label: "Deep", sw: "#7A4A2E" }
       ];
 
-      // [color name regex, fair, wheatish, medium, deep]  →  2 = best match, 1 = good, 0 = not ideal
-      // Order mukkiyam: specific shades munnaadi, generic kadaisila
-      var COLOR_RULES = [
-        [/sky|baby ?blue|powder|ice ?blue|pastel blue/, 2, 1, 1, 0],
-        [/navy|royal|cobalt|indigo|midnight/, 2, 2, 2, 2],
-        [/turquoise|aqua|teal|peacock/, 2, 2, 2, 2],
-        [/blue/, 1, 2, 2, 2],
-        [/mint|pista|pistachio|sea ?green|lime/, 2, 1, 1, 1],
-        [/green|emerald|bottle|olive|forest/, 1, 2, 2, 2],
-        [/fuchsia|magenta|rani|hot ?pink/, 1, 2, 2, 2],
-        [/maroon|wine|burgundy|plum|mulberry/, 2, 2, 1, 1],
-        [/pink|rose|blush|salmon/, 2, 1, 1, 1],
-        [/peach/, 2, 1, 0, 0],
-        [/coral/, 1, 2, 2, 2],
-        [/orange|rust|terracotta|brick/, 1, 2, 2, 2],
-        [/mustard|yellow|gold|lemon/, 0, 2, 2, 2],
-        [/red|crimson|scarlet|cherry/, 1, 2, 2, 2],
-        [/lavender|lilac|mauve|orchid/, 2, 1, 2, 2],
-        [/purple|violet/, 1, 2, 2, 2],
-        [/cream|ivory|off ?white/, 0, 1, 2, 2],
-        [/beige|nude|sand|champagne/, 0, 1, 0, 0],
-        [/white/, 1, 2, 2, 2],
-        [/black|charcoal/, 1, 1, 1, 0],
-        [/grey|gray|silver|ash/, 1, 1, 1, 0],
-        [/brown|chocolate|coffee|tan|khaki|camel|mocha/, 1, 1, 0, 0]
-      ];
+      /* ===== REAL SKIN TONE MATCHING ===== */
 
-      /* Product-wise override (optional): Firestore-la  skinMatch: { "Maroon": ["fair","wheatish"], "Printed": ["medium","deep"] } */
-      function toneScore(color, toneId) {
-        var ov = product && product.skinMatch && product.skinMatch[color];
-        if (Array.isArray(ov)) return ov.indexOf(toneId) > -1 ? 2 : 0;
-        var idx = TONES.map(function (t) { return t.id; }).indexOf(toneId);
-        var name = String(color || "").toLowerCase();
-        for (var i = 0; i < COLOR_RULES.length; i++) {
-          if (COLOR_RULES[i][0].test(name)) return COLOR_RULES[i][idx + 1];
+      /* Each skin tone's dominant undertone */
+      var SKIN_UNDERTONE = {
+        fair: "cool",
+        wheatish: "warm",
+        medium: "warm",
+        deep: "neutral"
+      };
+
+      /* Fallback color metadata — used when the product doc doesn't have colorMeta.
+         This is based on real colour-theory (undertone + contrast), not name guessing. */
+      var COLOR_META_DEFAULT = {
+        /* Neutrals */
+        "white": { undertone: "neutral", contrast: "low", best: ["fair", "wheatish", "medium", "deep"] },
+        "black": { undertone: "neutral", contrast: "high", best: ["fair", "wheatish", "medium", "deep"] },
+        "grey": { undertone: "cool", contrast: "low", best: ["fair", "wheatish", "medium"] },
+        "gray": { undertone: "cool", contrast: "low", best: ["fair", "wheatish", "medium"] },
+        "beige": { undertone: "warm", contrast: "low", best: ["fair", "wheatish"] },
+        "cream": { undertone: "warm", contrast: "low", best: ["fair", "wheatish"] },
+        "ivory": { undertone: "warm", contrast: "low", best: ["fair", "wheatish"] },
+
+        /* Blues */
+        "navy": { undertone: "cool", contrast: "high", best: ["fair", "wheatish", "medium", "deep"] },
+        "blue": { undertone: "cool", contrast: "medium", best: ["fair", "wheatish", "medium", "deep"] },
+        "sky blue": { undertone: "cool", contrast: "low", best: ["fair", "wheatish"] },
+        "royal blue": { undertone: "cool", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "teal": { undertone: "cool", contrast: "medium", best: ["fair", "wheatish", "medium", "deep"] },
+        "turquoise": { undertone: "cool", contrast: "medium", best: ["fair", "wheatish", "medium"] },
+
+        /* Greens */
+        "green": { undertone: "warm", contrast: "medium", best: ["wheatish", "medium", "deep"] },
+        "emerald": { undertone: "cool", contrast: "high", best: ["fair", "wheatish", "medium"] },
+        "olive": { undertone: "warm", contrast: "medium", best: ["wheatish", "medium", "deep"] },
+        "mint": { undertone: "cool", contrast: "low", best: ["fair", "wheatish"] },
+        "sage": { undertone: "cool", contrast: "low", best: ["fair", "wheatish"] },
+
+        /* Reds / Pinks */
+        "red": { undertone: "warm", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "maroon": { undertone: "warm", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "burgundy": { undertone: "warm", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "wine": { undertone: "warm", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "pink": { undertone: "cool", contrast: "low", best: ["fair", "wheatish"] },
+        "rose": { undertone: "cool", contrast: "low", best: ["fair", "wheatish"] },
+        "blush": { undertone: "cool", contrast: "low", best: ["fair", "wheatish"] },
+        "hot pink": { undertone: "cool", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "magenta": { undertone: "cool", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "fuchsia": { undertone: "cool", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "coral": { undertone: "warm", contrast: "medium", best: ["wheatish", "medium"] },
+        "peach": { undertone: "warm", contrast: "low", best: ["fair", "wheatish"] },
+
+        /* Yellows / Oranges */
+        "yellow": { undertone: "warm", contrast: "medium", best: ["wheatish", "medium", "deep"] },
+        "mustard": { undertone: "warm", contrast: "medium", best: ["wheatish", "medium", "deep"] },
+        "gold": { undertone: "warm", contrast: "medium", best: ["wheatish", "medium", "deep"] },
+        "orange": { undertone: "warm", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "rust": { undertone: "warm", contrast: "high", best: ["wheatish", "medium", "deep"] },
+        "terracotta": { undertone: "warm", contrast: "high", best: ["wheatish", "medium", "deep"] },
+
+        /* Purples */
+        "purple": { undertone: "cool", contrast: "medium", best: ["fair", "wheatish", "medium", "deep"] },
+        "violet": { undertone: "cool", contrast: "medium", best: ["fair", "wheatish", "medium", "deep"] },
+        "lavender": { undertone: "cool", contrast: "low", best: ["fair", "wheatish"] },
+        "lilac": { undertone: "cool", contrast: "low", best: ["fair", "wheatish"] },
+        "mauve": { undertone: "cool", contrast: "medium", best: ["fair", "wheatish", "medium"] },
+        "plum": { undertone: "cool", contrast: "high", best: ["wheatish", "medium", "deep"] },
+
+        /* Browns */
+        "brown": { undertone: "warm", contrast: "medium", best: ["wheatish", "medium", "deep"] },
+        "tan": { undertone: "warm", contrast: "low", best: ["wheatish", "medium"] },
+        "camel": { undertone: "warm", contrast: "low", best: ["fair", "wheatish", "medium"] },
+        "chocolate": { undertone: "warm", contrast: "high", best: ["medium", "deep"] },
+        "coffee": { undertone: "warm", contrast: "high", best: ["medium", "deep"] }
+      };
+
+      /* Fuzzy lookup: find the closest COLOR_META_DEFAULT key that appears in the colour name */
+      function colorMetaLookup(name) {
+        var n = String(name || "").toLowerCase().trim();
+        if (!n) return null;
+
+        // product-level override first
+        if (product && product.colorMeta && product.colorMeta[name]) {
+          var ov = product.colorMeta[name];
+          if (ov.undertone || ov.best) return ov;
         }
-        return null; // theriyaadha color → rating illa
+
+        // exact key
+        if (COLOR_META_DEFAULT[n]) return COLOR_META_DEFAULT[n];
+
+        // multi-word exact (e.g. "sky blue")
+        for (var k in COLOR_META_DEFAULT) {
+          if (n.indexOf(k) > -1) return COLOR_META_DEFAULT[k];
+        }
+        return null;
       }
 
+      /* Real tone scoring — uses undertone + best[] from metadata */
+      function toneScore(color, toneId) {
+        if (!toneId) return null;
+
+        // 1. Explicit product-level override wins first
+        var ov = product && product.skinMatch && product.skinMatch[color];
+        if (Array.isArray(ov)) return ov.indexOf(toneId) > -1 ? 2 : 0;
+
+        // 2. Real colour metadata (undertone + best list)
+        var meta = colorMetaLookup(color);
+        if (meta && Array.isArray(meta.best)) {
+          if (meta.best.indexOf(toneId) < 0) return 0;
+          // Bonus: undertone aligns with skin undertone → 2, otherwise 1
+          var skinUt = SKIN_UNDERTONE[toneId];
+          if (meta.undertone === "neutral") return 2;         // neutrals flatter everyone
+          if (meta.undertone === skinUt) return 2;
+          return 1;
+        }
+
+        return null; // unknown colour → no rating, don't invent one
+      }
       function getTone() { try { return localStorage.getItem("aura_skin_tone") || ""; } catch (e) { return ""; } }
       function setTone(v) { try { if (v) localStorage.setItem("aura_skin_tone", v); else localStorage.removeItem("aura_skin_tone"); } catch (e) { } }
       function toneLabel(id) { var t = TONES.filter(function (x) { return x.id === id; })[0]; return t ? t.label : ""; }
 
       function skinColors(tone, min) {
         return (product.colors || []).filter(function (c) {
-          return c !== "Default" && colorStock(c) > 0 && toneScore(c, tone) >= min;
+          if (c === "Default" || colorStock(c) <= 0) return false;
+          var s = toneScore(c, tone);
+          return s !== null && s >= min;
         });
       }
 
@@ -2931,17 +3064,48 @@
       function updateSkinResult() {
         var el = $("pdSkinResult"), tone = getTone();
         if (!tone || !product) { el.hidden = true; return; }
-        var label = toneLabel(tone), sel = selectedColor, s = toneScore(sel, tone);
-        var best = skinColors(tone, 2), msg = "";
 
-        if (s === null) msg = 'No skin-tone rating for <b>' + esc(sel || "this shade") + '</b>.';
-        else if (s === 2) msg = '✓ <b>' + esc(sel) + '</b> is a great match for <b>' + esc(label) + '</b> skin.';
-        else if (s === 1) msg = '<b>' + esc(sel) + '</b> works well on <b>' + esc(label) + '</b> skin.';
-        else msg = 'For <b>' + esc(label) + '</b> skin, <b>' + esc(sel || "this shade") + '</b> is a subtler choice.';
+        var label = toneLabel(tone);
+        var sel = selectedColor;
+        var s = toneScore(sel, tone);
+        var meta = colorMetaLookup(sel);
+        var msg = "";
 
-        if (s !== 2 && best.length && best.indexOf(sel) < 0) msg += ' Best picks: <b>' + best.map(esc).join(", ") + '</b>.';
-        msg += '<small>Styling suggestion only. The final look depends on your undertone and lighting.</small>';
-        el.innerHTML = msg; el.hidden = false;
+        /* Human-readable reason based on undertone */
+        function reason(m) {
+          if (!m || !m.undertone) return "";
+          var skinUt = SKIN_UNDERTONE[tone];
+          if (m.undertone === "neutral")
+            return "it is a neutral shade that sits well on every undertone";
+          if (m.undertone === skinUt)
+            return "its " + m.undertone + " undertone matches your " + skinUt + " skin undertone";
+          return "its " + m.undertone + " undertone adds healthy contrast to your " + skinUt + " undertone";
+        }
+
+        if (s === null) {
+          msg = 'No colour-match rating for <b>' + esc(sel || "this shade") + '</b> yet.';
+        } else if (s === 2) {
+          msg = '✓ <b>' + esc(sel) + '</b> is an <b>excellent match</b> for <b>' + esc(label) +
+            '</b> skin — ' + reason(meta) + '.';
+        } else if (s === 1) {
+          msg = '<b>' + esc(sel) + '</b> is a <b>good match</b> for <b>' + esc(label) +
+            '</b> skin — ' + (reason(meta) || "it is a versatile shade that suits many undertones") + '.';
+        } else {
+          msg = '<b>' + esc(sel) + '</b> is a <b>subtle choice</b> for <b>' + esc(label) +
+            '</b> skin' + (meta ? ' — its ' + meta.undertone + ' undertone sits apart from your ' + SKIN_UNDERTONE[tone] + ' undertone' : '') + '.';
+        }
+
+        /* Best picks — real alternatives, exclude current + sold out */
+        if (s !== 2) {
+          var best = skinColors(tone, 2).filter(function (c) { return c !== sel; });
+          if (best.length) {
+            msg += ' <b>Better picks for you:</b> ' + best.map(esc).join(", ") + '.';
+          }
+        }
+
+        msg += '<small>Undertone-based suggestion — the final look also depends on fabric, lighting and your personal style.</small>';
+        el.innerHTML = msg;
+        el.hidden = false;
       }
 
       function renderSkin() {
@@ -2949,40 +3113,25 @@
         $("pdSkin").style.display = multi ? "" : "none";
         if (!multi) return;
         renderTones(); applySkinBadges(); updateSkinResult();
+        refreshColorCards();
       }
-      /* skin tone change: swap ONLY the front photo (no rebuild, no flash). The new photo is loaded first, then swapped */
-      function toneFront(p, color) {
-        var list = colorImageList(p, color);
-        if (!list.length) return null;
-        var t = p.toneImages && p.toneImages[color] && p.toneImages[color][getTone()];
-        return (t && t.front) ? t.front : list[0].src;
-      }
-      function swapFront(p, color) {
-        var src = toneFront(p, color), img = $("pdSlider").querySelector(".pd-slide img");
-        if (!src || !img) { updateGalleryImages(p, color); return; }     // fallback: old behaviour
-        goToSlide(0);
-        if (img.getAttribute("src") === src) return;
-        var pre = new Image(); pre.decoding = "async";
-        pre.onload = function () { img.src = src; };                     // old photo stays until the new one is ready
-        pre.src = src;
-      }
-      /* start downloading a tone's photo the moment the mouse is over its button */
+
+      /* start downloading ALL of a tone's photos the moment the mouse is over its button */
       document.addEventListener("pointerover", function (e) {
         var b = e.target.closest && e.target.closest(".pd-tone"); if (!b || !product) return;
         var t = product.toneImages && product.toneImages[selectedColor] && product.toneImages[selectedColor][b.dataset.tone];
-        if (t && t.front) { var im = new Image(); im.src = t.front; }
+        if (t) IMG_KEYS.forEach(function (k) { if (t[k]) { var im = new Image(); im.src = thumb(t[k], 1200); } });
       });
+
       function initSkin() {
         $("pdTones").addEventListener("click", function (e) {
           var b = e.target.closest(".pd-tone"); if (!b || !product) return;
           var id = b.dataset.tone, was = getTone() === id;
-          setTone(was ? "" : id);
-          renderTones(); applySkinBadges();
-
-          swapFront(product, selectedColor);          // 🔥 END 🔥
-
-       
-          updateSkinResult();
+          setTone(was ? "" : id);              // same tone again click = remove
+          renderTones();
+          swapTone(product, selectedColor);    // all images (front/back/side/quality)
+          refreshColorCards();                 // color cards
+          updateSkinResult();                  // match text
         });
       }
       /* ---------- gallery ---------- */
@@ -3007,21 +3156,7 @@
       }
 
       function updateGalleryImages(p, color) {
-        var list = colorImageList(p, color);
-        if (!list.length) (p.images || []).forEach(function (s, i) { list.push({ src: s, label: IMG_LABELS[i] || ("View " + (i + 1)) }); });
-        if (!list.length) list = [{ src: IMG_PLACEHOLDER, label: "Front" }];
-
-        // 🔥 NEW SKIN TONE LOGIC 🔥
-        var activeTone = getTone(); // Current selected tone (fair, wheatish, etc.)
-
-        // Antha color ku antha tone la image irukka nu check pannu
-        var toneImgData = p.toneImages && p.toneImages[color] && p.toneImages[color][activeTone];
-
-        // Oru vela tone image (front) irundha, FIRST image ah mattum athuku maathu
-        if (toneImgData && toneImgData.front) {
-          list[0].src = toneImgData.front;
-        }
-        // 🔥 END OF NEW LOGIC 🔥
+        var list = galleryList(p, color);
 
         var s = $("pdSlider");
         s.innerHTML = list.map(function (it, i) {
@@ -3053,8 +3188,10 @@
         var urls = [];
         try {
           var t = p.toneImages && p.toneImages[color];
-          if (t) Object.keys(t).forEach(function (k) { if (t[k] && t[k].front) urls.push(t[k].front); });
-          (p.colors || []).forEach(function (c) { var l = colorImageList(p, c); if (l[0]) urls.push(l[0].src); });
+          if (t) Object.keys(t).forEach(function (tn) {
+            IMG_KEYS.forEach(function (k) { if (t[tn] && t[tn][k]) urls.push(thumb(t[tn][k], 1200)); });
+          });
+          (p.colors || []).forEach(function (c) { var l = colorImageList(p, c); if (l[0]) urls.push(thumb(l[0].src, 1200)); });
         } catch (e) { }
         var done = false;
         function run() {
@@ -3207,7 +3344,7 @@
           b.classList.add("sel");
           selectedColor = b.dataset.color;
           $("pdColorName").textContent = selectedColor;
-          updateGalleryImages(product, selectedColor);
+          updateGalleryImages(product, selectedColor);   // uses galleryList -> keeps selected tone
           renderSizes();      // sizes / sold-out / stock differ per color
           updateCTA();
           updateSkinResult(); // skin-match text follows the colour that is now selected
@@ -3228,7 +3365,7 @@
           updateCTA();
           renderSizes();      // sizes / sold-out / stock differ per color
           updateCTA();
-          updateSkinResult();   // ← idha add pannunga
+          updateSkinResult();
         });
 
         $("pdCartBtn").addEventListener("click", function () { addToCart(false); });
@@ -3325,13 +3462,12 @@
         var cl = colorImageList(product, selectedColor);
         if (cl.length) finalImg = cl[0].src;
 
-        // 🔥 NEW: Tone select pannirundha, antha front image ah cart ku edu 🔥
+        // Tone select pannirundha, antha front image ah cart ku edu
         var activeTone = getTone();
         var toneData = product.toneImages && product.toneImages[selectedColor] && product.toneImages[selectedColor][activeTone];
         if (toneData && toneData.front) {
           finalImg = toneData.front;
         }
-        // 🔥 END 🔥
         if (!buyNow) {
           if (existing > -1) {
             cart[existing].qty = (cart[existing].qty || 1) + 1;
